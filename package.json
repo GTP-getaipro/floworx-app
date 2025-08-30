@@ -1,0 +1,23 @@
+{
+  "name": "floworx-invite",
+  "version": "1.0.0",
+  "description": "SaaS application with secure backend and React frontend",
+  "main": "index.js",
+  "scripts": {
+    "setup": "node setup.js",
+    "dev": "concurrently \"npm run server\" \"npm run client\"",
+    "server": "cd backend && npm run dev",
+    "client": "cd frontend && npm start",
+    "install-all": "npm install && cd backend && npm install && cd ../frontend && npm install",
+    "build": "cd frontend && npm run build",
+    "start": "cd backend && npm start",
+    "test": "cd backend && npm test && cd ../frontend && npm test",
+    "db:setup": "psql -d floworx_db -f backend/database/schema.sql"
+  },
+  "keywords": ["saas", "oauth", "automation"],
+  "author": "",
+  "license": "ISC",
+  "devDependencies": {
+    "concurrently": "^8.2.2"
+  }
+}

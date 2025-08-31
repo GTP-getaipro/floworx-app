@@ -331,6 +331,7 @@ const OnboardingWizard = ({ onComplete }) => {
           Need help? <a href="mailto:support@floworx-iq.com">Contact Support</a>
         </div>
       </div>
+      </div>
     </ErrorBoundary>
   );
 };

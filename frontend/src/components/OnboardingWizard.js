@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import axios from 'axios';
 import ErrorBoundary, { useErrorReporting } from './ErrorBoundary';
 import WorkflowDeployment from './WorkflowDeployment';
@@ -24,7 +24,7 @@ const OnboardingWizard = ({ onComplete }) => {
   });
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
-  const [sessionId, setSessionId] = useState(null);
+
   const [recoveryInfo, setRecoveryInfo] = useState(null);
   const { reportError } = useErrorReporting();
   const {
@@ -87,9 +87,9 @@ const OnboardingWizard = ({ onComplete }) => {
     trackPageView('onboarding_wizard');
 
     fetchOnboardingStatus();
-  }, [trackOnboardingStart, trackPageView]);
+  }, [trackOnboardingStart, trackPageView, fetchOnboardingStatus]);
 
-  const fetchOnboardingStatus = async () => {
+  const fetchOnboardingStatus = useCallback(async () => {
     try {
       setLoading(true);
       const token = localStorage.getItem('token');
@@ -147,7 +147,7 @@ const OnboardingWizard = ({ onComplete }) => {
     } finally {
       setLoading(false);
     }
-  };
+  }, [onboardingData, steps, trackStepStart, reportError]);
 
   const handleStepComplete = async (stepId, data) => {
     try {
@@ -261,7 +261,7 @@ const OnboardingWizard = ({ onComplete }) => {
   };
 
   return (
-    <ErrorBoundary context={{ currentStep, sessionId }}>
+    <ErrorBoundary context={{ currentStep }}>
       <div className="onboarding-wizard">
         {recoveryInfo && recoveryInfo.hasRecoveryData && recoveryInfo.recentErrors.length > 0 && (
           <div className="recovery-banner">

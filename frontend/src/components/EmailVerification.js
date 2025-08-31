@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
 import axios from 'axios';
 import { useAuth } from '../contexts/AuthContext';
@@ -14,6 +14,33 @@ const EmailVerification = () => {
   const location = useLocation();
   const navigate = useNavigate();
   const { login } = useAuth();
+
+  const verifyEmail = useCallback(async (token) => {
+    try {
+      setStatus('verifying');
+      const response = await axios.post(`${process.env.REACT_APP_API_URL}/auth/verify-email`, {
+        token
+      });
+
+      setStatus('success');
+      setMessage('Email verified successfully! Redirecting to your dashboard...');
+
+      // Log the user in with the returned token
+      if (response.data.token) {
+        login(response.data.token, response.data.user);
+
+        // Redirect to dashboard after 3 seconds
+        setTimeout(() => {
+          navigate('/dashboard');
+        }, 3000);
+      }
+    } catch (error) {
+      console.error('Email verification failed:', error);
+      setStatus('error');
+      setMessage(error.response?.data?.message || 'Email verification failed');
+      setCanResend(true);
+    }
+  }, [login, navigate]);
 
   useEffect(() => {
     const urlParams = new URLSearchParams(location.search);
@@ -31,41 +58,9 @@ const EmailVerification = () => {
       setMessage('No verification token provided');
       setCanResend(true);
     }
-  }, [location]);
+  }, [location, verifyEmail]);
 
-  const verifyEmail = async (token) => {
-    try {
-      setStatus('verifying');
-      const response = await axios.post(`${process.env.REACT_APP_API_URL}/auth/verify-email`, {
-        token
-      });
 
-      setStatus('success');
-      setMessage('Email verified successfully! Redirecting to your dashboard...');
-
-      // Log the user in with the returned token
-      if (response.data.token) {
-        login(response.data.token, response.data.user);
-        
-        // Redirect to dashboard after 3 seconds
-        setTimeout(() => {
-          navigate('/dashboard');
-        }, 3000);
-      }
-
-    } catch (error) {
-      console.error('Email verification error:', error);
-      setStatus('error');
-      
-      if (error.response?.status === 400) {
-        setMessage(error.response.data.message || 'Invalid or expired verification token');
-      } else {
-        setMessage('Failed to verify email. Please try again.');
-      }
-      
-      setCanResend(true);
-    }
-  };
 
   const handleResendVerification = async () => {
     if (!email) {

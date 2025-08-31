@@ -26,7 +26,7 @@ const WorkflowDeployment = ({ onComplete, onboardingData }) => {
     if (deploymentStatus === 'preparing') {
       startDeployment();
     }
-  }, []);
+  }, [deploymentStatus, startDeployment]);
 
   const addLog = (message, type = 'info') => {
     const timestamp = new Date().toLocaleTimeString();

@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useCallback } from 'react';
+import React, { useState, useEffect, useCallback, useMemo } from 'react';
 import axios from 'axios';
 import ErrorBoundary, { useErrorReporting } from './ErrorBoundary';
 import WorkflowDeployment from './WorkflowDeployment';
@@ -36,7 +36,7 @@ const OnboardingWizard = ({ onComplete }) => {
     trackPageView
   } = useAnalytics();
 
-  const steps = [
+  const steps = useMemo(() => [
     {
       id: 'welcome',
       title: 'Welcome to Floworx',
@@ -79,15 +79,7 @@ const OnboardingWizard = ({ onComplete }) => {
       component: CompletionStep,
       description: 'Your automation is now active'
     }
-  ];
-
-  useEffect(() => {
-    // Track onboarding start
-    trackOnboardingStart('dashboard', window.location.href);
-    trackPageView('onboarding_wizard');
-
-    fetchOnboardingStatus();
-  }, [trackOnboardingStart, trackPageView, fetchOnboardingStatus]);
+  ], []);
 
   const fetchOnboardingStatus = useCallback(async () => {
     try {
@@ -148,6 +140,14 @@ const OnboardingWizard = ({ onComplete }) => {
       setLoading(false);
     }
   }, [onboardingData, steps, trackStepStart, reportError]);
+
+  useEffect(() => {
+    // Track onboarding start
+    trackOnboardingStart('dashboard', window.location.href);
+    trackPageView('onboarding_wizard');
+
+    fetchOnboardingStatus();
+  }, [trackOnboardingStart, trackPageView, fetchOnboardingStatus]);
 
   const handleStepComplete = async (stepId, data) => {
     try {

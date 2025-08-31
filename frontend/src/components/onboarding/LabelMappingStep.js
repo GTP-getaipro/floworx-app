@@ -12,7 +12,7 @@ const LabelMappingStep = ({ data, onComplete, onBack, canGoBack }) => {
   useEffect(() => {
     fetchGmailLabels();
     initializeMappings();
-  }, [data]);
+  }, [data, initializeMappings]);
 
   const fetchGmailLabels = async () => {
     try {

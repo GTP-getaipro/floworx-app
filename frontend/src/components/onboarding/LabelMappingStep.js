@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import axios from 'axios';
 import './StepStyles.css';
 
@@ -8,6 +8,17 @@ const LabelMappingStep = ({ data, onComplete, onBack, canGoBack }) => {
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
   const [error, setError] = useState(null);
+
+  const initializeMappings = useCallback(() => {
+    if (data.businessCategories) {
+      const initialMappings = data.businessCategories.map(category => ({
+        categoryName: category.name,
+        gmailLabelId: '',
+        gmailLabelName: ''
+      }));
+      setMappings(initialMappings);
+    }
+  }, [data.businessCategories]);
 
   useEffect(() => {
     fetchGmailLabels();
@@ -27,17 +38,6 @@ const LabelMappingStep = ({ data, onComplete, onBack, canGoBack }) => {
       setError('Failed to fetch Gmail labels. Please ensure your Google account is connected.');
     } finally {
       setLoading(false);
-    }
-  };
-
-  const initializeMappings = () => {
-    if (data.businessCategories) {
-      const initialMappings = data.businessCategories.map(category => ({
-        categoryName: category.name,
-        gmailLabelId: '',
-        gmailLabelName: ''
-      }));
-      setMappings(initialMappings);
     }
   };
 

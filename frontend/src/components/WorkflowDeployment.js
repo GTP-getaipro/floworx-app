@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import axios from 'axios';
 import { useErrorReporting } from './ErrorBoundary';
 import './WorkflowDeployment.css';
@@ -21,26 +21,19 @@ const WorkflowDeployment = ({ onComplete, onboardingData }) => {
     { id: 'finalize', name: 'Finalizing Setup', description: 'Completing deployment process' }
   ];
 
-  useEffect(() => {
-    // Auto-start deployment when component mounts
-    if (deploymentStatus === 'preparing') {
-      startDeployment();
-    }
-  }, [deploymentStatus, startDeployment]);
-
-  const addLog = (message, type = 'info') => {
+  const addLog = useCallback((message, type = 'info') => {
     const timestamp = new Date().toLocaleTimeString();
     setLogs(prev => [...prev, { timestamp, message, type }]);
-  };
+  }, []);
 
-  const updateProgress = (stepIndex, stepName) => {
+  const updateProgress = useCallback((stepIndex, stepName) => {
     const progressPercent = ((stepIndex + 1) / deploymentSteps.length) * 100;
     setProgress(progressPercent);
     setCurrentStep(stepName);
     addLog(`${stepName}...`, 'info');
-  };
+  }, [deploymentSteps.length, addLog]);
 
-  const startDeployment = async () => {
+  const startDeployment = useCallback(async () => {
     try {
       setDeploymentStatus('deploying');
       setError(null);
@@ -107,7 +100,14 @@ const WorkflowDeployment = ({ onComplete, onboardingData }) => {
       setCanRetry(error.response?.data?.canRetry !== false);
       addLog(`✗ Deployment failed: ${error.response?.data?.message || error.message}`, 'error');
     }
-  };
+  }, [setDeploymentStatus, setError, setCanRetry, addLog, updateProgress, setDeploymentResult, setProgress, onComplete, reportError, onboardingData]);
+
+  useEffect(() => {
+    // Auto-start deployment when component mounts
+    if (deploymentStatus === 'preparing') {
+      startDeployment();
+    }
+  }, [deploymentStatus, startDeployment]);
 
   const retryDeployment = () => {
     setLogs([]);

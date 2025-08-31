@@ -9,12 +9,14 @@ class EmailService {
   }
 
   createTransporter() {
-    // Configure email transporter (using Gmail SMTP as example)
-    return nodemailer.createTransporter({
-      service: 'gmail',
+    // Configure email transporter with flexible SMTP settings
+    return nodemailer.createTransport({
+      host: process.env.SMTP_HOST || 'smtp.gmail.com',
+      port: parseInt(process.env.SMTP_PORT) || 587,
+      secure: false, // true for 465, false for other ports
       auth: {
-        user: process.env.EMAIL_USER,
-        pass: process.env.EMAIL_PASSWORD // Use App Password for Gmail
+        user: process.env.SMTP_USER,
+        pass: process.env.SMTP_PASS // Use App Password for Gmail
       }
     });
   }
@@ -39,7 +41,7 @@ class EmailService {
     const htmlContent = this.getVerificationEmailTemplate(firstName, verificationUrl);
     
     const mailOptions = {
-      from: `"Floworx Team" <${process.env.EMAIL_USER}>`,
+      from: `"${process.env.FROM_NAME || 'Floworx Team'}" <${process.env.FROM_EMAIL || process.env.SMTP_USER}>`,
       to: email,
       subject: 'Welcome to Floworx - Please Verify Your Email',
       html: htmlContent
@@ -66,7 +68,7 @@ class EmailService {
     const htmlContent = this.getWelcomeEmailTemplate(firstName, dashboardUrl);
     
     const mailOptions = {
-      from: `"Floworx Team" <${process.env.EMAIL_USER}>`,
+      from: `"${process.env.FROM_NAME || 'Floworx Team'}" <${process.env.FROM_EMAIL || process.env.SMTP_USER}>`,
       to: email,
       subject: 'Welcome to Floworx - Let\'s Get Your Email Automation Started!',
       html: htmlContent
@@ -94,7 +96,7 @@ class EmailService {
     const htmlContent = this.getOnboardingReminderTemplate(firstName, lastStep, continueUrl);
     
     const mailOptions = {
-      from: `"Floworx Team" <${process.env.EMAIL_USER}>`,
+      from: `"${process.env.FROM_NAME || 'Floworx Team'}" <${process.env.FROM_EMAIL || process.env.SMTP_USER}>`,
       to: email,
       subject: 'Complete Your Floworx Setup - Your Email Automation Awaits!',
       html: htmlContent

@@ -11,6 +11,10 @@ yarn-error.log*
 .env.test.local
 .env.production.local
 
+# Actual credentials (never commit)
+*-ACTUAL.txt
+vercel-environment-variables-ACTUAL.txt
+
 # Production builds
 /frontend/build
 /backend/dist

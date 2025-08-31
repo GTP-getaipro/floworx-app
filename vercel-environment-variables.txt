@@ -1,0 +1,39 @@
+# Vercel Environment Variables Template
+# Replace placeholder values with your actual credentials before deployment
+
+# Database Configuration (Supabase)
+DB_HOST=your_supabase_host.pooler.supabase.com
+DB_PORT=6543
+DB_NAME=postgres
+DB_USER=postgres.your_project_ref
+DB_PASSWORD=your_database_password
+SUPABASE_URL=https://your_project_ref.supabase.co
+SUPABASE_ANON_KEY=your_supabase_anon_key
+SUPABASE_SERVICE_ROLE_KEY=your_supabase_service_role_key
+
+# Security Keys (Generate new ones for production)
+JWT_SECRET=your_jwt_secret_min_64_characters
+ENCRYPTION_KEY=your_encryption_key_32_characters
+
+# Google OAuth Configuration
+GOOGLE_CLIENT_ID=your_google_client_id.apps.googleusercontent.com
+GOOGLE_CLIENT_SECRET=GOCSPX-your_google_client_secret
+GOOGLE_REDIRECT_URI=https://your-vercel-app.vercel.app/api/oauth/google/callback
+
+# n8n Integration
+N8N_WEBHOOK_URL=your_n8n_webhook_url
+N8N_API_KEY=your_n8n_api_key
+N8N_BASE_URL=your_n8n_base_url
+
+# Email Service Configuration
+SMTP_HOST=smtp.gmail.com
+SMTP_PORT=587
+SMTP_USER=your_email@gmail.com
+SMTP_PASS=your_gmail_app_password
+FROM_EMAIL=your_email@gmail.com
+FROM_NAME=Your App Name
+
+# Server Configuration
+NODE_ENV=production
+PORT=5001
+FRONTEND_URL=https://your-vercel-app.vercel.app

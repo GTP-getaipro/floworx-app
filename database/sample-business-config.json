@@ -1,0 +1,78 @@
+{
+  "business_name": "Sample Business",
+  "contact_phone": "+1-555-123-4567",
+  "contact_email": "info@samplebusiness.com",
+  "internal_domains": [
+    "samplebusiness.com"
+  ],
+  "website_links": {
+    "homepage": "https://www.samplebusiness.com",
+    "services": "https://www.samplebusiness.com/services",
+    "contact": "https://www.samplebusiness.com/contact"
+  },
+  "email_categories": [
+    "SALES",
+    "SUPPORT",
+    "BILLING",
+    "GENERAL"
+  ],
+  "personnel": [
+    {
+      "name": "John Doe",
+      "role": "Sales Manager",
+      "email": "john@samplebusiness.com",
+      "categories": [
+        "SALES"
+      ]
+    },
+    {
+      "name": "Jane Smith",
+      "role": "Support Lead",
+      "email": "jane@samplebusiness.com",
+      "categories": [
+        "SUPPORT"
+      ]
+    }
+  ],
+  "gmail_label_mappings": {
+    "SALES": "Label_1234567890",
+    "SUPPORT": "Label_0987654321",
+    "BILLING": "Label_1122334455",
+    "GENERAL": "Label_5566778899"
+  },
+  "notification_preferences": {
+    "email_routing": true,
+    "team_notifications": true,
+    "sms_alerts": false
+  },
+  "business_hours": {
+    "timezone": "America/New_York",
+    "monday": {
+      "start": "09:00",
+      "end": "17:00"
+    },
+    "tuesday": {
+      "start": "09:00",
+      "end": "17:00"
+    },
+    "wednesday": {
+      "start": "09:00",
+      "end": "17:00"
+    },
+    "thursday": {
+      "start": "09:00",
+      "end": "17:00"
+    },
+    "friday": {
+      "start": "09:00",
+      "end": "17:00"
+    },
+    "saturday": null,
+    "sunday": null
+  },
+  "auto_response_templates": {
+    "SALES": "Thank you for your interest! A sales representative will contact you within 2 business hours.",
+    "SUPPORT": "We've received your support request. Our team will respond within 4 hours during business hours.",
+    "BILLING": "Your billing inquiry has been received. Our accounting team will respond within 1 business day."
+  }
+}

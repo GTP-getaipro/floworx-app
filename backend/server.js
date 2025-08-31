@@ -6,6 +6,10 @@ require('dotenv').config();
 const { initializeDatabase } = require('./database/connection');
 const authRoutes = require('./routes/auth');
 const { router: oauthRoutes } = require('./routes/oauth');
+const onboardingRoutes = require('./routes/onboarding');
+const recoveryRoutes = require('./routes/recovery');
+const workflowRoutes = require('./routes/workflows');
+const analyticsRoutes = require('./routes/analytics');
 const { router: schedulerRoutes, scheduler } = require('./scheduler/n8nScheduler');
 
 const app = express();
@@ -54,6 +58,10 @@ app.get('/health', (req, res) => {
 // API routes
 app.use('/api/auth', authRoutes);
 app.use('/api/oauth', oauthRoutes);
+app.use('/api/onboarding', onboardingRoutes);
+app.use('/api/recovery', recoveryRoutes);
+app.use('/api/workflows', workflowRoutes);
+app.use('/api/analytics', analyticsRoutes);
 app.use('/api/scheduler', schedulerRoutes);
 
 // 404 handler

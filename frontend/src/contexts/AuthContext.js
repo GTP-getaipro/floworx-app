@@ -13,7 +13,7 @@ export const useAuth = () => {
 };
 
 // Configure axios defaults
-const API_BASE_URL = process.env.REACT_APP_API_URL || 'http://localhost:5000/api';
+const API_BASE_URL = process.env.REACT_APP_API_URL || 'http://localhost:5001/api';
 axios.defaults.baseURL = API_BASE_URL;
 
 export const AuthProvider = ({ children }) => {
@@ -91,10 +91,14 @@ export const AuthProvider = ({ children }) => {
   };
 
   // Register function
-  const register = async (email, password) => {
+  const register = async (userData) => {
     try {
-      await axios.post('/auth/register', { email, password });
-      return { success: true };
+      const response = await axios.post(`${process.env.REACT_APP_API_URL}/auth/register`, userData);
+      return {
+        success: true,
+        requiresVerification: response.data.requiresVerification,
+        user: response.data.user
+      };
     } catch (error) {
       const message = error.response?.data?.message || 'Registration failed';
       return { success: false, error: message };

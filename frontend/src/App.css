@@ -126,6 +126,44 @@ body {
   cursor: not-allowed;
 }
 
+.form-row {
+  display: flex;
+  gap: 1rem;
+  margin-bottom: 1rem;
+}
+
+.form-row .form-group {
+  flex: 1;
+  margin-bottom: 0;
+}
+
+.verification-help {
+  background: #f8f9fa;
+  padding: 1.5rem;
+  border-radius: 8px;
+  margin-top: 1rem;
+  text-align: left;
+}
+
+.verification-help ul {
+  margin: 1rem 0;
+  padding-left: 1.5rem;
+}
+
+.verification-help li {
+  margin-bottom: 0.5rem;
+}
+
+.resend-link {
+  color: #4CAF50;
+  text-decoration: none;
+  font-weight: 600;
+}
+
+.resend-link:hover {
+  text-decoration: underline;
+}
+
 /* Button Styles */
 .auth-button {
   padding: 0.75rem 1.5rem;

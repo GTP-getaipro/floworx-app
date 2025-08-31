@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { useAuth } from '../contexts/AuthContext';
 import { useLocation } from 'react-router-dom';
 import axios from 'axios';
+import OnboardingWizard from './OnboardingWizard';
 
 const Dashboard = () => {
   const { user, logout } = useAuth();
@@ -9,6 +10,8 @@ const Dashboard = () => {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
   const [message, setMessage] = useState('');
+  const [showOnboarding, setShowOnboarding] = useState(false);
+  const [onboardingStatus, setOnboardingStatus] = useState(null);
   const location = useLocation();
 
   // Check for URL parameters (success/error messages from OAuth)
@@ -33,15 +36,29 @@ const Dashboard = () => {
     }
   }, [location]);
 
-  // Fetch user status on component mount
+  // Fetch user status and onboarding status on component mount
   useEffect(() => {
     const fetchUserStatus = async () => {
       try {
-        const response = await axios.get('/auth/user/status');
-        setUserStatus(response.data);
+        const token = localStorage.getItem('token');
+        const headers = { Authorization: `Bearer ${token}` };
+
+        // Fetch user status
+        const userResponse = await axios.get(`${process.env.REACT_APP_API_URL}/auth/user/status`, { headers });
+        setUserStatus(userResponse.data);
+
+        // Fetch onboarding status
+        const onboardingResponse = await axios.get(`${process.env.REACT_APP_API_URL}/onboarding/status`, { headers });
+        setOnboardingStatus(onboardingResponse.data);
+
+        // Show onboarding if not completed
+        if (!onboardingResponse.data.user.onboardingCompleted) {
+          setShowOnboarding(true);
+        }
+
       } catch (error) {
-        console.error('Failed to fetch user status:', error);
-        setError('Failed to load connection status');
+        console.error('Error fetching status:', error);
+        setError('Failed to load user status');
       } finally {
         setLoading(false);
       }
@@ -75,6 +92,17 @@ const Dashboard = () => {
   const handleLogout = () => {
     logout();
   };
+
+  const handleOnboardingComplete = () => {
+    setShowOnboarding(false);
+    // Refresh user status
+    window.location.reload();
+  };
+
+  // Show onboarding wizard if user hasn't completed onboarding
+  if (showOnboarding && onboardingStatus) {
+    return <OnboardingWizard onComplete={handleOnboardingComplete} />;
+  }
 
   if (loading) {
     return (

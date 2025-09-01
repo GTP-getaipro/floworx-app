@@ -1,5 +1,6 @@
-const bcrypt = require('bcryptjs');
-const { getPool } = require('../_lib/database');
+import bcrypt from 'bcryptjs';
+import jwt from 'jsonwebtoken';
+import { getSupabaseAdmin } from '../_lib/database.js';
 
 // Input validation helpers
 const validateEmail = (email) => {
@@ -13,7 +14,7 @@ const validatePassword = (password) => {
 
 // POST /api/auth/register
 // Register a new user account
-module.exports = async (req, res) => {
+export default async function handler(req, res) {
   // Set CORS headers
   res.setHeader('Access-Control-Allow-Origin', '*');
   res.setHeader('Access-Control-Allow-Methods', 'POST, OPTIONS');
@@ -32,13 +33,20 @@ module.exports = async (req, res) => {
   }
 
   try {
-    const { email, password } = req.body;
+    const { firstName, lastName, companyName, email, password } = req.body;
 
     // Input validation
     if (!email || !password) {
       return res.status(400).json({
         error: 'Missing required fields',
         message: 'Email and password are required'
+      });
+    }
+
+    if (!firstName || !lastName) {
+      return res.status(400).json({
+        error: 'Missing required fields',
+        message: 'First name and last name are required'
       });
     }
 
@@ -56,12 +64,17 @@ module.exports = async (req, res) => {
       });
     }
 
-    // Check if user already exists
-    const pool = getPool();
-    const existingUserQuery = 'SELECT id FROM users WHERE email = $1';
-    const existingUser = await pool.query(existingUserQuery, [email.toLowerCase()]);
+    // Get Supabase admin client
+    const supabase = getSupabaseAdmin();
 
-    if (existingUser.rows.length > 0) {
+    // Check if user already exists
+    const { data: existingUser, error: checkError } = await supabase
+      .from('users')
+      .select('id')
+      .eq('email', email.toLowerCase())
+      .single();
+
+    if (existingUser) {
       return res.status(409).json({
         error: 'User already exists',
         message: 'An account with this email already exists'
@@ -73,27 +86,52 @@ module.exports = async (req, res) => {
     const passwordHash = await bcrypt.hash(password, saltRounds);
 
     // Create new user
-    const insertUserQuery = `
-      INSERT INTO users (email, password_hash) 
-      VALUES ($1, $2) 
-      RETURNING id, email, created_at
-    `;
-    const newUser = await pool.query(insertUserQuery, [email.toLowerCase(), passwordHash]);
+    const { data: newUser, error: insertError } = await supabase
+      .from('users')
+      .insert([{
+        email: email.toLowerCase(),
+        password_hash: passwordHash,
+        first_name: firstName,
+        last_name: lastName,
+        company_name: companyName || null,
+        created_at: new Date().toISOString()
+      }])
+      .select()
+      .single();
+
+    if (insertError) {
+      throw insertError;
+    }
+
+    // Generate JWT token
+    const token = jwt.sign(
+      {
+        userId: newUser.id,
+        email: newUser.email
+      },
+      process.env.JWT_SECRET,
+      { expiresIn: '24h' }
+    );
 
     res.status(201).json({
       message: 'User registered successfully',
       user: {
-        id: newUser.rows[0].id,
-        email: newUser.rows[0].email,
-        created_at: newUser.rows[0].created_at
-      }
+        id: newUser.id,
+        email: newUser.email,
+        firstName: newUser.first_name,
+        lastName: newUser.last_name,
+        companyName: newUser.company_name,
+        createdAt: newUser.created_at
+      },
+      token,
+      expiresIn: '24h'
     });
 
   } catch (error) {
     console.error('Registration error:', error);
     res.status(500).json({
       error: 'Registration failed',
-      message: 'Internal server error during registration'
+      message: 'Something went wrong during registration. Please try again.'
     });
   }
-};
+}

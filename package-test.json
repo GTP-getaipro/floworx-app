@@ -1,0 +1,70 @@
+{
+  "name": "floworx-api-tests",
+  "version": "1.0.0",
+  "description": "Comprehensive API test suite for FloWorx SaaS application",
+  "main": "tests/api/run-tests.js",
+  "scripts": {
+    "test": "node tests/api/run-tests.js",
+    "test:local": "TEST_ENV=local node tests/api/run-tests.js",
+    "test:production": "TEST_ENV=production node tests/api/run-tests.js",
+    "test:auth": "node tests/api/auth.test.js",
+    "test:oauth": "node tests/api/oauth.test.js",
+    "test:user": "node tests/api/user.test.js",
+    "test:dashboard": "node tests/api/dashboard.test.js",
+    "test:system": "node tests/api/system.test.js",
+    "test:integration": "node tests/api/integration.test.js",
+    "test:help": "node tests/api/run-tests.js --help"
+  },
+  "dependencies": {
+    "axios": "^1.6.0",
+    "dotenv": "^16.3.1"
+  },
+  "devDependencies": {
+    "jest": "^29.7.0",
+    "@types/jest": "^29.5.8"
+  },
+  "keywords": [
+    "api",
+    "testing",
+    "floworx",
+    "saas",
+    "oauth",
+    "authentication",
+    "integration"
+  ],
+  "author": "FloWorx Development Team",
+  "license": "MIT",
+  "engines": {
+    "node": ">=16.0.0"
+  },
+  "jest": {
+    "testEnvironment": "node",
+    "testMatch": [
+      "**/tests/api/**/*.test.js"
+    ],
+    "setupFilesAfterEnv": [
+      "<rootDir>/tests/api/setup/jest.setup.js"
+    ],
+    "collectCoverageFrom": [
+      "tests/api/**/*.js",
+      "!tests/api/setup/**",
+      "!tests/api/run-tests.js"
+    ],
+    "coverageDirectory": "tests/coverage",
+    "coverageReporters": [
+      "text",
+      "lcov",
+      "html"
+    ],
+    "testTimeout": 30000,
+    "verbose": true
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/floworx/floworx-saas.git"
+  },
+  "bugs": {
+    "url": "https://github.com/floworx/floworx-saas/issues"
+  },
+  "homepage": "https://www.floworx-iq.com"
+}

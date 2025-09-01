@@ -1,6 +1,6 @@
-const bcrypt = require('bcryptjs');
-const jwt = require('jsonwebtoken');
-const { getPool } = require('../_lib/database');
+import bcrypt from 'bcryptjs';
+import jwt from 'jsonwebtoken';
+import { getSupabaseAdmin } from '../_lib/database.js';
 
 // Input validation helper
 const validateEmail = (email) => {
@@ -10,7 +10,7 @@ const validateEmail = (email) => {
 
 // POST /api/auth/login
 // Authenticate user and return JWT
-module.exports = async (req, res) => {
+export default async function handler(req, res) {
   // Set CORS headers
   res.setHeader('Access-Control-Allow-Origin', '*');
   res.setHeader('Access-Control-Allow-Methods', 'POST, OPTIONS');
@@ -47,18 +47,19 @@ module.exports = async (req, res) => {
     }
 
     // Find user by email
-    const pool = getPool();
-    const userQuery = 'SELECT id, email, password_hash FROM users WHERE email = $1';
-    const userResult = await pool.query(userQuery, [email.toLowerCase()]);
+    const supabase = getSupabaseAdmin();
+    const { data: user, error: findError } = await supabase
+      .from('users')
+      .select('id, email, password_hash, first_name, last_name, company_name, created_at')
+      .eq('email', email.toLowerCase())
+      .single();
 
-    if (userResult.rows.length === 0) {
+    if (findError || !user) {
       return res.status(401).json({
         error: 'Invalid credentials',
         message: 'Email or password is incorrect'
       });
     }
-
-    const user = userResult.rows[0];
 
     // Compare password with hash
     const passwordMatch = await bcrypt.compare(password, user.password_hash);
@@ -77,20 +78,31 @@ module.exports = async (req, res) => {
       { expiresIn: '24h' }
     );
 
-    res.json({
+    // Update last login timestamp
+    await supabase
+      .from('users')
+      .update({ last_login: new Date().toISOString() })
+      .eq('id', user.id);
+
+    res.status(200).json({
       message: 'Login successful',
       token,
       user: {
         id: user.id,
-        email: user.email
-      }
+        email: user.email,
+        firstName: user.first_name,
+        lastName: user.last_name,
+        companyName: user.company_name,
+        createdAt: user.created_at
+      },
+      expiresIn: '24h'
     });
 
   } catch (error) {
     console.error('Login error:', error);
     res.status(500).json({
       error: 'Login failed',
-      message: 'Internal server error during login'
+      message: 'Something went wrong during login. Please try again.'
     });
   }
-};
+}

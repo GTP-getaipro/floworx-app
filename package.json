@@ -23,12 +23,20 @@
   "author": "",
   "license": "ISC",
   "devDependencies": {
-    "concurrently": "^8.2.2"
+    "@badeball/cypress-cucumber-preprocessor": "^23.0.0",
+    "@bahmutov/cypress-esbuild-preprocessor": "^2.2.5",
+    "concurrently": "^8.2.2",
+    "cypress": "^15.0.0",
+    "cypress-mochawesome-reporter": "^4.0.2",
+    "esbuild": "^0.25.9",
+    "multiple-cucumber-html-reporter": "^3.9.3"
   },
   "dependencies": {
     "@supabase/supabase-js": "^2.56.1",
+    "axios": "^1.11.0",
     "bcryptjs": "^3.0.2",
     "dotenv": "^17.2.1",
+    "faker": "^6.6.6",
     "jsonwebtoken": "^9.0.2",
     "nodemailer": "^7.0.6",
     "pg": "^8.16.3"

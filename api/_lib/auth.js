@@ -1,5 +1,5 @@
-const jwt = require('jsonwebtoken');
-const { getPool } = require('./database');
+import jwt from 'jsonwebtoken';
+import { getSupabaseAdmin } from './database.js';
 
 // Middleware to verify JWT tokens for serverless functions
 const authenticateToken = async (req, res, next) => {
@@ -18,21 +18,26 @@ const authenticateToken = async (req, res, next) => {
     const decoded = jwt.verify(token, process.env.JWT_SECRET);
     
     // Verify user still exists in database
-    const pool = getPool();
-    const userQuery = 'SELECT id, email FROM users WHERE id = $1';
-    const userResult = await pool.query(userQuery, [decoded.userId]);
-    
-    if (userResult.rows.length === 0) {
-      return res.status(401).json({ 
+    const supabase = getSupabaseAdmin();
+    const { data: user, error: userError } = await supabase
+      .from('users')
+      .select('id, email, first_name, last_name')
+      .eq('id', decoded.userId)
+      .single();
+
+    if (userError || !user) {
+      return res.status(401).json({
         error: 'Invalid token',
-        message: 'User no longer exists' 
+        message: 'User no longer exists'
       });
     }
 
     // Add user info to request object
     req.user = {
-      id: decoded.userId,
-      email: userResult.rows[0].email
+      id: user.id,
+      email: user.email,
+      firstName: user.first_name,
+      lastName: user.last_name
     };
     
     next();
@@ -57,6 +62,6 @@ const authenticateToken = async (req, res, next) => {
   }
 };
 
-module.exports = {
+export {
   authenticateToken
 };

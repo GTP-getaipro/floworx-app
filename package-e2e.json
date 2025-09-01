@@ -1,0 +1,56 @@
+{
+  "name": "floworx-e2e-tests",
+  "version": "1.0.0",
+  "description": "End-to-end BDD tests for FloWorx SaaS application",
+  "scripts": {
+    "cypress:open": "cypress open",
+    "cypress:run": "cypress run",
+    "test:e2e": "cypress run --spec 'cypress/e2e/features/**/*.feature'",
+    "test:e2e:headed": "cypress run --headed --spec 'cypress/e2e/features/**/*.feature'",
+    "test:e2e:chrome": "cypress run --browser chrome --spec 'cypress/e2e/features/**/*.feature'",
+    "test:e2e:firefox": "cypress run --browser firefox --spec 'cypress/e2e/features/**/*.feature'",
+    "test:api": "cypress run --spec 'cypress/e2e/features/api/**/*.feature'",
+    "test:frontend": "cypress run --spec 'cypress/e2e/features/frontend/**/*.feature'",
+    "test:integration": "cypress run --spec 'cypress/e2e/features/integration/**/*.feature'",
+    "test:smoke": "cypress run --spec 'cypress/e2e/features/smoke/**/*.feature'",
+    "test:regression": "npm run test:e2e",
+    "test:ci": "cypress run --record --key $CYPRESS_RECORD_KEY",
+    "generate:report": "node scripts/generate-report.js"
+  },
+  "devDependencies": {
+    "cypress": "^13.6.0",
+    "@badeball/cypress-cucumber-preprocessor": "^19.2.0",
+    "@bahmutov/cypress-esbuild-preprocessor": "^2.2.0",
+    "esbuild": "^0.19.8",
+    "multiple-cucumber-html-reporter": "^3.5.0",
+    "cypress-mochawesome-reporter": "^3.7.0"
+  },
+  "dependencies": {
+    "axios": "^1.6.0",
+    "faker": "^5.5.3"
+  },
+  "cypress-cucumber-preprocessor": {
+    "stepDefinitions": [
+      "cypress/e2e/step_definitions/**/*.js"
+    ],
+    "html": {
+      "enabled": true,
+      "output": "cypress/reports/cucumber-html-report.html"
+    },
+    "json": {
+      "enabled": true,
+      "output": "cypress/reports/cucumber-report.json"
+    }
+  },
+  "keywords": [
+    "cypress",
+    "cucumber",
+    "bdd",
+    "e2e",
+    "testing",
+    "floworx",
+    "saas"
+  ],
+  "author": "FloWorx Development Team",
+  "license": "MIT"
+}

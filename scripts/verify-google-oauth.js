@@ -102,7 +102,7 @@ async function verifyGoogleOAuth() {
   
   console.log('   📋 Required redirect URIs in Google Cloud Console:');
   console.log('   Development: http://localhost:5001/api/oauth/google/callback');
-  console.log('   Production: https://floworx-app-git-main-floworxdevelopers-projects.vercel.app/api/oauth/google/callback');
+  console.log('   Production: https://floworx-app.vercel.app/api/oauth/google/callback');
   console.log('   Custom Domain: https://app.floworx-iq.com/api/oauth/google/callback (when ready)');
   console.log('');
 

@@ -40,11 +40,14 @@ Based on your production deployment at `https://floworx-app.vercel.app`, we've i
 **Run these commands in your terminal:**
 
 ```bash
-# Update production redirect URI
+# Verify current environment variables
+vercel env ls
+
+# If needed, update production redirect URI
 vercel env add GOOGLE_REDIRECT_URI production
 # When prompted, enter: https://floworx-app.vercel.app/api/oauth/google/callback
 
-# Update production frontend URL  
+# If needed, update production frontend URL
 vercel env add FRONTEND_URL production
 # When prompted, enter: https://floworx-app.vercel.app
 

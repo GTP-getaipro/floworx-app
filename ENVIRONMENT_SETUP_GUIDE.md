@@ -82,7 +82,7 @@ FROM_NAME=Floworx Team
 
 **Authorized redirect URIs** (add both):
 - Development: `http://localhost:5001/api/oauth/google/callback`
-- Production: `https://floworx-app-git-main-floworxdevelopers-projects.vercel.app/api/oauth/google/callback`
+- Production: `https://floworx-app.vercel.app/api/oauth/google/callback`
 
 ### **5. Generate Additional Security Keys**
 
@@ -123,7 +123,7 @@ SESSION_SECRET=your_generated_session_secret
 ```
 GOOGLE_CLIENT_ID=your_google_client_id.apps.googleusercontent.com
 GOOGLE_CLIENT_SECRET=GOCSPX-your_google_client_secret
-GOOGLE_REDIRECT_URI=https://floworx-app-git-main-floworxdevelopers-projects.vercel.app/api/oauth/google/callback
+GOOGLE_REDIRECT_URI=https://floworx-app.vercel.app/api/oauth/google/callback
 N8N_WEBHOOK_URL=your_n8n_webhook_url
 N8N_API_KEY=your_n8n_api_key
 N8N_BASE_URL=your_n8n_base_url
@@ -143,7 +143,7 @@ FROM_NAME=Floworx Team
 ```
 NODE_ENV=production
 PORT=5001
-FRONTEND_URL=https://floworx-app-git-main-floworxdevelopers-projects.vercel.app
+FRONTEND_URL=https://floworx-app.vercel.app
 LOG_LEVEL=warn
 RATE_LIMIT_WINDOW_MS=900000
 RATE_LIMIT_MAX_REQUESTS=100

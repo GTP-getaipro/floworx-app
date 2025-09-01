@@ -2,7 +2,7 @@ const axios = require('axios');
 
 // Test the deployed application
 async function testDeployment() {
-  const baseUrl = 'https://floworx-app-git-main-floworxdevelopers-projects.vercel.app';
+  const baseUrl = 'https://floworx-app.vercel.app';
   
   console.log('🚀 Testing Floworx Deployment...\n');
   

@@ -101,7 +101,7 @@ async function prepareProductionEnvironment() {
     // OAuth - Production URLs
     GOOGLE_CLIENT_ID: process.env.GOOGLE_CLIENT_ID,
     GOOGLE_CLIENT_SECRET: process.env.GOOGLE_CLIENT_SECRET,
-    GOOGLE_REDIRECT_URI: 'https://floworx-app-git-main-floworxdevelopers-projects.vercel.app/api/oauth/google/callback',
+    GOOGLE_REDIRECT_URI: 'https://floworx-app.vercel.app/api/oauth/google/callback',
     
     // n8n
     N8N_WEBHOOK_URL: process.env.N8N_WEBHOOK_URL,
@@ -119,7 +119,7 @@ async function prepareProductionEnvironment() {
     // Server
     NODE_ENV: 'production',
     PORT: '5001',
-    FRONTEND_URL: 'https://floworx-app-git-main-floworxdevelopers-projects.vercel.app'
+    FRONTEND_URL: 'https://floworx-app.vercel.app'
   };
 
   // Create Vercel environment variables file
@@ -179,7 +179,7 @@ vercel --prod
 1. Go to [Google Cloud Console](https://console.cloud.google.com/apis/credentials)
 2. Find your OAuth 2.0 Client ID
 3. Add production redirect URI:
-   \`https://floworx-app-git-main-floworxdevelopers-projects.vercel.app/api/oauth/google/callback\`
+   \`https://floworx-app.vercel.app/api/oauth/google/callback\`
 
 ### **Step 4: Test Production Deployment**
 1. Visit your deployed URL
@@ -198,9 +198,9 @@ vercel --prod
 
 ## **📊 Production URLs**
 
-- **Backend API**: https://floworx-app-git-main-floworxdevelopers-projects.vercel.app
-- **Frontend**: https://floworx-app-git-main-floworxdevelopers-projects.vercel.app
-- **OAuth Callback**: https://floworx-app-git-main-floworxdevelopers-projects.vercel.app/api/oauth/google/callback
+- **Backend API**: https://floworx-app.vercel.app
+- **Frontend**: https://floworx-app.vercel.app
+- **OAuth Callback**: https://floworx-app.vercel.app/api/oauth/google/callback
 
 ## **🧪 Post-Deployment Testing**
 

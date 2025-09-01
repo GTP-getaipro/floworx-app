@@ -60,7 +60,7 @@ async function runProductionDeploymentTest() {
     // OAuth configuration check
     console.log('\n   🔐 Google OAuth Production Configuration:');
     console.log('   📍 Add production redirect URI in Google Cloud Console:');
-    console.log('   https://floworx-app-git-main-floworxdevelopers-projects.vercel.app/api/oauth/google/callback');
+    console.log('   https://floworx-app.vercel.app/api/oauth/google/callback');
     
     testResults.deploymentStatus.passed += 1;
     testResults.deploymentStatus.details.push('✅ OAuth configuration guidance provided');

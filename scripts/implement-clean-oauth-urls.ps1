@@ -26,10 +26,10 @@ Write-Host ""
 Write-Host "🎯 OAuth URL Options:" -ForegroundColor Yellow
 Write-Host "===================="
 Write-Host ""
-Write-Host "Option A (Recommended for immediate fix):" -ForegroundColor Cyan
+Write-Host "Option A (Current Production Setup):" -ForegroundColor Cyan
 Write-Host "  Clean Vercel Domain: https://floworx-app.vercel.app"
 Write-Host "  OAuth Redirect: https://floworx-app.vercel.app/api/oauth/google/callback"
-Write-Host "  ✅ Quick to implement (10 minutes)"
+Write-Host "  ✅ Already implemented"
 Write-Host "  ✅ Professional appearance"
 Write-Host "  ✅ Stable and reliable"
 Write-Host ""
@@ -45,21 +45,21 @@ $choice = Read-Host "Which option do you want to implement? (A/B)"
 
 if ($choice -eq "A" -or $choice -eq "a") {
     Write-Host ""
-    Write-Host "🚀 OPTION A: Clean Vercel Domain Implementation" -ForegroundColor Green
+    Write-Host "🚀 OPTION A: Verify Clean Vercel Domain Setup" -ForegroundColor Green
     Write-Host "=============================================="
-    
+
     Write-Host ""
-    Write-Host "⚡ Updating Vercel environment variables..." -ForegroundColor Yellow
-    
-    # Update GOOGLE_REDIRECT_URI
-    Write-Host "📝 Setting GOOGLE_REDIRECT_URI..."
+    Write-Host "⚡ Checking current Vercel environment variables..." -ForegroundColor Yellow
+
+    # Check current environment variables
+    Write-Host "📝 Checking current environment variables..."
+    vercel env ls
+
+    # Expected values
     $redirectUri = "https://floworx-app.vercel.app/api/oauth/google/callback"
-    Write-Host "Setting to: $redirectUri"
-    
-    # Update FRONTEND_URL
-    Write-Host "📝 Setting FRONTEND_URL..."
     $frontendUrl = "https://floworx-app.vercel.app"
-    Write-Host "Setting to: $frontendUrl"
+    Write-Host "Expected GOOGLE_REDIRECT_URI: $redirectUri"
+    Write-Host "Expected FRONTEND_URL: $frontendUrl"
     
     Write-Host ""
     Write-Host "🚀 Ready to deploy with new configuration..." -ForegroundColor Yellow

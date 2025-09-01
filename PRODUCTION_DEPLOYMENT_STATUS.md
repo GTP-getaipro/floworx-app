@@ -21,7 +21,7 @@ Your Floworx SaaS application has achieved **EXCELLENT** production readiness an
 
 ### **🔐 OAuth Production Setup**
 - ✅ **Google Cloud Console**: Instructions provided
-- ✅ **Production Redirect URI**: `https://floworx-app-git-main-floworxdevelopers-projects.vercel.app/api/oauth/google/callback`
+- ✅ **Production Redirect URI**: `https://floworx-app.vercel.app/api/oauth/google/callback`
 - ✅ **Manual Setup Required**: Add redirect URI to Google Cloud Console
 
 ---
@@ -124,7 +124,7 @@ Your Floworx SaaS application has achieved **EXCELLENT** production readiness an
 2. Find your OAuth 2.0 Client ID
 3. Add production redirect URI:
    ```
-   https://floworx-app-git-main-floworxdevelopers-projects.vercel.app/api/oauth/google/callback
+   https://floworx-app.vercel.app/api/oauth/google/callback
    ```
 4. Save changes and wait for propagation
 

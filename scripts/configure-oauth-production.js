@@ -50,7 +50,7 @@ async function configureOAuthProduction() {
   
   const productionUrls = {
     // From vercel deployment
-    vercelUrl: 'https://floworx-app-git-main-floworxdevelopers-projects.vercel.app',
+    vercelUrl: 'https://floworx-app.vercel.app',
     // Future custom domain
     customDomain: 'https://app.floworx-iq.com',
     // Current development

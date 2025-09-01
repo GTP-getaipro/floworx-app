@@ -21,7 +21,7 @@ function openGoogleConsole() {
   console.log('');
   console.log('2. **Verify Authorized Redirect URIs:**');
   console.log('   ✅ Development: http://localhost:5001/api/oauth/google/callback');
-  console.log('   ✅ Production: https://floworx-app-git-main-floworxdevelopers-projects.vercel.app/api/oauth/google/callback');
+  console.log('   ✅ Production: https://floworx-app.vercel.app/api/oauth/google/callback');
   console.log('   ⚪ Custom Domain: https://app.floworx-iq.com/api/oauth/google/callback (add when ready)');
   console.log('');
   console.log('3. **Check OAuth Consent Screen:**');

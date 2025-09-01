@@ -30,7 +30,7 @@ echo ""
 echo "🚀 OPTION A: Clean Vercel Domain (Quick Fix)"
 echo "============================================"
 echo ""
-echo "This will update your OAuth configuration to use:"
+echo "This will verify your OAuth configuration uses:"
 echo "  Frontend URL: https://floworx-app.vercel.app"
 echo "  OAuth Redirect: https://floworx-app.vercel.app/api/oauth/google/callback"
 echo ""
@@ -40,18 +40,19 @@ echo ""
 
 if [[ $REPLY =~ ^[Yy]$ ]]; then
     echo ""
-    echo "⚡ Updating Vercel environment variables..."
-    
-    # Update GOOGLE_REDIRECT_URI
-    echo "📝 Setting GOOGLE_REDIRECT_URI..."
-    echo "https://floworx-app.vercel.app/api/oauth/google/callback" | vercel env add GOOGLE_REDIRECT_URI production
-    
-    # Update FRONTEND_URL
-    echo "📝 Setting FRONTEND_URL..."
-    echo "https://floworx-app.vercel.app" | vercel env add FRONTEND_URL production
-    
+    echo "⚡ Verifying Vercel environment variables..."
+
+    # Check current environment variables
+    echo "📝 Checking current environment variables..."
+    vercel env ls
+
     echo ""
-    echo "🚀 Deploying with new configuration..."
+    echo "📝 If variables need updating, run:"
+    echo "echo 'https://floworx-app.vercel.app/api/oauth/google/callback' | vercel env add GOOGLE_REDIRECT_URI production"
+    echo "echo 'https://floworx-app.vercel.app' | vercel env add FRONTEND_URL production"
+
+    echo ""
+    echo "🚀 Deploying with current configuration..."
     vercel --prod
     
     echo ""

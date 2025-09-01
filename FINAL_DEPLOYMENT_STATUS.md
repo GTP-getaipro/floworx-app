@@ -95,7 +95,7 @@ vercel --prod
 2. Find your OAuth 2.0 Client ID
 3. Add production redirect URI:
    ```
-   https://floworx-app-git-main-floworxdevelopers-projects.vercel.app/api/oauth/google/callback
+   https://floworx-app.vercel.app/api/oauth/google/callback
    ```
 4. Save changes
 

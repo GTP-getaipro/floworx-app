@@ -1,0 +1,246 @@
+// Prisma Schema for FloWorx SaaS
+// Enhanced security with RLS policies and proper relationships
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+// User management with enhanced security
+model User {
+  id                    String    @id @default(uuid()) @db.Uuid
+  email                 String    @unique @db.VarChar(255)
+  passwordHash          String    @map("password_hash") @db.VarChar(255)
+  firstName             String    @map("first_name") @db.VarChar(100)
+  lastName              String    @map("last_name") @db.VarChar(100)
+  businessName          String?   @map("business_name") @db.VarChar(200)
+  phone                 String?   @db.VarChar(20)
+  emailVerified         Boolean   @default(false) @map("email_verified")
+  onboardingCompleted   Boolean   @default(false) @map("onboarding_completed")
+  
+  // Security fields
+  failedLoginAttempts   Int       @default(0) @map("failed_login_attempts")
+  accountLockedUntil    DateTime? @map("account_locked_until")
+  lastLoginAt           DateTime? @map("last_login_at")
+  lastPasswordReset     DateTime? @map("last_password_reset")
+  twoFactorEnabled      Boolean   @default(false) @map("two_factor_enabled")
+  twoFactorSecret       String?   @map("two_factor_secret")
+  
+  // JSON fields for flexibility
+  preferences           Json?     @db.JsonB
+  backupCodes           String[]  @map("backup_codes")
+  
+  // Timestamps
+  createdAt             DateTime  @default(now()) @map("created_at")
+  updatedAt             DateTime  @updatedAt @map("updated_at")
+  deletedAt             DateTime? @map("deleted_at")
+
+  // Relationships
+  passwordResetTokens   PasswordResetToken[]
+  accountRecoveryTokens AccountRecoveryToken[]
+  securityAuditLogs     SecurityAuditLog[]
+  onboardingSessions    OnboardingSession[]
+  workflows             Workflow[]
+  oauthTokens           OAuthToken[]
+
+  @@map("users")
+  @@index([email])
+  @@index([createdAt])
+  @@index([deletedAt])
+}
+
+// Password reset with enhanced security
+model PasswordResetToken {
+  id        String    @id @default(uuid()) @db.Uuid
+  userId    String    @map("user_id") @db.Uuid
+  token     String    @unique @db.VarChar(255)
+  expiresAt DateTime  @map("expires_at")
+  used      Boolean   @default(false)
+  usedAt    DateTime? @map("used_at")
+  createdAt DateTime  @default(now()) @map("created_at")
+
+  // Relationships
+  user      User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@map("password_reset_tokens")
+  @@index([token])
+  @@index([userId])
+  @@index([expiresAt])
+}
+
+// Account recovery with multiple methods
+model AccountRecoveryToken {
+  id            String    @id @default(uuid()) @db.Uuid
+  userId        String    @map("user_id") @db.Uuid
+  token         String    @unique @db.VarChar(255)
+  recoveryType  String    @map("recovery_type") @db.VarChar(50) // email, sms, security_questions
+  expiresAt     DateTime  @map("expires_at")
+  used          Boolean   @default(false)
+  usedAt        DateTime? @map("used_at")
+  metadata      Json?     @db.JsonB // Additional recovery data
+  createdAt     DateTime  @default(now()) @map("created_at")
+
+  // Relationships
+  user          User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@map("account_recovery_tokens")
+  @@index([token])
+  @@index([userId])
+  @@index([recoveryType])
+}
+
+// Security audit logging
+model SecurityAuditLog {
+  id          String    @id @default(uuid()) @db.Uuid
+  userId      String?   @map("user_id") @db.Uuid
+  eventType   String    @map("event_type") @db.VarChar(100)
+  eventDetails Json?    @map("event_details") @db.JsonB
+  ipAddress   String?   @map("ip_address") @db.VarChar(45)
+  userAgent   String?   @map("user_agent") @db.Text
+  severity    String    @default("medium") @db.VarChar(20) // low, medium, high, critical
+  createdAt   DateTime  @default(now()) @map("created_at")
+
+  // Relationships
+  user        User?     @relation(fields: [userId], references: [id], onDelete: SetNull)
+
+  @@map("security_audit_log")
+  @@index([userId])
+  @@index([eventType])
+  @@index([createdAt])
+  @@index([severity])
+}
+
+// OAuth token storage with encryption
+model OAuthToken {
+  id            String    @id @default(uuid()) @db.Uuid
+  userId        String    @map("user_id") @db.Uuid
+  provider      String    @db.VarChar(50) // google, microsoft, github
+  accessToken   String    @map("access_token") @db.Text // Encrypted
+  refreshToken  String?   @map("refresh_token") @db.Text // Encrypted
+  tokenType     String    @default("Bearer") @map("token_type") @db.VarChar(50)
+  scope         String?   @db.Text
+  expiresAt     DateTime? @map("expires_at")
+  createdAt     DateTime  @default(now()) @map("created_at")
+  updatedAt     DateTime  @updatedAt @map("updated_at")
+
+  // Relationships
+  user          User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@map("oauth_tokens")
+  @@unique([userId, provider])
+  @@index([userId])
+  @@index([provider])
+}
+
+// Business types for multi-tenant support
+model BusinessType {
+  id                String    @id @default(uuid()) @db.Uuid
+  name              String    @unique @db.VarChar(100)
+  slug              String    @unique @db.VarChar(100)
+  description       String?   @db.Text
+  defaultCategories Json?     @map("default_categories") @db.JsonB
+  isActive          Boolean   @default(true) @map("is_active")
+  sortOrder         Int       @default(0) @map("sort_order")
+  createdAt         DateTime  @default(now()) @map("created_at")
+  updatedAt         DateTime  @updatedAt @map("updated_at")
+
+  // Relationships
+  onboardingSessions OnboardingSession[]
+  workflows          Workflow[]
+
+  @@map("business_types")
+  @@index([slug])
+  @@index([isActive])
+}
+
+// Onboarding session tracking
+model OnboardingSession {
+  id              String        @id @default(uuid()) @db.Uuid
+  userId          String        @map("user_id") @db.Uuid
+  businessTypeId  String        @map("business_type_id") @db.Uuid
+  currentStep     String        @map("current_step") @db.VarChar(50)
+  stepData        Json?         @map("step_data") @db.JsonB
+  completedSteps  String[]      @map("completed_steps")
+  status          String        @default("in_progress") @db.VarChar(20) // in_progress, completed, abandoned
+  startedAt       DateTime      @default(now()) @map("started_at")
+  completedAt     DateTime?     @map("completed_at")
+  updatedAt       DateTime      @updatedAt @map("updated_at")
+
+  // Relationships
+  user            User          @relation(fields: [userId], references: [id], onDelete: Cascade)
+  businessType    BusinessType  @relation(fields: [businessTypeId], references: [id])
+
+  @@map("onboarding_sessions")
+  @@index([userId])
+  @@index([status])
+  @@index([currentStep])
+}
+
+// Workflow management
+model Workflow {
+  id              String        @id @default(uuid()) @db.Uuid
+  userId          String        @map("user_id") @db.Uuid
+  businessTypeId  String        @map("business_type_id") @db.Uuid
+  name            String        @db.VarChar(200)
+  description     String?       @db.Text
+  n8nWorkflowId   String?       @map("n8n_workflow_id") @db.VarChar(100)
+  isActive        Boolean       @default(false) @map("is_active")
+  configuration   Json?         @db.JsonB
+  triggers        Json?         @db.JsonB
+  createdAt       DateTime      @default(now()) @map("created_at")
+  updatedAt       DateTime      @updatedAt @map("updated_at")
+
+  // Relationships
+  user            User          @relation(fields: [userId], references: [id], onDelete: Cascade)
+  businessType    BusinessType  @relation(fields: [businessTypeId], references: [id])
+  executions      WorkflowExecution[]
+
+  @@map("workflows")
+  @@index([userId])
+  @@index([businessTypeId])
+  @@index([isActive])
+}
+
+// Workflow execution tracking
+model WorkflowExecution {
+  id          String    @id @default(uuid()) @db.Uuid
+  workflowId  String    @map("workflow_id") @db.Uuid
+  status      String    @db.VarChar(20) // running, success, error, canceled
+  startedAt   DateTime  @default(now()) @map("started_at")
+  completedAt DateTime? @map("completed_at")
+  duration    Int?      // Duration in milliseconds
+  inputData   Json?     @map("input_data") @db.JsonB
+  outputData  Json?     @map("output_data") @db.JsonB
+  errorData   Json?     @map("error_data") @db.JsonB
+  triggeredBy String    @map("triggered_by") @db.VarChar(50) // email, webhook, manual, schedule
+
+  // Relationships
+  workflow    Workflow  @relation(fields: [workflowId], references: [id], onDelete: Cascade)
+
+  @@map("workflow_executions")
+  @@index([workflowId])
+  @@index([status])
+  @@index([startedAt])
+}
+
+// Analytics events
+model AnalyticsEvent {
+  id          String    @id @default(uuid()) @db.Uuid
+  userId      String?   @map("user_id") @db.Uuid
+  eventType   String    @map("event_type") @db.VarChar(100)
+  eventData   Json?     @map("event_data") @db.JsonB
+  sessionId   String?   @map("session_id") @db.VarChar(100)
+  ipAddress   String?   @map("ip_address") @db.VarChar(45)
+  userAgent   String?   @map("user_agent") @db.Text
+  createdAt   DateTime  @default(now()) @map("created_at")
+
+  @@map("analytics_events")
+  @@index([userId])
+  @@index([eventType])
+  @@index([createdAt])
+  @@index([sessionId])
+}

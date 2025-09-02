@@ -1,12 +1,12 @@
 .onboarding-wizard {
   min-height: 100vh;
-  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  background: linear-gradient(135deg, var(--color-brand) 0%, var(--color-brand-hover) 100%);
   display: flex;
   flex-direction: column;
 }
 
 .recovery-banner {
-  background: linear-gradient(135deg, #FF9800, #F57C00);
+  background: linear-gradient(135deg, var(--color-warning), #F57C00);
   color: white;
   padding: 1rem 0;
   border-bottom: 1px solid rgba(255, 255, 255, 0.2);

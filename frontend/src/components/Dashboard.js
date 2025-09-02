@@ -3,6 +3,7 @@ import { useAuth } from '../contexts/AuthContext';
 import { useLocation } from 'react-router-dom';
 import axios from 'axios';
 import OnboardingWizard from './OnboardingWizard';
+import { Button, Alert, Card, Badge } from './ui';
 
 const Dashboard = () => {
   const { user, logout } = useAuth();
@@ -106,11 +107,13 @@ const Dashboard = () => {
 
   if (loading) {
     return (
-      <div className="dashboard-container">
-        <div className="loading-container">
-          <div className="loading-spinner"></div>
-          <p>Loading dashboard...</p>
-        </div>
+      <div className="min-h-screen bg-surface-soft flex items-center justify-center">
+        <Card className="text-center py-12">
+          <div className="flex flex-col items-center space-y-4">
+            <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-brand-primary"></div>
+            <p className="text-ink-sub">Loading dashboard...</p>
+          </div>
+        </Card>
       </div>
     );
   }
@@ -118,97 +121,133 @@ const Dashboard = () => {
   const hasGoogleConnection = userStatus?.has_google_connection;
 
   return (
-    <div className="dashboard-container">
-      <div className="dashboard-header">
-        <div className="user-info">
-          <h2>Welcome, {user?.email}</h2>
-          <p>Manage your email automation connections</p>
+    <div className="min-h-screen bg-surface-soft">
+      <div className="bg-surface border-b border-surface-border">
+        <div className="max-w-6xl mx-auto px-6 py-6">
+          <div className="flex justify-between items-center">
+            <div>
+              <h1 className="text-2xl font-bold text-ink">Welcome, {user?.email}</h1>
+              <p className="text-ink-sub mt-1">Manage your email automation connections</p>
+            </div>
+            <Button onClick={handleLogout} variant="secondary">
+              Sign Out
+            </Button>
+          </div>
         </div>
-        <button onClick={handleLogout} className="logout-button">
-          Sign Out
-        </button>
       </div>
 
-      {message && (
-        <div className="success-message">
-          {message}
-        </div>
-      )}
+      <div className="max-w-6xl mx-auto px-6 py-8">
+        {message && (
+          <Alert variant="success" className="mb-6">
+            {message}
+          </Alert>
+        )}
 
-      {error && (
-        <div className="error-message">
-          {error}
-        </div>
-      )}
+        {error && (
+          <Alert variant="danger" className="mb-6">
+            {error}
+          </Alert>
+        )}
 
-      <div className="dashboard-content">
-        <div className="connection-card">
-          <div className="connection-header">
-            <h3>Google Account Integration</h3>
-            <div className={`connection-status ${hasGoogleConnection ? 'connected' : 'disconnected'}`}>
-              {hasGoogleConnection ? '🟢 Connected' : '🔴 Not Connected'}
-            </div>
-          </div>
+        <div className="space-y-6">
+          <Card>
+            <Card.Header>
+              <div className="flex justify-between items-center">
+                <Card.Title>Google Account Integration</Card.Title>
+                <Badge variant={hasGoogleConnection ? 'success' : 'danger'}>
+                  {hasGoogleConnection ? 'Connected' : 'Not Connected'}</Badge>
+              </div>
+            </Card.Header>
 
-          <div className="connection-body">
+          <Card.Content>
             {hasGoogleConnection ? (
-              <div className="connected-state">
-                <div className="success-icon">✅</div>
-                <h4>Connection Successful!</h4>
-                <p>Your FloWorx email automations are now active and running.</p>
-                <p className="connection-details">
+              <div className="text-center py-8">
+                <div className="w-16 h-16 bg-success/10 rounded-full flex items-center justify-center mx-auto mb-4">
+                  <svg className="w-8 h-8 text-success" fill="currentColor" viewBox="0 0 20 20">
+                    <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clipRule="evenodd" />
+                  </svg>
+                </div>
+                <h3 className="text-lg font-semibold text-ink mb-2">Connection Successful!</h3>
+                <p className="text-ink-sub mb-4">Your FloWorx email automations are now active and running.</p>
+                <p className="text-sm text-ink-sub mb-6">
                   Connected on: {new Date(userStatus.connected_services.find(s => s.service === 'google')?.connected_at).toLocaleDateString()}
                 </p>
-                <div className="connection-actions">
-                  <button 
-                    onClick={handleDisconnectGoogle}
-                    className="auth-button secondary"
-                  >
-                    Disconnect Google Account
-                  </button>
-                </div>
+                <Button
+                  onClick={handleDisconnectGoogle}
+                  variant="danger"
+                >
+                  Disconnect Google Account
+                </Button>
               </div>
             ) : (
-              <div className="disconnected-state">
-                <div className="connect-icon">🔗</div>
-                <h4>Connect Your Google Account</h4>
-                <p>Connect your Google account to start automating your hot tub business emails with FloWorx AI.</p>
-                <ul className="benefits-list">
-                  <li>📧 Automated email sorting and prioritization</li>
-                  <li>🤖 AI-powered customer responses</li>
-                  <li>⚡ Faster response times to service calls</li>
-                  <li>🔒 Secure, encrypted connections</li>
-                </ul>
-                <button 
+              <div className="text-center py-8">
+                <div className="w-16 h-16 bg-brand-primary-50 rounded-full flex items-center justify-center mx-auto mb-4">
+                  <svg className="w-8 h-8 text-brand-primary" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13.828 10.172a4 4 0 00-5.656 0l-4 4a4 4 0 105.656 5.656l1.102-1.101m-.758-4.899a4 4 0 005.656 0l4-4a4 4 0 00-5.656-5.656l-1.1 1.1" />
+                  </svg>
+                </div>
+                <h3 className="text-lg font-semibold text-ink mb-2">Connect Your Google Account</h3>
+                <p className="text-ink-sub mb-6">Connect your Google account to start automating your hot tub business emails with FloWorx AI.</p>
+                <div className="grid grid-cols-2 gap-4 mb-8 text-left">
+                  <div className="flex items-center space-x-2">
+                    <span className="text-brand-primary">📧</span>
+                    <span className="text-sm text-ink">Automated email sorting</span>
+                  </div>
+                  <div className="flex items-center space-x-2">
+                    <span className="text-brand-primary">🤖</span>
+                    <span className="text-sm text-ink">AI-powered responses</span>
+                  </div>
+                  <div className="flex items-center space-x-2">
+                    <span className="text-brand-primary">⚡</span>
+                    <span className="text-sm text-ink">Faster response times</span>
+                  </div>
+                  <div className="flex items-center space-x-2">
+                    <span className="text-brand-primary">🔒</span>
+                    <span className="text-sm text-ink">Secure connections</span>
+                  </div>
+                </div>
+                <Button
                   onClick={handleConnectGoogle}
-                  className="auth-button primary large"
+                  variant="primary"
+                  size="lg"
                 >
                   Connect Your Google Account
-                </button>
+                </Button>
               </div>
             )}
-          </div>
-        </div>
+          </Card.Content>
+        </Card>
 
-        <div className="info-section">
-          <h3>How It Works</h3>
-          <div className="info-grid">
-            <div className="info-item">
-              <div className="info-icon">🔐</div>
-              <h4>Secure Connection</h4>
-              <p>Your credentials are encrypted and stored securely using industry-standard encryption.</p>
-            </div>
-            <div className="info-item">
-              <div className="info-icon">⚡</div>
-              <h4>Real-time Processing</h4>
-              <p>Our system monitors your emails every 5 minutes and triggers intelligent responses.</p>
-            </div>
-            <div className="info-item">
-              <div className="info-icon">🎯</div>
-              <h4>Hot Tub Expertise</h4>
-              <p>Built by spa professionals who understand your business challenges.</p>
-            </div>
-          </div>
+          <Card>
+            <Card.Header>
+              <Card.Title>How It Works</Card.Title>
+            </Card.Header>
+            <Card.Content>
+              <div className="grid md:grid-cols-3 gap-6">
+                <div className="text-center">
+                  <div className="w-12 h-12 bg-brand-primary-50 rounded-lg flex items-center justify-center mx-auto mb-3">
+                    <span className="text-2xl">🔐</span>
+                  </div>
+                  <h4 className="font-semibold text-ink mb-2">Secure Connection</h4>
+                  <p className="text-sm text-ink-sub">Your credentials are encrypted and stored securely using industry-standard encryption.</p>
+                </div>
+                <div className="text-center">
+                  <div className="w-12 h-12 bg-brand-primary-50 rounded-lg flex items-center justify-center mx-auto mb-3">
+                    <span className="text-2xl">⚡</span>
+                  </div>
+                  <h4 className="font-semibold text-ink mb-2">Real-time Processing</h4>
+                  <p className="text-sm text-ink-sub">Our system monitors your emails every 5 minutes and triggers intelligent responses.</p>
+                </div>
+                <div className="text-center">
+                  <div className="w-12 h-12 bg-brand-primary-50 rounded-lg flex items-center justify-center mx-auto mb-3">
+                    <span className="text-2xl">🎯</span>
+                  </div>
+                  <h4 className="font-semibold text-ink mb-2">Hot Tub Expertise</h4>
+                  <p className="text-sm text-ink-sub">Built by spa professionals who understand your business challenges.</p>
+                </div>
+              </div>
+            </Card.Content>
+          </Card>
         </div>
       </div>
     </div>

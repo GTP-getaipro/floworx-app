@@ -1,14 +1,38 @@
-import React, { useState } from 'react';
-import { Link, useNavigate, useLocation } from 'react-router-dom';
+import React from 'react';
+import { useNavigate, useLocation } from 'react-router-dom';
 import { useAuth } from '../contexts/AuthContext';
+import { Button, Input, Alert, Card, Link } from './ui';
+import useFormValidation from '../hooks/useFormValidation';
+import { useErrorReporting } from '../contexts/ErrorContext';
 
 const Login = () => {
-  const [formData, setFormData] = useState({
-    email: '',
-    password: ''
-  });
-  const [error, setError] = useState('');
-  const [loading, setLoading] = useState(false);
+  const { login, isAuthenticated } = useAuth();
+  const { reportError } = useErrorReporting();
+  const navigate = useNavigate();
+  const location = useLocation();
+
+  const validationRules = {
+    email: [
+      value => !value ? 'Email is required' : '',
+      value => !/\S+@\S+\.\S+/.test(value) ? 'Invalid email format' : ''
+    ],
+    password: [
+      value => !value ? 'Password is required' : '',
+      value => value.length < 8 ? 'Password must be at least 8 characters' : ''
+    ]
+  };
+
+  const {
+    values: formData,
+    errors,
+    isSubmitting: loading,
+    handleChange,
+    handleBlur,
+    handleSubmit: submitForm
+  } = useFormValidation(
+    { email: '', password: '' },
+    validationRules
+  );
 
   const { login, isAuthenticated } = useAuth();
   const navigate = useNavigate();
@@ -62,23 +86,24 @@ const Login = () => {
   };
 
   return (
-    <div className="auth-container">
-      <div className="auth-card">
-        <h2>Sign In to Floworx</h2>
-        <p className="auth-subtitle">Access your automation dashboard</p>
-        
-        {error && (
-          <div className="error-message">
-            {error}
-          </div>
-        )}
+    <div className="min-h-screen bg-surface-soft flex items-center justify-center py-12 px-4 sm:px-6 lg:px-8">
+      <div className="max-w-md w-full space-y-8">
+        <div className="text-center">
+          <h2 className="text-3xl font-bold text-ink">Sign In to Floworx</h2>
+          <p className="mt-2 text-ink-sub">Access your automation dashboard</p>
+        </div>
 
-        <form onSubmit={handleSubmit} className="auth-form">
-          <div className="form-group">
-            <label htmlFor="email">Email Address</label>
-            <input
+        <Card className="mt-8">
+          {error && (
+            <Alert variant="danger" className="mb-6">
+              {error}
+            </Alert>
+          )}
+
+          <form onSubmit={handleSubmit} className="space-y-6">
+            <Input
+              label="Email Address"
               type="email"
-              id="email"
               name="email"
               value={formData.email}
               onChange={handleChange}
@@ -86,13 +111,10 @@ const Login = () => {
               required
               disabled={loading}
             />
-          </div>
 
-          <div className="form-group">
-            <label htmlFor="password">Password</label>
-            <input
+            <Input
+              label="Password"
               type="password"
-              id="password"
               name="password"
               value={formData.password}
               onChange={handleChange}
@@ -100,25 +122,30 @@ const Login = () => {
               required
               disabled={loading}
             />
-          </div>
 
-          <button 
-            type="submit" 
-            className="auth-button primary"
-            disabled={loading}
-          >
-            {loading ? 'Signing In...' : 'Sign In'}
-          </button>
-        </form>
+            <Button
+              type="submit"
+              variant="primary"
+              size="lg"
+              loading={loading}
+              className="w-full"
+            >
+              Sign In
+            </Button>
+          </form>
 
-        <div className="auth-links">
-          <p>
-            Don't have an account?{' '}
-            <Link to="/register" className="auth-link">
-              Create one here
+          <div className="mt-6 space-y-4 text-center">
+            <Link to="/forgot-password" variant="primary">
+              Forgot your password?
             </Link>
-          </p>
-        </div>
+            <p className="text-ink-sub">
+              Don't have an account?{' '}
+              <Link to="/register" variant="primary">
+                Create one here
+              </Link>
+            </p>
+          </div>
+        </Card>
       </div>
     </div>
   );

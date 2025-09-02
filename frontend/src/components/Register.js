@@ -1,6 +1,9 @@
-import React, { useState } from 'react';
-import { Link, useNavigate } from 'react-router-dom';
+import React from 'react';
+import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../contexts/AuthContext';
+import { Button, Input, Alert, Card, Link } from './ui';
+import useFormValidation, { commonValidationRules } from '../hooks/useFormValidation';
+import useApiRequest from '../hooks/useApiRequest';
 
 const Register = () => {
   const [formData, setFormData] = useState({
@@ -111,71 +114,72 @@ const Register = () => {
 
   if (success) {
     return (
-      <div className="auth-container">
-        <div className="auth-card">
-          <div className="success-message">
-            <h2>Registration Successful! ✅</h2>
-            {requiresVerification ? (
-              <>
-                <p>Your account has been created successfully!</p>
-                <p><strong>Please check your email to verify your account.</strong></p>
-                <p>We've sent a verification link to <strong>{formData.email}</strong></p>
-                <div className="verification-help">
-                  <p>Didn't receive the email?</p>
-                  <ul>
-                    <li>Check your spam/junk folder</li>
-                    <li>Make sure you entered the correct email address</li>
-                    <li>Wait a few minutes and check again</li>
-                  </ul>
-                  <Link to="/verify-email" className="resend-link">
-                    Need to resend verification email?
-                  </Link>
+      <div className="min-h-screen bg-surface-soft flex items-center justify-center py-12 px-4 sm:px-6 lg:px-8">
+        <div className="max-w-md w-full">
+          <Card>
+            <Alert variant="success" title="Registration Successful! ✅">
+              {requiresVerification ? (
+                <div className="space-y-4">
+                  <p>Your account has been created successfully!</p>
+                  <p><strong>Please check your email to verify your account.</strong></p>
+                  <p>We've sent a verification link to <strong>{formData.email}</strong></p>
+                  <div className="mt-4 p-4 bg-surface-subtle rounded-lg">
+                    <p className="font-medium text-ink mb-2">Didn't receive the email?</p>
+                    <ul className="list-disc list-inside space-y-1 text-sm text-ink-sub">
+                      <li>Check your spam/junk folder</li>
+                      <li>Make sure you entered the correct email address</li>
+                      <li>Wait a few minutes and check again</li>
+                    </ul>
+                    <div className="mt-3">
+                      <Link to="/verify-email" variant="primary">
+                        Need to resend verification email?
+                      </Link>
+                    </div>
+                  </div>
                 </div>
-              </>
-            ) : (
-              <>
-                <p>Your account has been created successfully.</p>
-                <p>Redirecting to your dashboard...</p>
-              </>
-            )}
-          </div>
+              ) : (
+                <div>
+                  <p>Your account has been created successfully.</p>
+                  <p>Redirecting to your dashboard...</p>
+                </div>
+              )}
+            </Alert>
+          </Card>
         </div>
       </div>
     );
   }
 
   return (
-    <div className="auth-container">
-      <div className="auth-card">
-        <h2>Create Your Floworx Account</h2>
-        <p className="auth-subtitle">Start automating your workflow today</p>
-        
-        {error && (
-          <div className="error-message">
-            {error}
-          </div>
-        )}
+    <div className="min-h-screen bg-surface-soft flex items-center justify-center py-12 px-4 sm:px-6 lg:px-8">
+      <div className="max-w-md w-full space-y-8">
+        <div className="text-center">
+          <h2 className="text-3xl font-bold text-ink">Create Your Floworx Account</h2>
+          <p className="mt-2 text-ink-sub">Start automating your workflow today</p>
+        </div>
 
-        <form onSubmit={handleSubmit} className="auth-form">
-          <div className="form-row">
-            <div className="form-group">
-              <label htmlFor="firstName">First Name</label>
-              <input
+        <Card className="mt-8">
+          {error && (
+            <Alert variant="danger" className="mb-6">
+              {error}
+            </Alert>
+          )}
+
+          <form onSubmit={handleSubmit} className="space-y-6">
+            <div className="grid grid-cols-2 gap-4">
+              <Input
+                label="First Name"
                 type="text"
-                id="firstName"
                 name="firstName"
                 value={formData.firstName}
                 onChange={handleChange}
                 placeholder="Your first name"
                 disabled={loading}
               />
-            </div>
 
-            <div className="form-group">
-              <label htmlFor="lastName">Last Name</label>
-              <input
+              <Input
+                label="Last Name"
                 type="text"
-                id="lastName"
                 name="lastName"
                 value={formData.lastName}
                 onChange={handleChange}
@@ -183,26 +187,20 @@ const Register = () => {
                 disabled={loading}
               />
             </div>
-          </div>
 
-          <div className="form-group">
-            <label htmlFor="companyName">Company Name</label>
-            <input
+            <Input
+              label="Company Name"
               type="text"
-              id="companyName"
               name="companyName"
               value={formData.companyName}
               onChange={handleChange}
               placeholder="Your company name (optional)"
               disabled={loading}
             />
-          </div>
 
-          <div className="form-group">
-            <label htmlFor="email">Email Address *</label>
-            <input
+            <Input
+              label="Email Address"
               type="email"
-              id="email"
               name="email"
               value={formData.email}
               onChange={handleChange}
@@ -210,27 +208,22 @@ const Register = () => {
               required
               disabled={loading}
             />
-          </div>
 
-          <div className="form-group">
-            <label htmlFor="password">Password</label>
-            <input
+            <Input
+              label="Password"
               type="password"
-              id="password"
               name="password"
               value={formData.password}
               onChange={handleChange}
               placeholder="Create a password (min. 8 characters)"
               required
               disabled={loading}
+              helperText="Password must be at least 8 characters long"
             />
-          </div>
 
-          <div className="form-group">
-            <label htmlFor="confirmPassword">Confirm Password</label>
-            <input
+            <Input
+              label="Confirm Password"
               type="password"
-              id="confirmPassword"
               name="confirmPassword"
               value={formData.confirmPassword}
               onChange={handleChange}
@@ -238,25 +231,27 @@ const Register = () => {
               required
               disabled={loading}
             />
+
+            <Button
+              type="submit"
+              variant="primary"
+              size="lg"
+              loading={loading}
+              className="w-full"
+            >
+              Create Account
+            </Button>
+          </form>
+
+          <div className="mt-6 text-center">
+            <p className="text-ink-sub">
+              Already have an account?{' '}
+              <Link to="/login" variant="primary">
+                Sign in here
+              </Link>
+            </p>
           </div>
-
-          <button 
-            type="submit" 
-            className="auth-button primary"
-            disabled={loading}
-          >
-            {loading ? 'Creating Account...' : 'Create Account'}
-          </button>
-        </form>
-
-        <div className="auth-links">
-          <p>
-            Already have an account?{' '}
-            <Link to="/login" className="auth-link">
-              Sign in here
-            </Link>
-          </p>
-        </div>
+        </Card>
       </div>
     </div>
   );

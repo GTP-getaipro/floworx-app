@@ -1,6 +1,9 @@
 const express = require('express');
 const { authenticateToken } = require('../middleware/auth');
 const analyticsService = require('../services/analyticsService');
+const cacheService = require('../services/cacheService');
+const { paginationMiddleware } = require('../utils/pagination');
+const performanceService = require('../services/performanceService');
 
 const router = express.Router();
 
@@ -30,20 +33,14 @@ router.post('/track', authenticateToken, extractMetadata, async (req, res) => {
     }
 
     const metadata = { ...req.metadata, ...customMetadata };
-    
-    const result = await analyticsService.trackEvent(
-      userId,
-      eventType,
-      eventData || {},
-      metadata
-    );
+
+    const result = await analyticsService.trackEvent(userId, eventType, eventData || {}, metadata);
 
     res.json({
       success: true,
       event: result,
       message: 'Event tracked successfully'
     });
-
   } catch (error) {
     console.error('Error tracking event:', error);
     res.status(500).json({
@@ -78,7 +75,6 @@ router.post('/onboarding/started', authenticateToken, extractMetadata, async (re
       event: result,
       message: 'Onboarding start tracked'
     });
-
   } catch (error) {
     console.error('Error tracking onboarding start:', error);
     res.status(500).json({
@@ -102,19 +98,12 @@ router.post('/onboarding/step-completed', authenticateToken, extractMetadata, as
       });
     }
 
-    await analyticsService.trackStepCompletion(
-      userId,
-      step,
-      duration || 0,
-      stepData || {},
-      req.metadata
-    );
+    await analyticsService.trackStepCompletion(userId, step, duration || 0, stepData || {}, req.metadata);
 
     res.json({
       success: true,
       message: 'Step completion tracked'
     });
-
   } catch (error) {
     console.error('Error tracking step completion:', error);
     res.status(500).json({
@@ -138,19 +127,12 @@ router.post('/onboarding/step-failed', authenticateToken, extractMetadata, async
       });
     }
 
-    await analyticsService.trackStepFailure(
-      userId,
-      step,
-      error,
-      duration || 0,
-      req.metadata
-    );
+    await analyticsService.trackStepFailure(userId, step, error, duration || 0, req.metadata);
 
     res.json({
       success: true,
       message: 'Step failure tracked'
     });
-
   } catch (error) {
     console.error('Error tracking step failure:', error);
     res.status(500).json({
@@ -186,7 +168,6 @@ router.post('/onboarding/completed', authenticateToken, extractMetadata, async (
       event: result,
       message: 'Onboarding completion tracked'
     });
-
   } catch (error) {
     console.error('Error tracking onboarding completion:', error);
     res.status(500).json({
@@ -204,13 +185,16 @@ router.get('/funnel', authenticateToken, async (req, res) => {
     const { startDate, endDate } = req.query;
 
     const filters = {};
-    if (startDate) filters.startDate = startDate;
-    if (endDate) filters.endDate = endDate;
+    if (startDate) {
+      filters.startDate = startDate;
+    }
+    if (endDate) {
+      filters.endDate = endDate;
+    }
 
     const funnel = await analyticsService.getOnboardingFunnel(filters);
 
     res.json(funnel);
-
   } catch (error) {
     console.error('Error getting funnel analytics:', error);
     res.status(500).json({
@@ -227,13 +211,16 @@ router.get('/conversion', authenticateToken, async (req, res) => {
     const { startDate, endDate } = req.query;
 
     const filters = {};
-    if (startDate) filters.startDate = startDate;
-    if (endDate) filters.endDate = endDate;
+    if (startDate) {
+      filters.startDate = startDate;
+    }
+    if (endDate) {
+      filters.endDate = endDate;
+    }
 
     const conversion = await analyticsService.getConversionAnalytics(filters);
 
     res.json(conversion);
-
   } catch (error) {
     console.error('Error getting conversion analytics:', error);
     res.status(500).json({
@@ -250,13 +237,16 @@ router.get('/behavior', authenticateToken, async (req, res) => {
     const { startDate, endDate } = req.query;
 
     const filters = {};
-    if (startDate) filters.startDate = startDate;
-    if (endDate) filters.endDate = endDate;
+    if (startDate) {
+      filters.startDate = startDate;
+    }
+    if (endDate) {
+      filters.endDate = endDate;
+    }
 
     const behavior = await analyticsService.getUserBehaviorAnalytics(filters);
 
     res.json(behavior);
-
   } catch (error) {
     console.error('Error getting behavior analytics:', error);
     res.status(500).json({
@@ -273,7 +263,6 @@ router.get('/realtime', authenticateToken, async (req, res) => {
     const metrics = await analyticsService.getRealTimeMetrics();
 
     res.json(metrics);
-
   } catch (error) {
     console.error('Error getting real-time metrics:', error);
     res.status(500).json({
@@ -290,8 +279,12 @@ router.get('/dashboard', authenticateToken, async (req, res) => {
     const { startDate, endDate } = req.query;
 
     const filters = {};
-    if (startDate) filters.startDate = startDate;
-    if (endDate) filters.endDate = endDate;
+    if (startDate) {
+      filters.startDate = startDate;
+    }
+    if (endDate) {
+      filters.endDate = endDate;
+    }
 
     // Get all analytics data in parallel
     const [funnel, conversion, behavior, realtime] = await Promise.all([
@@ -312,7 +305,6 @@ router.get('/dashboard', authenticateToken, async (req, res) => {
       },
       generatedAt: new Date()
     });
-
   } catch (error) {
     console.error('Error getting dashboard data:', error);
     res.status(500).json({
@@ -336,18 +328,12 @@ router.post('/drop-off', authenticateToken, extractMetadata, async (req, res) =>
       });
     }
 
-    await analyticsService.trackDropOff(
-      userId,
-      step,
-      timeSpent || 0,
-      { ...req.metadata, reason }
-    );
+    await analyticsService.trackDropOff(userId, step, timeSpent || 0, { ...req.metadata, reason });
 
     res.json({
       success: true,
       message: 'Drop-off tracked'
     });
-
   } catch (error) {
     console.error('Error tracking drop-off:', error);
     res.status(500).json({

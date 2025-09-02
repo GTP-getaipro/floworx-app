@@ -1,0 +1,165 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>FloWorx Account Recovery</title>
+    <style>
+      body {
+        font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+        line-height: 1.6;
+        color: #333;
+        max-width: 600px;
+        margin: 0 auto;
+        padding: 20px;
+        background-color: #f8fafc;
+      }
+      .container {
+        background: white;
+        border-radius: 12px;
+        padding: 40px;
+        box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+      }
+      .header {
+        text-align: center;
+        margin-bottom: 30px;
+      }
+      .logo {
+        font-size: 28px;
+        font-weight: bold;
+        color: #2563eb;
+        margin-bottom: 10px;
+      }
+      .title {
+        font-size: 24px;
+        font-weight: 600;
+        color: #1f2937;
+        margin-bottom: 10px;
+      }
+      .subtitle {
+        color: #6b7280;
+        font-size: 16px;
+      }
+      .content {
+        margin: 30px 0;
+      }
+      .recovery-button {
+        display: inline-block;
+        background: #2563eb;
+        color: white;
+        padding: 14px 28px;
+        text-decoration: none;
+        border-radius: 8px;
+        font-weight: 600;
+        margin: 20px 0;
+        text-align: center;
+      }
+      .recovery-button:hover {
+        background: #1d4ed8;
+      }
+      .info-box {
+        background: #f3f4f6;
+        border-left: 4px solid #2563eb;
+        padding: 16px;
+        margin: 20px 0;
+        border-radius: 4px;
+      }
+      .warning-box {
+        background: #fef3cd;
+        border-left: 4px solid #f59e0b;
+        padding: 16px;
+        margin: 20px 0;
+        border-radius: 4px;
+      }
+      .footer {
+        margin-top: 40px;
+        padding-top: 20px;
+        border-top: 1px solid #e5e7eb;
+        text-align: center;
+        color: #6b7280;
+        font-size: 14px;
+      }
+      .security-tips {
+        background: #f0f9ff;
+        border: 1px solid #bae6fd;
+        border-radius: 8px;
+        padding: 20px;
+        margin: 20px 0;
+      }
+      .security-tips h4 {
+        color: #0369a1;
+        margin-top: 0;
+      }
+      .security-tips ul {
+        margin: 10px 0;
+        padding-left: 20px;
+      }
+      .security-tips li {
+        margin: 5px 0;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="container">
+      <div class="header">
+        <div class="logo">FloWorx</div>
+        <h1 class="title">Account Recovery Request</h1>
+        <p class="subtitle">We received a request to recover your account</p>
+      </div>
+
+      <div class="content">
+        <p>Hello {{firstName}},</p>
+
+        <p>
+          We received a request to recover your FloWorx account. If you made this request, click the button below to
+          continue with account recovery:
+        </p>
+
+        <div style="text-align: center; margin: 30px 0">
+          <a href="{{recoveryUrl}}" class="recovery-button">Recover My Account</a>
+        </div>
+
+        <div class="info-box">
+          <strong>Recovery Type:</strong> {{recoveryType}}<br />
+          <strong>Request Time:</strong> {{timestamp}}<br />
+          <strong>Expires:</strong> {{expiryTime}}
+        </div>
+
+        <div class="warning-box">
+          <strong>⚠️ Security Notice:</strong><br />
+          If you didn't request this account recovery, please ignore this email. Your account remains secure.
+        </div>
+
+        <div class="security-tips">
+          <h4>🔒 Security Tips</h4>
+          <ul>
+            <li>This recovery link expires in 24 hours for your security</li>
+            <li>The link can only be used once</li>
+            <li>Never share this recovery link with anyone</li>
+            <li>If you suspect unauthorized access, contact our support team immediately</li>
+          </ul>
+        </div>
+
+        <p>If the button above doesn't work, you can copy and paste this link into your browser:</p>
+        <p
+          style="word-break: break-all; background: #f3f4f6; padding: 10px; border-radius: 4px; font-family: monospace"
+        >
+          {{recoveryUrl}}
+        </p>
+
+        <p>If you have any questions or concerns, please don't hesitate to contact our support team.</p>
+
+        <p>
+          Best regards,<br />
+          The FloWorx Security Team
+        </p>
+      </div>
+
+      <div class="footer">
+        <p>This email was sent to {{email}} because a recovery request was made for your FloWorx account.</p>
+        <p>FloWorx - Email AI Built by Hot Tub Pros—For Hot Tub Pros</p>
+        <p>© 2024 FloWorx. All rights reserved.</p>
+      </div>
+    </div>
+  </body>
+</html>

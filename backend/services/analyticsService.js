@@ -52,7 +52,6 @@ class AnalyticsService {
         eventId: result.rows[0].id,
         timestamp: result.rows[0].created_at
       };
-
     } catch (error) {
       console.error('Error tracking analytics event:', error);
       throw new Error('Failed to track analytics event');
@@ -158,11 +157,7 @@ class AnalyticsService {
           END
       `;
 
-      const stepResult = await pool.query(stepQuery, [
-        this.eventTypes.STEP_COMPLETED,
-        startDate,
-        endDate
-      ]);
+      const stepResult = await pool.query(stepQuery, [this.eventTypes.STEP_COMPLETED, startDate, endDate]);
 
       // Get drop-off counts
       const dropOffQuery = `
@@ -176,11 +171,7 @@ class AnalyticsService {
         GROUP BY event_data->>'dropOffStep'
       `;
 
-      const dropOffResult = await pool.query(dropOffQuery, [
-        this.eventTypes.STEP_ABANDONED,
-        startDate,
-        endDate
-      ]);
+      const dropOffResult = await pool.query(dropOffQuery, [this.eventTypes.STEP_ABANDONED, startDate, endDate]);
 
       // Get total started count
       const startedQuery = `
@@ -191,11 +182,7 @@ class AnalyticsService {
           AND created_at <= $3
       `;
 
-      const startedResult = await pool.query(startedQuery, [
-        this.eventTypes.ONBOARDING_STARTED,
-        startDate,
-        endDate
-      ]);
+      const startedResult = await pool.query(startedQuery, [this.eventTypes.ONBOARDING_STARTED, startDate, endDate]);
 
       const totalStarted = parseInt(startedResult.rows[0]?.started || 0);
 
@@ -208,7 +195,6 @@ class AnalyticsService {
         totalStarted,
         dateRange: { startDate, endDate }
       };
-
     } catch (error) {
       console.error('Error getting onboarding funnel:', error);
       throw new Error('Failed to get onboarding funnel analytics');
@@ -274,7 +260,6 @@ class AnalyticsService {
         },
         dateRange: { startDate, endDate }
       };
-
     } catch (error) {
       console.error('Error getting conversion analytics:', error);
       throw new Error('Failed to get conversion analytics');
@@ -332,11 +317,7 @@ class AnalyticsService {
         LIMIT 5
       `;
 
-      const failureResult = await pool.query(failureQuery, [
-        this.eventTypes.STEP_FAILED,
-        startDate,
-        endDate
-      ]);
+      const failureResult = await pool.query(failureQuery, [this.eventTypes.STEP_FAILED, startDate, endDate]);
 
       // Device and browser analytics
       const deviceQuery = `
@@ -353,11 +334,7 @@ class AnalyticsService {
         LIMIT 10
       `;
 
-      const deviceResult = await pool.query(deviceQuery, [
-        this.eventTypes.ONBOARDING_STARTED,
-        startDate,
-        endDate
-      ]);
+      const deviceResult = await pool.query(deviceQuery, [this.eventTypes.ONBOARDING_STARTED, startDate, endDate]);
 
       const timeStats = timeResult.rows[0];
 
@@ -387,7 +364,6 @@ class AnalyticsService {
         },
         dateRange: { startDate, endDate }
       };
-
     } catch (error) {
       console.error('Error getting user behavior analytics:', error);
       throw new Error('Failed to get user behavior analytics');
@@ -432,20 +408,18 @@ class AnalyticsService {
             started: parseInt(metrics.started_24h),
             completed: parseInt(metrics.completed_24h),
             failed: parseInt(metrics.failed_24h),
-            completionRate: metrics.started_24h > 0 ? 
-              (metrics.completed_24h / metrics.started_24h * 100).toFixed(2) : 0
+            completionRate:
+              metrics.started_24h > 0 ? ((metrics.completed_24h / metrics.started_24h) * 100).toFixed(2) : 0
           },
           lastHour: {
             started: parseInt(metrics.started_1h),
             completed: parseInt(metrics.completed_1h),
             failed: parseInt(metrics.failed_1h),
-            completionRate: metrics.started_1h > 0 ? 
-              (metrics.completed_1h / metrics.started_1h * 100).toFixed(2) : 0
+            completionRate: metrics.started_1h > 0 ? ((metrics.completed_1h / metrics.started_1h) * 100).toFixed(2) : 0
           }
         },
         timestamp: new Date()
       };
-
     } catch (error) {
       console.error('Error getting real-time metrics:', error);
       throw new Error('Failed to get real-time metrics');
@@ -455,31 +429,39 @@ class AnalyticsService {
   // Helper methods
   getDateRange(filters) {
     const endDate = filters.endDate ? new Date(filters.endDate) : new Date();
-    const startDate = filters.startDate ? 
-      new Date(filters.startDate) : 
-      new Date(endDate.getTime() - 30 * 24 * 60 * 60 * 1000); // 30 days ago
+    const startDate = filters.startDate
+      ? new Date(filters.startDate)
+      : new Date(endDate.getTime() - 30 * 24 * 60 * 60 * 1000); // 30 days ago
 
     return { startDate, endDate };
   }
 
   buildFunnelData(stepData, dropOffData, totalStarted) {
-    const steps = ['welcome', 'google-connection', 'business-categories', 'label-mapping', 'team-setup', 'review', 'workflow-deployment'];
+    const steps = [
+      'welcome',
+      'google-connection',
+      'business-categories',
+      'label-mapping',
+      'team-setup',
+      'review',
+      'workflow-deployment'
+    ];
     const funnel = [];
     let previousCount = totalStarted;
 
     steps.forEach((step, index) => {
       const stepStats = stepData.find(s => s.step === step);
       const dropOffs = dropOffData.find(d => d.step === step);
-      
+
       const completions = parseInt(stepStats?.completions || 0);
       const dropOffCount = parseInt(dropOffs?.dropoffs || 0);
-      
+
       funnel.push({
         step,
         stepNumber: index + 1,
         completions,
         dropOffs: dropOffCount,
-        conversionRate: previousCount > 0 ? (completions / previousCount * 100).toFixed(2) : 0,
+        conversionRate: previousCount > 0 ? ((completions / previousCount) * 100).toFixed(2) : 0,
         averageDuration: stepStats ? this.formatDuration(stepStats.avg_duration) : null,
         medianDuration: stepStats ? this.formatDuration(stepStats.median_duration) : null
       });
@@ -491,8 +473,10 @@ class AnalyticsService {
   }
 
   formatDuration(milliseconds) {
-    if (!milliseconds) return '0s';
-    
+    if (!milliseconds) {
+      return '0s';
+    }
+
     const seconds = Math.floor(milliseconds / 1000);
     const minutes = Math.floor(seconds / 60);
     const hours = Math.floor(minutes / 60);
@@ -507,28 +491,38 @@ class AnalyticsService {
   }
 
   parseUserAgent(userAgent) {
-    if (!userAgent) return 'Unknown';
-    
+    if (!userAgent) {
+      return 'Unknown';
+    }
+
     // Simple user agent parsing
-    if (userAgent.includes('Chrome')) return 'Chrome';
-    if (userAgent.includes('Firefox')) return 'Firefox';
-    if (userAgent.includes('Safari')) return 'Safari';
-    if (userAgent.includes('Edge')) return 'Edge';
-    
+    if (userAgent.includes('Chrome')) {
+      return 'Chrome';
+    }
+    if (userAgent.includes('Firefox')) {
+      return 'Firefox';
+    }
+    if (userAgent.includes('Safari')) {
+      return 'Safari';
+    }
+    if (userAgent.includes('Edge')) {
+      return 'Edge';
+    }
+
     return 'Other';
   }
 
-  async updateUserAnalytics(userId, eventType, eventData) {
+  async updateUserAnalytics(_userId, _eventType, _eventData) {
     // Update user-specific analytics summary
     // This could be implemented for user-level analytics
   }
 
-  async updateStepAnalytics(step, status, duration) {
+  async updateStepAnalytics(_step, _status, _duration) {
     // Update step-specific analytics
     // This could be implemented for step-level analytics
   }
 
-  async updateDropOffAnalytics(step) {
+  async updateDropOffAnalytics(_step) {
     // Update drop-off analytics
     // This could be implemented for drop-off tracking
   }

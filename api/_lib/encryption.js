@@ -18,19 +18,19 @@ const getEncryptionKey = () => {
   return Buffer.from(key, 'utf8');
 };
 
-// Encrypt sensitive data (OAuth tokens)
+// Encrypt sensitive data (OAuth tokens) - SECURE IMPLEMENTATION
 const encrypt = (text) => {
   try {
     const key = getEncryptionKey();
     const iv = crypto.randomBytes(IV_LENGTH);
-    const cipher = crypto.createCipher(ALGORITHM, key);
+    const cipher = crypto.createCipherGCM(ALGORITHM, key, iv); // FIXED: Use secure createCipherGCM
     cipher.setAAD(Buffer.from('floworx-oauth', 'utf8')); // Additional authenticated data
-    
+
     let encrypted = cipher.update(text, 'utf8', 'hex');
     encrypted += cipher.final('hex');
-    
+
     const tag = cipher.getAuthTag();
-    
+
     // Return IV + tag + encrypted data as a single string
     return iv.toString('hex') + ':' + tag.toString('hex') + ':' + encrypted;
   } catch (error) {
@@ -39,27 +39,27 @@ const encrypt = (text) => {
   }
 };
 
-// Decrypt sensitive data (OAuth tokens)
+// Decrypt sensitive data (OAuth tokens) - SECURE IMPLEMENTATION
 const decrypt = (encryptedData) => {
   try {
     const key = getEncryptionKey();
     const parts = encryptedData.split(':');
-    
+
     if (parts.length !== 3) {
       throw new Error('Invalid encrypted data format');
     }
-    
+
     const iv = Buffer.from(parts[0], 'hex');
     const tag = Buffer.from(parts[1], 'hex');
     const encrypted = parts[2];
-    
-    const decipher = crypto.createDecipher(ALGORITHM, key);
+
+    const decipher = crypto.createDecipherGCM(ALGORITHM, key, iv); // FIXED: Use secure createDecipherGCM
     decipher.setAAD(Buffer.from('floworx-oauth', 'utf8'));
     decipher.setAuthTag(tag);
-    
+
     let decrypted = decipher.update(encrypted, 'hex', 'utf8');
     decrypted += decipher.final('utf8');
-    
+
     return decrypted;
   } catch (error) {
     console.error('Decryption error:', error);

@@ -1,4 +1,4 @@
-/* Global Styles */
+/* Global Styles - FloWorx Design System */
 * {
   margin: 0;
   padding: 0;
@@ -6,13 +6,13 @@
 }
 
 body {
-  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen',
+  font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen',
     'Ubuntu', 'Cantarell', 'Fira Sans', 'Droid Sans', 'Helvetica Neue',
     sans-serif;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
-  background-color: #f5f7fa;
-  color: #333;
+  background-color: var(--color-surface-soft);
+  color: var(--color-ink);
 }
 
 .App {
@@ -21,13 +21,13 @@ body {
   flex-direction: column;
 }
 
-/* Header Styles */
+/* Header Styles - Updated with FloWorx Colors */
 .App-header {
-  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  background: linear-gradient(135deg, var(--color-brand) 0%, var(--color-brand-hover) 100%);
   color: white;
   padding: 2rem 0;
   text-align: center;
-  box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+  box-shadow: 0 6px 20px rgba(0,0,0,0.06);
 }
 
 .App-header h1 {
@@ -52,14 +52,14 @@ body {
 
 /* Footer */
 .App-footer {
-  background-color: #2c3e50;
-  color: white;
+  background-color: var(--color-ink);
+  color: var(--color-surface);
   text-align: center;
   padding: 1rem;
   margin-top: auto;
 }
 
-/* Authentication Styles */
+/* Authentication Styles - Updated with FloWorx Colors */
 .auth-container {
   display: flex;
   justify-content: center;
@@ -69,16 +69,17 @@ body {
 }
 
 .auth-card {
-  background: white;
-  border-radius: 12px;
-  box-shadow: 0 4px 20px rgba(0,0,0,0.1);
+  background: var(--color-surface);
+  border-radius: 1rem;
+  box-shadow: 0 6px 20px rgba(0,0,0,0.06);
   padding: 3rem;
   width: 100%;
   max-width: 450px;
+  border: 1px solid var(--color-surface-border);
 }
 
 .auth-card h2 {
-  color: #2c3e50;
+  color: var(--color-ink);
   margin-bottom: 0.5rem;
   text-align: center;
   font-size: 1.8rem;
@@ -86,7 +87,7 @@ body {
 
 .auth-subtitle {
   text-align: center;
-  color: #7f8c8d;
+  color: var(--color-ink-sub);
   margin-bottom: 2rem;
 }
 
@@ -221,16 +222,17 @@ body {
 }
 
 .auth-link {
-  color: #667eea;
+  color: var(--color-brand);
   text-decoration: none;
   font-weight: 600;
 }
 
 .auth-link:hover {
+  color: var(--color-brand-hover);
   text-decoration: underline;
 }
 
-/* Dashboard Styles */
+/* Dashboard Styles - Updated with FloWorx Colors */
 .dashboard-container {
   max-width: 1000px;
   margin: 0 auto;
@@ -242,28 +244,35 @@ body {
   align-items: center;
   margin-bottom: 2rem;
   padding: 1.5rem;
-  background: white;
-  border-radius: 12px;
-  box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+  background: var(--color-surface);
+  border-radius: 1rem;
+  box-shadow: 0 6px 20px rgba(0,0,0,0.06);
+  border: 1px solid var(--color-surface-border);
 }
 
 .user-info h2 {
-  color: #2c3e50;
+  color: var(--color-ink);
   margin-bottom: 0.25rem;
 }
 
 .user-info p {
-  color: #7f8c8d;
+  color: var(--color-ink-sub);
 }
 
 .logout-button {
-  background-color: #95a5a6;
-  color: white;
-  border: none;
+  background-color: var(--color-surface-subtle);
+  color: var(--color-ink);
+  border: 1px solid var(--color-surface-border);
   padding: 0.5rem 1rem;
-  border-radius: 6px;
+  border-radius: 0.5rem;
   cursor: pointer;
   font-weight: 600;
+  transition: all 0.2s ease-in-out;
+}
+
+.logout-button:hover {
+  background-color: var(--color-surface-border);
+  color: var(--color-ink);
 }
 
 .logout-button:hover {

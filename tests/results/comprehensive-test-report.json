@@ -1,0 +1,37 @@
+{
+  "timestamp": "2025-09-01T22:19:00.446Z",
+  "summary": {
+    "totalPassed": 0,
+    "totalFailed": 0,
+    "totalDuration": 6080,
+    "success": true
+  },
+  "results": {
+    "infrastructure": {
+      "passed": 0,
+      "failed": 0,
+      "duration": 1705
+    },
+    "database": {
+      "passed": 0,
+      "failed": 0,
+      "duration": 1343
+    },
+    "api": {
+      "passed": 0,
+      "failed": 0,
+      "duration": 1664
+    },
+    "frontend": {
+      "passed": 0,
+      "failed": 0,
+      "duration": 1367
+    }
+  },
+  "testCategories": {
+    "infrastructure": "Basic test infrastructure and configuration",
+    "database": "Database operations with mocked Supabase client",
+    "api": "API endpoints with mocked Express server",
+    "frontend": "Frontend business logic without React components"
+  }
+}

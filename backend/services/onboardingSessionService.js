@@ -18,12 +18,12 @@ class OnboardingSessionService {
     try {
       // Check for existing session
       const existingSession = await this.getExistingSession(userId);
-      
+
       if (existingSession && !this.isSessionExpired(existingSession)) {
         // Resume existing session
         existingSession.lastActivity = new Date();
         this.activeSessions.set(userId, existingSession);
-        
+
         return {
           sessionId: existingSession.sessionId,
           resumed: true,
@@ -58,7 +58,6 @@ class OnboardingSessionService {
         progress: {},
         lastActivity: session.lastActivity
       };
-
     } catch (error) {
       console.error('Error creating/resuming onboarding session:', error);
       throw new Error('Failed to initialize onboarding session');
@@ -103,10 +102,9 @@ class OnboardingSessionService {
         nextStep: session.currentStep,
         totalCheckpoints: session.checkpoints.length
       };
-
     } catch (error) {
       console.error('Error saving checkpoint:', error);
-      
+
       // Mark checkpoint as failed
       checkpoint.status = 'failed';
       checkpoint.error = error.message;
@@ -167,7 +165,6 @@ class OnboardingSessionService {
         canRetry: recoveryStrategy.canRetry,
         suggestedAction: recoveryStrategy.suggestedAction
       };
-
     } catch (recoveryError) {
       console.error('Error handling step failure:', recoveryError);
       throw new Error('Failed to handle step failure');
@@ -218,15 +215,15 @@ class OnboardingSessionService {
    * @returns {Object} Recovery information
    */
   async getRecoveryInfo(userId) {
-    const session = this.activeSessions.get(userId) || await this.getExistingSession(userId);
-    
+    const session = this.activeSessions.get(userId) || (await this.getExistingSession(userId));
+
     if (!session) {
       return { hasRecoveryData: false };
     }
 
     const lastCheckpoint = session.checkpoints[session.checkpoints.length - 1];
-    const recentErrors = session.errors.filter(e => 
-      new Date() - e.timestamp < 24 * 60 * 60 * 1000 // Last 24 hours
+    const recentErrors = session.errors.filter(
+      e => new Date() - e.timestamp < 24 * 60 * 60 * 1000 // Last 24 hours
     );
 
     return {
@@ -252,7 +249,7 @@ class OnboardingSessionService {
    */
   async cleanupExpiredSessions() {
     const expiredSessions = [];
-    
+
     for (const [userId, session] of this.activeSessions.entries()) {
       if (this.isSessionExpired(session)) {
         expiredSessions.push(userId);
@@ -284,6 +281,7 @@ class OnboardingSessionService {
     const stepOrder = [
       'welcome',
       'google-connection',
+      'business-type',
       'business-categories',
       'label-mapping',
       'team-setup',
@@ -291,12 +289,12 @@ class OnboardingSessionService {
       'workflow-deployment',
       'completion'
     ];
-    
+
     const currentIndex = stepOrder.indexOf(currentStep);
     return currentIndex < stepOrder.length - 1 ? stepOrder[currentIndex + 1] : 'completion';
   }
 
-  determineRecoveryStrategy(step, error) {
+  determineRecoveryStrategy(step, _error) {
     const strategies = {
       'google-connection': {
         canRetry: true,
@@ -313,7 +311,7 @@ class OnboardingSessionService {
       'label-mapping': {
         canRetry: true,
         suggestedAction: 'refresh_labels',
-        message: 'We\'ll refresh your Gmail labels and try again',
+        message: "We'll refresh your Gmail labels and try again",
         autoRetry: true
       },
       'team-setup': {
@@ -325,17 +323,19 @@ class OnboardingSessionService {
       'workflow-deployment': {
         canRetry: true,
         suggestedAction: 'retry_deployment',
-        message: 'We\'ll attempt to deploy your workflow again',
+        message: "We'll attempt to deploy your workflow again",
         autoRetry: false
       }
     };
 
-    return strategies[step] || {
-      canRetry: true,
-      suggestedAction: 'retry_step',
-      message: 'Please try this step again',
-      autoRetry: false
-    };
+    return (
+      strategies[step] || {
+        canRetry: true,
+        suggestedAction: 'retry_step',
+        message: 'Please try this step again',
+        autoRetry: false
+      }
+    );
   }
 
   async getExistingSession(userId) {
@@ -346,9 +346,9 @@ class OnboardingSessionService {
       ORDER BY last_activity DESC 
       LIMIT 1
     `;
-    
+
     const result = await pool.query(query, [userId]);
-    
+
     if (result.rows.length === 0) {
       return null;
     }
@@ -380,7 +380,7 @@ class OnboardingSessionService {
         last_activity = EXCLUDED.last_activity,
         status = EXCLUDED.status
     `;
-    
+
     await pool.query(query, [
       session.sessionId,
       session.userId,
@@ -398,7 +398,7 @@ class OnboardingSessionService {
         user_id, step, data, timestamp, transaction_id, status
       ) VALUES ($1, $2, $3, $4, $5, $6)
     `;
-    
+
     await pool.query(query, [
       userId,
       checkpoint.step,
@@ -415,7 +415,7 @@ class OnboardingSessionService {
         user_id, step, error_message, error_stack, timestamp, transaction_id, recovery_attempts
       ) VALUES ($1, $2, $3, $4, $5, $6, $7)
     `;
-    
+
     await pool.query(query, [
       userId,
       failure.step,
@@ -433,13 +433,8 @@ class OnboardingSessionService {
       SET current_step = $1, progress = $2, last_activity = $3
       WHERE user_id = $4
     `;
-    
-    await pool.query(query, [
-      session.currentStep,
-      JSON.stringify(session.progress),
-      session.lastActivity,
-      userId
-    ]);
+
+    await pool.query(query, [session.currentStep, JSON.stringify(session.progress), session.lastActivity, userId]);
   }
 
   async archiveSession(userId) {
@@ -448,7 +443,7 @@ class OnboardingSessionService {
       SET status = 'archived', archived_at = CURRENT_TIMESTAMP
       WHERE user_id = $1
     `;
-    
+
     await pool.query(query, [userId]);
   }
 }
@@ -457,8 +452,11 @@ class OnboardingSessionService {
 const onboardingSessionService = new OnboardingSessionService();
 
 // Cleanup expired sessions every 10 minutes
-setInterval(() => {
-  onboardingSessionService.cleanupExpiredSessions().catch(console.error);
-}, 10 * 60 * 1000);
+setInterval(
+  () => {
+    onboardingSessionService.cleanupExpiredSessions().catch(console.error);
+  },
+  10 * 60 * 1000
+);
 
 module.exports = onboardingSessionService;

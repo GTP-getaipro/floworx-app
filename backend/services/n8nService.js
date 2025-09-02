@@ -1,13 +1,13 @@
 const axios = require('axios');
 const { pool } = require('../database/connection');
-const transactionService = require('./transactionService');
+const _transactionService = require('./transactionService');
 
 class N8nService {
   constructor() {
     this.baseURL = process.env.N8N_API_URL || 'http://localhost:5678/api/v1';
     this.apiKey = process.env.N8N_API_KEY;
     this.webhookBaseURL = process.env.N8N_WEBHOOK_URL || 'http://localhost:5678/webhook';
-    
+
     // Configure axios instance
     this.client = axios.create({
       baseURL: this.baseURL,
@@ -20,22 +20,22 @@ class N8nService {
 
     // Add request/response interceptors for logging
     this.client.interceptors.request.use(
-      (config) => {
+      config => {
         console.log(`N8N API Request: ${config.method?.toUpperCase()} ${config.url}`);
         return config;
       },
-      (error) => {
+      error => {
         console.error('N8N API Request Error:', error);
         return Promise.reject(error);
       }
     );
 
     this.client.interceptors.response.use(
-      (response) => {
+      response => {
         console.log(`N8N API Response: ${response.status} ${response.config.url}`);
         return response;
       },
-      (error) => {
+      error => {
         console.error('N8N API Response Error:', error.response?.status, error.response?.data);
         return Promise.reject(error);
       }
@@ -75,18 +75,18 @@ class N8nService {
     try {
       // Get the master template
       const template = await this.getMasterTemplate();
-      
+
       // Customize template with user configuration
       const customizedWorkflow = await this.customizeWorkflow(template, userId, config);
-      
+
       // Create workflow in n8n
       const response = await this.client.post('/workflows', customizedWorkflow);
-      
+
       const workflowData = response.data.data;
-      
+
       // Store workflow deployment record
       await this.storeWorkflowDeployment(userId, workflowData, config);
-      
+
       return {
         success: true,
         workflowId: workflowData.id,
@@ -94,7 +94,6 @@ class N8nService {
         webhookUrl: this.generateWebhookUrl(workflowData.id),
         status: 'created'
       };
-
     } catch (error) {
       console.error('Error creating workflow:', error);
       throw new Error(`Failed to create workflow: ${error.message}`);
@@ -108,15 +107,14 @@ class N8nService {
    */
   async activateWorkflow(workflowId) {
     try {
-      const response = await this.client.post(`/workflows/${workflowId}/activate`);
-      
+      const _response = await this.client.post(`/workflows/${workflowId}/activate`);
+
       return {
         success: true,
         workflowId,
         status: 'active',
         activatedAt: new Date()
       };
-
     } catch (error) {
       console.error('Error activating workflow:', error);
       throw new Error(`Failed to activate workflow: ${error.message}`);
@@ -130,15 +128,14 @@ class N8nService {
    */
   async deactivateWorkflow(workflowId) {
     try {
-      const response = await this.client.post(`/workflows/${workflowId}/deactivate`);
-      
+      const _response = await this.client.post(`/workflows/${workflowId}/deactivate`);
+
       return {
         success: true,
         workflowId,
         status: 'inactive',
         deactivatedAt: new Date()
       };
-
     } catch (error) {
       console.error('Error deactivating workflow:', error);
       throw new Error(`Failed to deactivate workflow: ${error.message}`);
@@ -156,14 +153,13 @@ class N8nService {
       const response = await this.client.post(`/workflows/${workflowId}/execute`, {
         data: testData
       });
-      
+
       return {
         success: true,
         executionId: response.data.data.executionId,
         status: response.data.data.status,
         result: response.data.data
       };
-
     } catch (error) {
       console.error('Error testing workflow:', error);
       throw new Error(`Failed to test workflow: ${error.message}`);
@@ -178,12 +174,11 @@ class N8nService {
   async getExecutionStatus(executionId) {
     try {
       const response = await this.client.get(`/executions/${executionId}`);
-      
+
       return {
         success: true,
         execution: response.data.data
       };
-
     } catch (error) {
       console.error('Error getting execution status:', error);
       throw new Error(`Failed to get execution status: ${error.message}`);
@@ -198,14 +193,13 @@ class N8nService {
   async deleteWorkflow(workflowId) {
     try {
       await this.client.delete(`/workflows/${workflowId}`);
-      
+
       return {
         success: true,
         workflowId,
         status: 'deleted',
         deletedAt: new Date()
       };
-
     } catch (error) {
       console.error('Error deleting workflow:', error);
       throw new Error(`Failed to delete workflow: ${error.message}`);
@@ -220,25 +214,26 @@ class N8nService {
     // This would typically load from a file or database
     // For now, return a basic email automation template
     return {
-      name: "Floworx Email Automation Template",
+      name: 'Floworx Email Automation Template',
       nodes: [
         {
           parameters: {},
-          name: "Gmail Trigger",
-          type: "n8n-nodes-base.gmailTrigger",
+          name: 'Gmail Trigger',
+          type: 'n8n-nodes-base.gmailTrigger',
           typeVersion: 1,
           position: [250, 300],
-          webhookId: "gmail-webhook",
+          webhookId: 'gmail-webhook',
           credentials: {
-            gmailOAuth2: "gmail_oauth"
+            gmailOAuth2: 'gmail_oauth'
           }
         },
         {
           parameters: {
-            functionCode: "// Email categorization logic\nconst email = items[0].json;\nconst subject = email.subject || '';\nconst body = email.body || '';\nconst from = email.from || '';\n\n// Simple categorization rules\nlet category = 'general';\n\nif (subject.toLowerCase().includes('quote') || subject.toLowerCase().includes('price')) {\n  category = 'new-leads';\n} else if (subject.toLowerCase().includes('support') || subject.toLowerCase().includes('help')) {\n  category = 'customer-support';\n} else if (subject.toLowerCase().includes('service') || subject.toLowerCase().includes('repair')) {\n  category = 'service-requests';\n} else if (subject.toLowerCase().includes('invoice') || subject.toLowerCase().includes('payment')) {\n  category = 'invoices-billing';\n}\n\nreturn [{\n  json: {\n    ...email,\n    category,\n    processed_at: new Date().toISOString()\n  }\n}];"
+            functionCode:
+              "// Email categorization logic\nconst email = items[0].json;\nconst subject = email.subject || '';\nconst body = email.body || '';\nconst from = email.from || '';\n\n// Simple categorization rules\nlet category = 'general';\n\nif (subject.toLowerCase().includes('quote') || subject.toLowerCase().includes('price')) {\n  category = 'new-leads';\n} else if (subject.toLowerCase().includes('support') || subject.toLowerCase().includes('help')) {\n  category = 'customer-support';\n} else if (subject.toLowerCase().includes('service') || subject.toLowerCase().includes('repair')) {\n  category = 'service-requests';\n} else if (subject.toLowerCase().includes('invoice') || subject.toLowerCase().includes('payment')) {\n  category = 'invoices-billing';\n}\n\nreturn [{\n  json: {\n    ...email,\n    category,\n    processed_at: new Date().toISOString()\n  }\n}];"
           },
-          name: "Categorize Email",
-          type: "n8n-nodes-base.function",
+          name: 'Categorize Email',
+          type: 'n8n-nodes-base.function',
           typeVersion: 1,
           position: [450, 300]
         },
@@ -247,83 +242,84 @@ class N8nService {
             conditions: {
               string: [
                 {
-                  value1: "={{$json.category}}",
-                  operation: "equal",
-                  value2: "new-leads"
+                  value1: '={{$json.category}}',
+                  operation: 'equal',
+                  value2: 'new-leads'
                 }
               ]
             }
           },
-          name: "Is New Lead?",
-          type: "n8n-nodes-base.if",
+          name: 'Is New Lead?',
+          type: 'n8n-nodes-base.if',
           typeVersion: 1,
           position: [650, 300]
         },
         {
           parameters: {
-            labelIds: ["INBOX", "Label_New_Leads"],
-            messageId: "={{$json.id}}"
+            labelIds: ['INBOX', 'Label_New_Leads'],
+            messageId: '={{$json.id}}'
           },
-          name: "Label as New Lead",
-          type: "n8n-nodes-base.gmail",
+          name: 'Label as New Lead',
+          type: 'n8n-nodes-base.gmail',
           typeVersion: 1,
           position: [850, 200],
           credentials: {
-            gmailOAuth2: "gmail_oauth"
+            gmailOAuth2: 'gmail_oauth'
           }
         },
         {
           parameters: {
-            to: "team@company.com",
-            subject: "New Lead: {{$json.subject}}",
-            message: "A new lead email has been received:\n\nFrom: {{$json.from}}\nSubject: {{$json.subject}}\n\nPlease review and respond promptly."
+            to: 'team@company.com',
+            subject: 'New Lead: {{$json.subject}}',
+            message:
+              'A new lead email has been received:\n\nFrom: {{$json.from}}\nSubject: {{$json.subject}}\n\nPlease review and respond promptly.'
           },
-          name: "Notify Team",
-          type: "n8n-nodes-base.emailSend",
+          name: 'Notify Team',
+          type: 'n8n-nodes-base.emailSend',
           typeVersion: 1,
           position: [1050, 200]
         }
       ],
       connections: {
-        "Gmail Trigger": {
+        'Gmail Trigger': {
           main: [
             [
               {
-                node: "Categorize Email",
-                type: "main",
+                node: 'Categorize Email',
+                type: 'main',
                 index: 0
               }
             ]
           ]
         },
-        "Categorize Email": {
+        'Categorize Email': {
           main: [
             [
               {
-                node: "Is New Lead?",
-                type: "main",
+                node: 'Is New Lead?',
+                type: 'main',
                 index: 0
               }
             ]
           ]
         },
-        "Is New Lead?": {
+        'Is New Lead?': {
           main: [
             [
               {
-                node: "Label as New Lead",
-                type: "main",
+                node: 'Label as New Lead',
+                type: 'main',
                 index: 0
               }
             ]
           ]
         },
-        "Label as New Lead": {
+        'Label as New Lead': {
           main: [
             [
               {
-                node: "Notify Team",
-                type: "main",
+                node: 'Notify Team',
+                type: 'main',
                 index: 0
               }
             ]
@@ -345,33 +341,33 @@ class N8nService {
    */
   async customizeWorkflow(template, userId, config) {
     const customized = JSON.parse(JSON.stringify(template)); // Deep clone
-    
+
     // Customize workflow name
     customized.name = `Floworx Automation - User ${userId}`;
-    
+
     // Update categorization logic based on user's categories
     if (config.businessCategories && config.businessCategories.length > 0) {
-      const categorizeNode = customized.nodes.find(n => n.name === "Categorize Email");
+      const categorizeNode = customized.nodes.find(n => n.name === 'Categorize Email');
       if (categorizeNode) {
         categorizeNode.parameters.functionCode = this.generateCategorizationCode(config.businessCategories);
       }
     }
-    
+
     // Update Gmail labels based on user's mappings
     if (config.labelMappings && config.labelMappings.length > 0) {
       // This would update the label assignment logic
       // For now, we'll keep it simple
     }
-    
+
     // Update team notifications
     if (config.teamMembers && config.teamMembers.length > 0) {
-      const notifyNode = customized.nodes.find(n => n.name === "Notify Team");
+      const notifyNode = customized.nodes.find(n => n.name === 'Notify Team');
       if (notifyNode) {
         const teamEmails = config.teamMembers.map(m => m.email).join(', ');
         notifyNode.parameters.to = teamEmails;
       }
     }
-    
+
     return customized;
   }
 
@@ -381,12 +377,14 @@ class N8nService {
    * @returns {string} JavaScript code for categorization
    */
   generateCategorizationCode(categories) {
-    const categoryRules = categories.map(cat => {
-      const keywords = this.generateKeywords(cat.name);
-      return `if (${keywords.map(k => `subject.toLowerCase().includes('${k}') || body.toLowerCase().includes('${k}')`).join(' || ')}) {
+    const categoryRules = categories
+      .map(cat => {
+        const keywords = this.generateKeywords(cat.name);
+        return `if (${keywords.map(k => `subject.toLowerCase().includes('${k}') || body.toLowerCase().includes('${k}')`).join(' || ')}) {
   category = '${cat.name.toLowerCase().replace(/\s+/g, '-')}';
 }`;
-    }).join(' else ');
+      })
+      .join(' else ');
 
     return `// AI-powered email categorization
 const email = items[0].json;
@@ -421,8 +419,8 @@ return [{
       'customer support': ['help', 'support', 'problem', 'issue', 'trouble', 'question'],
       'service requests': ['service', 'repair', 'maintenance', 'fix', 'broken', 'appointment'],
       'invoices & billing': ['invoice', 'payment', 'bill', 'charge', 'receipt', 'refund'],
-      'partnerships': ['partner', 'vendor', 'supplier', 'collaboration', 'business'],
-      'appointments': ['appointment', 'schedule', 'booking', 'meeting', 'visit'],
+      partnerships: ['partner', 'vendor', 'supplier', 'collaboration', 'business'],
+      appointments: ['appointment', 'schedule', 'booking', 'meeting', 'visit'],
       'product inquiries': ['product', 'hot tub', 'spa', 'model', 'features', 'specifications'],
       'warranty claims': ['warranty', 'claim', 'defect', 'replacement', 'coverage']
     };
@@ -550,8 +548,12 @@ return [{
       score += 40;
 
       // Bonus for multiple categories
-      if (config.businessCategories.length >= 3) score += 10;
-      if (config.businessCategories.length >= 5) score += 10;
+      if (config.businessCategories.length >= 3) {
+        score += 10;
+      }
+      if (config.businessCategories.length >= 5) {
+        score += 10;
+      }
     }
 
     // Score for label mappings
@@ -564,8 +566,12 @@ return [{
       score += 20;
 
       // Bonus for multiple team members
-      if (config.teamMembers.length >= 2) score += 5;
-      if (config.teamMembers.length >= 3) score += 5;
+      if (config.teamMembers.length >= 2) {
+        score += 5;
+      }
+      if (config.teamMembers.length >= 3) {
+        score += 5;
+      }
     }
 
     return Math.min(score, 100);
@@ -602,7 +608,6 @@ return [{
         averageExecutionTime: this.calculateAverageExecutionTime(successful),
         lastExecution: executions.length > 0 ? executions[0].startedAt : null
       };
-
     } catch (error) {
       console.error('Error getting workflow metrics:', error);
       return {
@@ -625,7 +630,9 @@ return [{
    * @returns {number} Average time in milliseconds
    */
   calculateAverageExecutionTime(executions) {
-    if (executions.length === 0) return 0;
+    if (executions.length === 0) {
+      return 0;
+    }
 
     const totalTime = executions.reduce((sum, execution) => {
       const start = new Date(execution.startedAt);

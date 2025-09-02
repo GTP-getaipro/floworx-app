@@ -1,0 +1,3396 @@
+<!doctype html>
+<html>
+  <head>
+    <meta charset="UTF-8" />
+    <title>ESLint Report</title>
+    <link
+      rel="icon"
+      type="image/png"
+      sizes="any"
+      href="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAACAAAAAgCAYAAABzenr0AAAACXBIWXMAAAHaAAAB2gGFomX7AAAAGXRFWHRTb2Z0d2FyZQB3d3cuaW5rc2NhcGUub3Jnm+48GgAABD1JREFUWMPFl11sk2UUx3/nbYtjxS1MF7MLMTECMgSTtSSyrQkLhAj7UBPnDSEGoxegGzMwojhXVpmTAA5iYpSoMQa8GBhFOrMFk03buei6yRAlcmOM0SEmU9d90b19jxcM1o5+sGnsc/e+z/l6ztf/HFFVMnns6QieeOCHBePGsHM+wrOtvLG2C4WRVDSSygNV7sCjlspxwDnPB44aols/DXk+mbMBmx/6OseITF1CuOtfevkPh2Uu+/jbdX8lujSScRlT5r7/QDlAfsRmfzmpnkQ/H3H13gf6bBrBn1uqK8WylgEnU8eZmk1repbfchJG1TyKyIKEwuBHFd3lD3naY3O1siiwXsVoBV2VgM1ht/QQUJk2ByqKghsQziYQ8ifKgexIXmuyzC4r67Y7R+xPAfuB/Nn3Cpva+0s7khpQVtZtd4bt51BWxtBYAiciprG7c7D4SixzU9PYalDL6110Ifb/w8W9eY7JqFeFHbO8fPGyLHwwFHJNJTSgwtVTB9oaw9BlQ+tO93vOxypoaQnfEYlI43SeCHDC4TDq9+51/h5fxr33q0ZfV9g04wat9Q943rjJgCp3952W2i8Bi6eDvdsfKj0cK/DYMRyXL4/sUJUmIHd2zYMezsvLaamp4WpcWN3BXSiHpuMwbGbZlnZ8tXY4rgosy+G7oRwQ0cAsd28YGgqfU5UjCZQDLALxDg+Hv/P5Rqvj4hwrS8izXzWb4spwc1GgENFnkpWRzxeuB+ssUHgLdb9UVdt8vpGdKQpze7n7y1U3DBChNRUuqOo9c+0+qpKKxyZqtAIYla7gY4JszAAQri93BSsMRZoyBcUC+w3Q3AyOA4sNhAOZ0q7Iq0b2vUNvK5zPgP+/H8+Zetdoa6uOikhdGurxebwvJY8Iz3V1rTMNAH+opEuQj5KTT/qA1yC+wyUjBm12OidaUtCcPNNX2h0Hx2JG69VulANZAJZJwfU7rzd/FHixuXniTdM0m4GtSQT7bTartqEh9yfImUEzkwKZmTwmo5a5JwkYBfcDL01/RkR5y8iWhtPBknB8ZxwtU9UjwOrrKCeizzc25nTGg1F/turEHoU9wMLpDvWKf8DTmNCAKnd/tqUTF4ElMXJ+A5rWDJS+41WsGWzALhJ+ErBWrLj9g+pqojHxlXJX8HGUg0BsR/x1yhxf3jm4cSzpQFLp6tmi6PEE7g1ZhtZ91ufpSZUAFa6gC+UoQslNaSmypT1U8mHKiUgEKS8KfgF4EpYunFI16tsHin+OG0LcgQK7yj7g6cSzpva2D3hKVNG0Y3mVO1BkqfSlmJrHBQ4uvM12gJHc6ETW8HZVfMRmXvyxxNC1Z/o839zyXlDuCr4nsC11J+MXueaVJWn6yPv+/pJtc9oLTNN4AeTvNGByd3rlhE2x9s5pLwDoHCy+grDzWmOZ95lUtLYj5Bma126Y8eX0/zj/ADxGyViSg4BXAAAAAElFTkSuQmCC"
+    />
+    <link
+      rel="icon"
+      type="image/svg+xml"
+      href="data:image/svg+xml;base64,PHN2ZyB2aWV3Qm94PScwIDAgMjk0LjgyNSAyNTguOTgyJyB4bWxucz0naHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmcnPg0KPHBhdGggZmlsbD0nIzgwODBGMicgZD0nTTk3LjAyMSw5OS4wMTZsNDguNDMyLTI3Ljk2MmMxLjIxMi0wLjcsMi43MDYtMC43LDMuOTE4LDBsNDguNDMzLDI3Ljk2MiBjMS4yMTEsMC43LDEuOTU5LDEuOTkzLDEuOTU5LDMuMzkzdjU1LjkyNGMwLDEuMzk5LTAuNzQ4LDIuNjkzLTEuOTU5LDMuMzk0bC00OC40MzMsMjcuOTYyYy0xLjIxMiwwLjctMi43MDYsMC43LTMuOTE4LDAgbC00OC40MzItMjcuOTYyYy0xLjIxMi0wLjctMS45NTktMS45OTQtMS45NTktMy4zOTR2LTU1LjkyNEM5NS4wNjMsMTAxLjAwOSw5NS44MSw5OS43MTYsOTcuMDIxLDk5LjAxNicvPg0KPHBhdGggZmlsbD0nIzRCMzJDMycgZD0nTTI3My4zMzYsMTI0LjQ4OEwyMTUuNDY5LDIzLjgxNmMtMi4xMDItMy42NC01Ljk4NS02LjMyNS0xMC4xODgtNi4zMjVIODkuNTQ1IGMtNC4yMDQsMC04LjA4OCwyLjY4NS0xMC4xOSw2LjMyNWwtNTcuODY3LDEwMC40NWMtMi4xMDIsMy42NDEtMi4xMDIsOC4yMzYsMCwxMS44NzdsNTcuODY3LDk5Ljg0NyBjMi4xMDIsMy42NCw1Ljk4Niw1LjUwMSwxMC4xOSw1LjUwMWgxMTUuNzM1YzQuMjAzLDAsOC4wODctMS44MDUsMTAuMTg4LTUuNDQ2bDU3Ljg2Ny0xMDAuMDEgQzI3NS40MzksMTMyLjM5NiwyNzUuNDM5LDEyOC4xMjgsMjczLjMzNiwxMjQuNDg4IE0yMjUuNDE5LDE3Mi44OThjMCwxLjQ4LTAuODkxLDIuODQ5LTIuMTc0LDMuNTlsLTczLjcxLDQyLjUyNyBjLTEuMjgyLDAuNzQtMi44ODgsMC43NC00LjE3LDBsLTczLjc2Ny00Mi41MjdjLTEuMjgyLTAuNzQxLTIuMTc5LTIuMTA5LTIuMTc5LTMuNTlWODcuODQzYzAtMS40ODEsMC44ODQtMi44NDksMi4xNjctMy41OSBsNzMuNzA3LTQyLjUyN2MxLjI4Mi0wLjc0MSwyLjg4Ni0wLjc0MSw0LjE2OCwwbDczLjc3Miw0Mi41MjdjMS4yODMsMC43NDEsMi4xODYsMi4xMDksMi4xODYsMy41OVYxNzIuODk4eicvPg0KPC9zdmc+"
+    />
+    <style>
+      body {
+        font-family: Arial, 'Helvetica Neue', Helvetica, sans-serif;
+        font-size: 16px;
+        font-weight: normal;
+        margin: 0;
+        padding: 0;
+        color: #333;
+      }
+
+      #overview {
+        padding: 20px 30px;
+      }
+
+      td,
+      th {
+        padding: 5px 10px;
+      }
+
+      h1 {
+        margin: 0;
+      }
+
+      table {
+        margin: 30px;
+        width: calc(100% - 60px);
+        max-width: 1000px;
+        border-radius: 5px;
+        border: 1px solid #ddd;
+        border-spacing: 0;
+      }
+
+      th {
+        font-weight: 400;
+        font-size: medium;
+        text-align: left;
+        cursor: pointer;
+      }
+
+      td.clr-1,
+      td.clr-2,
+      th span {
+        font-weight: 700;
+      }
+
+      th span {
+        float: right;
+        margin-left: 20px;
+      }
+
+      th span::after {
+        content: '';
+        clear: both;
+        display: block;
+      }
+
+      tr:last-child td {
+        border-bottom: none;
+      }
+
+      tr td:first-child,
+      tr td:last-child {
+        color: #9da0a4;
+      }
+
+      #overview.bg-0,
+      tr.bg-0 th {
+        color: #468847;
+        background: #dff0d8;
+        border-bottom: 1px solid #d6e9c6;
+      }
+
+      #overview.bg-1,
+      tr.bg-1 th {
+        color: #f0ad4e;
+        background: #fcf8e3;
+        border-bottom: 1px solid #fbeed5;
+      }
+
+      #overview.bg-2,
+      tr.bg-2 th {
+        color: #b94a48;
+        background: #f2dede;
+        border-bottom: 1px solid #eed3d7;
+      }
+
+      td {
+        border-bottom: 1px solid #ddd;
+      }
+
+      td.clr-1 {
+        color: #f0ad4e;
+      }
+
+      td.clr-2 {
+        color: #b94a48;
+      }
+
+      td a {
+        color: #3a33d1;
+        text-decoration: none;
+      }
+
+      td a:hover {
+        color: #272296;
+        text-decoration: underline;
+      }
+    </style>
+  </head>
+  <body>
+    <div id="overview" class="bg-2">
+      <h1>ESLint Report</h1>
+      <div>
+        <span>270 problems (270 errors, 0 warnings)</span> - Generated on Mon Sep 01 2025 20:41:01 GMT-0600 (Mountain
+        Daylight Time)
+      </div>
+    </div>
+    <table>
+      <tbody>
+        <tr class="bg-0" data-group="f-0">
+          <th colspan="4">
+            [+] C:\FloworxInvite\backend\.eslintrc.js
+            <span>0 problems</span>
+          </th>
+        </tr>
+
+        <tr class="bg-0" data-group="f-1">
+          <th colspan="4">
+            [+] C:\FloworxInvite\backend\.prettierrc.js
+            <span>0 problems</span>
+          </th>
+        </tr>
+
+        <tr class="bg-0" data-group="f-2">
+          <th colspan="4">
+            [+] C:\FloworxInvite\backend\config\database.js
+            <span>0 problems</span>
+          </th>
+        </tr>
+
+        <tr class="bg-0" data-group="f-3">
+          <th colspan="4">
+            [+] C:\FloworxInvite\backend\coverage\block-navigation.js
+            <span>0 problems</span>
+          </th>
+        </tr>
+
+        <tr class="bg-0" data-group="f-4">
+          <th colspan="4">
+            [+] C:\FloworxInvite\backend\coverage\lcov-report\block-navigation.js
+            <span>0 problems</span>
+          </th>
+        </tr>
+
+        <tr class="bg-0" data-group="f-5">
+          <th colspan="4">
+            [+] C:\FloworxInvite\backend\coverage\lcov-report\prettify.js
+            <span>0 problems</span>
+          </th>
+        </tr>
+
+        <tr class="bg-0" data-group="f-6">
+          <th colspan="4">
+            [+] C:\FloworxInvite\backend\coverage\lcov-report\sorter.js
+            <span>0 problems</span>
+          </th>
+        </tr>
+
+        <tr class="bg-0" data-group="f-7">
+          <th colspan="4">
+            [+] C:\FloworxInvite\backend\coverage\prettify.js
+            <span>0 problems</span>
+          </th>
+        </tr>
+
+        <tr class="bg-0" data-group="f-8">
+          <th colspan="4">
+            [+] C:\FloworxInvite\backend\coverage\sorter.js
+            <span>0 problems</span>
+          </th>
+        </tr>
+
+        <tr class="bg-0" data-group="f-9">
+          <th colspan="4">
+            [+] C:\FloworxInvite\backend\database\connection.js
+            <span>0 problems</span>
+          </th>
+        </tr>
+
+        <tr class="bg-0" data-group="f-10">
+          <th colspan="4">
+            [+] C:\FloworxInvite\backend\database\supabase-client.js
+            <span>0 problems</span>
+          </th>
+        </tr>
+
+        <tr class="bg-0" data-group="f-11">
+          <th colspan="4">
+            [+] C:\FloworxInvite\backend\database\unified-connection.js
+            <span>0 problems</span>
+          </th>
+        </tr>
+
+        <tr class="bg-0" data-group="f-12">
+          <th colspan="4">
+            [+] C:\FloworxInvite\backend\eslint.config.js
+            <span>0 problems</span>
+          </th>
+        </tr>
+
+        <tr class="bg-0" data-group="f-13">
+          <th colspan="4">
+            [+] C:\FloworxInvite\backend\jest.config.js
+            <span>0 problems</span>
+          </th>
+        </tr>
+
+        <tr class="bg-0" data-group="f-14">
+          <th colspan="4">
+            [+] C:\FloworxInvite\backend\middleware\auth.js
+            <span>0 problems</span>
+          </th>
+        </tr>
+
+        <tr class="bg-0" data-group="f-15">
+          <th colspan="4">
+            [+] C:\FloworxInvite\backend\middleware\errorHandler.js
+            <span>0 problems</span>
+          </th>
+        </tr>
+
+        <tr class="bg-0" data-group="f-16">
+          <th colspan="4">
+            [+] C:\FloworxInvite\backend\middleware\rateLimiter.js
+            <span>0 problems</span>
+          </th>
+        </tr>
+
+        <tr class="bg-0" data-group="f-17">
+          <th colspan="4">
+            [+] C:\FloworxInvite\backend\middleware\validation.js
+            <span>0 problems</span>
+          </th>
+        </tr>
+
+        <tr class="bg-2" data-group="f-18">
+          <th colspan="4">
+            [+] C:\FloworxInvite\backend\routes\accountRecovery.js
+            <span>4 problems (4 errors, 0 warnings)</span>
+          </th>
+        </tr>
+        <tr style="display: none" class="f-18">
+          <td>236:53</td>
+          <td class="clr-2">Error</td>
+          <td>Async arrow function has no &#39;await&#39; expression.</td>
+          <td>
+            <a href="https://eslint.org/docs/latest/rules/require-await" target="_blank" rel="noopener noreferrer"
+              >require-await</a
+            >
+          </td>
+        </tr>
+
+        <tr style="display: none" class="f-18">
+          <td>264:73</td>
+          <td class="clr-2">Error</td>
+          <td>Async arrow function has no &#39;await&#39; expression.</td>
+          <td>
+            <a href="https://eslint.org/docs/latest/rules/require-await" target="_blank" rel="noopener noreferrer"
+              >require-await</a
+            >
+          </td>
+        </tr>
+
+        <tr style="display: none" class="f-18">
+          <td>267:13</td>
+          <td class="clr-2">Error</td>
+          <td>&#39;limit&#39; is assigned a value but never used. Allowed unused vars must match /^_/u.</td>
+          <td>
+            <a href="https://eslint.org/docs/latest/rules/no-unused-vars" target="_blank" rel="noopener noreferrer"
+              >no-unused-vars</a
+            >
+          </td>
+        </tr>
+
+        <tr style="display: none" class="f-18">
+          <td>267:25</td>
+          <td class="clr-2">Error</td>
+          <td>&#39;offset&#39; is assigned a value but never used. Allowed unused vars must match /^_/u.</td>
+          <td>
+            <a href="https://eslint.org/docs/latest/rules/no-unused-vars" target="_blank" rel="noopener noreferrer"
+              >no-unused-vars</a
+            >
+          </td>
+        </tr>
+
+        <tr class="bg-0" data-group="f-19">
+          <th colspan="4">
+            [+] C:\FloworxInvite\backend\routes\analytics.js
+            <span>0 problems</span>
+          </th>
+        </tr>
+
+        <tr class="bg-0" data-group="f-20">
+          <th colspan="4">
+            [+] C:\FloworxInvite\backend\routes\auth.js
+            <span>0 problems</span>
+          </th>
+        </tr>
+
+        <tr class="bg-0" data-group="f-21">
+          <th colspan="4">
+            [+] C:\FloworxInvite\backend\routes\businessTypes.js
+            <span>0 problems</span>
+          </th>
+        </tr>
+
+        <tr class="bg-0" data-group="f-22">
+          <th colspan="4">
+            [+] C:\FloworxInvite\backend\routes\oauth.js
+            <span>0 problems</span>
+          </th>
+        </tr>
+
+        <tr class="bg-0" data-group="f-23">
+          <th colspan="4">
+            [+] C:\FloworxInvite\backend\routes\onboarding-v2.js
+            <span>0 problems</span>
+          </th>
+        </tr>
+
+        <tr class="bg-0" data-group="f-24">
+          <th colspan="4">
+            [+] C:\FloworxInvite\backend\routes\onboarding.js
+            <span>0 problems</span>
+          </th>
+        </tr>
+
+        <tr class="bg-0" data-group="f-25">
+          <th colspan="4">
+            [+] C:\FloworxInvite\backend\routes\passwordReset.js
+            <span>0 problems</span>
+          </th>
+        </tr>
+
+        <tr class="bg-0" data-group="f-26">
+          <th colspan="4">
+            [+] C:\FloworxInvite\backend\routes\recovery.js
+            <span>0 problems</span>
+          </th>
+        </tr>
+
+        <tr class="bg-0" data-group="f-27">
+          <th colspan="4">
+            [+] C:\FloworxInvite\backend\routes\workflows.js
+            <span>0 problems</span>
+          </th>
+        </tr>
+
+        <tr class="bg-0" data-group="f-28">
+          <th colspan="4">
+            [+] C:\FloworxInvite\backend\scheduler\n8nScheduler.js
+            <span>0 problems</span>
+          </th>
+        </tr>
+
+        <tr class="bg-2" data-group="f-29">
+          <th colspan="4">
+            [+] C:\FloworxInvite\backend\scripts\quality-check.js
+            <span>20 problems (20 errors, 0 warnings)</span>
+          </th>
+        </tr>
+        <tr style="display: none" class="f-29">
+          <td>8:19</td>
+          <td class="clr-2">Error</td>
+          <td>&#39;spawn&#39; is assigned a value but never used. Allowed unused vars must match /^_/u.</td>
+          <td>
+            <a href="https://eslint.org/docs/latest/rules/no-unused-vars" target="_blank" rel="noopener noreferrer"
+              >no-unused-vars</a
+            >
+          </td>
+        </tr>
+
+        <tr style="display: none" class="f-29">
+          <td>11:7</td>
+          <td class="clr-2">Error</td>
+          <td>&#39;colors&#39; is assigned a value but never used. Allowed unused vars must match /^_/u.</td>
+          <td>
+            <a href="https://eslint.org/docs/latest/rules/no-unused-vars" target="_blank" rel="noopener noreferrer"
+              >no-unused-vars</a
+            >
+          </td>
+        </tr>
+
+        <tr style="display: none" class="f-29">
+          <td>29:1</td>
+          <td class="clr-2">Error</td>
+          <td>Expected indentation of 2 spaces but found 4.</td>
+          <td>
+            <a href="https://eslint.org/docs/latest/rules/indent" target="_blank" rel="noopener noreferrer">indent</a>
+          </td>
+        </tr>
+
+        <tr style="display: none" class="f-29">
+          <td>30:1</td>
+          <td class="clr-2">Error</td>
+          <td>Expected indentation of 4 spaces but found 6.</td>
+          <td>
+            <a href="https://eslint.org/docs/latest/rules/indent" target="_blank" rel="noopener noreferrer">indent</a>
+          </td>
+        </tr>
+
+        <tr style="display: none" class="f-29">
+          <td>31:1</td>
+          <td class="clr-2">Error</td>
+          <td>Expected indentation of 4 spaces but found 6.</td>
+          <td>
+            <a href="https://eslint.org/docs/latest/rules/indent" target="_blank" rel="noopener noreferrer">indent</a>
+          </td>
+        </tr>
+
+        <tr style="display: none" class="f-29">
+          <td>32:1</td>
+          <td class="clr-2">Error</td>
+          <td>Expected indentation of 2 spaces but found 4.</td>
+          <td>
+            <a href="https://eslint.org/docs/latest/rules/indent" target="_blank" rel="noopener noreferrer">indent</a>
+          </td>
+        </tr>
+
+        <tr style="display: none" class="f-29">
+          <td>33:1</td>
+          <td class="clr-2">Error</td>
+          <td>Expected indentation of 4 spaces but found 6.</td>
+          <td>
+            <a href="https://eslint.org/docs/latest/rules/indent" target="_blank" rel="noopener noreferrer">indent</a>
+          </td>
+        </tr>
+
+        <tr style="display: none" class="f-29">
+          <td>34:1</td>
+          <td class="clr-2">Error</td>
+          <td>Expected indentation of 4 spaces but found 6.</td>
+          <td>
+            <a href="https://eslint.org/docs/latest/rules/indent" target="_blank" rel="noopener noreferrer">indent</a>
+          </td>
+        </tr>
+
+        <tr style="display: none" class="f-29">
+          <td>35:1</td>
+          <td class="clr-2">Error</td>
+          <td>Expected indentation of 2 spaces but found 4.</td>
+          <td>
+            <a href="https://eslint.org/docs/latest/rules/indent" target="_blank" rel="noopener noreferrer">indent</a>
+          </td>
+        </tr>
+
+        <tr style="display: none" class="f-29">
+          <td>36:1</td>
+          <td class="clr-2">Error</td>
+          <td>Expected indentation of 4 spaces but found 6.</td>
+          <td>
+            <a href="https://eslint.org/docs/latest/rules/indent" target="_blank" rel="noopener noreferrer">indent</a>
+          </td>
+        </tr>
+
+        <tr style="display: none" class="f-29">
+          <td>37:1</td>
+          <td class="clr-2">Error</td>
+          <td>Expected indentation of 4 spaces but found 6.</td>
+          <td>
+            <a href="https://eslint.org/docs/latest/rules/indent" target="_blank" rel="noopener noreferrer">indent</a>
+          </td>
+        </tr>
+
+        <tr style="display: none" class="f-29">
+          <td>38:1</td>
+          <td class="clr-2">Error</td>
+          <td>Expected indentation of 2 spaces but found 4.</td>
+          <td>
+            <a href="https://eslint.org/docs/latest/rules/indent" target="_blank" rel="noopener noreferrer">indent</a>
+          </td>
+        </tr>
+
+        <tr style="display: none" class="f-29">
+          <td>39:1</td>
+          <td class="clr-2">Error</td>
+          <td>Expected indentation of 2 spaces but found 4.</td>
+          <td>
+            <a href="https://eslint.org/docs/latest/rules/indent" target="_blank" rel="noopener noreferrer">indent</a>
+          </td>
+        </tr>
+
+        <tr style="display: none" class="f-29">
+          <td>40:1</td>
+          <td class="clr-2">Error</td>
+          <td>Expected indentation of 4 spaces but found 6.</td>
+          <td>
+            <a href="https://eslint.org/docs/latest/rules/indent" target="_blank" rel="noopener noreferrer">indent</a>
+          </td>
+        </tr>
+
+        <tr style="display: none" class="f-29">
+          <td>41:1</td>
+          <td class="clr-2">Error</td>
+          <td>Expected indentation of 4 spaces but found 6.</td>
+          <td>
+            <a href="https://eslint.org/docs/latest/rules/indent" target="_blank" rel="noopener noreferrer">indent</a>
+          </td>
+        </tr>
+
+        <tr style="display: none" class="f-29">
+          <td>83:9</td>
+          <td class="clr-2">Error</td>
+          <td>&#39;htmlResult&#39; is assigned a value but never used. Allowed unused vars must match /^_/u.</td>
+          <td>
+            <a href="https://eslint.org/docs/latest/rules/no-unused-vars" target="_blank" rel="noopener noreferrer"
+              >no-unused-vars</a
+            >
+          </td>
+        </tr>
+
+        <tr style="display: none" class="f-29">
+          <td>146:9</td>
+          <td class="clr-2">Error</td>
+          <td>&#39;auditResult&#39; is assigned a value but never used. Allowed unused vars must match /^_/u.</td>
+          <td>
+            <a href="https://eslint.org/docs/latest/rules/no-unused-vars" target="_blank" rel="noopener noreferrer"
+              >no-unused-vars</a
+            >
+          </td>
+        </tr>
+
+        <tr style="display: none" class="f-29">
+          <td>278:35</td>
+          <td class="clr-2">Error</td>
+          <td>Expected { after &#39;if&#39; condition.</td>
+          <td>
+            <a href="https://eslint.org/docs/latest/rules/curly" target="_blank" rel="noopener noreferrer">curly</a>
+          </td>
+        </tr>
+
+        <tr style="display: none" class="f-29">
+          <td>279:37</td>
+          <td class="clr-2">Error</td>
+          <td>Expected { after &#39;if&#39; condition.</td>
+          <td>
+            <a href="https://eslint.org/docs/latest/rules/curly" target="_blank" rel="noopener noreferrer">curly</a>
+          </td>
+        </tr>
+
+        <tr style="display: none" class="f-29">
+          <td>283:23</td>
+          <td class="clr-2">Error</td>
+          <td>Async arrow function has no &#39;await&#39; expression.</td>
+          <td>
+            <a href="https://eslint.org/docs/latest/rules/require-await" target="_blank" rel="noopener noreferrer"
+              >require-await</a
+            >
+          </td>
+        </tr>
+
+        <tr class="bg-2" data-group="f-30">
+          <th colspan="4">
+            [+] C:\FloworxInvite\backend\scripts\test-deployment.js
+            <span>14 problems (14 errors, 0 warnings)</span>
+          </th>
+        </tr>
+        <tr style="display: none" class="f-30">
+          <td>9:7</td>
+          <td class="clr-2">Error</td>
+          <td>&#39;colors&#39; is assigned a value but never used. Allowed unused vars must match /^_/u.</td>
+          <td>
+            <a href="https://eslint.org/docs/latest/rules/no-unused-vars" target="_blank" rel="noopener noreferrer"
+              >no-unused-vars</a
+            >
+          </td>
+        </tr>
+
+        <tr style="display: none" class="f-30">
+          <td>25:1</td>
+          <td class="clr-2">Error</td>
+          <td>Expected indentation of 2 spaces but found 4.</td>
+          <td>
+            <a href="https://eslint.org/docs/latest/rules/indent" target="_blank" rel="noopener noreferrer">indent</a>
+          </td>
+        </tr>
+
+        <tr style="display: none" class="f-30">
+          <td>26:1</td>
+          <td class="clr-2">Error</td>
+          <td>Expected indentation of 4 spaces but found 6.</td>
+          <td>
+            <a href="https://eslint.org/docs/latest/rules/indent" target="_blank" rel="noopener noreferrer">indent</a>
+          </td>
+        </tr>
+
+        <tr style="display: none" class="f-30">
+          <td>27:1</td>
+          <td class="clr-2">Error</td>
+          <td>Expected indentation of 4 spaces but found 6.</td>
+          <td>
+            <a href="https://eslint.org/docs/latest/rules/indent" target="_blank" rel="noopener noreferrer">indent</a>
+          </td>
+        </tr>
+
+        <tr style="display: none" class="f-30">
+          <td>28:1</td>
+          <td class="clr-2">Error</td>
+          <td>Expected indentation of 2 spaces but found 4.</td>
+          <td>
+            <a href="https://eslint.org/docs/latest/rules/indent" target="_blank" rel="noopener noreferrer">indent</a>
+          </td>
+        </tr>
+
+        <tr style="display: none" class="f-30">
+          <td>29:1</td>
+          <td class="clr-2">Error</td>
+          <td>Expected indentation of 4 spaces but found 6.</td>
+          <td>
+            <a href="https://eslint.org/docs/latest/rules/indent" target="_blank" rel="noopener noreferrer">indent</a>
+          </td>
+        </tr>
+
+        <tr style="display: none" class="f-30">
+          <td>30:1</td>
+          <td class="clr-2">Error</td>
+          <td>Expected indentation of 4 spaces but found 6.</td>
+          <td>
+            <a href="https://eslint.org/docs/latest/rules/indent" target="_blank" rel="noopener noreferrer">indent</a>
+          </td>
+        </tr>
+
+        <tr style="display: none" class="f-30">
+          <td>31:1</td>
+          <td class="clr-2">Error</td>
+          <td>Expected indentation of 2 spaces but found 4.</td>
+          <td>
+            <a href="https://eslint.org/docs/latest/rules/indent" target="_blank" rel="noopener noreferrer">indent</a>
+          </td>
+        </tr>
+
+        <tr style="display: none" class="f-30">
+          <td>32:1</td>
+          <td class="clr-2">Error</td>
+          <td>Expected indentation of 4 spaces but found 6.</td>
+          <td>
+            <a href="https://eslint.org/docs/latest/rules/indent" target="_blank" rel="noopener noreferrer">indent</a>
+          </td>
+        </tr>
+
+        <tr style="display: none" class="f-30">
+          <td>33:1</td>
+          <td class="clr-2">Error</td>
+          <td>Expected indentation of 4 spaces but found 6.</td>
+          <td>
+            <a href="https://eslint.org/docs/latest/rules/indent" target="_blank" rel="noopener noreferrer">indent</a>
+          </td>
+        </tr>
+
+        <tr style="display: none" class="f-30">
+          <td>34:1</td>
+          <td class="clr-2">Error</td>
+          <td>Expected indentation of 2 spaces but found 4.</td>
+          <td>
+            <a href="https://eslint.org/docs/latest/rules/indent" target="_blank" rel="noopener noreferrer">indent</a>
+          </td>
+        </tr>
+
+        <tr style="display: none" class="f-30">
+          <td>35:1</td>
+          <td class="clr-2">Error</td>
+          <td>Expected indentation of 2 spaces but found 4.</td>
+          <td>
+            <a href="https://eslint.org/docs/latest/rules/indent" target="_blank" rel="noopener noreferrer">indent</a>
+          </td>
+        </tr>
+
+        <tr style="display: none" class="f-30">
+          <td>36:1</td>
+          <td class="clr-2">Error</td>
+          <td>Expected indentation of 4 spaces but found 6.</td>
+          <td>
+            <a href="https://eslint.org/docs/latest/rules/indent" target="_blank" rel="noopener noreferrer">indent</a>
+          </td>
+        </tr>
+
+        <tr style="display: none" class="f-30">
+          <td>37:1</td>
+          <td class="clr-2">Error</td>
+          <td>Expected indentation of 4 spaces but found 6.</td>
+          <td>
+            <a href="https://eslint.org/docs/latest/rules/indent" target="_blank" rel="noopener noreferrer">indent</a>
+          </td>
+        </tr>
+
+        <tr class="bg-0" data-group="f-31">
+          <th colspan="4">
+            [+] C:\FloworxInvite\backend\server.js
+            <span>0 problems</span>
+          </th>
+        </tr>
+
+        <tr class="bg-2" data-group="f-32">
+          <th colspan="4">
+            [+] C:\FloworxInvite\backend\services\accountRecoveryService.js
+            <span>4 problems (4 errors, 0 warnings)</span>
+          </th>
+        </tr>
+        <tr style="display: none" class="f-32">
+          <td>323:3</td>
+          <td class="clr-2">Error</td>
+          <td>Async method &#39;handleEmergencyAccess&#39; has no &#39;await&#39; expression.</td>
+          <td>
+            <a href="https://eslint.org/docs/latest/rules/require-await" target="_blank" rel="noopener noreferrer"
+              >require-await</a
+            >
+          </td>
+        </tr>
+
+        <tr style="display: none" class="f-32">
+          <td>323:31</td>
+          <td class="clr-2">Error</td>
+          <td>&#39;client&#39; is defined but never used. Allowed unused args must match /^_/u.</td>
+          <td>
+            <a href="https://eslint.org/docs/latest/rules/no-unused-vars" target="_blank" rel="noopener noreferrer"
+              >no-unused-vars</a
+            >
+          </td>
+        </tr>
+
+        <tr style="display: none" class="f-32">
+          <td>323:39</td>
+          <td class="clr-2">Error</td>
+          <td>&#39;tokenData&#39; is defined but never used. Allowed unused args must match /^_/u.</td>
+          <td>
+            <a href="https://eslint.org/docs/latest/rules/no-unused-vars" target="_blank" rel="noopener noreferrer"
+              >no-unused-vars</a
+            >
+          </td>
+        </tr>
+
+        <tr style="display: none" class="f-32">
+          <td>323:50</td>
+          <td class="clr-2">Error</td>
+          <td>&#39;actions&#39; is defined but never used. Allowed unused args must match /^_/u.</td>
+          <td>
+            <a href="https://eslint.org/docs/latest/rules/no-unused-vars" target="_blank" rel="noopener noreferrer"
+              >no-unused-vars</a
+            >
+          </td>
+        </tr>
+
+        <tr class="bg-2" data-group="f-33">
+          <th colspan="4">
+            [+] C:\FloworxInvite\backend\services\analyticsService.js
+            <span>7 problems (7 errors, 0 warnings)</span>
+          </th>
+        </tr>
+        <tr style="display: none" class="f-33">
+          <td>521:29</td>
+          <td class="clr-2">Error</td>
+          <td>&#39;userId&#39; is defined but never used. Allowed unused args must match /^_/u.</td>
+          <td>
+            <a href="https://eslint.org/docs/latest/rules/no-unused-vars" target="_blank" rel="noopener noreferrer"
+              >no-unused-vars</a
+            >
+          </td>
+        </tr>
+
+        <tr style="display: none" class="f-33">
+          <td>521:37</td>
+          <td class="clr-2">Error</td>
+          <td>&#39;eventType&#39; is defined but never used. Allowed unused args must match /^_/u.</td>
+          <td>
+            <a href="https://eslint.org/docs/latest/rules/no-unused-vars" target="_blank" rel="noopener noreferrer"
+              >no-unused-vars</a
+            >
+          </td>
+        </tr>
+
+        <tr style="display: none" class="f-33">
+          <td>521:48</td>
+          <td class="clr-2">Error</td>
+          <td>&#39;eventData&#39; is defined but never used. Allowed unused args must match /^_/u.</td>
+          <td>
+            <a href="https://eslint.org/docs/latest/rules/no-unused-vars" target="_blank" rel="noopener noreferrer"
+              >no-unused-vars</a
+            >
+          </td>
+        </tr>
+
+        <tr style="display: none" class="f-33">
+          <td>526:29</td>
+          <td class="clr-2">Error</td>
+          <td>&#39;step&#39; is defined but never used. Allowed unused args must match /^_/u.</td>
+          <td>
+            <a href="https://eslint.org/docs/latest/rules/no-unused-vars" target="_blank" rel="noopener noreferrer"
+              >no-unused-vars</a
+            >
+          </td>
+        </tr>
+
+        <tr style="display: none" class="f-33">
+          <td>526:35</td>
+          <td class="clr-2">Error</td>
+          <td>&#39;status&#39; is defined but never used. Allowed unused args must match /^_/u.</td>
+          <td>
+            <a href="https://eslint.org/docs/latest/rules/no-unused-vars" target="_blank" rel="noopener noreferrer"
+              >no-unused-vars</a
+            >
+          </td>
+        </tr>
+
+        <tr style="display: none" class="f-33">
+          <td>526:43</td>
+          <td class="clr-2">Error</td>
+          <td>&#39;duration&#39; is defined but never used. Allowed unused args must match /^_/u.</td>
+          <td>
+            <a href="https://eslint.org/docs/latest/rules/no-unused-vars" target="_blank" rel="noopener noreferrer"
+              >no-unused-vars</a
+            >
+          </td>
+        </tr>
+
+        <tr style="display: none" class="f-33">
+          <td>531:32</td>
+          <td class="clr-2">Error</td>
+          <td>&#39;step&#39; is defined but never used. Allowed unused args must match /^_/u.</td>
+          <td>
+            <a href="https://eslint.org/docs/latest/rules/no-unused-vars" target="_blank" rel="noopener noreferrer"
+              >no-unused-vars</a
+            >
+          </td>
+        </tr>
+
+        <tr class="bg-2" data-group="f-34">
+          <th colspan="4">
+            [+] C:\FloworxInvite\backend\services\emailService.js
+            <span>1 problem (1 error, 0 warnings)</span>
+          </th>
+        </tr>
+        <tr style="display: none" class="f-34">
+          <td>251:49</td>
+          <td class="clr-2">Error</td>
+          <td>&#39;expiryMinutes&#39; is assigned a value but never used. Allowed unused args must match /^_/u.</td>
+          <td>
+            <a href="https://eslint.org/docs/latest/rules/no-unused-vars" target="_blank" rel="noopener noreferrer"
+              >no-unused-vars</a
+            >
+          </td>
+        </tr>
+
+        <tr class="bg-2" data-group="f-35">
+          <th colspan="4">
+            [+] C:\FloworxInvite\backend\services\encryptionService.js
+            <span>3 problems (3 errors, 0 warnings)</span>
+          </th>
+        </tr>
+        <tr style="display: none" class="f-35">
+          <td>47:3</td>
+          <td class="clr-2">Error</td>
+          <td>Async method &#39;encrypt&#39; has no &#39;await&#39; expression.</td>
+          <td>
+            <a href="https://eslint.org/docs/latest/rules/require-await" target="_blank" rel="noopener noreferrer"
+              >require-await</a
+            >
+          </td>
+        </tr>
+
+        <tr style="display: none" class="f-35">
+          <td>84:3</td>
+          <td class="clr-2">Error</td>
+          <td>Async method &#39;decrypt&#39; has no &#39;await&#39; expression.</td>
+          <td>
+            <a href="https://eslint.org/docs/latest/rules/require-await" target="_blank" rel="noopener noreferrer"
+              >require-await</a
+            >
+          </td>
+        </tr>
+
+        <tr style="display: none" class="f-35">
+          <td>215:14</td>
+          <td class="clr-2">Error</td>
+          <td>&#39;error&#39; is defined but never used. Allowed unused caught errors must match /^_/u.</td>
+          <td>
+            <a href="https://eslint.org/docs/latest/rules/no-unused-vars" target="_blank" rel="noopener noreferrer"
+              >no-unused-vars</a
+            >
+          </td>
+        </tr>
+
+        <tr class="bg-0" data-group="f-36">
+          <th colspan="4">
+            [+] C:\FloworxInvite\backend\services\gmailService.js
+            <span>0 problems</span>
+          </th>
+        </tr>
+
+        <tr class="bg-2" data-group="f-37">
+          <th colspan="4">
+            [+] C:\FloworxInvite\backend\services\n8nService.js
+            <span>5 problems (5 errors, 0 warnings)</span>
+          </th>
+        </tr>
+        <tr style="display: none" class="f-37">
+          <td>3:7</td>
+          <td class="clr-2">Error</td>
+          <td>
+            &#39;transactionService&#39; is assigned a value but never used. Allowed unused vars must match /^_/u.
+          </td>
+          <td>
+            <a href="https://eslint.org/docs/latest/rules/no-unused-vars" target="_blank" rel="noopener noreferrer"
+              >no-unused-vars</a
+            >
+          </td>
+        </tr>
+
+        <tr style="display: none" class="f-37">
+          <td>111:13</td>
+          <td class="clr-2">Error</td>
+          <td>&#39;response&#39; is assigned a value but never used. Allowed unused vars must match /^_/u.</td>
+          <td>
+            <a href="https://eslint.org/docs/latest/rules/no-unused-vars" target="_blank" rel="noopener noreferrer"
+              >no-unused-vars</a
+            >
+          </td>
+        </tr>
+
+        <tr style="display: none" class="f-37">
+          <td>133:13</td>
+          <td class="clr-2">Error</td>
+          <td>&#39;response&#39; is assigned a value but never used. Allowed unused vars must match /^_/u.</td>
+          <td>
+            <a href="https://eslint.org/docs/latest/rules/no-unused-vars" target="_blank" rel="noopener noreferrer"
+              >no-unused-vars</a
+            >
+          </td>
+        </tr>
+
+        <tr style="display: none" class="f-37">
+          <td>219:3</td>
+          <td class="clr-2">Error</td>
+          <td>Async method &#39;getMasterTemplate&#39; has no &#39;await&#39; expression.</td>
+          <td>
+            <a href="https://eslint.org/docs/latest/rules/require-await" target="_blank" rel="noopener noreferrer"
+              >require-await</a
+            >
+          </td>
+        </tr>
+
+        <tr style="display: none" class="f-37">
+          <td>346:3</td>
+          <td class="clr-2">Error</td>
+          <td>Async method &#39;customizeWorkflow&#39; has no &#39;await&#39; expression.</td>
+          <td>
+            <a href="https://eslint.org/docs/latest/rules/require-await" target="_blank" rel="noopener noreferrer"
+              >require-await</a
+            >
+          </td>
+        </tr>
+
+        <tr class="bg-2" data-group="f-38">
+          <th colspan="4">
+            [+] C:\FloworxInvite\backend\services\onboardingSessionService.js
+            <span>1 problem (1 error, 0 warnings)</span>
+          </th>
+        </tr>
+        <tr style="display: none" class="f-38">
+          <td>300:35</td>
+          <td class="clr-2">Error</td>
+          <td>&#39;error&#39; is defined but never used. Allowed unused args must match /^_/u.</td>
+          <td>
+            <a href="https://eslint.org/docs/latest/rules/no-unused-vars" target="_blank" rel="noopener noreferrer"
+              >no-unused-vars</a
+            >
+          </td>
+        </tr>
+
+        <tr class="bg-2" data-group="f-39">
+          <th colspan="4">
+            [+] C:\FloworxInvite\backend\services\passwordResetService.js
+            <span>1 problem (1 error, 0 warnings)</span>
+          </th>
+        </tr>
+        <tr style="display: none" class="f-39">
+          <td>569:3</td>
+          <td class="clr-2">Error</td>
+          <td>Duplicate name &#39;logSecurityEvent&#39;.</td>
+          <td>
+            <a
+              href="https://eslint.org/docs/latest/rules/no-dupe-class-members"
+              target="_blank"
+              rel="noopener noreferrer"
+              >no-dupe-class-members</a
+            >
+          </td>
+        </tr>
+
+        <tr class="bg-0" data-group="f-40">
+          <th colspan="4">
+            [+] C:\FloworxInvite\backend\services\transactionService.js
+            <span>0 problems</span>
+          </th>
+        </tr>
+
+        <tr class="bg-0" data-group="f-41">
+          <th colspan="4">
+            [+] C:\FloworxInvite\backend\test-db.js
+            <span>0 problems</span>
+          </th>
+        </tr>
+
+        <tr class="bg-2" data-group="f-42">
+          <th colspan="4">
+            [+] C:\FloworxInvite\backend\tests\middleware\errorHandler.test.js
+            <span>66 problems (66 errors, 0 warnings)</span>
+          </th>
+        </tr>
+        <tr style="display: none" class="f-42">
+          <td>14:3</td>
+          <td class="clr-2">Error</td>
+          <td>
+            &#39;AuthorizationError&#39; is assigned a value but never used. Allowed unused vars must match /^_/u.
+          </td>
+          <td>
+            <a href="https://eslint.org/docs/latest/rules/no-unused-vars" target="_blank" rel="noopener noreferrer"
+              >no-unused-vars</a
+            >
+          </td>
+        </tr>
+
+        <tr style="display: none" class="f-42">
+          <td>15:3</td>
+          <td class="clr-2">Error</td>
+          <td>&#39;NotFoundError&#39; is assigned a value but never used. Allowed unused vars must match /^_/u.</td>
+          <td>
+            <a href="https://eslint.org/docs/latest/rules/no-unused-vars" target="_blank" rel="noopener noreferrer"
+              >no-unused-vars</a
+            >
+          </td>
+        </tr>
+
+        <tr style="display: none" class="f-42">
+          <td>16:3</td>
+          <td class="clr-2">Error</td>
+          <td>&#39;ConflictError&#39; is assigned a value but never used. Allowed unused vars must match /^_/u.</td>
+          <td>
+            <a href="https://eslint.org/docs/latest/rules/no-unused-vars" target="_blank" rel="noopener noreferrer"
+              >no-unused-vars</a
+            >
+          </td>
+        </tr>
+
+        <tr style="display: none" class="f-42">
+          <td>17:3</td>
+          <td class="clr-2">Error</td>
+          <td>&#39;RateLimitError&#39; is assigned a value but never used. Allowed unused vars must match /^_/u.</td>
+          <td>
+            <a href="https://eslint.org/docs/latest/rules/no-unused-vars" target="_blank" rel="noopener noreferrer"
+              >no-unused-vars</a
+            >
+          </td>
+        </tr>
+
+        <tr style="display: none" class="f-42">
+          <td>22:1</td>
+          <td class="clr-2">Error</td>
+          <td>&#39;describe&#39; is not defined.</td>
+          <td>
+            <a href="https://eslint.org/docs/latest/rules/no-undef" target="_blank" rel="noopener noreferrer"
+              >no-undef</a
+            >
+          </td>
+        </tr>
+
+        <tr style="display: none" class="f-42">
+          <td>25:3</td>
+          <td class="clr-2">Error</td>
+          <td>&#39;beforeEach&#39; is not defined.</td>
+          <td>
+            <a href="https://eslint.org/docs/latest/rules/no-undef" target="_blank" rel="noopener noreferrer"
+              >no-undef</a
+            >
+          </td>
+        </tr>
+
+        <tr style="display: none" class="f-42">
+          <td>30:3</td>
+          <td class="clr-2">Error</td>
+          <td>&#39;describe&#39; is not defined.</td>
+          <td>
+            <a href="https://eslint.org/docs/latest/rules/no-undef" target="_blank" rel="noopener noreferrer"
+              >no-undef</a
+            >
+          </td>
+        </tr>
+
+        <tr style="display: none" class="f-42">
+          <td>31:5</td>
+          <td class="clr-2">Error</td>
+          <td>&#39;test&#39; is not defined.</td>
+          <td>
+            <a href="https://eslint.org/docs/latest/rules/no-undef" target="_blank" rel="noopener noreferrer"
+              >no-undef</a
+            >
+          </td>
+        </tr>
+
+        <tr style="display: none" class="f-42">
+          <td>34:7</td>
+          <td class="clr-2">Error</td>
+          <td>&#39;expect&#39; is not defined.</td>
+          <td>
+            <a href="https://eslint.org/docs/latest/rules/no-undef" target="_blank" rel="noopener noreferrer"
+              >no-undef</a
+            >
+          </td>
+        </tr>
+
+        <tr style="display: none" class="f-42">
+          <td>35:7</td>
+          <td class="clr-2">Error</td>
+          <td>&#39;expect&#39; is not defined.</td>
+          <td>
+            <a href="https://eslint.org/docs/latest/rules/no-undef" target="_blank" rel="noopener noreferrer"
+              >no-undef</a
+            >
+          </td>
+        </tr>
+
+        <tr style="display: none" class="f-42">
+          <td>36:7</td>
+          <td class="clr-2">Error</td>
+          <td>&#39;expect&#39; is not defined.</td>
+          <td>
+            <a href="https://eslint.org/docs/latest/rules/no-undef" target="_blank" rel="noopener noreferrer"
+              >no-undef</a
+            >
+          </td>
+        </tr>
+
+        <tr style="display: none" class="f-42">
+          <td>37:7</td>
+          <td class="clr-2">Error</td>
+          <td>&#39;expect&#39; is not defined.</td>
+          <td>
+            <a href="https://eslint.org/docs/latest/rules/no-undef" target="_blank" rel="noopener noreferrer"
+              >no-undef</a
+            >
+          </td>
+        </tr>
+
+        <tr style="display: none" class="f-42">
+          <td>38:7</td>
+          <td class="clr-2">Error</td>
+          <td>&#39;expect&#39; is not defined.</td>
+          <td>
+            <a href="https://eslint.org/docs/latest/rules/no-undef" target="_blank" rel="noopener noreferrer"
+              >no-undef</a
+            >
+          </td>
+        </tr>
+
+        <tr style="display: none" class="f-42">
+          <td>41:5</td>
+          <td class="clr-2">Error</td>
+          <td>&#39;test&#39; is not defined.</td>
+          <td>
+            <a href="https://eslint.org/docs/latest/rules/no-undef" target="_blank" rel="noopener noreferrer"
+              >no-undef</a
+            >
+          </td>
+        </tr>
+
+        <tr style="display: none" class="f-42">
+          <td>44:7</td>
+          <td class="clr-2">Error</td>
+          <td>&#39;expect&#39; is not defined.</td>
+          <td>
+            <a href="https://eslint.org/docs/latest/rules/no-undef" target="_blank" rel="noopener noreferrer"
+              >no-undef</a
+            >
+          </td>
+        </tr>
+
+        <tr style="display: none" class="f-42">
+          <td>45:7</td>
+          <td class="clr-2">Error</td>
+          <td>&#39;expect&#39; is not defined.</td>
+          <td>
+            <a href="https://eslint.org/docs/latest/rules/no-undef" target="_blank" rel="noopener noreferrer"
+              >no-undef</a
+            >
+          </td>
+        </tr>
+
+        <tr style="display: none" class="f-42">
+          <td>46:7</td>
+          <td class="clr-2">Error</td>
+          <td>&#39;expect&#39; is not defined.</td>
+          <td>
+            <a href="https://eslint.org/docs/latest/rules/no-undef" target="_blank" rel="noopener noreferrer"
+              >no-undef</a
+            >
+          </td>
+        </tr>
+
+        <tr style="display: none" class="f-42">
+          <td>49:5</td>
+          <td class="clr-2">Error</td>
+          <td>&#39;test&#39; is not defined.</td>
+          <td>
+            <a href="https://eslint.org/docs/latest/rules/no-undef" target="_blank" rel="noopener noreferrer"
+              >no-undef</a
+            >
+          </td>
+        </tr>
+
+        <tr style="display: none" class="f-42">
+          <td>52:7</td>
+          <td class="clr-2">Error</td>
+          <td>&#39;expect&#39; is not defined.</td>
+          <td>
+            <a href="https://eslint.org/docs/latest/rules/no-undef" target="_blank" rel="noopener noreferrer"
+              >no-undef</a
+            >
+          </td>
+        </tr>
+
+        <tr style="display: none" class="f-42">
+          <td>53:7</td>
+          <td class="clr-2">Error</td>
+          <td>&#39;expect&#39; is not defined.</td>
+          <td>
+            <a href="https://eslint.org/docs/latest/rules/no-undef" target="_blank" rel="noopener noreferrer"
+              >no-undef</a
+            >
+          </td>
+        </tr>
+
+        <tr style="display: none" class="f-42">
+          <td>54:7</td>
+          <td class="clr-2">Error</td>
+          <td>&#39;expect&#39; is not defined.</td>
+          <td>
+            <a href="https://eslint.org/docs/latest/rules/no-undef" target="_blank" rel="noopener noreferrer"
+              >no-undef</a
+            >
+          </td>
+        </tr>
+
+        <tr style="display: none" class="f-42">
+          <td>57:5</td>
+          <td class="clr-2">Error</td>
+          <td>&#39;test&#39; is not defined.</td>
+          <td>
+            <a href="https://eslint.org/docs/latest/rules/no-undef" target="_blank" rel="noopener noreferrer"
+              >no-undef</a
+            >
+          </td>
+        </tr>
+
+        <tr style="display: none" class="f-42">
+          <td>60:7</td>
+          <td class="clr-2">Error</td>
+          <td>&#39;expect&#39; is not defined.</td>
+          <td>
+            <a href="https://eslint.org/docs/latest/rules/no-undef" target="_blank" rel="noopener noreferrer"
+              >no-undef</a
+            >
+          </td>
+        </tr>
+
+        <tr style="display: none" class="f-42">
+          <td>61:7</td>
+          <td class="clr-2">Error</td>
+          <td>&#39;expect&#39; is not defined.</td>
+          <td>
+            <a href="https://eslint.org/docs/latest/rules/no-undef" target="_blank" rel="noopener noreferrer"
+              >no-undef</a
+            >
+          </td>
+        </tr>
+
+        <tr style="display: none" class="f-42">
+          <td>65:3</td>
+          <td class="clr-2">Error</td>
+          <td>&#39;describe&#39; is not defined.</td>
+          <td>
+            <a href="https://eslint.org/docs/latest/rules/no-undef" target="_blank" rel="noopener noreferrer"
+              >no-undef</a
+            >
+          </td>
+        </tr>
+
+        <tr style="display: none" class="f-42">
+          <td>66:5</td>
+          <td class="clr-2">Error</td>
+          <td>&#39;beforeEach&#39; is not defined.</td>
+          <td>
+            <a href="https://eslint.org/docs/latest/rules/no-undef" target="_blank" rel="noopener noreferrer"
+              >no-undef</a
+            >
+          </td>
+        </tr>
+
+        <tr style="display: none" class="f-42">
+          <td>88:5</td>
+          <td class="clr-2">Error</td>
+          <td>&#39;test&#39; is not defined.</td>
+          <td>
+            <a href="https://eslint.org/docs/latest/rules/no-undef" target="_blank" rel="noopener noreferrer"
+              >no-undef</a
+            >
+          </td>
+        </tr>
+
+        <tr style="display: none" class="f-42">
+          <td>93:7</td>
+          <td class="clr-2">Error</td>
+          <td>&#39;expect&#39; is not defined.</td>
+          <td>
+            <a href="https://eslint.org/docs/latest/rules/no-undef" target="_blank" rel="noopener noreferrer"
+              >no-undef</a
+            >
+          </td>
+        </tr>
+
+        <tr style="display: none" class="f-42">
+          <td>104:5</td>
+          <td class="clr-2">Error</td>
+          <td>&#39;test&#39; is not defined.</td>
+          <td>
+            <a href="https://eslint.org/docs/latest/rules/no-undef" target="_blank" rel="noopener noreferrer"
+              >no-undef</a
+            >
+          </td>
+        </tr>
+
+        <tr style="display: none" class="f-42">
+          <td>109:7</td>
+          <td class="clr-2">Error</td>
+          <td>&#39;expect&#39; is not defined.</td>
+          <td>
+            <a href="https://eslint.org/docs/latest/rules/no-undef" target="_blank" rel="noopener noreferrer"
+              >no-undef</a
+            >
+          </td>
+        </tr>
+
+        <tr style="display: none" class="f-42">
+          <td>119:5</td>
+          <td class="clr-2">Error</td>
+          <td>&#39;test&#39; is not defined.</td>
+          <td>
+            <a href="https://eslint.org/docs/latest/rules/no-undef" target="_blank" rel="noopener noreferrer"
+              >no-undef</a
+            >
+          </td>
+        </tr>
+
+        <tr style="display: none" class="f-42">
+          <td>124:7</td>
+          <td class="clr-2">Error</td>
+          <td>&#39;expect&#39; is not defined.</td>
+          <td>
+            <a href="https://eslint.org/docs/latest/rules/no-undef" target="_blank" rel="noopener noreferrer"
+              >no-undef</a
+            >
+          </td>
+        </tr>
+
+        <tr style="display: none" class="f-42">
+          <td>134:5</td>
+          <td class="clr-2">Error</td>
+          <td>&#39;test&#39; is not defined.</td>
+          <td>
+            <a href="https://eslint.org/docs/latest/rules/no-undef" target="_blank" rel="noopener noreferrer"
+              >no-undef</a
+            >
+          </td>
+        </tr>
+
+        <tr style="display: none" class="f-42">
+          <td>142:7</td>
+          <td class="clr-2">Error</td>
+          <td>&#39;expect&#39; is not defined.</td>
+          <td>
+            <a href="https://eslint.org/docs/latest/rules/no-undef" target="_blank" rel="noopener noreferrer"
+              >no-undef</a
+            >
+          </td>
+        </tr>
+
+        <tr style="display: none" class="f-42">
+          <td>155:3</td>
+          <td class="clr-2">Error</td>
+          <td>&#39;describe&#39; is not defined.</td>
+          <td>
+            <a href="https://eslint.org/docs/latest/rules/no-undef" target="_blank" rel="noopener noreferrer"
+              >no-undef</a
+            >
+          </td>
+        </tr>
+
+        <tr style="display: none" class="f-42">
+          <td>156:5</td>
+          <td class="clr-2">Error</td>
+          <td>&#39;beforeEach&#39; is not defined.</td>
+          <td>
+            <a href="https://eslint.org/docs/latest/rules/no-undef" target="_blank" rel="noopener noreferrer"
+              >no-undef</a
+            >
+          </td>
+        </tr>
+
+        <tr style="display: none" class="f-42">
+          <td>157:68</td>
+          <td class="clr-2">Error</td>
+          <td>Async arrow function has no &#39;await&#39; expression.</td>
+          <td>
+            <a href="https://eslint.org/docs/latest/rules/require-await" target="_blank" rel="noopener noreferrer"
+              >require-await</a
+            >
+          </td>
+        </tr>
+
+        <tr style="display: none" class="f-42">
+          <td>161:56</td>
+          <td class="clr-2">Error</td>
+          <td>&#39;req&#39; is defined but never used. Allowed unused args must match /^_/u.</td>
+          <td>
+            <a href="https://eslint.org/docs/latest/rules/no-unused-vars" target="_blank" rel="noopener noreferrer"
+              >no-unused-vars</a
+            >
+          </td>
+        </tr>
+
+        <tr style="display: none" class="f-42">
+          <td>161:61</td>
+          <td class="clr-2">Error</td>
+          <td>&#39;res&#39; is defined but never used. Allowed unused args must match /^_/u.</td>
+          <td>
+            <a href="https://eslint.org/docs/latest/rules/no-unused-vars" target="_blank" rel="noopener noreferrer"
+              >no-unused-vars</a
+            >
+          </td>
+        </tr>
+
+        <tr style="display: none" class="f-42">
+          <td>161:66</td>
+          <td class="clr-2">Error</td>
+          <td>Async arrow function has no &#39;await&#39; expression.</td>
+          <td>
+            <a href="https://eslint.org/docs/latest/rules/require-await" target="_blank" rel="noopener noreferrer"
+              >require-await</a
+            >
+          </td>
+        </tr>
+
+        <tr style="display: none" class="f-42">
+          <td>165:68</td>
+          <td class="clr-2">Error</td>
+          <td>&#39;req&#39; is defined but never used. Allowed unused args must match /^_/u.</td>
+          <td>
+            <a href="https://eslint.org/docs/latest/rules/no-unused-vars" target="_blank" rel="noopener noreferrer"
+              >no-unused-vars</a
+            >
+          </td>
+        </tr>
+
+        <tr style="display: none" class="f-42">
+          <td>165:73</td>
+          <td class="clr-2">Error</td>
+          <td>&#39;res&#39; is defined but never used. Allowed unused args must match /^_/u.</td>
+          <td>
+            <a href="https://eslint.org/docs/latest/rules/no-unused-vars" target="_blank" rel="noopener noreferrer"
+              >no-unused-vars</a
+            >
+          </td>
+        </tr>
+
+        <tr style="display: none" class="f-42">
+          <td>172:5</td>
+          <td class="clr-2">Error</td>
+          <td>&#39;test&#39; is not defined.</td>
+          <td>
+            <a href="https://eslint.org/docs/latest/rules/no-undef" target="_blank" rel="noopener noreferrer"
+              >no-undef</a
+            >
+          </td>
+        </tr>
+
+        <tr style="display: none" class="f-42">
+          <td>177:7</td>
+          <td class="clr-2">Error</td>
+          <td>&#39;expect&#39; is not defined.</td>
+          <td>
+            <a href="https://eslint.org/docs/latest/rules/no-undef" target="_blank" rel="noopener noreferrer"
+              >no-undef</a
+            >
+          </td>
+        </tr>
+
+        <tr style="display: none" class="f-42">
+          <td>183:5</td>
+          <td class="clr-2">Error</td>
+          <td>&#39;test&#39; is not defined.</td>
+          <td>
+            <a href="https://eslint.org/docs/latest/rules/no-undef" target="_blank" rel="noopener noreferrer"
+              >no-undef</a
+            >
+          </td>
+        </tr>
+
+        <tr style="display: none" class="f-42">
+          <td>188:7</td>
+          <td class="clr-2">Error</td>
+          <td>&#39;expect&#39; is not defined.</td>
+          <td>
+            <a href="https://eslint.org/docs/latest/rules/no-undef" target="_blank" rel="noopener noreferrer"
+              >no-undef</a
+            >
+          </td>
+        </tr>
+
+        <tr style="display: none" class="f-42">
+          <td>189:7</td>
+          <td class="clr-2">Error</td>
+          <td>&#39;expect&#39; is not defined.</td>
+          <td>
+            <a href="https://eslint.org/docs/latest/rules/no-undef" target="_blank" rel="noopener noreferrer"
+              >no-undef</a
+            >
+          </td>
+        </tr>
+
+        <tr style="display: none" class="f-42">
+          <td>192:5</td>
+          <td class="clr-2">Error</td>
+          <td>&#39;test&#39; is not defined.</td>
+          <td>
+            <a href="https://eslint.org/docs/latest/rules/no-undef" target="_blank" rel="noopener noreferrer"
+              >no-undef</a
+            >
+          </td>
+        </tr>
+
+        <tr style="display: none" class="f-42">
+          <td>197:7</td>
+          <td class="clr-2">Error</td>
+          <td>&#39;expect&#39; is not defined.</td>
+          <td>
+            <a href="https://eslint.org/docs/latest/rules/no-undef" target="_blank" rel="noopener noreferrer"
+              >no-undef</a
+            >
+          </td>
+        </tr>
+
+        <tr style="display: none" class="f-42">
+          <td>201:3</td>
+          <td class="clr-2">Error</td>
+          <td>&#39;describe&#39; is not defined.</td>
+          <td>
+            <a href="https://eslint.org/docs/latest/rules/no-undef" target="_blank" rel="noopener noreferrer"
+              >no-undef</a
+            >
+          </td>
+        </tr>
+
+        <tr style="display: none" class="f-42">
+          <td>202:5</td>
+          <td class="clr-2">Error</td>
+          <td>&#39;beforeEach&#39; is not defined.</td>
+          <td>
+            <a href="https://eslint.org/docs/latest/rules/no-undef" target="_blank" rel="noopener noreferrer"
+              >no-undef</a
+            >
+          </td>
+        </tr>
+
+        <tr style="display: none" class="f-42">
+          <td>207:5</td>
+          <td class="clr-2">Error</td>
+          <td>&#39;test&#39; is not defined.</td>
+          <td>
+            <a href="https://eslint.org/docs/latest/rules/no-undef" target="_blank" rel="noopener noreferrer"
+              >no-undef</a
+            >
+          </td>
+        </tr>
+
+        <tr style="display: none" class="f-42">
+          <td>212:7</td>
+          <td class="clr-2">Error</td>
+          <td>&#39;expect&#39; is not defined.</td>
+          <td>
+            <a href="https://eslint.org/docs/latest/rules/no-undef" target="_blank" rel="noopener noreferrer"
+              >no-undef</a
+            >
+          </td>
+        </tr>
+
+        <tr style="display: none" class="f-42">
+          <td>223:3</td>
+          <td class="clr-2">Error</td>
+          <td>&#39;describe&#39; is not defined.</td>
+          <td>
+            <a href="https://eslint.org/docs/latest/rules/no-undef" target="_blank" rel="noopener noreferrer"
+              >no-undef</a
+            >
+          </td>
+        </tr>
+
+        <tr style="display: none" class="f-42">
+          <td>226:5</td>
+          <td class="clr-2">Error</td>
+          <td>&#39;beforeEach&#39; is not defined.</td>
+          <td>
+            <a href="https://eslint.org/docs/latest/rules/no-undef" target="_blank" rel="noopener noreferrer"
+              >no-undef</a
+            >
+          </td>
+        </tr>
+
+        <tr style="display: none" class="f-42">
+          <td>227:20</td>
+          <td class="clr-2">Error</td>
+          <td>&#39;jest&#39; is not defined.</td>
+          <td>
+            <a href="https://eslint.org/docs/latest/rules/no-undef" target="_blank" rel="noopener noreferrer"
+              >no-undef</a
+            >
+          </td>
+        </tr>
+
+        <tr style="display: none" class="f-42">
+          <td>239:5</td>
+          <td class="clr-2">Error</td>
+          <td>&#39;afterEach&#39; is not defined.</td>
+          <td>
+            <a href="https://eslint.org/docs/latest/rules/no-undef" target="_blank" rel="noopener noreferrer"
+              >no-undef</a
+            >
+          </td>
+        </tr>
+
+        <tr style="display: none" class="f-42">
+          <td>243:5</td>
+          <td class="clr-2">Error</td>
+          <td>&#39;test&#39; is not defined.</td>
+          <td>
+            <a href="https://eslint.org/docs/latest/rules/no-undef" target="_blank" rel="noopener noreferrer"
+              >no-undef</a
+            >
+          </td>
+        </tr>
+
+        <tr style="display: none" class="f-42">
+          <td>249:7</td>
+          <td class="clr-2">Error</td>
+          <td>&#39;expect&#39; is not defined.</td>
+          <td>
+            <a href="https://eslint.org/docs/latest/rules/no-undef" target="_blank" rel="noopener noreferrer"
+              >no-undef</a
+            >
+          </td>
+        </tr>
+
+        <tr style="display: none" class="f-42">
+          <td>250:9</td>
+          <td class="clr-2">Error</td>
+          <td>&#39;expect&#39; is not defined.</td>
+          <td>
+            <a href="https://eslint.org/docs/latest/rules/no-undef" target="_blank" rel="noopener noreferrer"
+              >no-undef</a
+            >
+          </td>
+        </tr>
+
+        <tr style="display: none" class="f-42">
+          <td>256:7</td>
+          <td class="clr-2">Error</td>
+          <td>&#39;expect&#39; is not defined.</td>
+          <td>
+            <a href="https://eslint.org/docs/latest/rules/no-undef" target="_blank" rel="noopener noreferrer"
+              >no-undef</a
+            >
+          </td>
+        </tr>
+
+        <tr style="display: none" class="f-42">
+          <td>259:13</td>
+          <td class="clr-2">Error</td>
+          <td>&#39;expect&#39; is not defined.</td>
+          <td>
+            <a href="https://eslint.org/docs/latest/rules/no-undef" target="_blank" rel="noopener noreferrer"
+              >no-undef</a
+            >
+          </td>
+        </tr>
+
+        <tr style="display: none" class="f-42">
+          <td>268:5</td>
+          <td class="clr-2">Error</td>
+          <td>&#39;test&#39; is not defined.</td>
+          <td>
+            <a href="https://eslint.org/docs/latest/rules/no-undef" target="_blank" rel="noopener noreferrer"
+              >no-undef</a
+            >
+          </td>
+        </tr>
+
+        <tr style="display: none" class="f-42">
+          <td>282:7</td>
+          <td class="clr-2">Error</td>
+          <td>&#39;expect&#39; is not defined.</td>
+          <td>
+            <a href="https://eslint.org/docs/latest/rules/no-undef" target="_blank" rel="noopener noreferrer"
+              >no-undef</a
+            >
+          </td>
+        </tr>
+
+        <tr style="display: none" class="f-42">
+          <td>283:7</td>
+          <td class="clr-2">Error</td>
+          <td>&#39;expect&#39; is not defined.</td>
+          <td>
+            <a href="https://eslint.org/docs/latest/rules/no-undef" target="_blank" rel="noopener noreferrer"
+              >no-undef</a
+            >
+          </td>
+        </tr>
+
+        <tr style="display: none" class="f-42">
+          <td>284:7</td>
+          <td class="clr-2">Error</td>
+          <td>&#39;expect&#39; is not defined.</td>
+          <td>
+            <a href="https://eslint.org/docs/latest/rules/no-undef" target="_blank" rel="noopener noreferrer"
+              >no-undef</a
+            >
+          </td>
+        </tr>
+
+        <tr class="bg-2" data-group="f-43">
+          <th colspan="4">
+            [+] C:\FloworxInvite\backend\tests\middleware\validation.test.js
+            <span>68 problems (68 errors, 0 warnings)</span>
+          </th>
+        </tr>
+        <tr style="display: none" class="f-43">
+          <td>10:3</td>
+          <td class="clr-2">Error</td>
+          <td>
+            &#39;validateLoginSecure&#39; is assigned a value but never used. Allowed unused vars must match /^_/u.
+          </td>
+          <td>
+            <a href="https://eslint.org/docs/latest/rules/no-unused-vars" target="_blank" rel="noopener noreferrer"
+              >no-unused-vars</a
+            >
+          </td>
+        </tr>
+
+        <tr style="display: none" class="f-43">
+          <td>18:1</td>
+          <td class="clr-2">Error</td>
+          <td>&#39;describe&#39; is not defined.</td>
+          <td>
+            <a href="https://eslint.org/docs/latest/rules/no-undef" target="_blank" rel="noopener noreferrer"
+              >no-undef</a
+            >
+          </td>
+        </tr>
+
+        <tr style="display: none" class="f-43">
+          <td>21:3</td>
+          <td class="clr-2">Error</td>
+          <td>&#39;beforeEach&#39; is not defined.</td>
+          <td>
+            <a href="https://eslint.org/docs/latest/rules/no-undef" target="_blank" rel="noopener noreferrer"
+              >no-undef</a
+            >
+          </td>
+        </tr>
+
+        <tr style="display: none" class="f-43">
+          <td>26:3</td>
+          <td class="clr-2">Error</td>
+          <td>&#39;describe&#39; is not defined.</td>
+          <td>
+            <a href="https://eslint.org/docs/latest/rules/no-undef" target="_blank" rel="noopener noreferrer"
+              >no-undef</a
+            >
+          </td>
+        </tr>
+
+        <tr style="display: none" class="f-43">
+          <td>27:5</td>
+          <td class="clr-2">Error</td>
+          <td>&#39;beforeEach&#39; is not defined.</td>
+          <td>
+            <a href="https://eslint.org/docs/latest/rules/no-undef" target="_blank" rel="noopener noreferrer"
+              >no-undef</a
+            >
+          </td>
+        </tr>
+
+        <tr style="display: none" class="f-43">
+          <td>34:5</td>
+          <td class="clr-2">Error</td>
+          <td>&#39;test&#39; is not defined.</td>
+          <td>
+            <a href="https://eslint.org/docs/latest/rules/no-undef" target="_blank" rel="noopener noreferrer"
+              >no-undef</a
+            >
+          </td>
+        </tr>
+
+        <tr style="display: none" class="f-43">
+          <td>48:9</td>
+          <td class="clr-2">Error</td>
+          <td>&#39;expect&#39; is not defined.</td>
+          <td>
+            <a href="https://eslint.org/docs/latest/rules/no-undef" target="_blank" rel="noopener noreferrer"
+              >no-undef</a
+            >
+          </td>
+        </tr>
+
+        <tr style="display: none" class="f-43">
+          <td>49:9</td>
+          <td class="clr-2">Error</td>
+          <td>&#39;expect&#39; is not defined.</td>
+          <td>
+            <a href="https://eslint.org/docs/latest/rules/no-undef" target="_blank" rel="noopener noreferrer"
+              >no-undef</a
+            >
+          </td>
+        </tr>
+
+        <tr style="display: none" class="f-43">
+          <td>53:5</td>
+          <td class="clr-2">Error</td>
+          <td>&#39;test&#39; is not defined.</td>
+          <td>
+            <a href="https://eslint.org/docs/latest/rules/no-undef" target="_blank" rel="noopener noreferrer"
+              >no-undef</a
+            >
+          </td>
+        </tr>
+
+        <tr style="display: none" class="f-43">
+          <td>69:9</td>
+          <td class="clr-2">Error</td>
+          <td>&#39;expect&#39; is not defined.</td>
+          <td>
+            <a href="https://eslint.org/docs/latest/rules/no-undef" target="_blank" rel="noopener noreferrer"
+              >no-undef</a
+            >
+          </td>
+        </tr>
+
+        <tr style="display: none" class="f-43">
+          <td>70:9</td>
+          <td class="clr-2">Error</td>
+          <td>&#39;expect&#39; is not defined.</td>
+          <td>
+            <a href="https://eslint.org/docs/latest/rules/no-undef" target="_blank" rel="noopener noreferrer"
+              >no-undef</a
+            >
+          </td>
+        </tr>
+
+        <tr style="display: none" class="f-43">
+          <td>71:9</td>
+          <td class="clr-2">Error</td>
+          <td>&#39;expect&#39; is not defined.</td>
+          <td>
+            <a href="https://eslint.org/docs/latest/rules/no-undef" target="_blank" rel="noopener noreferrer"
+              >no-undef</a
+            >
+          </td>
+        </tr>
+
+        <tr style="display: none" class="f-43">
+          <td>75:5</td>
+          <td class="clr-2">Error</td>
+          <td>&#39;test&#39; is not defined.</td>
+          <td>
+            <a href="https://eslint.org/docs/latest/rules/no-undef" target="_blank" rel="noopener noreferrer"
+              >no-undef</a
+            >
+          </td>
+        </tr>
+
+        <tr style="display: none" class="f-43">
+          <td>88:9</td>
+          <td class="clr-2">Error</td>
+          <td>&#39;expect&#39; is not defined.</td>
+          <td>
+            <a href="https://eslint.org/docs/latest/rules/no-undef" target="_blank" rel="noopener noreferrer"
+              >no-undef</a
+            >
+          </td>
+        </tr>
+
+        <tr style="display: none" class="f-43">
+          <td>89:11</td>
+          <td class="clr-2">Error</td>
+          <td>&#39;expect&#39; is not defined.</td>
+          <td>
+            <a href="https://eslint.org/docs/latest/rules/no-undef" target="_blank" rel="noopener noreferrer"
+              >no-undef</a
+            >
+          </td>
+        </tr>
+
+        <tr style="display: none" class="f-43">
+          <td>90:13</td>
+          <td class="clr-2">Error</td>
+          <td>&#39;expect&#39; is not defined.</td>
+          <td>
+            <a href="https://eslint.org/docs/latest/rules/no-undef" target="_blank" rel="noopener noreferrer"
+              >no-undef</a
+            >
+          </td>
+        </tr>
+
+        <tr style="display: none" class="f-43">
+          <td>98:5</td>
+          <td class="clr-2">Error</td>
+          <td>&#39;test&#39; is not defined.</td>
+          <td>
+            <a href="https://eslint.org/docs/latest/rules/no-undef" target="_blank" rel="noopener noreferrer"
+              >no-undef</a
+            >
+          </td>
+        </tr>
+
+        <tr style="display: none" class="f-43">
+          <td>106:7</td>
+          <td class="clr-2">Error</td>
+          <td>&#39;expect&#39; is not defined.</td>
+          <td>
+            <a href="https://eslint.org/docs/latest/rules/no-undef" target="_blank" rel="noopener noreferrer"
+              >no-undef</a
+            >
+          </td>
+        </tr>
+
+        <tr style="display: none" class="f-43">
+          <td>107:9</td>
+          <td class="clr-2">Error</td>
+          <td>&#39;expect&#39; is not defined.</td>
+          <td>
+            <a href="https://eslint.org/docs/latest/rules/no-undef" target="_blank" rel="noopener noreferrer"
+              >no-undef</a
+            >
+          </td>
+        </tr>
+
+        <tr style="display: none" class="f-43">
+          <td>108:11</td>
+          <td class="clr-2">Error</td>
+          <td>&#39;expect&#39; is not defined.</td>
+          <td>
+            <a href="https://eslint.org/docs/latest/rules/no-undef" target="_blank" rel="noopener noreferrer"
+              >no-undef</a
+            >
+          </td>
+        </tr>
+
+        <tr style="display: none" class="f-43">
+          <td>116:3</td>
+          <td class="clr-2">Error</td>
+          <td>&#39;describe&#39; is not defined.</td>
+          <td>
+            <a href="https://eslint.org/docs/latest/rules/no-undef" target="_blank" rel="noopener noreferrer"
+              >no-undef</a
+            >
+          </td>
+        </tr>
+
+        <tr style="display: none" class="f-43">
+          <td>117:5</td>
+          <td class="clr-2">Error</td>
+          <td>&#39;beforeEach&#39; is not defined.</td>
+          <td>
+            <a href="https://eslint.org/docs/latest/rules/no-undef" target="_blank" rel="noopener noreferrer"
+              >no-undef</a
+            >
+          </td>
+        </tr>
+
+        <tr style="display: none" class="f-43">
+          <td>124:5</td>
+          <td class="clr-2">Error</td>
+          <td>&#39;test&#39; is not defined.</td>
+          <td>
+            <a href="https://eslint.org/docs/latest/rules/no-undef" target="_blank" rel="noopener noreferrer"
+              >no-undef</a
+            >
+          </td>
+        </tr>
+
+        <tr style="display: none" class="f-43">
+          <td>138:9</td>
+          <td class="clr-2">Error</td>
+          <td>&#39;expect&#39; is not defined.</td>
+          <td>
+            <a href="https://eslint.org/docs/latest/rules/no-undef" target="_blank" rel="noopener noreferrer"
+              >no-undef</a
+            >
+          </td>
+        </tr>
+
+        <tr style="display: none" class="f-43">
+          <td>142:5</td>
+          <td class="clr-2">Error</td>
+          <td>&#39;test&#39; is not defined.</td>
+          <td>
+            <a href="https://eslint.org/docs/latest/rules/no-undef" target="_blank" rel="noopener noreferrer"
+              >no-undef</a
+            >
+          </td>
+        </tr>
+
+        <tr style="display: none" class="f-43">
+          <td>158:9</td>
+          <td class="clr-2">Error</td>
+          <td>&#39;expect&#39; is not defined.</td>
+          <td>
+            <a href="https://eslint.org/docs/latest/rules/no-undef" target="_blank" rel="noopener noreferrer"
+              >no-undef</a
+            >
+          </td>
+        </tr>
+
+        <tr style="display: none" class="f-43">
+          <td>159:11</td>
+          <td class="clr-2">Error</td>
+          <td>&#39;expect&#39; is not defined.</td>
+          <td>
+            <a href="https://eslint.org/docs/latest/rules/no-undef" target="_blank" rel="noopener noreferrer"
+              >no-undef</a
+            >
+          </td>
+        </tr>
+
+        <tr style="display: none" class="f-43">
+          <td>160:13</td>
+          <td class="clr-2">Error</td>
+          <td>&#39;expect&#39; is not defined.</td>
+          <td>
+            <a href="https://eslint.org/docs/latest/rules/no-undef" target="_blank" rel="noopener noreferrer"
+              >no-undef</a
+            >
+          </td>
+        </tr>
+
+        <tr style="display: none" class="f-43">
+          <td>169:3</td>
+          <td class="clr-2">Error</td>
+          <td>&#39;describe&#39; is not defined.</td>
+          <td>
+            <a href="https://eslint.org/docs/latest/rules/no-undef" target="_blank" rel="noopener noreferrer"
+              >no-undef</a
+            >
+          </td>
+        </tr>
+
+        <tr style="display: none" class="f-43">
+          <td>170:5</td>
+          <td class="clr-2">Error</td>
+          <td>&#39;beforeEach&#39; is not defined.</td>
+          <td>
+            <a href="https://eslint.org/docs/latest/rules/no-undef" target="_blank" rel="noopener noreferrer"
+              >no-undef</a
+            >
+          </td>
+        </tr>
+
+        <tr style="display: none" class="f-43">
+          <td>177:5</td>
+          <td class="clr-2">Error</td>
+          <td>&#39;test&#39; is not defined.</td>
+          <td>
+            <a href="https://eslint.org/docs/latest/rules/no-undef" target="_blank" rel="noopener noreferrer"
+              >no-undef</a
+            >
+          </td>
+        </tr>
+
+        <tr style="display: none" class="f-43">
+          <td>191:7</td>
+          <td class="clr-2">Error</td>
+          <td>&#39;expect&#39; is not defined.</td>
+          <td>
+            <a href="https://eslint.org/docs/latest/rules/no-undef" target="_blank" rel="noopener noreferrer"
+              >no-undef</a
+            >
+          </td>
+        </tr>
+
+        <tr style="display: none" class="f-43">
+          <td>192:7</td>
+          <td class="clr-2">Error</td>
+          <td>&#39;expect&#39; is not defined.</td>
+          <td>
+            <a href="https://eslint.org/docs/latest/rules/no-undef" target="_blank" rel="noopener noreferrer"
+              >no-undef</a
+            >
+          </td>
+        </tr>
+
+        <tr style="display: none" class="f-43">
+          <td>195:5</td>
+          <td class="clr-2">Error</td>
+          <td>&#39;test&#39; is not defined.</td>
+          <td>
+            <a href="https://eslint.org/docs/latest/rules/no-undef" target="_blank" rel="noopener noreferrer"
+              >no-undef</a
+            >
+          </td>
+        </tr>
+
+        <tr style="display: none" class="f-43">
+          <td>209:7</td>
+          <td class="clr-2">Error</td>
+          <td>&#39;expect&#39; is not defined.</td>
+          <td>
+            <a href="https://eslint.org/docs/latest/rules/no-undef" target="_blank" rel="noopener noreferrer"
+              >no-undef</a
+            >
+          </td>
+        </tr>
+
+        <tr style="display: none" class="f-43">
+          <td>210:7</td>
+          <td class="clr-2">Error</td>
+          <td>&#39;expect&#39; is not defined.</td>
+          <td>
+            <a href="https://eslint.org/docs/latest/rules/no-undef" target="_blank" rel="noopener noreferrer"
+              >no-undef</a
+            >
+          </td>
+        </tr>
+
+        <tr style="display: none" class="f-43">
+          <td>213:5</td>
+          <td class="clr-2">Error</td>
+          <td>&#39;test&#39; is not defined.</td>
+          <td>
+            <a href="https://eslint.org/docs/latest/rules/no-undef" target="_blank" rel="noopener noreferrer"
+              >no-undef</a
+            >
+          </td>
+        </tr>
+
+        <tr style="display: none" class="f-43">
+          <td>236:11</td>
+          <td class="clr-2">Error</td>
+          <td>&#39;expect&#39; is not defined.</td>
+          <td>
+            <a href="https://eslint.org/docs/latest/rules/no-undef" target="_blank" rel="noopener noreferrer"
+              >no-undef</a
+            >
+          </td>
+        </tr>
+
+        <tr style="display: none" class="f-43">
+          <td>237:11</td>
+          <td class="clr-2">Error</td>
+          <td>&#39;expect&#39; is not defined.</td>
+          <td>
+            <a href="https://eslint.org/docs/latest/rules/no-undef" target="_blank" rel="noopener noreferrer"
+              >no-undef</a
+            >
+          </td>
+        </tr>
+
+        <tr style="display: none" class="f-43">
+          <td>238:13</td>
+          <td class="clr-2">Error</td>
+          <td>&#39;expect&#39; is not defined.</td>
+          <td>
+            <a href="https://eslint.org/docs/latest/rules/no-undef" target="_blank" rel="noopener noreferrer"
+              >no-undef</a
+            >
+          </td>
+        </tr>
+
+        <tr style="display: none" class="f-43">
+          <td>239:15</td>
+          <td class="clr-2">Error</td>
+          <td>&#39;expect&#39; is not defined.</td>
+          <td>
+            <a href="https://eslint.org/docs/latest/rules/no-undef" target="_blank" rel="noopener noreferrer"
+              >no-undef</a
+            >
+          </td>
+        </tr>
+
+        <tr style="display: none" class="f-43">
+          <td>241:26</td>
+          <td class="clr-2">Error</td>
+          <td>&#39;expect&#39; is not defined.</td>
+          <td>
+            <a href="https://eslint.org/docs/latest/rules/no-undef" target="_blank" rel="noopener noreferrer"
+              >no-undef</a
+            >
+          </td>
+        </tr>
+
+        <tr style="display: none" class="f-43">
+          <td>246:11</td>
+          <td class="clr-2">Error</td>
+          <td>&#39;expect&#39; is not defined.</td>
+          <td>
+            <a href="https://eslint.org/docs/latest/rules/no-undef" target="_blank" rel="noopener noreferrer"
+              >no-undef</a
+            >
+          </td>
+        </tr>
+
+        <tr style="display: none" class="f-43">
+          <td>252:3</td>
+          <td class="clr-2">Error</td>
+          <td>&#39;describe&#39; is not defined.</td>
+          <td>
+            <a href="https://eslint.org/docs/latest/rules/no-undef" target="_blank" rel="noopener noreferrer"
+              >no-undef</a
+            >
+          </td>
+        </tr>
+
+        <tr style="display: none" class="f-43">
+          <td>253:5</td>
+          <td class="clr-2">Error</td>
+          <td>&#39;beforeEach&#39; is not defined.</td>
+          <td>
+            <a href="https://eslint.org/docs/latest/rules/no-undef" target="_blank" rel="noopener noreferrer"
+              >no-undef</a
+            >
+          </td>
+        </tr>
+
+        <tr style="display: none" class="f-43">
+          <td>260:5</td>
+          <td class="clr-2">Error</td>
+          <td>&#39;test&#39; is not defined.</td>
+          <td>
+            <a href="https://eslint.org/docs/latest/rules/no-undef" target="_blank" rel="noopener noreferrer"
+              >no-undef</a
+            >
+          </td>
+        </tr>
+
+        <tr style="display: none" class="f-43">
+          <td>272:9</td>
+          <td class="clr-2">Error</td>
+          <td>&#39;expect&#39; is not defined.</td>
+          <td>
+            <a href="https://eslint.org/docs/latest/rules/no-undef" target="_blank" rel="noopener noreferrer"
+              >no-undef</a
+            >
+          </td>
+        </tr>
+
+        <tr style="display: none" class="f-43">
+          <td>273:9</td>
+          <td class="clr-2">Error</td>
+          <td>&#39;expect&#39; is not defined.</td>
+          <td>
+            <a href="https://eslint.org/docs/latest/rules/no-undef" target="_blank" rel="noopener noreferrer"
+              >no-undef</a
+            >
+          </td>
+        </tr>
+
+        <tr style="display: none" class="f-43">
+          <td>277:5</td>
+          <td class="clr-2">Error</td>
+          <td>&#39;test&#39; is not defined.</td>
+          <td>
+            <a href="https://eslint.org/docs/latest/rules/no-undef" target="_blank" rel="noopener noreferrer"
+              >no-undef</a
+            >
+          </td>
+        </tr>
+
+        <tr style="display: none" class="f-43">
+          <td>290:9</td>
+          <td class="clr-2">Error</td>
+          <td>&#39;expect&#39; is not defined.</td>
+          <td>
+            <a href="https://eslint.org/docs/latest/rules/no-undef" target="_blank" rel="noopener noreferrer"
+              >no-undef</a
+            >
+          </td>
+        </tr>
+
+        <tr style="display: none" class="f-43">
+          <td>291:9</td>
+          <td class="clr-2">Error</td>
+          <td>&#39;expect&#39; is not defined.</td>
+          <td>
+            <a href="https://eslint.org/docs/latest/rules/no-undef" target="_blank" rel="noopener noreferrer"
+              >no-undef</a
+            >
+          </td>
+        </tr>
+
+        <tr style="display: none" class="f-43">
+          <td>292:11</td>
+          <td class="clr-2">Error</td>
+          <td>&#39;expect&#39; is not defined.</td>
+          <td>
+            <a href="https://eslint.org/docs/latest/rules/no-undef" target="_blank" rel="noopener noreferrer"
+              >no-undef</a
+            >
+          </td>
+        </tr>
+
+        <tr style="display: none" class="f-43">
+          <td>293:13</td>
+          <td class="clr-2">Error</td>
+          <td>&#39;expect&#39; is not defined.</td>
+          <td>
+            <a href="https://eslint.org/docs/latest/rules/no-undef" target="_blank" rel="noopener noreferrer"
+              >no-undef</a
+            >
+          </td>
+        </tr>
+
+        <tr style="display: none" class="f-43">
+          <td>302:3</td>
+          <td class="clr-2">Error</td>
+          <td>&#39;describe&#39; is not defined.</td>
+          <td>
+            <a href="https://eslint.org/docs/latest/rules/no-undef" target="_blank" rel="noopener noreferrer"
+              >no-undef</a
+            >
+          </td>
+        </tr>
+
+        <tr style="display: none" class="f-43">
+          <td>303:5</td>
+          <td class="clr-2">Error</td>
+          <td>&#39;beforeEach&#39; is not defined.</td>
+          <td>
+            <a href="https://eslint.org/docs/latest/rules/no-undef" target="_blank" rel="noopener noreferrer"
+              >no-undef</a
+            >
+          </td>
+        </tr>
+
+        <tr style="display: none" class="f-43">
+          <td>310:5</td>
+          <td class="clr-2">Error</td>
+          <td>&#39;test&#39; is not defined.</td>
+          <td>
+            <a href="https://eslint.org/docs/latest/rules/no-undef" target="_blank" rel="noopener noreferrer"
+              >no-undef</a
+            >
+          </td>
+        </tr>
+
+        <tr style="display: none" class="f-43">
+          <td>319:9</td>
+          <td class="clr-2">Error</td>
+          <td>&#39;expect&#39; is not defined.</td>
+          <td>
+            <a href="https://eslint.org/docs/latest/rules/no-undef" target="_blank" rel="noopener noreferrer"
+              >no-undef</a
+            >
+          </td>
+        </tr>
+
+        <tr style="display: none" class="f-43">
+          <td>320:9</td>
+          <td class="clr-2">Error</td>
+          <td>&#39;expect&#39; is not defined.</td>
+          <td>
+            <a href="https://eslint.org/docs/latest/rules/no-undef" target="_blank" rel="noopener noreferrer"
+              >no-undef</a
+            >
+          </td>
+        </tr>
+
+        <tr style="display: none" class="f-43">
+          <td>324:5</td>
+          <td class="clr-2">Error</td>
+          <td>&#39;test&#39; is not defined.</td>
+          <td>
+            <a href="https://eslint.org/docs/latest/rules/no-undef" target="_blank" rel="noopener noreferrer"
+              >no-undef</a
+            >
+          </td>
+        </tr>
+
+        <tr style="display: none" class="f-43">
+          <td>333:9</td>
+          <td class="clr-2">Error</td>
+          <td>&#39;expect&#39; is not defined.</td>
+          <td>
+            <a href="https://eslint.org/docs/latest/rules/no-undef" target="_blank" rel="noopener noreferrer"
+              >no-undef</a
+            >
+          </td>
+        </tr>
+
+        <tr style="display: none" class="f-43">
+          <td>334:9</td>
+          <td class="clr-2">Error</td>
+          <td>&#39;expect&#39; is not defined.</td>
+          <td>
+            <a href="https://eslint.org/docs/latest/rules/no-undef" target="_blank" rel="noopener noreferrer"
+              >no-undef</a
+            >
+          </td>
+        </tr>
+
+        <tr style="display: none" class="f-43">
+          <td>335:11</td>
+          <td class="clr-2">Error</td>
+          <td>&#39;expect&#39; is not defined.</td>
+          <td>
+            <a href="https://eslint.org/docs/latest/rules/no-undef" target="_blank" rel="noopener noreferrer"
+              >no-undef</a
+            >
+          </td>
+        </tr>
+
+        <tr style="display: none" class="f-43">
+          <td>336:13</td>
+          <td class="clr-2">Error</td>
+          <td>&#39;expect&#39; is not defined.</td>
+          <td>
+            <a href="https://eslint.org/docs/latest/rules/no-undef" target="_blank" rel="noopener noreferrer"
+              >no-undef</a
+            >
+          </td>
+        </tr>
+
+        <tr style="display: none" class="f-43">
+          <td>345:3</td>
+          <td class="clr-2">Error</td>
+          <td>&#39;describe&#39; is not defined.</td>
+          <td>
+            <a href="https://eslint.org/docs/latest/rules/no-undef" target="_blank" rel="noopener noreferrer"
+              >no-undef</a
+            >
+          </td>
+        </tr>
+
+        <tr style="display: none" class="f-43">
+          <td>346:5</td>
+          <td class="clr-2">Error</td>
+          <td>&#39;beforeEach&#39; is not defined.</td>
+          <td>
+            <a href="https://eslint.org/docs/latest/rules/no-undef" target="_blank" rel="noopener noreferrer"
+              >no-undef</a
+            >
+          </td>
+        </tr>
+
+        <tr style="display: none" class="f-43">
+          <td>353:5</td>
+          <td class="clr-2">Error</td>
+          <td>&#39;test&#39; is not defined.</td>
+          <td>
+            <a href="https://eslint.org/docs/latest/rules/no-undef" target="_blank" rel="noopener noreferrer"
+              >no-undef</a
+            >
+          </td>
+        </tr>
+
+        <tr style="display: none" class="f-43">
+          <td>368:7</td>
+          <td class="clr-2">Error</td>
+          <td>&#39;expect&#39; is not defined.</td>
+          <td>
+            <a href="https://eslint.org/docs/latest/rules/no-undef" target="_blank" rel="noopener noreferrer"
+              >no-undef</a
+            >
+          </td>
+        </tr>
+
+        <tr style="display: none" class="f-43">
+          <td>369:7</td>
+          <td class="clr-2">Error</td>
+          <td>&#39;expect&#39; is not defined.</td>
+          <td>
+            <a href="https://eslint.org/docs/latest/rules/no-undef" target="_blank" rel="noopener noreferrer"
+              >no-undef</a
+            >
+          </td>
+        </tr>
+
+        <tr class="bg-2" data-group="f-44">
+          <th colspan="4">
+            [+] C:\FloworxInvite\backend\tests\routes\auth.test.js
+            <span>73 problems (73 errors, 0 warnings)</span>
+          </th>
+        </tr>
+        <tr style="display: none" class="f-44">
+          <td>15:1</td>
+          <td class="clr-2">Error</td>
+          <td>&#39;describe&#39; is not defined.</td>
+          <td>
+            <a href="https://eslint.org/docs/latest/rules/no-undef" target="_blank" rel="noopener noreferrer"
+              >no-undef</a
+            >
+          </td>
+        </tr>
+
+        <tr style="display: none" class="f-44">
+          <td>18:3</td>
+          <td class="clr-2">Error</td>
+          <td>&#39;beforeAll&#39; is not defined.</td>
+          <td>
+            <a href="https://eslint.org/docs/latest/rules/no-undef" target="_blank" rel="noopener noreferrer"
+              >no-undef</a
+            >
+          </td>
+        </tr>
+
+        <tr style="display: none" class="f-44">
+          <td>34:3</td>
+          <td class="clr-2">Error</td>
+          <td>&#39;describe&#39; is not defined.</td>
+          <td>
+            <a href="https://eslint.org/docs/latest/rules/no-undef" target="_blank" rel="noopener noreferrer"
+              >no-undef</a
+            >
+          </td>
+        </tr>
+
+        <tr style="display: none" class="f-44">
+          <td>35:5</td>
+          <td class="clr-2">Error</td>
+          <td>&#39;test&#39; is not defined.</td>
+          <td>
+            <a href="https://eslint.org/docs/latest/rules/no-undef" target="_blank" rel="noopener noreferrer"
+              >no-undef</a
+            >
+          </td>
+        </tr>
+
+        <tr style="display: none" class="f-44">
+          <td>44:9</td>
+          <td class="clr-2">Error</td>
+          <td>&#39;expect&#39; is not defined.</td>
+          <td>
+            <a href="https://eslint.org/docs/latest/rules/no-undef" target="_blank" rel="noopener noreferrer"
+              >no-undef</a
+            >
+          </td>
+        </tr>
+
+        <tr style="display: none" class="f-44">
+          <td>45:20</td>
+          <td class="clr-2">Error</td>
+          <td>&#39;expect&#39; is not defined.</td>
+          <td>
+            <a href="https://eslint.org/docs/latest/rules/no-undef" target="_blank" rel="noopener noreferrer"
+              >no-undef</a
+            >
+          </td>
+        </tr>
+
+        <tr style="display: none" class="f-44">
+          <td>46:17</td>
+          <td class="clr-2">Error</td>
+          <td>&#39;expect&#39; is not defined.</td>
+          <td>
+            <a href="https://eslint.org/docs/latest/rules/no-undef" target="_blank" rel="noopener noreferrer"
+              >no-undef</a
+            >
+          </td>
+        </tr>
+
+        <tr style="display: none" class="f-44">
+          <td>52:9</td>
+          <td class="clr-2">Error</td>
+          <td>&#39;expect&#39; is not defined.</td>
+          <td>
+            <a href="https://eslint.org/docs/latest/rules/no-undef" target="_blank" rel="noopener noreferrer"
+              >no-undef</a
+            >
+          </td>
+        </tr>
+
+        <tr style="display: none" class="f-44">
+          <td>55:9</td>
+          <td class="clr-2">Error</td>
+          <td>&#39;expect&#39; is not defined.</td>
+          <td>
+            <a href="https://eslint.org/docs/latest/rules/no-undef" target="_blank" rel="noopener noreferrer"
+              >no-undef</a
+            >
+          </td>
+        </tr>
+
+        <tr style="display: none" class="f-44">
+          <td>58:19</td>
+          <td class="clr-2">Error</td>
+          <td>&#39;expect&#39; is not defined.</td>
+          <td>
+            <a href="https://eslint.org/docs/latest/rules/no-undef" target="_blank" rel="noopener noreferrer"
+              >no-undef</a
+            >
+          </td>
+        </tr>
+
+        <tr style="display: none" class="f-44">
+          <td>59:22</td>
+          <td class="clr-2">Error</td>
+          <td>&#39;expect&#39; is not defined.</td>
+          <td>
+            <a href="https://eslint.org/docs/latest/rules/no-undef" target="_blank" rel="noopener noreferrer"
+              >no-undef</a
+            >
+          </td>
+        </tr>
+
+        <tr style="display: none" class="f-44">
+          <td>66:5</td>
+          <td class="clr-2">Error</td>
+          <td>&#39;test&#39; is not defined.</td>
+          <td>
+            <a href="https://eslint.org/docs/latest/rules/no-undef" target="_blank" rel="noopener noreferrer"
+              >no-undef</a
+            >
+          </td>
+        </tr>
+
+        <tr style="display: none" class="f-44">
+          <td>77:7</td>
+          <td class="clr-2">Error</td>
+          <td>&#39;expect&#39; is not defined.</td>
+          <td>
+            <a href="https://eslint.org/docs/latest/rules/no-undef" target="_blank" rel="noopener noreferrer"
+              >no-undef</a
+            >
+          </td>
+        </tr>
+
+        <tr style="display: none" class="f-44">
+          <td>83:20</td>
+          <td class="clr-2">Error</td>
+          <td>&#39;expect&#39; is not defined.</td>
+          <td>
+            <a href="https://eslint.org/docs/latest/rules/no-undef" target="_blank" rel="noopener noreferrer"
+              >no-undef</a
+            >
+          </td>
+        </tr>
+
+        <tr style="display: none" class="f-44">
+          <td>84:13</td>
+          <td class="clr-2">Error</td>
+          <td>&#39;expect&#39; is not defined.</td>
+          <td>
+            <a href="https://eslint.org/docs/latest/rules/no-undef" target="_blank" rel="noopener noreferrer"
+              >no-undef</a
+            >
+          </td>
+        </tr>
+
+        <tr style="display: none" class="f-44">
+          <td>93:5</td>
+          <td class="clr-2">Error</td>
+          <td>&#39;test&#39; is not defined.</td>
+          <td>
+            <a href="https://eslint.org/docs/latest/rules/no-undef" target="_blank" rel="noopener noreferrer"
+              >no-undef</a
+            >
+          </td>
+        </tr>
+
+        <tr style="display: none" class="f-44">
+          <td>104:7</td>
+          <td class="clr-2">Error</td>
+          <td>&#39;expect&#39; is not defined.</td>
+          <td>
+            <a href="https://eslint.org/docs/latest/rules/no-undef" target="_blank" rel="noopener noreferrer"
+              >no-undef</a
+            >
+          </td>
+        </tr>
+
+        <tr style="display: none" class="f-44">
+          <td>105:9</td>
+          <td class="clr-2">Error</td>
+          <td>&#39;expect&#39; is not defined.</td>
+          <td>
+            <a href="https://eslint.org/docs/latest/rules/no-undef" target="_blank" rel="noopener noreferrer"
+              >no-undef</a
+            >
+          </td>
+        </tr>
+
+        <tr style="display: none" class="f-44">
+          <td>106:11</td>
+          <td class="clr-2">Error</td>
+          <td>&#39;expect&#39; is not defined.</td>
+          <td>
+            <a href="https://eslint.org/docs/latest/rules/no-undef" target="_blank" rel="noopener noreferrer"
+              >no-undef</a
+            >
+          </td>
+        </tr>
+
+        <tr style="display: none" class="f-44">
+          <td>108:22</td>
+          <td class="clr-2">Error</td>
+          <td>&#39;expect&#39; is not defined.</td>
+          <td>
+            <a href="https://eslint.org/docs/latest/rules/no-undef" target="_blank" rel="noopener noreferrer"
+              >no-undef</a
+            >
+          </td>
+        </tr>
+
+        <tr style="display: none" class="f-44">
+          <td>114:5</td>
+          <td class="clr-2">Error</td>
+          <td>&#39;test&#39; is not defined.</td>
+          <td>
+            <a href="https://eslint.org/docs/latest/rules/no-undef" target="_blank" rel="noopener noreferrer"
+              >no-undef</a
+            >
+          </td>
+        </tr>
+
+        <tr style="display: none" class="f-44">
+          <td>125:7</td>
+          <td class="clr-2">Error</td>
+          <td>&#39;expect&#39; is not defined.</td>
+          <td>
+            <a href="https://eslint.org/docs/latest/rules/no-undef" target="_blank" rel="noopener noreferrer"
+              >no-undef</a
+            >
+          </td>
+        </tr>
+
+        <tr style="display: none" class="f-44">
+          <td>126:9</td>
+          <td class="clr-2">Error</td>
+          <td>&#39;expect&#39; is not defined.</td>
+          <td>
+            <a href="https://eslint.org/docs/latest/rules/no-undef" target="_blank" rel="noopener noreferrer"
+              >no-undef</a
+            >
+          </td>
+        </tr>
+
+        <tr style="display: none" class="f-44">
+          <td>127:11</td>
+          <td class="clr-2">Error</td>
+          <td>&#39;expect&#39; is not defined.</td>
+          <td>
+            <a href="https://eslint.org/docs/latest/rules/no-undef" target="_blank" rel="noopener noreferrer"
+              >no-undef</a
+            >
+          </td>
+        </tr>
+
+        <tr style="display: none" class="f-44">
+          <td>135:5</td>
+          <td class="clr-2">Error</td>
+          <td>&#39;test&#39; is not defined.</td>
+          <td>
+            <a href="https://eslint.org/docs/latest/rules/no-undef" target="_blank" rel="noopener noreferrer"
+              >no-undef</a
+            >
+          </td>
+        </tr>
+
+        <tr style="display: none" class="f-44">
+          <td>147:7</td>
+          <td class="clr-2">Error</td>
+          <td>&#39;expect&#39; is not defined.</td>
+          <td>
+            <a href="https://eslint.org/docs/latest/rules/no-undef" target="_blank" rel="noopener noreferrer"
+              >no-undef</a
+            >
+          </td>
+        </tr>
+
+        <tr style="display: none" class="f-44">
+          <td>148:9</td>
+          <td class="clr-2">Error</td>
+          <td>&#39;expect&#39; is not defined.</td>
+          <td>
+            <a href="https://eslint.org/docs/latest/rules/no-undef" target="_blank" rel="noopener noreferrer"
+              >no-undef</a
+            >
+          </td>
+        </tr>
+
+        <tr style="display: none" class="f-44">
+          <td>149:11</td>
+          <td class="clr-2">Error</td>
+          <td>&#39;expect&#39; is not defined.</td>
+          <td>
+            <a href="https://eslint.org/docs/latest/rules/no-undef" target="_blank" rel="noopener noreferrer"
+              >no-undef</a
+            >
+          </td>
+        </tr>
+
+        <tr style="display: none" class="f-44">
+          <td>151:22</td>
+          <td class="clr-2">Error</td>
+          <td>&#39;expect&#39; is not defined.</td>
+          <td>
+            <a href="https://eslint.org/docs/latest/rules/no-undef" target="_blank" rel="noopener noreferrer"
+              >no-undef</a
+            >
+          </td>
+        </tr>
+
+        <tr style="display: none" class="f-44">
+          <td>153:11</td>
+          <td class="clr-2">Error</td>
+          <td>&#39;expect&#39; is not defined.</td>
+          <td>
+            <a href="https://eslint.org/docs/latest/rules/no-undef" target="_blank" rel="noopener noreferrer"
+              >no-undef</a
+            >
+          </td>
+        </tr>
+
+        <tr style="display: none" class="f-44">
+          <td>155:22</td>
+          <td class="clr-2">Error</td>
+          <td>&#39;expect&#39; is not defined.</td>
+          <td>
+            <a href="https://eslint.org/docs/latest/rules/no-undef" target="_blank" rel="noopener noreferrer"
+              >no-undef</a
+            >
+          </td>
+        </tr>
+
+        <tr style="display: none" class="f-44">
+          <td>161:5</td>
+          <td class="clr-2">Error</td>
+          <td>&#39;test&#39; is not defined.</td>
+          <td>
+            <a href="https://eslint.org/docs/latest/rules/no-undef" target="_blank" rel="noopener noreferrer"
+              >no-undef</a
+            >
+          </td>
+        </tr>
+
+        <tr style="display: none" class="f-44">
+          <td>172:7</td>
+          <td class="clr-2">Error</td>
+          <td>&#39;expect&#39; is not defined.</td>
+          <td>
+            <a href="https://eslint.org/docs/latest/rules/no-undef" target="_blank" rel="noopener noreferrer"
+              >no-undef</a
+            >
+          </td>
+        </tr>
+
+        <tr style="display: none" class="f-44">
+          <td>173:7</td>
+          <td class="clr-2">Error</td>
+          <td>&#39;expect&#39; is not defined.</td>
+          <td>
+            <a href="https://eslint.org/docs/latest/rules/no-undef" target="_blank" rel="noopener noreferrer"
+              >no-undef</a
+            >
+          </td>
+        </tr>
+
+        <tr style="display: none" class="f-44">
+          <td>176:5</td>
+          <td class="clr-2">Error</td>
+          <td>&#39;test&#39; is not defined.</td>
+          <td>
+            <a href="https://eslint.org/docs/latest/rules/no-undef" target="_blank" rel="noopener noreferrer"
+              >no-undef</a
+            >
+          </td>
+        </tr>
+
+        <tr style="display: none" class="f-44">
+          <td>190:9</td>
+          <td class="clr-2">Error</td>
+          <td>&#39;expect&#39; is not defined.</td>
+          <td>
+            <a href="https://eslint.org/docs/latest/rules/no-undef" target="_blank" rel="noopener noreferrer"
+              >no-undef</a
+            >
+          </td>
+        </tr>
+
+        <tr style="display: none" class="f-44">
+          <td>191:9</td>
+          <td class="clr-2">Error</td>
+          <td>&#39;expect&#39; is not defined.</td>
+          <td>
+            <a href="https://eslint.org/docs/latest/rules/no-undef" target="_blank" rel="noopener noreferrer"
+              >no-undef</a
+            >
+          </td>
+        </tr>
+
+        <tr style="display: none" class="f-44">
+          <td>193:9</td>
+          <td class="clr-2">Error</td>
+          <td>&#39;expect&#39; is not defined.</td>
+          <td>
+            <a href="https://eslint.org/docs/latest/rules/no-undef" target="_blank" rel="noopener noreferrer"
+              >no-undef</a
+            >
+          </td>
+        </tr>
+
+        <tr style="display: none" class="f-44">
+          <td>194:9</td>
+          <td class="clr-2">Error</td>
+          <td>&#39;expect&#39; is not defined.</td>
+          <td>
+            <a href="https://eslint.org/docs/latest/rules/no-undef" target="_blank" rel="noopener noreferrer"
+              >no-undef</a
+            >
+          </td>
+        </tr>
+
+        <tr style="display: none" class="f-44">
+          <td>199:3</td>
+          <td class="clr-2">Error</td>
+          <td>&#39;describe&#39; is not defined.</td>
+          <td>
+            <a href="https://eslint.org/docs/latest/rules/no-undef" target="_blank" rel="noopener noreferrer"
+              >no-undef</a
+            >
+          </td>
+        </tr>
+
+        <tr style="display: none" class="f-44">
+          <td>200:5</td>
+          <td class="clr-2">Error</td>
+          <td>&#39;test&#39; is not defined.</td>
+          <td>
+            <a href="https://eslint.org/docs/latest/rules/no-undef" target="_blank" rel="noopener noreferrer"
+              >no-undef</a
+            >
+          </td>
+        </tr>
+
+        <tr style="display: none" class="f-44">
+          <td>211:7</td>
+          <td class="clr-2">Error</td>
+          <td>&#39;expect&#39; is not defined.</td>
+          <td>
+            <a href="https://eslint.org/docs/latest/rules/no-undef" target="_blank" rel="noopener noreferrer"
+              >no-undef</a
+            >
+          </td>
+        </tr>
+
+        <tr style="display: none" class="f-44">
+          <td>217:20</td>
+          <td class="clr-2">Error</td>
+          <td>&#39;expect&#39; is not defined.</td>
+          <td>
+            <a href="https://eslint.org/docs/latest/rules/no-undef" target="_blank" rel="noopener noreferrer"
+              >no-undef</a
+            >
+          </td>
+        </tr>
+
+        <tr style="display: none" class="f-44">
+          <td>218:13</td>
+          <td class="clr-2">Error</td>
+          <td>&#39;expect&#39; is not defined.</td>
+          <td>
+            <a href="https://eslint.org/docs/latest/rules/no-undef" target="_blank" rel="noopener noreferrer"
+              >no-undef</a
+            >
+          </td>
+        </tr>
+
+        <tr style="display: none" class="f-44">
+          <td>227:5</td>
+          <td class="clr-2">Error</td>
+          <td>&#39;test&#39; is not defined.</td>
+          <td>
+            <a href="https://eslint.org/docs/latest/rules/no-undef" target="_blank" rel="noopener noreferrer"
+              >no-undef</a
+            >
+          </td>
+        </tr>
+
+        <tr style="display: none" class="f-44">
+          <td>238:7</td>
+          <td class="clr-2">Error</td>
+          <td>&#39;expect&#39; is not defined.</td>
+          <td>
+            <a href="https://eslint.org/docs/latest/rules/no-undef" target="_blank" rel="noopener noreferrer"
+              >no-undef</a
+            >
+          </td>
+        </tr>
+
+        <tr style="display: none" class="f-44">
+          <td>239:9</td>
+          <td class="clr-2">Error</td>
+          <td>&#39;expect&#39; is not defined.</td>
+          <td>
+            <a href="https://eslint.org/docs/latest/rules/no-undef" target="_blank" rel="noopener noreferrer"
+              >no-undef</a
+            >
+          </td>
+        </tr>
+
+        <tr style="display: none" class="f-44">
+          <td>240:11</td>
+          <td class="clr-2">Error</td>
+          <td>&#39;expect&#39; is not defined.</td>
+          <td>
+            <a href="https://eslint.org/docs/latest/rules/no-undef" target="_blank" rel="noopener noreferrer"
+              >no-undef</a
+            >
+          </td>
+        </tr>
+
+        <tr style="display: none" class="f-44">
+          <td>248:5</td>
+          <td class="clr-2">Error</td>
+          <td>&#39;test&#39; is not defined.</td>
+          <td>
+            <a href="https://eslint.org/docs/latest/rules/no-undef" target="_blank" rel="noopener noreferrer"
+              >no-undef</a
+            >
+          </td>
+        </tr>
+
+        <tr style="display: none" class="f-44">
+          <td>260:9</td>
+          <td class="clr-2">Error</td>
+          <td>&#39;expect&#39; is not defined.</td>
+          <td>
+            <a href="https://eslint.org/docs/latest/rules/no-undef" target="_blank" rel="noopener noreferrer"
+              >no-undef</a
+            >
+          </td>
+        </tr>
+
+        <tr style="display: none" class="f-44">
+          <td>264:22</td>
+          <td class="clr-2">Error</td>
+          <td>&#39;expect&#39; is not defined.</td>
+          <td>
+            <a href="https://eslint.org/docs/latest/rules/no-undef" target="_blank" rel="noopener noreferrer"
+              >no-undef</a
+            >
+          </td>
+        </tr>
+
+        <tr style="display: none" class="f-44">
+          <td>269:9</td>
+          <td class="clr-2">Error</td>
+          <td>&#39;expect&#39; is not defined.</td>
+          <td>
+            <a href="https://eslint.org/docs/latest/rules/no-undef" target="_blank" rel="noopener noreferrer"
+              >no-undef</a
+            >
+          </td>
+        </tr>
+
+        <tr style="display: none" class="f-44">
+          <td>273:5</td>
+          <td class="clr-2">Error</td>
+          <td>&#39;test&#39; is not defined.</td>
+          <td>
+            <a href="https://eslint.org/docs/latest/rules/no-undef" target="_blank" rel="noopener noreferrer"
+              >no-undef</a
+            >
+          </td>
+        </tr>
+
+        <tr style="display: none" class="f-44">
+          <td>284:7</td>
+          <td class="clr-2">Error</td>
+          <td>&#39;expect&#39; is not defined.</td>
+          <td>
+            <a href="https://eslint.org/docs/latest/rules/no-undef" target="_blank" rel="noopener noreferrer"
+              >no-undef</a
+            >
+          </td>
+        </tr>
+
+        <tr style="display: none" class="f-44">
+          <td>288:3</td>
+          <td class="clr-2">Error</td>
+          <td>&#39;describe&#39; is not defined.</td>
+          <td>
+            <a href="https://eslint.org/docs/latest/rules/no-undef" target="_blank" rel="noopener noreferrer"
+              >no-undef</a
+            >
+          </td>
+        </tr>
+
+        <tr style="display: none" class="f-44">
+          <td>289:5</td>
+          <td class="clr-2">Error</td>
+          <td>&#39;test&#39; is not defined.</td>
+          <td>
+            <a href="https://eslint.org/docs/latest/rules/no-undef" target="_blank" rel="noopener noreferrer"
+              >no-undef</a
+            >
+          </td>
+        </tr>
+
+        <tr style="display: none" class="f-44">
+          <td>296:7</td>
+          <td class="clr-2">Error</td>
+          <td>&#39;expect&#39; is not defined.</td>
+          <td>
+            <a href="https://eslint.org/docs/latest/rules/no-undef" target="_blank" rel="noopener noreferrer"
+              >no-undef</a
+            >
+          </td>
+        </tr>
+
+        <tr style="display: none" class="f-44">
+          <td>299:17</td>
+          <td class="clr-2">Error</td>
+          <td>&#39;expect&#39; is not defined.</td>
+          <td>
+            <a href="https://eslint.org/docs/latest/rules/no-undef" target="_blank" rel="noopener noreferrer"
+              >no-undef</a
+            >
+          </td>
+        </tr>
+
+        <tr style="display: none" class="f-44">
+          <td>300:20</td>
+          <td class="clr-2">Error</td>
+          <td>&#39;expect&#39; is not defined.</td>
+          <td>
+            <a href="https://eslint.org/docs/latest/rules/no-undef" target="_blank" rel="noopener noreferrer"
+              >no-undef</a
+            >
+          </td>
+        </tr>
+
+        <tr style="display: none" class="f-44">
+          <td>306:5</td>
+          <td class="clr-2">Error</td>
+          <td>&#39;test&#39; is not defined.</td>
+          <td>
+            <a href="https://eslint.org/docs/latest/rules/no-undef" target="_blank" rel="noopener noreferrer"
+              >no-undef</a
+            >
+          </td>
+        </tr>
+
+        <tr style="display: none" class="f-44">
+          <td>320:7</td>
+          <td class="clr-2">Error</td>
+          <td>&#39;expect&#39; is not defined.</td>
+          <td>
+            <a href="https://eslint.org/docs/latest/rules/no-undef" target="_blank" rel="noopener noreferrer"
+              >no-undef</a
+            >
+          </td>
+        </tr>
+
+        <tr style="display: none" class="f-44">
+          <td>321:7</td>
+          <td class="clr-2">Error</td>
+          <td>&#39;expect&#39; is not defined.</td>
+          <td>
+            <a href="https://eslint.org/docs/latest/rules/no-undef" target="_blank" rel="noopener noreferrer"
+              >no-undef</a
+            >
+          </td>
+        </tr>
+
+        <tr style="display: none" class="f-44">
+          <td>324:5</td>
+          <td class="clr-2">Error</td>
+          <td>&#39;test&#39; is not defined.</td>
+          <td>
+            <a href="https://eslint.org/docs/latest/rules/no-undef" target="_blank" rel="noopener noreferrer"
+              >no-undef</a
+            >
+          </td>
+        </tr>
+
+        <tr style="display: none" class="f-44">
+          <td>329:7</td>
+          <td class="clr-2">Error</td>
+          <td>&#39;expect&#39; is not defined.</td>
+          <td>
+            <a href="https://eslint.org/docs/latest/rules/no-undef" target="_blank" rel="noopener noreferrer"
+              >no-undef</a
+            >
+          </td>
+        </tr>
+
+        <tr style="display: none" class="f-44">
+          <td>333:20</td>
+          <td class="clr-2">Error</td>
+          <td>&#39;expect&#39; is not defined.</td>
+          <td>
+            <a href="https://eslint.org/docs/latest/rules/no-undef" target="_blank" rel="noopener noreferrer"
+              >no-undef</a
+            >
+          </td>
+        </tr>
+
+        <tr style="display: none" class="f-44">
+          <td>340:3</td>
+          <td class="clr-2">Error</td>
+          <td>&#39;describe&#39; is not defined.</td>
+          <td>
+            <a href="https://eslint.org/docs/latest/rules/no-undef" target="_blank" rel="noopener noreferrer"
+              >no-undef</a
+            >
+          </td>
+        </tr>
+
+        <tr style="display: none" class="f-44">
+          <td>341:5</td>
+          <td class="clr-2">Error</td>
+          <td>&#39;test&#39; is not defined.</td>
+          <td>
+            <a href="https://eslint.org/docs/latest/rules/no-undef" target="_blank" rel="noopener noreferrer"
+              >no-undef</a
+            >
+          </td>
+        </tr>
+
+        <tr style="display: none" class="f-44">
+          <td>347:7</td>
+          <td class="clr-2">Error</td>
+          <td>&#39;expect&#39; is not defined.</td>
+          <td>
+            <a href="https://eslint.org/docs/latest/rules/no-undef" target="_blank" rel="noopener noreferrer"
+              >no-undef</a
+            >
+          </td>
+        </tr>
+
+        <tr style="display: none" class="f-44">
+          <td>348:7</td>
+          <td class="clr-2">Error</td>
+          <td>&#39;expect&#39; is not defined.</td>
+          <td>
+            <a href="https://eslint.org/docs/latest/rules/no-undef" target="_blank" rel="noopener noreferrer"
+              >no-undef</a
+            >
+          </td>
+        </tr>
+
+        <tr style="display: none" class="f-44">
+          <td>349:7</td>
+          <td class="clr-2">Error</td>
+          <td>&#39;expect&#39; is not defined.</td>
+          <td>
+            <a href="https://eslint.org/docs/latest/rules/no-undef" target="_blank" rel="noopener noreferrer"
+              >no-undef</a
+            >
+          </td>
+        </tr>
+
+        <tr style="display: none" class="f-44">
+          <td>352:5</td>
+          <td class="clr-2">Error</td>
+          <td>&#39;test&#39; is not defined.</td>
+          <td>
+            <a href="https://eslint.org/docs/latest/rules/no-undef" target="_blank" rel="noopener noreferrer"
+              >no-undef</a
+            >
+          </td>
+        </tr>
+
+        <tr style="display: none" class="f-44">
+          <td>359:7</td>
+          <td class="clr-2">Error</td>
+          <td>&#39;expect&#39; is not defined.</td>
+          <td>
+            <a href="https://eslint.org/docs/latest/rules/no-undef" target="_blank" rel="noopener noreferrer"
+              >no-undef</a
+            >
+          </td>
+        </tr>
+
+        <tr style="display: none" class="f-44">
+          <td>360:7</td>
+          <td class="clr-2">Error</td>
+          <td>&#39;expect&#39; is not defined.</td>
+          <td>
+            <a href="https://eslint.org/docs/latest/rules/no-undef" target="_blank" rel="noopener noreferrer"
+              >no-undef</a
+            >
+          </td>
+        </tr>
+
+        <tr class="bg-2" data-group="f-45">
+          <th colspan="4">
+            [+] C:\FloworxInvite\backend\tests\setup.js
+            <span>3 problems (3 errors, 0 warnings)</span>
+          </th>
+        </tr>
+        <tr style="display: none" class="f-45">
+          <td>26:1</td>
+          <td class="clr-2">Error</td>
+          <td>&#39;beforeAll&#39; is not defined.</td>
+          <td>
+            <a href="https://eslint.org/docs/latest/rules/no-undef" target="_blank" rel="noopener noreferrer"
+              >no-undef</a
+            >
+          </td>
+        </tr>
+
+        <tr style="display: none" class="f-45">
+          <td>31:12</td>
+          <td class="clr-2">Error</td>
+          <td>&#39;error&#39; is defined but never used. Allowed unused caught errors must match /^_/u.</td>
+          <td>
+            <a href="https://eslint.org/docs/latest/rules/no-unused-vars" target="_blank" rel="noopener noreferrer"
+              >no-unused-vars</a
+            >
+          </td>
+        </tr>
+
+        <tr style="display: none" class="f-45">
+          <td>38:1</td>
+          <td class="clr-2">Error</td>
+          <td>&#39;afterAll&#39; is not defined.</td>
+          <td>
+            <a href="https://eslint.org/docs/latest/rules/no-undef" target="_blank" rel="noopener noreferrer"
+              >no-undef</a
+            >
+          </td>
+        </tr>
+
+        <tr class="bg-0" data-group="f-46">
+          <th colspan="4">
+            [+] C:\FloworxInvite\backend\utils\encryption.js
+            <span>0 problems</span>
+          </th>
+        </tr>
+
+        <tr class="bg-0" data-group="f-47">
+          <th colspan="4">
+            [+] C:\FloworxInvite\backend\utils\security.js
+            <span>0 problems</span>
+          </th>
+        </tr>
+      </tbody>
+    </table>
+    <script type="text/javascript">
+      var groups = document.querySelectorAll('tr[data-group]');
+      for (i = 0; i < groups.length; i++) {
+        groups[i].addEventListener('click', function () {
+          var inGroup = document.getElementsByClassName(this.getAttribute('data-group'));
+          this.innerHTML =
+            this.innerHTML.indexOf('+') > -1 ? this.innerHTML.replace('+', '-') : this.innerHTML.replace('-', '+');
+          for (var j = 0; j < inGroup.length; j++) {
+            inGroup[j].style.display = inGroup[j].style.display !== 'none' ? 'none' : 'table-row';
+          }
+        });
+      }
+    </script>
+  </body>
+</html>

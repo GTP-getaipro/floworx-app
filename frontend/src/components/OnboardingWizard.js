@@ -3,10 +3,11 @@ import axios from 'axios';
 import ErrorBoundary, { useErrorReporting } from './ErrorBoundary';
 import WorkflowDeployment from './WorkflowDeployment';
 import useAnalytics from '../hooks/useAnalytics';
-import './OnboardingWizard.css';
+import { ProgressBar, Alert } from './ui';
 
 // Step components
 import WelcomeStep from './onboarding/WelcomeStep';
+import BusinessTypeStep from './onboarding/BusinessTypeStep';
 import BusinessCategoriesStep from './onboarding/BusinessCategoriesStep';
 import LabelMappingStep from './onboarding/LabelMappingStep';
 import TeamSetupStep from './onboarding/TeamSetupStep';
@@ -42,6 +43,12 @@ const OnboardingWizard = ({ onComplete }) => {
       title: 'Welcome to Floworx',
       component: WelcomeStep,
       description: 'Let\'s get your email automation set up'
+    },
+    {
+      id: 'business-type',
+      title: 'Business Type',
+      component: BusinessTypeStep,
+      description: 'Select your business type for customized workflows'
     },
     {
       id: 'business-categories',
@@ -262,75 +269,98 @@ const OnboardingWizard = ({ onComplete }) => {
 
   return (
     <ErrorBoundary context={{ currentStep }}>
-      <div className="onboarding-wizard">
+      <div className="min-h-screen bg-surface-soft">
         {recoveryInfo && recoveryInfo.hasRecoveryData && recoveryInfo.recentErrors.length > 0 && (
-          <div className="recovery-banner">
-            <div className="recovery-content">
-              <div className="recovery-icon">🔄</div>
-              <div className="recovery-text">
-                <h4>We found where you left off!</h4>
-                <p>You can continue from your last successful step or start fresh.</p>
-              </div>
-              <div className="recovery-actions">
-                <button onClick={handleRecovery} className="recovery-button">
-                  Continue from {recoveryInfo.lastSuccessfulStep}
-                </button>
-                <button onClick={() => setRecoveryInfo(null)} className="dismiss-button">
-                  Start Fresh
-                </button>
-              </div>
+          <div className="bg-surface border-b border-surface-border">
+            <div className="max-w-4xl mx-auto p-4">
+              <Alert
+                variant="info"
+                title="We found where you left off!"
+                dismissible
+                onDismiss={() => setRecoveryInfo(null)}
+              >
+                <div className="flex items-center justify-between">
+                  <p>You can continue from your last successful step or start fresh.</p>
+                  <div className="flex space-x-2 ml-4">
+                    <button
+                      onClick={handleRecovery}
+                      className="px-3 py-1 bg-brand-primary text-white rounded text-sm hover:bg-brand-primary-hover"
+                    >
+                      Continue from {recoveryInfo.lastSuccessfulStep}
+                    </button>
+                  </div>
+                </div>
+              </Alert>
             </div>
           </div>
         )}
 
-        <div className="onboarding-header">
-          <div className="progress-bar">
-            <div className="progress-steps">
-              {steps.map((step, index) => (
-                <div
-                  key={step.id}
-                  className={`progress-step ${
-                    index <= currentStep ? 'completed' : ''
-                  } ${index === currentStep ? 'active' : ''}`}
-                >
-                  <div className="step-number">{index + 1}</div>
-                  <div className="step-title">{step.title}</div>
-                </div>
-              ))}
+        <div className="bg-surface border-b border-surface-border">
+          <div className="max-w-4xl mx-auto p-6">
+            <div className="mb-6">
+              <ProgressBar
+                value={currentStep + 1}
+                max={steps.length}
+                variant="primary"
+                showLabel
+                className="mb-4"
+              />
+              <div className="flex justify-between text-sm text-ink-sub">
+                {steps.map((step, index) => (
+                  <div
+                    key={step.id}
+                    className={`flex flex-col items-center space-y-1 ${
+                      index <= currentStep ? 'text-brand-primary' : 'text-ink-sub'
+                    }`}
+                  >
+                    <div className={`w-8 h-8 rounded-full flex items-center justify-center text-xs font-medium ${
+                      index < currentStep
+                        ? 'bg-brand-primary text-white'
+                        : index === currentStep
+                        ? 'bg-brand-primary text-white'
+                        : 'bg-surface-border text-ink-sub'
+                    }`}>
+                      {index < currentStep ? '✓' : index + 1}
+                    </div>
+                    <span className="text-xs text-center max-w-20">{step.title}</span>
+                  </div>
+                ))}
+              </div>
             </div>
-            <div
-              className="progress-fill"
-              style={{ width: `${((currentStep + 1) / steps.length) * 100}%` }}
-            ></div>
           </div>
         </div>
 
-      <div className="onboarding-content">
-        <div className="step-header">
-          <h2>{currentStepData.title}</h2>
-          <p>{currentStepData.description}</p>
+        <div className="flex-1 py-8">
+          <div className="max-w-4xl mx-auto px-6">
+            <CurrentStepComponent
+              data={onboardingData}
+              onComplete={(data) => handleStepComplete(currentStepData.id, data)}
+              onBack={handleStepBack}
+              onSkip={handleSkipStep}
+              canGoBack={currentStep > 0}
+              canSkip={currentStep < steps.length - 2} // Can't skip review or completion
+            />
+          </div>
         </div>
 
-        <div className="step-body">
-          <CurrentStepComponent
-            data={onboardingData}
-            onComplete={(data) => handleStepComplete(currentStepData.id, data)}
-            onBack={handleStepBack}
-            onSkip={handleSkipStep}
-            canGoBack={currentStep > 0}
-            canSkip={currentStep < steps.length - 2} // Can't skip review or completion
-          />
+        <div className="bg-surface border-t border-surface-border">
+          <div className="max-w-4xl mx-auto px-6 py-4">
+            <div className="flex justify-between items-center text-sm">
+              <div className="text-ink-sub">
+                Step {currentStep + 1} of {steps.length}
+              </div>
+              <div className="text-ink-sub">
+                Need help?{' '}
+                <a
+                  href="mailto:support@floworx-iq.com"
+                  className="text-brand-primary hover:text-brand-primary-hover underline"
+                >
+                  Contact Support
+                </a>
+              </div>
+            </div>
+          </div>
         </div>
-      </div>
-
-      <div className="onboarding-footer">
-        <div className="step-info">
-          Step {currentStep + 1} of {steps.length}
-        </div>
-        <div className="help-text">
-          Need help? <a href="mailto:support@floworx-iq.com">Contact Support</a>
-        </div>
-      </div>
       </div>
     </ErrorBoundary>
   );

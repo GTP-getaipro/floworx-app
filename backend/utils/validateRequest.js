@@ -20,11 +20,7 @@ const { ValidationError } = require('./errors');
  * @returns {Function} - Express middleware function
  */
 const validateRequest = (schemas, options = {}) => {
-  const {
-    abortEarly = false,
-    stripUnknown = true,
-    allowUnknown = false
-  } = options;
+  const { abortEarly = false, stripUnknown = true, allowUnknown = false } = options;
 
   const validationOptions = {
     abortEarly,
@@ -162,12 +158,12 @@ const validateQuery = (schema, options = {}) => {
 const validateOneOf = (schemas, options = {}) => {
   return (req, res, next) => {
     let lastError = null;
-    
+
     // Try each schema until one passes
     for (const schema of schemas) {
       try {
         const middleware = validateRequest(schema, options);
-        const mockNext = (error) => {
+        const mockNext = error => {
           if (error) {
             lastError = error;
             return;
@@ -175,9 +171,9 @@ const validateOneOf = (schemas, options = {}) => {
           // If no error, validation passed
           return next();
         };
-        
+
         middleware(req, res, mockNext);
-        
+
         // If we get here without error, validation passed
         if (!lastError) {
           return;
@@ -186,12 +182,12 @@ const validateOneOf = (schemas, options = {}) => {
         lastError = error;
       }
     }
-    
+
     // If we get here, all schemas failed
     if (lastError) {
       return next(lastError);
     }
-    
+
     // Fallback error
     const validationError = new ValidationError('Request does not match any expected format');
     validationError.statusCode = 400;
@@ -205,19 +201,19 @@ const validateOneOf = (schemas, options = {}) => {
  * @returns {Function} - Express middleware function
  */
 const sanitizeRequest = (dangerousFields = ['__proto__', 'constructor', 'prototype']) => {
-  const removeDangerousFields = (obj) => {
+  const removeDangerousFields = obj => {
     if (typeof obj !== 'object' || obj === null) {
       return obj;
     }
-    
+
     const sanitized = Array.isArray(obj) ? [] : {};
-    
+
     for (const [key, value] of Object.entries(obj)) {
       if (!dangerousFields.includes(key)) {
         sanitized[key] = removeDangerousFields(value);
       }
     }
-    
+
     return sanitized;
   };
 

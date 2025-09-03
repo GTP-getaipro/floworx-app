@@ -32,7 +32,7 @@
 .progress-percentage {
   font-size: 1.2rem;
   font-weight: 700;
-  color: #4CAF50;
+  color: #4caf50;
 }
 
 .progress-bar {
@@ -46,26 +46,30 @@
 
 .progress-fill {
   height: 100%;
-  background: linear-gradient(90deg, #4CAF50, #45a049);
+  background: linear-gradient(90deg, #4caf50, #45a049);
   border-radius: 4px;
   transition: width 0.5s ease;
   position: relative;
 }
 
 .progress-fill::after {
-  content: '';
+  content: "";
   position: absolute;
   top: 0;
   left: 0;
   right: 0;
   bottom: 0;
-  background: linear-gradient(90deg, transparent, rgba(255,255,255,0.3), transparent);
+  background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.3), transparent);
   animation: shimmer 2s infinite;
 }
 
 @keyframes shimmer {
-  0% { transform: translateX(-100%); }
-  100% { transform: translateX(100%); }
+  0% {
+    transform: translateX(-100%);
+  }
+  100% {
+    transform: translateX(100%);
+  }
 }
 
 .deployment-steps {
@@ -85,7 +89,7 @@
 
 .deployment-step.active {
   background: #e8f5e8;
-  border: 2px solid #4CAF50;
+  border: 2px solid #4caf50;
 }
 
 .deployment-step.completed {
@@ -107,19 +111,24 @@
 }
 
 .deployment-step.active .step-indicator {
-  background: #4CAF50;
+  background: #4caf50;
   color: white;
   animation: pulse 2s infinite;
 }
 
 .deployment-step.completed .step-indicator {
-  background: #4CAF50;
+  background: #4caf50;
   color: white;
 }
 
 @keyframes pulse {
-  0%, 100% { transform: scale(1); }
-  50% { transform: scale(1.1); }
+  0%,
+  100% {
+    transform: scale(1);
+  }
+  50% {
+    transform: scale(1.1);
+  }
 }
 
 .step-content {
@@ -145,21 +154,25 @@
   padding: 1rem;
   background: #f8f9fa;
   border-radius: 8px;
-  border-left: 4px solid #4CAF50;
+  border-left: 4px solid #4caf50;
 }
 
 .step-spinner {
   width: 20px;
   height: 20px;
   border: 2px solid #e0e0e0;
-  border-top: 2px solid #4CAF50;
+  border-top: 2px solid #4caf50;
   border-radius: 50%;
   animation: spin 1s linear infinite;
 }
 
 @keyframes spin {
-  0% { transform: rotate(0deg); }
-  100% { transform: rotate(360deg); }
+  0% {
+    transform: rotate(0deg);
+  }
+  100% {
+    transform: rotate(360deg);
+  }
 }
 
 /* Deployment Logs */
@@ -181,7 +194,7 @@
   padding: 1rem;
   max-height: 200px;
   overflow-y: auto;
-  font-family: 'Monaco', 'Menlo', 'Ubuntu Mono', monospace;
+  font-family: "Monaco", "Menlo", "Ubuntu Mono", monospace;
   font-size: 0.85rem;
 }
 
@@ -226,13 +239,23 @@
 }
 
 @keyframes bounce {
-  0%, 20%, 50%, 80%, 100% { transform: translateY(0); }
-  40% { transform: translateY(-20px); }
-  60% { transform: translateY(-10px); }
+  0%,
+  20%,
+  50%,
+  80%,
+  100% {
+    transform: translateY(0);
+  }
+  40% {
+    transform: translateY(-20px);
+  }
+  60% {
+    transform: translateY(-10px);
+  }
 }
 
 .deployment-success h2 {
-  color: #4CAF50;
+  color: #4caf50;
   margin-bottom: 1rem;
   font-size: 2rem;
 }
@@ -281,12 +304,12 @@
 
 .detail-item span {
   color: #333;
-  font-family: 'Monaco', 'Menlo', 'Ubuntu Mono', monospace;
+  font-family: "Monaco", "Menlo", "Ubuntu Mono", monospace;
   font-size: 0.9rem;
 }
 
 .status-active {
-  background: #4CAF50;
+  background: #4caf50;
   color: white;
   padding: 0.25rem 0.75rem;
   border-radius: 20px;
@@ -325,7 +348,7 @@
 }
 
 .complete-button {
-  background: linear-gradient(135deg, #4CAF50, #45a049);
+  background: linear-gradient(135deg, #4caf50, #45a049);
   color: white;
   border: none;
   padding: 1rem 2rem;
@@ -386,7 +409,7 @@
   border-radius: 8px;
   padding: 1rem;
   color: #d32f2f;
-  font-family: 'Monaco', 'Menlo', 'Ubuntu Mono', monospace;
+  font-family: "Monaco", "Menlo", "Ubuntu Mono", monospace;
   font-size: 0.9rem;
   word-break: break-word;
 }
@@ -400,7 +423,7 @@
 }
 
 .retry-button {
-  background: linear-gradient(135deg, #4CAF50, #45a049);
+  background: linear-gradient(135deg, #4caf50, #45a049);
   color: white;
   border: none;
   padding: 1rem 2rem;
@@ -429,8 +452,8 @@
 }
 
 .support-button:hover {
-  border-color: #4CAF50;
-  color: #4CAF50;
+  border-color: #4caf50;
+  color: #4caf50;
 }
 
 .troubleshooting {
@@ -461,21 +484,21 @@
   .workflow-deployment {
     padding: 1rem;
   }
-  
+
   .deployment-success,
   .deployment-error,
   .deployment-progress {
     padding: 2rem 1.5rem;
   }
-  
+
   .detail-grid {
     grid-template-columns: 1fr;
   }
-  
+
   .error-actions {
     flex-direction: column;
   }
-  
+
   .error-actions button {
     width: 100%;
   }

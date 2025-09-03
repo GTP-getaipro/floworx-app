@@ -3,28 +3,23 @@
  * Consolidates shared utilities with frontend-specific extensions
  */
 
-// Import shared utilities
-const sharedUtils = require('../../../shared/utils');
-
 // Frontend-specific utilities
-const apiClient = require('./apiClient');
-const storage = require('./storage');
-const navigation = require('./navigation');
-const validation = require('./validation');
-const hooks = require('./hooks');
+import apiClient from './apiClient';
+// Note: Other utilities will be added as they are created
+// import storage from './storage';
+// import navigation from './navigation';
+// import validation from './validation';
+// import hooks from './hooks';
 
 // Export consolidated utilities
 export {
-  // Shared utilities (available across frontend and backend)
-  ...sharedUtils,
-  
   // Frontend-specific utilities
   apiClient,
-  storage,
-  navigation,
-  validation,
+  // storage,
+  // navigation,
+  // validation,
   hooks,
-  
+
   // Convenience aliases for commonly used functions
   formatDate,
   formatCurrency,
@@ -37,7 +32,7 @@ export {
   formatBusinessName,
   formatStatus,
   formatErrorMessage,
-  
+
   // Date utilities
   parseDate,
   isValidDate,
@@ -45,7 +40,7 @@ export {
   getDateRange,
   addTime,
   getTimeDifference,
-  
+
   // String utilities
   generateUuid,
   generateSlug,
@@ -57,7 +52,7 @@ export {
   truncateText,
   maskEmail,
   maskPhone,
-  
+
   // Object utilities
   deepClone,
   deepMerge,
@@ -69,7 +64,7 @@ export {
   omit,
   mapKeys,
   mapValues,
-  
+
   // Array utilities
   unique,
   chunk,
@@ -81,7 +76,7 @@ export {
   paginate,
   shuffle,
   sample,
-  
+
   // Validation utilities
   isValidEmail,
   isValidPhone,
@@ -90,7 +85,7 @@ export {
   isValidUuid,
   isRequired,
   validateFields,
-  
+
   // Type checking
   isString,
   isNumber,
@@ -98,7 +93,7 @@ export {
   isArray,
   isFunction,
   getType,
-  
+
   // API utilities
   createSuccessResponse,
   createErrorResponse,
@@ -108,7 +103,7 @@ export {
   isNetworkError,
   isAuthError,
   isValidationError,
-  
+
   // Security utilities
   sanitizeString,
   sanitizeHtml,
@@ -117,7 +112,7 @@ export {
   generateSecureToken,
   validatePasswordStrength,
   maskSensitiveData,
-  
+
   // Constants
   HTTP_STATUS,
   API_STATUS,
@@ -133,7 +128,7 @@ export {
   PRIORITY_LABELS,
   ERROR_CODES,
   DATE_FORMATS,
-  REGEX
+  REGEX,
 } from '../../../shared/utils';
 
 // Re-export for CommonJS compatibility
@@ -143,5 +138,5 @@ module.exports = {
   storage,
   navigation,
   validation,
-  hooks
+  hooks,
 };

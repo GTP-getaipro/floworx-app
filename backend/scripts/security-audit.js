@@ -12,22 +12,10 @@ const { execSync } = require('child_process');
 // Security audit configuration
 const SECURITY_CONFIG = {
   // File patterns to scan for security issues
-  scanPatterns: [
-    '**/*.js',
-    '**/*.json',
-    '**/*.sql',
-    '**/*.env*'
-  ],
-  
+  scanPatterns: ['**/*.js', '**/*.json', '**/*.sql', '**/*.env*'],
+
   // Exclude patterns
-  excludePatterns: [
-    'node_modules/**',
-    'coverage/**',
-    'dist/**',
-    'build/**',
-    '*.test.js',
-    '*.spec.js'
-  ],
+  excludePatterns: ['node_modules/**', 'coverage/**', 'dist/**', 'build/**', '*.test.js', '*.spec.js'],
 
   // Security rules
   rules: {
@@ -142,7 +130,7 @@ class SecurityAudit {
     try {
       const content = fs.readFileSync(filePath, 'utf8');
       const lines = content.split('\n');
-      
+
       this.results.summary.scannedFiles++;
 
       // Check each rule category
@@ -152,15 +140,8 @@ class SecurityAudit {
       this.checkDangerousFunctions(filePath, lines);
       this.checkMissingValidation(filePath, lines);
       this.checkFilePermissions(filePath);
-
     } catch (error) {
-      this.addFinding(
-        'scan_error',
-        'medium',
-        filePath,
-        0,
-        `Failed to scan file: ${error.message}`
-      );
+      this.addFinding('scan_error', 'medium', filePath, 0, `Failed to scan file: ${error.message}`);
     }
   }
 
@@ -189,7 +170,9 @@ class SecurityAudit {
    */
   checkHardcodedSecrets(filePath, lines) {
     // Skip .env files as they're expected to have secrets
-    if (path.basename(filePath).startsWith('.env')) return;
+    if (path.basename(filePath).startsWith('.env')) {
+      return;
+    }
 
     lines.forEach((line, index) => {
       SECURITY_CONFIG.rules.hardcodedSecrets.forEach(pattern => {
@@ -234,14 +217,7 @@ class SecurityAudit {
     lines.forEach((line, index) => {
       SECURITY_CONFIG.rules.dangerousFunctions.forEach(pattern => {
         if (pattern.test(line)) {
-          this.addFinding(
-            'dangerous_function',
-            'high',
-            filePath,
-            index + 1,
-            'Dangerous function usage detected',
-            line
-          );
+          this.addFinding('dangerous_function', 'high', filePath, index + 1, 'Dangerous function usage detected', line);
         }
       });
     });
@@ -252,7 +228,9 @@ class SecurityAudit {
    */
   checkMissingValidation(filePath, lines) {
     // Only check route files
-    if (!filePath.includes('/routes/')) return;
+    if (!filePath.includes('/routes/')) {
+      return;
+    }
 
     lines.forEach((line, index) => {
       SECURITY_CONFIG.rules.missingValidation.forEach(pattern => {
@@ -277,27 +255,16 @@ class SecurityAudit {
     try {
       const stats = fs.statSync(filePath);
       const mode = stats.mode & parseInt('777', 8);
-      
+
       // Check for overly permissive files
-      if (mode & parseInt('002', 8)) { // World writable
-        this.addFinding(
-          'file_permissions',
-          'medium',
-          filePath,
-          0,
-          'File is world-writable'
-        );
+      if (mode & parseInt('002', 8)) {
+        // World writable
+        this.addFinding('file_permissions', 'medium', filePath, 0, 'File is world-writable');
       }
 
       // Check for sensitive files with wrong permissions
-      if (filePath.includes('.env') && (mode & parseInt('044', 8))) {
-        this.addFinding(
-          'file_permissions',
-          'high',
-          filePath,
-          0,
-          'Environment file is readable by others'
-        );
+      if (filePath.includes('.env') && mode & parseInt('044', 8)) {
+        this.addFinding('file_permissions', 'high', filePath, 0, 'Environment file is readable by others');
       }
     } catch (error) {
       // Ignore permission check errors
@@ -309,7 +276,7 @@ class SecurityAudit {
    */
   generateRecommendations() {
     const findings = this.results.findings;
-    
+
     // SQL injection recommendations
     if (findings.some(f => f.type === 'sql_injection')) {
       this.addRecommendation(
@@ -359,7 +326,7 @@ class SecurityAudit {
       console.log('🔍 Running npm audit...');
       const auditResult = execSync('npm audit --json', { encoding: 'utf8' });
       const audit = JSON.parse(auditResult);
-      
+
       if (audit.vulnerabilities) {
         Object.entries(audit.vulnerabilities).forEach(([pkg, vuln]) => {
           this.addFinding(
@@ -383,7 +350,7 @@ class SecurityAudit {
   generateReport() {
     const timestamp = new Date().toISOString().replace(/[:.]/g, '-');
     const reportFile = path.join(process.cwd(), 'reports', `security-audit-${timestamp}.json`);
-    
+
     // Ensure reports directory exists
     const reportsDir = path.dirname(reportFile);
     if (!fs.existsSync(reportsDir)) {
@@ -395,7 +362,7 @@ class SecurityAudit {
 
     // Write report
     fs.writeFileSync(reportFile, JSON.stringify(this.results, null, 2));
-    
+
     return reportFile;
   }
 }
@@ -408,7 +375,7 @@ async function runSecurityAudit() {
   console.log('=====================================');
 
   const audit = new SecurityAudit();
-  
+
   // Get all files to scan
   const glob = require('glob');
   const files = glob.sync('**/*.{js,json,sql}', {

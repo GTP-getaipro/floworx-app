@@ -1,6 +1,6 @@
 const nodemailer = require('nodemailer');
 const crypto = require('crypto');
-const { pool } = require('../database/connection');
+const { query } = require('../database/unified-connection');
 require('dotenv').config();
 
 class EmailService {
@@ -151,22 +151,22 @@ class EmailService {
     // Use template if specified
     if (template && !html) {
       switch (template) {
-      case 'password-reset':
-        htmlContent = this.getPasswordResetTemplate(data.firstName, data.resetUrl, data.expiryMinutes);
-        break;
-      case 'password-reset-confirmation':
-        htmlContent = this.getPasswordResetConfirmationTemplate(data.firstName, data.loginUrl);
-        break;
-      case 'account-recovery':
-        htmlContent = this.getAccountRecoveryTemplate(
-          data.firstName,
-          data.recoveryUrl,
-          data.recoveryType,
-          data.expiryTime
-        );
-        break;
-      default:
-        throw new Error(`Unknown email template: ${template}`);
+        case 'password-reset':
+          htmlContent = this.getPasswordResetTemplate(data.firstName, data.resetUrl, data.expiryMinutes);
+          break;
+        case 'password-reset-confirmation':
+          htmlContent = this.getPasswordResetConfirmationTemplate(data.firstName, data.loginUrl);
+          break;
+        case 'account-recovery':
+          htmlContent = this.getAccountRecoveryTemplate(
+            data.firstName,
+            data.recoveryUrl,
+            data.recoveryType,
+            data.expiryTime
+          );
+          break;
+        default:
+          throw new Error(`Unknown email template: ${template}`);
       }
     }
 

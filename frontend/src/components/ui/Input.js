@@ -1,14 +1,6 @@
 import React from 'react';
 
-const Input = ({ 
-  label,
-  error,
-  helperText,
-  required = false,
-  className = '',
-  id,
-  ...props 
-}) => {
+const Input = ({ label, error, helperText, required = false, className = '', id, ...props }) => {
   const inputId = id || `input-${Math.random().toString(36).substr(2, 9)}`;
 
   const inputClasses = `
@@ -17,43 +9,41 @@ const Input = ({
     focus:outline-none focus-visible:ring-2 focus-visible:ring-brand-primary-hover focus:border-brand-primary
     disabled:bg-surface-subtle disabled:cursor-not-allowed disabled:text-ink-sub
     transition-colors duration-200
-    ${error
-      ? 'border-danger focus-visible:ring-red-500 focus:border-danger'
-      : 'border-surface-border hover:border-ink-sub'
+    ${
+      error
+        ? 'border-danger focus-visible:ring-red-500 focus:border-danger'
+        : 'border-surface-border hover:border-ink-sub'
     }
     ${className}
-  `.replace(/\s+/g, ' ').trim();
+  `
+    .replace(/\s+/g, ' ')
+    .trim();
 
   return (
-    <div className="space-y-1">
+    <div className='space-y-1'>
       {label && (
-        <label 
-          htmlFor={inputId}
-          className="block text-sm font-medium text-ink"
-        >
+        <label htmlFor={inputId} className='block text-sm font-medium text-ink'>
           {label}
-          {required && <span className="text-danger ml-1">*</span>}
+          {required && <span className='text-danger ml-1'>*</span>}
         </label>
       )}
-      
-      <input
-        id={inputId}
-        className={inputClasses}
-        {...props}
-      />
-      
+
+      <input id={inputId} className={inputClasses} {...props} />
+
       {error && (
-        <p className="text-sm text-danger flex items-center gap-1">
-          <svg className="w-4 h-4 flex-shrink-0" fill="currentColor" viewBox="0 0 20 20">
-            <path fillRule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7 4a1 1 0 11-2 0 1 1 0 012 0zm-1-9a1 1 0 00-1 1v4a1 1 0 102 0V6a1 1 0 00-1-1z" clipRule="evenodd" />
+        <p className='text-sm text-danger flex items-center gap-1'>
+          <svg className='w-4 h-4 flex-shrink-0' fill='currentColor' viewBox='0 0 20 20'>
+            <path
+              fillRule='evenodd'
+              d='M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7 4a1 1 0 11-2 0 1 1 0 012 0zm-1-9a1 1 0 00-1 1v4a1 1 0 102 0V6a1 1 0 00-1-1z'
+              clipRule='evenodd'
+            />
           </svg>
           {error}
         </p>
       )}
-      
-      {helperText && !error && (
-        <p className="text-sm text-ink-sub">{helperText}</p>
-      )}
+
+      {helperText && !error && <p className='text-sm text-ink-sub'>{helperText}</p>}
     </div>
   );
 };

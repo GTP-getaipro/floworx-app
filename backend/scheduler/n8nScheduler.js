@@ -16,7 +16,7 @@ class N8nScheduler {
   async getActiveUsers() {
     try {
       const query = `
-        SELECT DISTINCT u.id, u.email, c.created_at as connected_at
+        SELECT DISTINCT u.id, u.email, u.created_at, c.created_at as connected_at
         FROM users u
         INNER JOIN credentials c ON u.id = c.user_id
         WHERE c.service_name = 'google'

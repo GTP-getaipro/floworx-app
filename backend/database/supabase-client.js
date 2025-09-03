@@ -36,7 +36,9 @@ class SupabaseClient {
     }
     const algorithm = 'aes-256-gcm';
     const iv = crypto.randomBytes(16);
-    const cipher = crypto.createCipher(algorithm, this.encryptionKey);
+    const keyBuffer = Buffer.from(this.encryptionKey.slice(0, 32), 'utf8');
+    const cipher = crypto.createCipherGCM(algorithm, keyBuffer, iv);
+    cipher.setAAD(Buffer.from('floworx-supabase', 'utf8'));
 
     let encrypted = cipher.update(text, 'utf8', 'hex');
     encrypted += cipher.final('hex');
@@ -56,11 +58,13 @@ class SupabaseClient {
       throw new Error('Invalid encrypted text format');
     }
 
-    const _iv = Buffer.from(parts[0], 'hex');
+    const iv = Buffer.from(parts[0], 'hex');
     const authTag = Buffer.from(parts[1], 'hex');
     const encrypted = parts[2];
+    const keyBuffer = Buffer.from(this.encryptionKey.slice(0, 32), 'utf8');
 
-    const decipher = crypto.createDecipher(algorithm, this.encryptionKey);
+    const decipher = crypto.createDecipherGCM(algorithm, keyBuffer, iv);
+    decipher.setAAD(Buffer.from('floworx-supabase', 'utf8'));
     decipher.setAuthTag(authTag);
 
     let decrypted = decipher.update(encrypted, 'hex', 'utf8');

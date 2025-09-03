@@ -1,5 +1,5 @@
 const { google } = require('googleapis');
-const { pool } = require('../database/connection');
+const { query } = require('../database/unified-connection');
 const { decrypt } = require('../utils/encryption');
 
 class GmailService {

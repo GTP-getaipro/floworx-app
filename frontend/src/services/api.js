@@ -3,6 +3,16 @@
  * Handles all API calls with proper error handling, authentication, and loading states
  */
 
+// Custom error class - defined first to avoid "used before defined" errors
+class ApiError extends Error {
+  constructor(message, status, data) {
+    super(message);
+    this.name = 'ApiError';
+    this.status = status;
+    this.data = data;
+  }
+}
+
 class ApiService {
   constructor() {
     this.baseURL = process.env.REACT_APP_API_URL || window.location.origin;
@@ -57,11 +67,11 @@ class ApiService {
 
     try {
       const response = await fetch(url, config);
-      
+
       // Handle different response types
       const contentType = response.headers.get('content-type');
       let data;
-      
+
       if (contentType && contentType.includes('application/json')) {
         data = await response.json();
       } else {
@@ -75,21 +85,22 @@ class ApiService {
           window.location.href = '/login';
           throw new ApiError('Authentication required', 401, data);
         }
-        
+
         if (response.status === 403) {
           throw new ApiError('Access forbidden', 403, data);
         }
-        
+
         if (response.status === 404) {
           throw new ApiError('Resource not found', 404, data);
         }
-        
+
         if (response.status >= 500) {
           throw new ApiError('Server error. Please try again later.', response.status, data);
         }
 
         // Extract error message from response
-        const errorMessage = data?.message || data?.error || `Request failed with status ${response.status}`;
+        const errorMessage =
+          data?.message || data?.error || `Request failed with status ${response.status}`;
         throw new ApiError(errorMessage, response.status, data);
       }
 
@@ -98,12 +109,12 @@ class ApiService {
       if (error instanceof ApiError) {
         throw error;
       }
-      
+
       // Network or other errors
       if (error.name === 'TypeError' && error.message.includes('fetch')) {
         throw new ApiError('Network error. Please check your connection.', 0, null);
       }
-      
+
       throw new ApiError(error.message || 'An unexpected error occurred', 0, null);
     }
   }
@@ -191,7 +202,11 @@ class ApiService {
 
   async handleOAuthCallback(code, state) {
     try {
-      const response = await this.post('/api/oauth/callback', { code, state }, { includeAuth: false });
+      const response = await this.post(
+        '/api/oauth/callback',
+        { code, state },
+        { includeAuth: false }
+      );
       if (response.token) {
         this.setToken(response.token, true);
       }
@@ -241,15 +256,7 @@ class ApiService {
   }
 }
 
-// Custom error class
-class ApiError extends Error {
-  constructor(message, status, data) {
-    super(message);
-    this.name = 'ApiError';
-    this.status = status;
-    this.data = data;
-  }
-}
+
 
 // Create singleton instance
 const apiService = new ApiService();

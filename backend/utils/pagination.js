@@ -35,14 +35,22 @@ class PaginationUtils {
     // Validate and sanitize parameters
     const parsedLimit = Math.min(parseInt(limit) || this.defaults.limit, this.defaults.maxLimit);
     const parsedPage = Math.max(parseInt(page) || 1, 1);
-    const parsedOffset = Math.max(parseInt(offset) || ((parsedPage - 1) * parsedLimit), 0);
-    
+    const parsedOffset = Math.max(parseInt(offset) || (parsedPage - 1) * parsedLimit, 0);
+
     // Validate sort field (whitelist approach)
     const allowedSortFields = [
-      'id', 'created_at', 'updated_at', 'name', 'email', 'status', 
-      'first_name', 'last_name', 'business_name', 'workflow_name'
+      'id',
+      'created_at',
+      'updated_at',
+      'name',
+      'email',
+      'status',
+      'first_name',
+      'last_name',
+      'business_name',
+      'workflow_name'
     ];
-    
+
     const validSort = allowedSortFields.includes(sort) ? sort : this.defaults.defaultSort;
     const validOrder = ['ASC', 'DESC'].includes(order.toUpperCase()) ? order.toUpperCase() : this.defaults.defaultOrder;
 
@@ -62,7 +70,7 @@ class PaginationUtils {
    */
   buildPaginationClause(params) {
     const { limit, offset, sort, order } = params;
-    
+
     return {
       orderBy: `ORDER BY "${sort}" ${order}`,
       limit: `LIMIT $${this.getNextParamIndex()}`,
@@ -76,16 +84,16 @@ class PaginationUtils {
    */
   buildCursorPagination(params, cursorColumn = 'id') {
     const { limit, cursor, order } = params;
-    
+
     let whereClause = '';
-    let values = [limit];
-    
+    const values = [limit];
+
     if (cursor) {
       const operator = order === 'DESC' ? '<' : '>';
       whereClause = `WHERE "${cursorColumn}" ${operator} $${this.getNextParamIndex()}`;
       values.push(cursor);
     }
-    
+
     return {
       whereClause,
       orderBy: `ORDER BY "${cursorColumn}" ${order}`,
@@ -125,20 +133,20 @@ class PaginationUtils {
     Object.entries(filters).forEach(([key, value]) => {
       if (allowedFilters[key] && value !== null && value !== undefined && value !== '') {
         const filterConfig = allowedFilters[key];
-        
+
         switch (filterConfig.type) {
           case 'exact':
             conditions.push(`"${key}" = $${paramIndex}`);
             values.push(value);
             paramIndex++;
             break;
-            
+
           case 'like':
             conditions.push(`"${key}" ILIKE $${paramIndex}`);
             values.push(`%${value}%`);
             paramIndex++;
             break;
-            
+
           case 'in':
             if (Array.isArray(value) && value.length > 0) {
               const placeholders = value.map(() => `$${paramIndex++}`).join(',');
@@ -146,7 +154,7 @@ class PaginationUtils {
               values.push(...value);
             }
             break;
-            
+
           case 'range':
             if (value.min !== undefined) {
               conditions.push(`"${key}" >= $${paramIndex}`);
@@ -159,7 +167,7 @@ class PaginationUtils {
               paramIndex++;
             }
             break;
-            
+
           case 'date':
             if (value.start) {
               conditions.push(`"${key}" >= $${paramIndex}`);
@@ -177,7 +185,7 @@ class PaginationUtils {
     });
 
     const whereClause = conditions.length > 0 ? `WHERE ${conditions.join(' AND ')}` : '';
-    
+
     return { whereClause, values };
   }
 
@@ -186,12 +194,9 @@ class PaginationUtils {
    */
   async executePaginatedQuery(queryBuilder, countQueryBuilder, params) {
     const { limit, offset } = params;
-    
+
     // Execute both queries in parallel
-    const [dataResult, countResult] = await Promise.all([
-      queryBuilder(),
-      countQueryBuilder()
-    ]);
+    const [dataResult, countResult] = await Promise.all([queryBuilder(), countQueryBuilder()]);
 
     const items = dataResult.rows;
     const totalCount = parseInt(countResult.rows[0]?.count || 0);
@@ -221,10 +226,10 @@ class PaginationUtils {
    */
   async executeCursorPaginatedQuery(queryBuilder, params, cursorColumn = 'id') {
     const { limit } = params;
-    
+
     const result = await queryBuilder();
     const items = result.rows;
-    
+
     // Get cursor for next page
     const nextCursor = items.length === limit ? items[items.length - 1][cursorColumn] : null;
     const hasNextPage = items.length === limit;
@@ -265,7 +270,7 @@ class PaginationUtils {
    */
   optimizeForLargeDataset(baseQuery, params) {
     const { offset, limit } = params;
-    
+
     // For large offsets, use cursor-based pagination
     if (offset > 10000) {
       console.warn(`Large offset detected (${offset}). Consider using cursor-based pagination.`);
@@ -273,7 +278,7 @@ class PaginationUtils {
 
     // Add query hints for PostgreSQL
     let optimizedQuery = baseQuery;
-    
+
     // Use index hints for large datasets
     if (offset > 1000) {
       optimizedQuery = `/*+ USE_INDEX */ ${optimizedQuery}`;
@@ -302,19 +307,19 @@ class PaginationUtils {
    */
   validatePaginationParams(params) {
     const { limit, offset, page } = params;
-    
+
     if (limit < 1 || limit > this.defaults.maxLimit) {
       throw new ValidationError(`Limit must be between 1 and ${this.defaults.maxLimit}`);
     }
-    
+
     if (offset < 0) {
       throw new ValidationError('Offset must be non-negative');
     }
-    
+
     if (page < 1) {
       throw new ValidationError('Page must be positive');
     }
-    
+
     return true;
   }
 

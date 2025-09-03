@@ -22,12 +22,10 @@ describe('Security Tests', () => {
       ];
 
       for (const payload of maliciousPayloads) {
-        const response = await request(app)
-          .post('/api/auth/login')
-          .send({
-            email: payload,
-            password: 'password123'
-          });
+        const response = await request(app).post('/api/auth/login').send({
+          email: payload,
+          password: 'password123'
+        });
 
         // Should not return 500 (SQL error) or 200 (successful injection)
         expect(response.status).not.toBe(500);
@@ -45,12 +43,10 @@ describe('Security Tests', () => {
       ];
 
       // First login to get auth token
-      const loginResponse = await request(app)
-        .post('/api/auth/login')
-        .send({
-          email: 'test@example.com',
-          password: 'validpassword'
-        });
+      const loginResponse = await request(app).post('/api/auth/login').send({
+        email: 'test@example.com',
+        password: 'validpassword'
+      });
 
       const token = loginResponse.body.token;
 
@@ -80,15 +76,13 @@ describe('Security Tests', () => {
       ];
 
       for (const payload of xssPayloads) {
-        const response = await request(app)
-          .post('/api/auth/register')
-          .send({
-            email: 'test@example.com',
-            password: 'ValidPass123!',
-            firstName: payload,
-            lastName: 'User',
-            agreeToTerms: true
-          });
+        const response = await request(app).post('/api/auth/register').send({
+          email: 'test@example.com',
+          password: 'ValidPass123!',
+          firstName: payload,
+          lastName: 'User',
+          agreeToTerms: true
+        });
 
         // Should either reject the payload or sanitize it
         if (response.status === 201) {
@@ -101,12 +95,10 @@ describe('Security Tests', () => {
     });
 
     test('should prevent XSS in error messages', async () => {
-      const response = await request(app)
-        .post('/api/auth/login')
-        .send({
-          email: '<script>alert("XSS")</script>@example.com',
-          password: 'password'
-        });
+      const response = await request(app).post('/api/auth/login').send({
+        email: '<script>alert("XSS")</script>@example.com',
+        password: 'password'
+      });
 
       expect(response.body.error).toBeDefined();
       expect(response.body.error.message).not.toContain('<script>');
@@ -117,21 +109,19 @@ describe('Security Tests', () => {
   describe('Rate Limiting', () => {
     test('should enforce rate limits on login attempts', async () => {
       const requests = [];
-      
+
       // Make multiple rapid requests
       for (let i = 0; i < 10; i++) {
         requests.push(
-          request(app)
-            .post('/api/auth/login')
-            .send({
-              email: 'test@example.com',
-              password: 'wrongpassword'
-            })
+          request(app).post('/api/auth/login').send({
+            email: 'test@example.com',
+            password: 'wrongpassword'
+          })
         );
       }
 
       const responses = await Promise.all(requests);
-      
+
       // Should have at least one rate limited response
       const rateLimitedResponses = responses.filter(res => res.status === 429);
       expect(rateLimitedResponses.length).toBeGreaterThan(0);
@@ -139,7 +129,7 @@ describe('Security Tests', () => {
 
     test('should enforce rate limits on registration', async () => {
       const requests = [];
-      
+
       for (let i = 0; i < 5; i++) {
         requests.push(
           request(app)
@@ -161,14 +151,12 @@ describe('Security Tests', () => {
 
     test('should enforce rate limits on password reset', async () => {
       const requests = [];
-      
+
       for (let i = 0; i < 5; i++) {
         requests.push(
-          request(app)
-            .post('/api/auth/password-reset-request')
-            .send({
-              email: 'test@example.com'
-            })
+          request(app).post('/api/auth/password-reset-request').send({
+            email: 'test@example.com'
+          })
         );
       }
 
@@ -191,15 +179,13 @@ describe('Security Tests', () => {
       ];
 
       for (const email of invalidEmails) {
-        const response = await request(app)
-          .post('/api/auth/register')
-          .send({
-            email: email,
-            password: 'ValidPass123!',
-            firstName: 'Test',
-            lastName: 'User',
-            agreeToTerms: true
-          });
+        const response = await request(app).post('/api/auth/register').send({
+          email: email,
+          password: 'ValidPass123!',
+          firstName: 'Test',
+          lastName: 'User',
+          agreeToTerms: true
+        });
 
         expect(response.status).toBe(400);
         expect(response.body.error).toBeDefined();
@@ -207,26 +193,16 @@ describe('Security Tests', () => {
     });
 
     test('should reject weak passwords', async () => {
-      const weakPasswords = [
-        'password',
-        '123456',
-        'abc123',
-        'Password',
-        'password123',
-        'PASSWORD123',
-        'Pass123'
-      ];
+      const weakPasswords = ['password', '123456', 'abc123', 'Password', 'password123', 'PASSWORD123', 'Pass123'];
 
       for (const password of weakPasswords) {
-        const response = await request(app)
-          .post('/api/auth/register')
-          .send({
-            email: 'test@example.com',
-            password: password,
-            firstName: 'Test',
-            lastName: 'User',
-            agreeToTerms: true
-          });
+        const response = await request(app).post('/api/auth/register').send({
+          email: 'test@example.com',
+          password: password,
+          firstName: 'Test',
+          lastName: 'User',
+          agreeToTerms: true
+        });
 
         expect(response.status).toBe(400);
         expect(response.body.error.message).toContain('Password');
@@ -238,9 +214,9 @@ describe('Security Tests', () => {
         { email: 'test@example.com' }, // Missing password
         { password: 'ValidPass123!' }, // Missing email
         { email: 'test@example.com', password: 'ValidPass123!' }, // Missing names
-        { 
-          email: 'test@example.com', 
-          password: 'ValidPass123!', 
+        {
+          email: 'test@example.com',
+          password: 'ValidPass123!',
           firstName: 'Test',
           lastName: 'User'
           // Missing agreeToTerms
@@ -248,9 +224,7 @@ describe('Security Tests', () => {
       ];
 
       for (const data of incompleteData) {
-        const response = await request(app)
-          .post('/api/auth/register')
-          .send(data);
+        const response = await request(app).post('/api/auth/register').send(data);
 
         expect(response.status).toBe(400);
         expect(response.body.error).toBeDefined();
@@ -260,12 +234,10 @@ describe('Security Tests', () => {
 
   describe('Authentication Security', () => {
     test('should not expose sensitive information in error messages', async () => {
-      const response = await request(app)
-        .post('/api/auth/login')
-        .send({
-          email: 'nonexistent@example.com',
-          password: 'password'
-        });
+      const response = await request(app).post('/api/auth/login').send({
+        email: 'nonexistent@example.com',
+        password: 'password'
+      });
 
       expect(response.status).toBe(401);
       expect(response.body.error.message).not.toContain('user not found');
@@ -275,35 +247,29 @@ describe('Security Tests', () => {
 
     test('should implement account lockout after failed attempts', async () => {
       const email = 'lockout-test@example.com';
-      
+
       // Create a test user first
-      await request(app)
-        .post('/api/auth/register')
-        .send({
-          email: email,
-          password: 'ValidPass123!',
-          firstName: 'Test',
-          lastName: 'User',
-          agreeToTerms: true
-        });
+      await request(app).post('/api/auth/register').send({
+        email: email,
+        password: 'ValidPass123!',
+        firstName: 'Test',
+        lastName: 'User',
+        agreeToTerms: true
+      });
 
       // Make multiple failed login attempts
       for (let i = 0; i < 6; i++) {
-        await request(app)
-          .post('/api/auth/login')
-          .send({
-            email: email,
-            password: 'wrongpassword'
-          });
+        await request(app).post('/api/auth/login').send({
+          email: email,
+          password: 'wrongpassword'
+        });
       }
 
       // Next attempt should be locked out
-      const response = await request(app)
-        .post('/api/auth/login')
-        .send({
-          email: email,
-          password: 'ValidPass123!' // Even with correct password
-        });
+      const response = await request(app).post('/api/auth/login').send({
+        email: email,
+        password: 'ValidPass123!' // Even with correct password
+      });
 
       expect(response.status).toBe(423); // Locked
       expect(response.body.error.message).toContain('locked');
@@ -323,7 +289,7 @@ describe('Security Tests', () => {
 
     test('should set Content Security Policy', async () => {
       const response = await request(app).get('/health');
-      
+
       expect(response.headers).toHaveProperty('content-security-policy');
       const csp = response.headers['content-security-policy'];
       expect(csp).toContain("default-src 'self'");
@@ -339,13 +305,13 @@ expect.extend({
     if (pass) {
       return {
         message: () => `expected ${received} not to be one of ${expected}`,
-        pass: true,
+        pass: true
       };
     } else {
       return {
         message: () => `expected ${received} to be one of ${expected}`,
-        pass: false,
+        pass: false
       };
     }
-  },
+  }
 });

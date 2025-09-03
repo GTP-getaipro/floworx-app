@@ -13,19 +13,19 @@ const commonSchemas = require('./common');
 module.exports = {
   // Authentication schemas
   ...authSchemas,
-  
+
   // User management schemas
   ...userSchemas,
-  
+
   // Onboarding schemas
   ...onboardingSchemas,
-  
+
   // Account recovery schemas
   ...accountRecoverySchemas,
-  
+
   // Workflow schemas
   ...workflowSchemas,
-  
+
   // Common/shared schemas
   ...commonSchemas
 };

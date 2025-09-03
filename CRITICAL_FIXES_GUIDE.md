@@ -91,7 +91,7 @@ After redeployment, test these steps:
 ### **3. Implement Enhanced Error Handling**
 
 Replace raw API errors with user-friendly messages using the components we've created:
-- ✅ `ErrorBoundary.jsx` - Catches JavaScript errors
+- ✅ `ErrorBoundary.js` - Catches JavaScript errors
 - ✅ `LoadingSpinner.jsx` - Shows loading states
 - ✅ `SuccessModal.jsx` - Shows success messages
 
@@ -165,7 +165,7 @@ After implementing fixes, verify these user journeys work:
 
 We've created these enhanced components for you:
 
-### **1. `frontend/src/components/ErrorBoundary.jsx`**
+### **1. `frontend/src/components/ErrorBoundary.js`**
 - Catches and displays JavaScript errors gracefully
 - Provides retry mechanisms
 - Shows user-friendly error messages

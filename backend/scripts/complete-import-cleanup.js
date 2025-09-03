@@ -32,9 +32,7 @@ const remainingFixes = [
   },
   {
     file: 'tests/setup.js',
-    fixes: [
-      { line: 31, action: 'prefix', vars: ['error'] }
-    ]
+    fixes: [{ line: 31, action: 'prefix', vars: ['error'] }]
   }
 ];
 
@@ -58,7 +56,7 @@ const applyFix = (filePath, fix) => {
 
     const content = fs.readFileSync(filePath, 'utf8');
     const lines = content.split('\n');
-    
+
     if (fix.line > lines.length) {
       log(`Line ${fix.line} not found in ${filePath}`, 'warning');
       return false;
@@ -74,7 +72,7 @@ const applyFix = (filePath, fix) => {
         if (destructureMatch) {
           const variables = destructureMatch[1].split(',').map(v => v.trim());
           const filteredVars = variables.filter(v => v !== fix.content);
-          
+
           if (filteredVars.length === 0) {
             // Remove entire line
             lines.splice(fix.line - 1, 1);
@@ -84,9 +82,11 @@ const applyFix = (filePath, fix) => {
             lines[fix.line - 1] = line.replace(/\{\s*[^}]+\s*\}/, newDestructure);
           }
           modified = true;
-        } else if (line.includes(`const ${fix.content}`) || 
-                   line.includes(`let ${fix.content}`) || 
-                   line.includes(`var ${fix.content}`)) {
+        } else if (
+          line.includes(`const ${fix.content}`) ||
+          line.includes(`let ${fix.content}`) ||
+          line.includes(`var ${fix.content}`)
+        ) {
           // Remove entire variable declaration line
           lines.splice(fix.line - 1, 1);
           modified = true;
@@ -105,7 +105,7 @@ const applyFix = (filePath, fix) => {
       fs.writeFileSync(filePath, lines.join('\n'), 'utf8');
       return true;
     }
-    
+
     return false;
   } catch (error) {
     log(`Error fixing ${filePath}: ${error.message}`, 'error');
@@ -123,14 +123,14 @@ const main = () => {
   remainingFixes.forEach(fileConfig => {
     const filePath = path.join(process.cwd(), fileConfig.file);
     log(`Processing: ${fileConfig.file}`, 'info');
-    
+
     let fileFixed = false;
     fileConfig.fixes.forEach(fix => {
       if (applyFix(filePath, fix)) {
         fileFixed = true;
       }
     });
-    
+
     if (fileFixed) {
       totalFixed++;
       log(`✅ Fixed: ${fileConfig.file}`, 'success');
@@ -140,14 +140,19 @@ const main = () => {
   // Run final ESLint check
   log('\n🔍 Running final ESLint check...', 'info');
   try {
-    const result = execSync('npx eslint . --ext .js | findstr "no-unused-vars" | findstr -v "backup-imports" | findstr -v "tests"', { 
-      encoding: 'utf8',
-      stdio: 'pipe'
-    });
-    
+    const result = execSync(
+      'npx eslint . --ext .js | findstr "no-unused-vars" | findstr -v "backup-imports" | findstr -v "tests"',
+      {
+        encoding: 'utf8',
+        stdio: 'pipe'
+      }
+    );
+
     const remainingErrors = result.split('\n').filter(line => line.trim()).length;
-    log(`Remaining unused variable errors in main source: ${remainingErrors}`, remainingErrors > 0 ? 'warning' : 'success');
-    
+    log(
+      `Remaining unused variable errors in main source: ${remainingErrors}`,
+      remainingErrors > 0 ? 'warning' : 'success'
+    );
   } catch (error) {
     log('ESLint check completed with some remaining issues', 'warning');
   }
@@ -157,14 +162,14 @@ const main = () => {
   log('========================', 'info');
   log(`Files processed: ${remainingFixes.length}`, 'info');
   log(`Files modified: ${totalFixed}`, 'success');
-  
+
   log('\n✅ MAJOR IMPROVEMENTS ACHIEVED:', 'success');
   log('• Removed unused imports from core service files', 'success');
   log('• Fixed unused variables in route handlers', 'success');
   log('• Cleaned up script files', 'success');
   log('• Prefixed unused parameters with underscore', 'success');
   log('• Maintained code functionality while improving quality', 'success');
-  
+
   log('\n🎉 Import & Declaration cleanup completed!', 'success');
 };
 

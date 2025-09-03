@@ -13,7 +13,7 @@ const { performance } = require('perf_hooks');
 class CacheService {
   constructor() {
     this.redis = null;
-    this.memoryCache = new NodeCache({ 
+    this.memoryCache = new NodeCache({
       stdTTL: 300, // 5 minutes default TTL
       checkperiod: 60, // Check for expired keys every minute
       useClones: false // Better performance, but be careful with object mutations
@@ -26,7 +26,7 @@ class CacheService {
       deletes: 0,
       errors: 0
     };
-    
+
     this.initializeRedis();
   }
 
@@ -66,7 +66,7 @@ class CacheService {
         this.isRedisConnected = true;
       });
 
-      this.redis.on('error', (error) => {
+      this.redis.on('error', error => {
         console.warn('⚠️ Redis connection error, falling back to memory cache:', error.message);
         this.isRedisConnected = false;
         this.stats.errors++;
@@ -79,7 +79,6 @@ class CacheService {
 
       // Test connection
       await this.redis.ping();
-      
     } catch (error) {
       console.warn('⚠️ Redis initialization failed, using memory cache only:', error.message);
       this.isRedisConnected = false;
@@ -91,7 +90,7 @@ class CacheService {
    */
   async get(key, options = {}) {
     const startTime = performance.now();
-    
+
     try {
       let value = null;
       let source = 'miss';
@@ -128,12 +127,12 @@ class CacheService {
 
       // Log performance for debugging
       const duration = performance.now() - startTime;
-      if (duration > 10) { // Log slow cache operations
+      if (duration > 10) {
+        // Log slow cache operations
         console.warn(`🐌 Slow cache get (${duration.toFixed(2)}ms): ${key} from ${source}`);
       }
 
       return value;
-      
     } catch (error) {
       console.error(`Cache get error for key ${key}:`, error);
       this.stats.errors++;
@@ -146,10 +145,10 @@ class CacheService {
    */
   async set(key, value, ttl = 300) {
     const startTime = performance.now();
-    
+
     try {
       const serializedValue = this.serialize(value);
-      
+
       // Set in Redis if available
       if (this.isRedisConnected && this.redis) {
         try {
@@ -166,7 +165,7 @@ class CacheService {
 
       // Always set in memory cache as backup
       this.memoryCache.set(key, value, ttl);
-      
+
       this.stats.sets++;
 
       // Log performance
@@ -176,7 +175,6 @@ class CacheService {
       }
 
       return true;
-      
     } catch (error) {
       console.error(`Cache set error for key ${key}:`, error);
       this.stats.errors++;
@@ -200,10 +198,9 @@ class CacheService {
 
       // Delete from memory cache
       this.memoryCache.del(key);
-      
+
       this.stats.deletes++;
       return true;
-      
     } catch (error) {
       console.error(`Cache delete error for key ${key}:`, error);
       this.stats.errors++;
@@ -237,7 +234,7 @@ class CacheService {
         const regex = new RegExp(pattern.replace(/\*/g, '.*'));
         return regex.test(key);
       });
-      
+
       matchingKeys.forEach(key => {
         this.memoryCache.del(key);
         deletedCount++;
@@ -245,7 +242,6 @@ class CacheService {
 
       this.stats.deletes += deletedCount;
       return deletedCount;
-      
     } catch (error) {
       console.error(`Cache pattern delete error for ${pattern}:`, error);
       this.stats.errors++;
@@ -258,7 +254,7 @@ class CacheService {
    */
   async getOrSet(key, fetchFunction, ttl = 300) {
     const value = await this.get(key);
-    
+
     if (value !== null) {
       return value;
     }
@@ -310,7 +306,7 @@ class CacheService {
    */
   getStats() {
     const memoryStats = this.memoryCache.getStats();
-    
+
     return {
       redis: {
         connected: this.isRedisConnected,

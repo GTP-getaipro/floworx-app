@@ -17,7 +17,7 @@
 }
 
 .verification-header {
-  background: linear-gradient(135deg, #4CAF50, #45a049);
+  background: linear-gradient(135deg, #4caf50, #45a049);
   color: white;
   padding: 2rem;
   text-align: center;
@@ -57,26 +57,30 @@
   width: 50px;
   height: 50px;
   border: 4px solid #f3f3f3;
-  border-top: 4px solid #4CAF50;
+  border-top: 4px solid #4caf50;
   border-radius: 50%;
   animation: spin 1s linear infinite;
   margin: 0 auto 2rem;
 }
 
 @keyframes spin {
-  0% { transform: rotate(0deg); }
-  100% { transform: rotate(360deg); }
+  0% {
+    transform: rotate(0deg);
+  }
+  100% {
+    transform: rotate(360deg);
+  }
 }
 
 /* Success State */
 .verification-content.success {
-  color: #4CAF50;
+  color: #4caf50;
 }
 
 .success-icon {
   width: 80px;
   height: 80px;
-  background: #4CAF50;
+  background: #4caf50;
   color: white;
   border-radius: 50%;
   display: flex;
@@ -112,11 +116,13 @@
   border-radius: 50%;
   display: block;
   stroke-width: 2;
-  stroke: #4CAF50;
+  stroke: #4caf50;
   stroke-miterlimit: 10;
   margin: 0 auto;
-  box-shadow: inset 0px 0px 0px #4CAF50;
-  animation: fill 0.4s ease-in-out 0.4s forwards, scale 0.3s ease-in-out 0.9s both;
+  box-shadow: inset 0px 0px 0px #4caf50;
+  animation:
+    fill 0.4s ease-in-out 0.4s forwards,
+    scale 0.3s ease-in-out 0.9s both;
   position: relative;
 }
 
@@ -125,7 +131,7 @@
   stroke-dashoffset: 166;
   stroke-width: 2;
   stroke-miterlimit: 10;
-  stroke: #4CAF50;
+  stroke: #4caf50;
   fill: none;
   animation: stroke 0.6s cubic-bezier(0.65, 0, 0.45, 1) forwards;
 }
@@ -151,7 +157,8 @@
 }
 
 @keyframes scale {
-  0%, 100% {
+  0%,
+  100% {
     transform: none;
   }
   50% {
@@ -161,7 +168,7 @@
 
 @keyframes fill {
   100% {
-    box-shadow: inset 0px 0px 0px 30px #4CAF50;
+    box-shadow: inset 0px 0px 0px 30px #4caf50;
   }
 }
 
@@ -173,7 +180,7 @@
 .error-icon {
   width: 80px;
   height: 80px;
-  background: #FF5722;
+  background: #ff5722;
   color: white;
   border-radius: 50%;
   display: flex;
@@ -213,11 +220,11 @@
 
 .email-input:focus {
   outline: none;
-  border-color: #4CAF50;
+  border-color: #4caf50;
 }
 
 .resend-button {
-  background: linear-gradient(135deg, #4CAF50, #45a049);
+  background: linear-gradient(135deg, #4caf50, #45a049);
   color: white;
   border: none;
   padding: 12px 24px;
@@ -286,7 +293,7 @@
 
 .support-link,
 .login-link {
-  color: #4CAF50;
+  color: #4caf50;
   text-decoration: none;
   font-weight: 600;
   padding: 0.5rem 1rem;
@@ -317,33 +324,33 @@
   .email-verification-container {
     padding: 1rem;
   }
-  
+
   .verification-content {
     padding: 2rem 1.5rem;
   }
-  
+
   .verification-header {
     padding: 1.5rem;
   }
-  
+
   .logo h1 {
     font-size: 1.8rem;
   }
-  
+
   .verification-content h2 {
     font-size: 1.5rem;
   }
-  
+
   .resend-section,
   .help-section {
     padding: 1.5rem;
   }
-  
+
   .support-contact {
     flex-direction: column;
     gap: 0.5rem;
   }
-  
+
   .divider {
     display: none;
   }

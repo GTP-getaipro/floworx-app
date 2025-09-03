@@ -134,6 +134,21 @@ CREATE INDEX idx_team_notifications_category_id ON team_notifications(category_i
 CREATE INDEX idx_user_onboarding_status_user_id ON user_onboarding_status(user_id);
 CREATE INDEX idx_workflow_deployments_user_id ON workflow_deployments(user_id);
 
+-- Performance optimization indexes
+CREATE INDEX idx_users_email_verified ON users(email_verified) WHERE email_verified = true;
+CREATE INDEX idx_users_onboarding_completed ON users(onboarding_completed) WHERE onboarding_completed = false;
+CREATE INDEX idx_users_subscription_status ON users(subscription_status);
+CREATE INDEX idx_users_trial_ends_at ON users(trial_ends_at) WHERE trial_ends_at IS NOT NULL;
+CREATE INDEX idx_credentials_user_service ON credentials(user_id, service_name);
+CREATE INDEX idx_workflow_deployments_status ON workflow_deployments(workflow_status);
+CREATE INDEX idx_workflow_deployments_deployed_at ON workflow_deployments(deployed_at) WHERE deployed_at IS NOT NULL;
+CREATE INDEX idx_user_onboarding_status_step ON user_onboarding_status(step_completed);
+
+-- Composite indexes for common query patterns
+CREATE INDEX idx_users_email_verified_active ON users(email, email_verified) WHERE email_verified = true;
+CREATE INDEX idx_team_notifications_user_category_enabled ON team_notifications(user_id, category_id, notification_enabled);
+CREATE INDEX idx_category_label_mappings_user_category ON category_label_mappings(user_id, category_id);
+
 -- Triggers for new tables
 CREATE TRIGGER update_business_categories_updated_at
     BEFORE UPDATE ON business_categories

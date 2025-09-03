@@ -13,39 +13,25 @@ const registerSchema = Joi.object({
   email: email,
   password: password,
   phone: phone,
-  businessName: Joi.string()
-    .trim()
-    .min(1)
-    .max(200)
-    .optional()
-    .messages({
-      'string.min': 'Business name must be at least 1 character',
-      'string.max': 'Business name must be less than 200 characters'
-    }),
-  agreeToTerms: Joi.boolean()
-    .valid(true)
-    .required()
-    .messages({
-      'any.only': 'You must agree to the terms and conditions',
-      'any.required': 'You must agree to the terms and conditions'
-    }),
-  marketingConsent: Joi.boolean()
-    .default(false)
-    .optional()
+  businessName: Joi.string().trim().min(1).max(200).optional().messages({
+    'string.min': 'Business name must be at least 1 character',
+    'string.max': 'Business name must be less than 200 characters'
+  }),
+  agreeToTerms: Joi.boolean().valid(true).required().messages({
+    'any.only': 'You must agree to the terms and conditions',
+    'any.required': 'You must agree to the terms and conditions'
+  }),
+  marketingConsent: Joi.boolean().default(false).optional()
 }).options({ stripUnknown: true });
 
 // Login schema
 const loginSchema = Joi.object({
   email: email,
-  password: Joi.string()
-    .required()
-    .messages({
-      'string.empty': 'Password is required',
-      'any.required': 'Password is required'
-    }),
-  rememberMe: Joi.boolean()
-    .default(false)
-    .optional()
+  password: Joi.string().required().messages({
+    'string.empty': 'Password is required',
+    'any.required': 'Password is required'
+  }),
+  rememberMe: Joi.boolean().default(false).optional()
 }).options({ stripUnknown: true });
 
 // Password reset request schema
@@ -55,93 +41,68 @@ const passwordResetRequestSchema = Joi.object({
 
 // Password reset confirmation schema
 const passwordResetConfirmSchema = Joi.object({
-  token: Joi.string()
-    .required()
-    .messages({
-      'string.empty': 'Reset token is required',
-      'any.required': 'Reset token is required'
-    }),
+  token: Joi.string().required().messages({
+    'string.empty': 'Reset token is required',
+    'any.required': 'Reset token is required'
+  }),
   newPassword: password,
-  confirmPassword: Joi.string()
-    .valid(Joi.ref('newPassword'))
-    .required()
-    .messages({
-      'any.only': 'Passwords do not match',
-      'string.empty': 'Password confirmation is required',
-      'any.required': 'Password confirmation is required'
-    })
+  confirmPassword: Joi.string().valid(Joi.ref('newPassword')).required().messages({
+    'any.only': 'Passwords do not match',
+    'string.empty': 'Password confirmation is required',
+    'any.required': 'Password confirmation is required'
+  })
 }).options({ stripUnknown: true });
 
 // Change password schema
 const changePasswordSchema = Joi.object({
-  currentPassword: Joi.string()
-    .required()
-    .messages({
-      'string.empty': 'Current password is required',
-      'any.required': 'Current password is required'
-    }),
+  currentPassword: Joi.string().required().messages({
+    'string.empty': 'Current password is required',
+    'any.required': 'Current password is required'
+  }),
   newPassword: password,
-  confirmPassword: Joi.string()
-    .valid(Joi.ref('newPassword'))
-    .required()
-    .messages({
-      'any.only': 'Passwords do not match',
-      'string.empty': 'Password confirmation is required',
-      'any.required': 'Password confirmation is required'
-    })
+  confirmPassword: Joi.string().valid(Joi.ref('newPassword')).required().messages({
+    'any.only': 'Passwords do not match',
+    'string.empty': 'Password confirmation is required',
+    'any.required': 'Password confirmation is required'
+  })
 }).options({ stripUnknown: true });
 
 // OAuth callback schema
 const oauthCallbackSchema = Joi.object({
-  code: Joi.string()
-    .required()
-    .messages({
-      'string.empty': 'Authorization code is required',
-      'any.required': 'Authorization code is required'
-    }),
-  state: Joi.string()
-    .optional(),
-  error: Joi.string()
-    .optional(),
-  error_description: Joi.string()
-    .optional()
+  code: Joi.string().required().messages({
+    'string.empty': 'Authorization code is required',
+    'any.required': 'Authorization code is required'
+  }),
+  state: Joi.string().optional(),
+  error: Joi.string().optional(),
+  error_description: Joi.string().optional()
 }).options({ stripUnknown: true });
 
 // OAuth state schema
 const oauthStateSchema = Joi.object({
-  provider: Joi.string()
-    .valid('google', 'microsoft', 'github')
-    .required()
-    .messages({
-      'any.only': 'Provider must be one of: google, microsoft, github',
-      'any.required': 'OAuth provider is required'
-    }),
-  redirectUrl: Joi.string()
-    .uri()
-    .optional()
-    .messages({
-      'string.uri': 'Redirect URL must be a valid URL'
-    })
+  provider: Joi.string().valid('google', 'microsoft', 'github').required().messages({
+    'any.only': 'Provider must be one of: google, microsoft, github',
+    'any.required': 'OAuth provider is required'
+  }),
+  redirectUrl: Joi.string().uri().optional().messages({
+    'string.uri': 'Redirect URL must be a valid URL'
+  })
 }).options({ stripUnknown: true });
 
 // Token refresh schema
 const refreshTokenSchema = Joi.object({
-  refreshToken: Joi.string()
-    .required()
-    .messages({
-      'string.empty': 'Refresh token is required',
-      'any.required': 'Refresh token is required'
-    })
+  refreshToken: Joi.string().required().messages({
+    'string.empty': 'Refresh token is required',
+    'any.required': 'Refresh token is required'
+  })
 }).options({ stripUnknown: true });
 
 // Email verification schema
 const emailVerificationSchema = Joi.object({
-  token: Joi.string()
-    .required()
-    .messages({
-      'string.empty': 'Verification token is required',
-      'any.required': 'Verification token is required'
-    })
+  token: Joi.string().required().messages({
+    'string.empty': 'Verification token is required',
+    'any.required': 'Verification token is required'
+  })
 }).options({ stripUnknown: true });
 
 // Resend verification email schema
@@ -151,12 +112,10 @@ const resendVerificationSchema = Joi.object({
 
 // Two-factor authentication setup schema
 const twoFactorSetupSchema = Joi.object({
-  secret: Joi.string()
-    .required()
-    .messages({
-      'string.empty': '2FA secret is required',
-      'any.required': '2FA secret is required'
-    }),
+  secret: Joi.string().required().messages({
+    'string.empty': '2FA secret is required',
+    'any.required': '2FA secret is required'
+  }),
   token: Joi.string()
     .length(6)
     .pattern(/^\d{6}$/)

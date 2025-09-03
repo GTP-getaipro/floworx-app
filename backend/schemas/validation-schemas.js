@@ -10,7 +10,10 @@ const Joi = require('joi');
  */
 const commonPatterns = {
   email: Joi.string().email().lowercase().trim().max(255),
-  password: Joi.string().min(8).max(128).pattern(/^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]/),
+  password: Joi.string()
+    .min(8)
+    .max(128)
+    .pattern(/^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]/),
   uuid: Joi.string().uuid(),
   name: Joi.string().trim().min(1).max(100),
   businessName: Joi.string().trim().min(1).max(200),
@@ -91,33 +94,37 @@ const onboardingSchemas = {
   }),
 
   labelMapping: Joi.object({
-    mappings: Joi.array().items(
-      Joi.object({
-        gmailLabel: Joi.string().required(),
-        triggerType: Joi.string().valid(
-          'new_customer', 'service_request', 'complaint', 
-          'inquiry', 'booking', 'follow_up', 'other'
-        ).required(),
-        priority: Joi.string().valid('low', 'medium', 'high', 'urgent').default('medium'),
-        autoRespond: Joi.boolean().default(false),
-        responseTemplate: Joi.string().when('autoRespond', {
-          is: true,
-          then: Joi.required(),
-          otherwise: Joi.optional()
+    mappings: Joi.array()
+      .items(
+        Joi.object({
+          gmailLabel: Joi.string().required(),
+          triggerType: Joi.string()
+            .valid('new_customer', 'service_request', 'complaint', 'inquiry', 'booking', 'follow_up', 'other')
+            .required(),
+          priority: Joi.string().valid('low', 'medium', 'high', 'urgent').default('medium'),
+          autoRespond: Joi.boolean().default(false),
+          responseTemplate: Joi.string().when('autoRespond', {
+            is: true,
+            then: Joi.required(),
+            otherwise: Joi.optional()
+          })
         })
-      })
-    ).min(1).required()
+      )
+      .min(1)
+      .required()
   }),
 
   teamNotifications: Joi.object({
-    notifications: Joi.array().items(
-      Joi.object({
-        type: Joi.string().valid('email', 'sms', 'slack', 'webhook').required(),
-        recipient: Joi.string().required(),
-        triggers: Joi.array().items(Joi.string()).min(1).required(),
-        enabled: Joi.boolean().default(true)
-      })
-    ).optional(),
+    notifications: Joi.array()
+      .items(
+        Joi.object({
+          type: Joi.string().valid('email', 'sms', 'slack', 'webhook').required(),
+          recipient: Joi.string().required(),
+          triggers: Joi.array().items(Joi.string()).min(1).required(),
+          enabled: Joi.boolean().default(true)
+        })
+      )
+      .optional(),
     defaultNotifications: Joi.boolean().default(true)
   }),
 
@@ -137,13 +144,15 @@ const onboardingSchemas = {
       }).optional()
     }).optional(),
     responseDelay: Joi.number().integer().min(0).max(3600).default(0), // seconds
-    escalationRules: Joi.array().items(
-      Joi.object({
-        condition: Joi.string().required(),
-        action: Joi.string().required(),
-        delay: Joi.number().integer().min(0).required()
-      })
-    ).optional()
+    escalationRules: Joi.array()
+      .items(
+        Joi.object({
+          condition: Joi.string().required(),
+          action: Joi.string().required(),
+          delay: Joi.number().integer().min(0).required()
+        })
+      )
+      .optional()
   })
 };
 
@@ -154,10 +163,9 @@ const workflowSchemas = {
   create: Joi.object({
     name: Joi.string().trim().min(1).max(200).required(),
     description: Joi.string().trim().max(1000).optional(),
-    triggerType: Joi.string().valid(
-      'new_customer', 'service_request', 'complaint', 
-      'inquiry', 'booking', 'follow_up', 'other'
-    ).required(),
+    triggerType: Joi.string()
+      .valid('new_customer', 'service_request', 'complaint', 'inquiry', 'booking', 'follow_up', 'other')
+      .required(),
     configuration: Joi.object().required(),
     isActive: Joi.boolean().default(true)
   }),
@@ -189,10 +197,16 @@ const workflowSchemas = {
  */
 const analyticsSchemas = {
   trackEvent: Joi.object({
-    eventType: Joi.string().valid(
-      'workflow_executed', 'email_processed', 'user_action', 
-      'system_event', 'error_occurred', 'performance_metric'
-    ).required(),
+    eventType: Joi.string()
+      .valid(
+        'workflow_executed',
+        'email_processed',
+        'user_action',
+        'system_event',
+        'error_occurred',
+        'performance_metric'
+      )
+      .required(),
     eventData: Joi.object().required(),
     metadata: Joi.object().optional()
   }),
@@ -208,12 +222,18 @@ const analyticsSchemas = {
 
   dashboard: Joi.object({
     period: Joi.string().valid('day', 'week', 'month', 'quarter', 'year').default('week'),
-    metrics: Joi.array().items(
-      Joi.string().valid(
-        'workflow_executions', 'email_volume', 'response_times',
-        'error_rates', 'user_activity', 'system_performance'
+    metrics: Joi.array()
+      .items(
+        Joi.string().valid(
+          'workflow_executions',
+          'email_volume',
+          'response_times',
+          'error_rates',
+          'user_activity',
+          'system_performance'
+        )
       )
-    ).optional()
+      .optional()
   })
 };
 

@@ -1,5 +1,6 @@
-import React from 'react';
+// React import removed - not needed with new JSX transform
 import { Navigate, useLocation } from 'react-router-dom';
+
 import { useAuth } from '../contexts/AuthContext';
 
 const ProtectedRoute = ({ children }) => {
@@ -9,8 +10,8 @@ const ProtectedRoute = ({ children }) => {
   // Show loading spinner while checking authentication
   if (loading) {
     return (
-      <div className="loading-container">
-        <div className="loading-spinner"></div>
+      <div className='loading-container'>
+        <div className='loading-spinner' />
         <p>Loading...</p>
       </div>
     );
@@ -18,7 +19,7 @@ const ProtectedRoute = ({ children }) => {
 
   // Redirect to login if not authenticated
   if (!isAuthenticated()) {
-    return <Navigate to="/login" state={{ from: location }} replace />;
+    return <Navigate to='/login' state={{ from: location }} replace />;
   }
 
   // Render protected component if authenticated

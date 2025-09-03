@@ -17,15 +17,15 @@ const cacheService = require('../services/cacheService');
 const AUDIT_CONFIG = {
   // Performance thresholds
   thresholds: {
-    slowEndpoint: 1000,     // 1 second
+    slowEndpoint: 1000, // 1 second
     criticalEndpoint: 3000, // 3 seconds
-    slowQuery: 500,         // 500ms
-    criticalQuery: 2000,    // 2 seconds
-    lowCacheHitRate: 0.7,   // 70%
-    highErrorRate: 0.05,    // 5%
-    highMemoryUsage: 0.8    // 80%
+    slowQuery: 500, // 500ms
+    criticalQuery: 2000, // 2 seconds
+    lowCacheHitRate: 0.7, // 70%
+    highErrorRate: 0.05, // 5%
+    highMemoryUsage: 0.8 // 80%
   },
-  
+
   // Endpoints to specifically monitor
   criticalEndpoints: [
     '/api/auth/login',
@@ -34,15 +34,9 @@ const AUDIT_CONFIG = {
     '/api/workflows/execute',
     '/api/analytics/dashboard'
   ],
-  
+
   // Database tables to analyze
-  criticalTables: [
-    'users',
-    'workflows',
-    'workflow_executions',
-    'onboarding_sessions',
-    'analytics_events'
-  ]
+  criticalTables: ['users', 'workflows', 'workflow_executions', 'onboarding_sessions', 'analytics_events']
 };
 
 /**
@@ -76,30 +70,29 @@ class PerformanceAudit {
     try {
       // Audit API endpoints
       await this.auditEndpoints();
-      
+
       // Audit database performance
       await this.auditDatabase();
-      
+
       // Audit cache performance
       await this.auditCache();
-      
+
       // Audit system resources
       await this.auditSystem();
-      
+
       // Generate recommendations
       this.generateRecommendations();
-      
+
       // Calculate overall score
       this.calculateOverallScore();
-      
+
       // Generate report
       const reportFile = this.generateReport();
-      
+
       // Display summary
       this.displaySummary();
-      
+
       return reportFile;
-      
     } catch (error) {
       console.error('❌ Performance audit failed:', error);
       throw error;
@@ -111,9 +104,9 @@ class PerformanceAudit {
    */
   async auditEndpoints() {
     console.log('📊 Auditing API endpoints...');
-    
+
     const performanceSummary = performanceService.getPerformanceSummary();
-    
+
     // Analyze slow endpoints
     performanceSummary.slowRequests.forEach(endpoint => {
       const issue = {
@@ -125,9 +118,9 @@ class PerformanceAudit {
         severity: this.getEndpointSeverity(endpoint.avgTime),
         recommendations: this.getEndpointRecommendations(endpoint)
       };
-      
+
       this.results.endpoints.push(issue);
-      
+
       if (issue.severity === 'critical') {
         this.results.summary.criticalIssues++;
       } else if (issue.severity === 'warning') {
@@ -149,11 +142,11 @@ class PerformanceAudit {
    */
   async auditDatabase() {
     console.log('🗄️ Auditing database performance...');
-    
+
     try {
       // Get slow queries from performance service
       const performanceSummary = performanceService.getPerformanceSummary();
-      
+
       performanceSummary.slowQueries.forEach(query => {
         const issue = {
           query: query.query,
@@ -164,9 +157,9 @@ class PerformanceAudit {
           severity: this.getQuerySeverity(query.avgTime),
           recommendations: this.getQueryRecommendations(query)
         };
-        
+
         this.results.database.push(issue);
-        
+
         if (issue.severity === 'critical') {
           this.results.summary.criticalIssues++;
         } else if (issue.severity === 'warning') {
@@ -176,7 +169,6 @@ class PerformanceAudit {
 
       // Check for missing indexes (simplified check)
       await this.checkMissingIndexes();
-      
     } catch (error) {
       console.warn('⚠️ Database audit failed:', error.message);
     }
@@ -187,11 +179,11 @@ class PerformanceAudit {
    */
   async auditCache() {
     console.log('💾 Auditing cache performance...');
-    
+
     try {
       const cacheStats = cacheService.getStats();
       const cacheHealth = await cacheService.healthCheck();
-      
+
       this.results.cache = {
         redis: {
           status: cacheHealth.redis.status,
@@ -225,7 +217,6 @@ class PerformanceAudit {
         });
         this.results.summary.warnings++;
       }
-      
     } catch (error) {
       console.warn('⚠️ Cache audit failed:', error.message);
     }
@@ -236,10 +227,10 @@ class PerformanceAudit {
    */
   async auditSystem() {
     console.log('🖥️ Auditing system resources...');
-    
+
     const memUsage = process.memoryUsage();
     const cpuUsage = process.cpuUsage();
-    
+
     this.results.system = {
       memory: {
         heapUsed: Math.round(memUsage.heapUsed / 1024 / 1024), // MB
@@ -297,8 +288,12 @@ class PerformanceAudit {
    * Get endpoint severity level
    */
   getEndpointSeverity(avgTime) {
-    if (avgTime > AUDIT_CONFIG.thresholds.criticalEndpoint) return 'critical';
-    if (avgTime > AUDIT_CONFIG.thresholds.slowEndpoint) return 'warning';
+    if (avgTime > AUDIT_CONFIG.thresholds.criticalEndpoint) {
+      return 'critical';
+    }
+    if (avgTime > AUDIT_CONFIG.thresholds.slowEndpoint) {
+      return 'warning';
+    }
     return 'info';
   }
 
@@ -306,8 +301,12 @@ class PerformanceAudit {
    * Get query severity level
    */
   getQuerySeverity(avgTime) {
-    if (avgTime > AUDIT_CONFIG.thresholds.criticalQuery) return 'critical';
-    if (avgTime > AUDIT_CONFIG.thresholds.slowQuery) return 'warning';
+    if (avgTime > AUDIT_CONFIG.thresholds.criticalQuery) {
+      return 'critical';
+    }
+    if (avgTime > AUDIT_CONFIG.thresholds.slowQuery) {
+      return 'warning';
+    }
     return 'info';
   }
 
@@ -316,17 +315,17 @@ class PerformanceAudit {
    */
   getEndpointRecommendations(endpoint) {
     const recommendations = [];
-    
+
     if (endpoint.avgTime > 2000) {
       recommendations.push('Implement caching for this endpoint');
       recommendations.push('Add pagination if returning large datasets');
       recommendations.push('Optimize database queries');
     }
-    
+
     if (parseFloat(endpoint.errorRate) > 5) {
       recommendations.push('Investigate and fix recurring errors');
     }
-    
+
     return recommendations;
   }
 
@@ -335,13 +334,13 @@ class PerformanceAudit {
    */
   getQueryRecommendations(query) {
     const recommendations = [];
-    
+
     if (query.avgTime > 1000) {
       recommendations.push('Add database indexes for this query');
       recommendations.push('Consider query optimization');
       recommendations.push('Implement result caching');
     }
-    
+
     return recommendations;
   }
 
@@ -376,16 +375,16 @@ class PerformanceAudit {
    */
   calculateOverallScore() {
     let score = 100;
-    
+
     // Deduct points for issues
     score -= this.results.summary.criticalIssues * 20;
     score -= this.results.summary.warnings * 10;
-    
+
     // Bonus points for good cache performance
     if (this.results.cache.performance?.hitRate > 0.8) {
       score += 5;
     }
-    
+
     this.results.summary.overallScore = Math.max(0, Math.min(100, score));
   }
 
@@ -395,7 +394,7 @@ class PerformanceAudit {
   generateReport() {
     const timestamp = new Date().toISOString().replace(/[:.]/g, '-');
     const reportFile = path.join(process.cwd(), 'reports', `performance-audit-${timestamp}.json`);
-    
+
     // Ensure reports directory exists
     const reportsDir = path.dirname(reportFile);
     if (!fs.existsSync(reportsDir)) {
@@ -404,7 +403,7 @@ class PerformanceAudit {
 
     // Write report
     fs.writeFileSync(reportFile, JSON.stringify(this.results, null, 2));
-    
+
     return reportFile;
   }
 
@@ -420,23 +419,28 @@ class PerformanceAudit {
     console.log(`📋 Recommendations: ${this.results.summary.recommendations}`);
     console.log(`🔍 Slow Endpoints: ${this.results.endpoints.length}`);
     console.log(`🗄️  Database Issues: ${this.results.database.length}`);
-    
+
     if (this.results.cache.performance) {
       console.log(`💾 Cache Hit Rate: ${(this.results.cache.performance.hitRate * 100).toFixed(1)}%`);
     }
-    
+
     console.log(`🖥️  Memory Usage: ${(this.results.system.memory?.usage * 100 || 0).toFixed(1)}%`);
 
     // Performance grade
     const score = this.results.summary.overallScore;
     let grade = 'F';
-    if (score >= 90) grade = 'A';
-    else if (score >= 80) grade = 'B';
-    else if (score >= 70) grade = 'C';
-    else if (score >= 60) grade = 'D';
-    
+    if (score >= 90) {
+      grade = 'A';
+    } else if (score >= 80) {
+      grade = 'B';
+    } else if (score >= 70) {
+      grade = 'C';
+    } else if (score >= 60) {
+      grade = 'D';
+    }
+
     console.log(`\n🎯 Performance Grade: ${grade}`);
-    
+
     if (this.results.summary.criticalIssues > 0) {
       console.log('\n❌ Critical performance issues detected!');
       process.exit(1);

@@ -13,7 +13,7 @@ class AppError extends Error {
     this.details = details;
     this.isOperational = true;
     this.timestamp = new Date().toISOString();
-    
+
     Error.captureStackTrace(this, this.constructor);
   }
 
@@ -102,15 +102,18 @@ class DatabaseError extends AppError {
     let details = null;
 
     // Handle specific database error types
-    if (dbError.code === '23505') { // PostgreSQL unique violation
+    if (dbError.code === '23505') {
+      // PostgreSQL unique violation
       message = 'Resource already exists';
       details = { constraint: dbError.constraint };
       return new ConflictError(message, details);
-    } else if (dbError.code === '23503') { // PostgreSQL foreign key violation
+    } else if (dbError.code === '23503') {
+      // PostgreSQL foreign key violation
       message = 'Referenced resource not found';
       details = { constraint: dbError.constraint };
       return new ValidationError(message, details);
-    } else if (dbError.code === '23502') { // PostgreSQL not null violation
+    } else if (dbError.code === '23502') {
+      // PostgreSQL not null violation
       message = 'Required field missing';
       details = { column: dbError.column };
       return new ValidationError(message, details);
@@ -211,14 +214,14 @@ const ErrorUtils = {
   /**
    * Check if error is operational (expected) vs programming error
    */
-  isOperational: (error) => {
+  isOperational: error => {
     return error.isOperational === true;
   },
 
   /**
    * Get safe error message for client (hides sensitive info in production)
    */
-  getSafeMessage: (error) => {
+  getSafeMessage: error => {
     if (process.env.NODE_ENV === 'development') {
       return error.message;
     }
@@ -234,7 +237,7 @@ const ErrorUtils = {
   /**
    * Format error for API response
    */
-  formatForApi: (error) => {
+  formatForApi: error => {
     return {
       success: false,
       error: {
@@ -252,11 +255,11 @@ const ErrorUtils = {
    */
   logError: (error, context = {}) => {
     const logData = {
-      ...error.toJSON?.() || {
+      ...(error.toJSON?.() || {
         name: error.name,
         message: error.message,
         stack: error.stack
-      },
+      }),
       context
     };
 

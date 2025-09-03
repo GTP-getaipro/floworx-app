@@ -7,10 +7,12 @@ The FloWorx Design System provides a comprehensive set of UI components and desi
 ## Color System
 
 ### Brand Colors
+
 - **Primary**: `#2563EB` (Deep Blue) - Used for primary CTAs, links, and brand elements
 - **Primary Hover**: `#3B82F6` (Electric Blue) - Hover states for primary elements
 
 ### Neutral Colors
+
 - **Ink**: `#111827` - Primary text, headings
 - **Ink Sub**: `#6B7280` - Secondary text, labels
 - **Ink Muted**: `#374151` - Tertiary text
@@ -20,6 +22,7 @@ The FloWorx Design System provides a comprehensive set of UI components and desi
 - **Surface Border**: `#E5E7EB` - Borders, dividers
 
 ### Feedback Colors
+
 - **Success**: `#10B981` - Success states, confirmations
 - **Warning**: `#F59E0B` - Warning states, cautions
 - **Danger**: `#EF4444` - Error states, destructive actions
@@ -28,48 +31,52 @@ The FloWorx Design System provides a comprehensive set of UI components and desi
 ## Components
 
 ### Button
+
 Primary action button with multiple variants and states.
 
 ```jsx
 import { Button } from './ui';
 
-<Button variant="primary" size="lg" loading={isLoading}>
+<Button variant='primary' size='lg' loading={isLoading}>
   Continue
-</Button>
+</Button>;
 ```
 
 **Variants**: `primary`, `secondary`, `danger`, `ghost`, `link`
 **Sizes**: `sm`, `md`, `lg`, `xl`
 
 ### Input
+
 Form input component with validation states and accessibility features.
 
 ```jsx
 import { Input } from './ui';
 
 <Input
-  label="Email Address"
-  type="email"
+  label='Email Address'
+  type='email'
   required
   error={errors.email}
   helperText="We'll never share your email"
-/>
+/>;
 ```
 
 ### Alert
+
 Contextual feedback component for different message types.
 
 ```jsx
 import { Alert } from './ui';
 
-<Alert variant="success" title="Success!" dismissible>
+<Alert variant='success' title='Success!' dismissible>
   Your changes have been saved.
-</Alert>
+</Alert>;
 ```
 
 **Variants**: `success`, `warning`, `danger`, `info`
 
 ### Card
+
 Container component for grouping related content.
 
 ```jsx
@@ -80,27 +87,25 @@ import { Card } from './ui';
     <Card.Title>Settings</Card.Title>
     <Card.Description>Manage your account preferences</Card.Description>
   </Card.Header>
-  <Card.Content>
-    {/* Content */}
-  </Card.Content>
-  <Card.Footer>
-    {/* Actions */}
-  </Card.Footer>
-</Card>
+  <Card.Content>{/* Content */}</Card.Content>
+  <Card.Footer>{/* Actions */}</Card.Footer>
+</Card>;
 ```
 
 ### Badge
+
 Small status indicator component.
 
 ```jsx
 import { Badge } from './ui';
 
-<Badge variant="success">Active</Badge>
+<Badge variant='success'>Active</Badge>;
 ```
 
 **Variants**: `default`, `primary`, `success`, `warning`, `danger`, `info`
 
 ### Link
+
 Navigation component with external link support.
 
 ```jsx
@@ -111,32 +116,37 @@ import { Link } from './ui';
 ```
 
 ### ProgressBar
+
 Visual progress indicator with customizable appearance.
 
 ```jsx
 import { ProgressBar } from './ui';
 
-<ProgressBar value={75} max={100} showLabel />
+<ProgressBar value={75} max={100} showLabel />;
 ```
 
 ## Accessibility Guidelines
 
 ### Color Contrast
+
 - **Normal text**: Minimum 4.5:1 contrast ratio (WCAG AA)
 - **Large text**: Minimum 3:1 contrast ratio (WCAG AA Large)
 - All color combinations in the system meet these requirements
 
 ### Focus Management
+
 - All interactive elements have visible focus rings
 - Focus rings use `focus-visible:ring-2 focus-visible:ring-brand-primary-hover`
 - Tab order follows logical content flow
 
 ### Keyboard Navigation
+
 - All components are fully keyboard accessible
 - Interactive elements respond to Enter and Space keys
 - Modal dialogs trap focus appropriately
 
 ### Screen Reader Support
+
 - Semantic HTML elements used throughout
 - ARIA labels and descriptions provided where needed
 - Form inputs properly associated with labels
@@ -146,18 +156,21 @@ import { ProgressBar } from './ui';
 ### When to Use Each Color
 
 **Brand Primary**
+
 - Primary call-to-action buttons
 - Active navigation items
 - Links and interactive elements
 - Progress indicators
 
 **Feedback Colors**
+
 - Success: Confirmations, completed states
 - Warning: Cautions, non-critical issues
 - Danger: Errors, destructive actions
 - Info: Helpful information, tips
 
 **Neutral Colors**
+
 - Ink: Primary content, headings
 - Ink Sub: Secondary content, labels
 - Surface: Content containers
@@ -166,17 +179,20 @@ import { ProgressBar } from './ui';
 ### Component Selection
 
 **Buttons**
+
 - Use `primary` for main actions
 - Use `secondary` for alternative actions
 - Use `danger` for destructive actions
 - Use `ghost` for subtle actions
 
 **Alerts**
+
 - Use appropriate variant for message type
 - Include clear, actionable messaging
 - Provide dismissal option when appropriate
 
 **Cards**
+
 - Group related content logically
 - Use headers for clear section identification
 - Include actions in footers when needed
@@ -194,6 +210,7 @@ When updating existing components:
 ## Browser Support
 
 The design system supports:
+
 - Chrome 90+
 - Firefox 88+
 - Safari 14+

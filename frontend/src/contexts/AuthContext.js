@@ -1,5 +1,5 @@
-import React, { createContext, useContext, useState, useEffect } from 'react';
 import axios from 'axios';
+import React, { createContext, useContext, useState, useEffect } from 'react';
 
 const AuthContext = createContext();
 
@@ -24,18 +24,18 @@ export const AuthProvider = ({ children }) => {
   // Set up axios interceptor for authentication
   useEffect(() => {
     const requestInterceptor = axios.interceptors.request.use(
-      (config) => {
+      config => {
         if (token) {
           config.headers.Authorization = `Bearer ${token}`;
         }
         return config;
       },
-      (error) => Promise.reject(error)
+      error => Promise.reject(error)
     );
 
     const responseInterceptor = axios.interceptors.response.use(
-      (response) => response,
-      (error) => {
+      response => response,
+      error => {
         if (error.response?.status === 401) {
           // Token expired or invalid
           logout();
@@ -78,11 +78,11 @@ export const AuthProvider = ({ children }) => {
     try {
       const response = await axios.post('/auth/login', { email, password });
       const { token: newToken, user: userData } = response.data;
-      
+
       localStorage.setItem('floworx_token', newToken);
       setToken(newToken);
       setUser(userData);
-      
+
       return { success: true };
     } catch (error) {
       const message = error.response?.data?.message || 'Login failed';
@@ -91,13 +91,13 @@ export const AuthProvider = ({ children }) => {
   };
 
   // Register function
-  const register = async (userData) => {
+  const register = async userData => {
     try {
       const response = await axios.post(`${process.env.REACT_APP_API_URL}/auth/register`, userData);
       return {
         success: true,
         requiresVerification: response.data.requiresVerification,
-        user: response.data.user
+        user: response.data.user,
       };
     } catch (error) {
       const message = error.response?.data?.message || 'Registration failed';
@@ -114,7 +114,7 @@ export const AuthProvider = ({ children }) => {
 
   // Check if user is authenticated
   const isAuthenticated = () => {
-    return !!token && !!user;
+    return Boolean(token) && Boolean(user);
   };
 
   const value = {
@@ -124,12 +124,8 @@ export const AuthProvider = ({ children }) => {
     login,
     register,
     logout,
-    isAuthenticated
+    isAuthenticated,
   };
 
-  return (
-    <AuthContext.Provider value={value}>
-      {children}
-    </AuthContext.Provider>
-  );
+  return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;
 };

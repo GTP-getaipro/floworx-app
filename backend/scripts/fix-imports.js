@@ -30,16 +30,16 @@ const log = (message, type = 'info') => {
 };
 
 // Get all JavaScript files
-const _getJavaScriptFiles = (dir) => {
+const _getJavaScriptFiles = dir => {
   const files = [];
-  
-  const traverse = (currentDir) => {
+
+  const traverse = currentDir => {
     const items = fs.readdirSync(currentDir);
-    
+
     for (const item of items) {
       const fullPath = path.join(currentDir, item);
       const stat = fs.statSync(fullPath);
-      
+
       if (stat.isDirectory() && !CONFIG.excludeDirs.includes(item)) {
         traverse(fullPath);
       } else if (stat.isFile() && CONFIG.fileExtensions.some(ext => item.endsWith(ext))) {
@@ -47,7 +47,7 @@ const _getJavaScriptFiles = (dir) => {
       }
     }
   };
-  
+
   traverse(dir);
   return files;
 };
@@ -55,22 +55,23 @@ const _getJavaScriptFiles = (dir) => {
 // Parse ESLint output to identify unused imports
 const getUnusedImports = () => {
   try {
-    const eslintOutput = execSync('npx eslint . --ext .js --format json', { 
+    const eslintOutput = execSync('npx eslint . --ext .js --format json', {
       encoding: 'utf8',
       stdio: 'pipe'
     });
-    
+
     const results = JSON.parse(eslintOutput);
     const unusedImports = {};
-    
+
     results.forEach(file => {
       const filePath = file.filePath;
-      const unusedVars = file.messages.filter(msg => 
-        msg.ruleId === 'no-unused-vars' && 
-        (msg.message.includes('is assigned a value but never used') ||
-         msg.message.includes('is defined but never used'))
+      const unusedVars = file.messages.filter(
+        msg =>
+          msg.ruleId === 'no-unused-vars' &&
+          (msg.message.includes('is assigned a value but never used') ||
+            msg.message.includes('is defined but never used'))
       );
-      
+
       if (unusedVars.length > 0) {
         unusedImports[filePath] = unusedVars.map(msg => ({
           line: msg.line,
@@ -80,7 +81,7 @@ const getUnusedImports = () => {
         }));
       }
     });
-    
+
     return unusedImports;
   } catch (error) {
     log(`Error running ESLint: ${error.message}`, 'error');
@@ -89,17 +90,17 @@ const getUnusedImports = () => {
 };
 
 // Analyze file imports and usage
-const analyzeFileImports = (filePath) => {
+const analyzeFileImports = filePath => {
   const content = fs.readFileSync(filePath, 'utf8');
   const lines = content.split('\n');
-  
+
   const imports = [];
   const requires = [];
   const declarations = [];
-  
+
   lines.forEach((line, index) => {
     const lineNum = index + 1;
-    
+
     // ES6 imports
     const importMatch = line.match(/^import\s+(.+?)\s+from\s+['"](.+?)['"];?/);
     if (importMatch) {
@@ -110,7 +111,7 @@ const analyzeFileImports = (filePath) => {
         module: importMatch[2]
       });
     }
-    
+
     // CommonJS requires
     const requireMatch = line.match(/(?:const|let|var)\s+(.+?)\s*=\s*require\(['"](.+?)['"]\)/);
     if (requireMatch) {
@@ -121,7 +122,7 @@ const analyzeFileImports = (filePath) => {
         module: requireMatch[2]
       });
     }
-    
+
     // Function/class declarations
     const funcMatch = line.match(/^(?:async\s+)?(?:function\s+(\w+)|class\s+(\w+)|const\s+(\w+)\s*=)/);
     if (funcMatch) {
@@ -135,7 +136,7 @@ const analyzeFileImports = (filePath) => {
       }
     }
   });
-  
+
   return { imports, requires, declarations, content, lines };
 };
 
@@ -144,13 +145,13 @@ const fixUnusedImports = (filePath, unusedVars) => {
   const analysis = analyzeFileImports(filePath);
   const { lines } = analysis;
   let modified = false;
-  
+
   // Remove unused imports/requires (from bottom to top to maintain line numbers)
   const linesToRemove = [];
-  
+
   unusedVars.forEach(unused => {
     const line = lines[unused.line - 1];
-    
+
     // Check if it's an import/require line
     if (line && (line.includes('require(') || line.includes('import '))) {
       // Check if the entire line can be removed or just part of it
@@ -160,7 +161,7 @@ const fixUnusedImports = (filePath, unusedVars) => {
         if (destructureMatch) {
           const variables = destructureMatch[1].split(',').map(v => v.trim());
           const filteredVars = variables.filter(v => v !== unused.variable);
-          
+
           if (filteredVars.length === 0) {
             // Remove entire line
             linesToRemove.push(unused.line - 1);
@@ -177,33 +178,45 @@ const fixUnusedImports = (filePath, unusedVars) => {
       }
     }
   });
-  
+
   // Remove lines (from highest index to lowest)
-  linesToRemove.sort((a, b) => b - a).forEach(lineIndex => {
-    lines.splice(lineIndex, 1);
-    modified = true;
-  });
-  
+  linesToRemove
+    .sort((a, b) => b - a)
+    .forEach(lineIndex => {
+      lines.splice(lineIndex, 1);
+      modified = true;
+    });
+
   if (modified) {
     const newContent = lines.join('\n');
     fs.writeFileSync(filePath, newContent, 'utf8');
     log(`Fixed unused imports in: ${filePath}`, 'success');
     return true;
   }
-  
+
   return false;
 };
 
 // Add missing imports based on usage
-const addMissingImports = (filePath) => {
+const addMissingImports = filePath => {
   const content = fs.readFileSync(filePath, 'utf8');
-  
+
   // Common patterns that need imports
   const missingImports = [];
-  
+
   // Check for Jest globals in test files
   if (filePath.includes('test') || filePath.includes('spec')) {
-    const jestGlobals = ['describe', 'test', 'it', 'expect', 'beforeEach', 'afterEach', 'beforeAll', 'afterAll', 'jest'];
+    const jestGlobals = [
+      'describe',
+      'test',
+      'it',
+      'expect',
+      'beforeEach',
+      'afterEach',
+      'beforeAll',
+      'afterAll',
+      'jest'
+    ];
     jestGlobals.forEach(global => {
       if (content.includes(global) && !content.includes(`global.${global}`)) {
         // Jest globals are available globally, no import needed
@@ -211,15 +224,15 @@ const addMissingImports = (filePath) => {
       }
     });
   }
-  
+
   // Check for Node.js modules that might be missing
   const nodeModules = {
-    'fs': ['readFileSync', 'writeFileSync', 'existsSync', 'mkdirSync'],
-    'path': ['join', 'resolve', 'dirname', 'basename'],
-    'crypto': ['createHash', 'randomBytes', 'createCipher'],
-    'util': ['promisify', 'inspect']
+    fs: ['readFileSync', 'writeFileSync', 'existsSync', 'mkdirSync'],
+    path: ['join', 'resolve', 'dirname', 'basename'],
+    crypto: ['createHash', 'randomBytes', 'createCipher'],
+    util: ['promisify', 'inspect']
   };
-  
+
   Object.entries(nodeModules).forEach(([module, methods]) => {
     methods.forEach(method => {
       if (content.includes(method) && !content.includes(`require('${module}')`)) {
@@ -232,7 +245,7 @@ const addMissingImports = (filePath) => {
       }
     });
   });
-  
+
   return missingImports;
 };
 
@@ -326,7 +339,11 @@ const fixSpecificUnusedVars = () => {
                 lines[fix.line - 1] = line.replace(/\{\s*[^}]+\s*\}/, newDestructure);
               }
               modified = true;
-            } else if (line.includes(`const ${varName}`) || line.includes(`let ${varName}`) || line.includes(`var ${varName}`)) {
+            } else if (
+              line.includes(`const ${varName}`) ||
+              line.includes(`let ${varName}`) ||
+              line.includes(`var ${varName}`)
+            ) {
               // Remove entire variable declaration line
               lines.splice(fix.line - 1, 1);
               modified = true;

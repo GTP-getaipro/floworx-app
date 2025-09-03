@@ -22,19 +22,19 @@ const results = [];
 const log = (message, type = 'info') => {
   const timestamp = new Date().toISOString();
   switch (type) {
-  case 'success':
-    console.log(`[${timestamp}] ✅ ${message}`.green);
-    break;
-  case 'error':
-    console.log(`[${timestamp}] ❌ ${message}`.red);
-    break;
-  case 'warning':
-    console.log(`[${timestamp}] ⚠️  ${message}`.yellow);
-    break;
-  case 'info':
-  default:
-    console.log(`[${timestamp}] ℹ️  ${message}`.blue);
-    break;
+    case 'success':
+      console.log(`[${timestamp}] ✅ ${message}`.green);
+      break;
+    case 'error':
+      console.log(`[${timestamp}] ❌ ${message}`.red);
+      break;
+    case 'warning':
+      console.log(`[${timestamp}] ⚠️  ${message}`.yellow);
+      break;
+    case 'info':
+    default:
+      console.log(`[${timestamp}] ℹ️  ${message}`.blue);
+      break;
   }
 };
 

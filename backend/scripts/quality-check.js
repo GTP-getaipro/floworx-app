@@ -26,19 +26,19 @@ const CONFIG = {
 const log = (message, type = 'info') => {
   const timestamp = new Date().toISOString();
   switch (type) {
-  case 'success':
-    console.log(`[${timestamp}] ✅ ${message}`.green);
-    break;
-  case 'error':
-    console.log(`[${timestamp}] ❌ ${message}`.red);
-    break;
-  case 'warning':
-    console.log(`[${timestamp}] ⚠️  ${message}`.yellow);
-    break;
-  case 'info':
-  default:
-    console.log(`[${timestamp}] ℹ️  ${message}`.blue);
-    break;
+    case 'success':
+      console.log(`[${timestamp}] ✅ ${message}`.green);
+      break;
+    case 'error':
+      console.log(`[${timestamp}] ❌ ${message}`.red);
+      break;
+    case 'warning':
+      console.log(`[${timestamp}] ⚠️  ${message}`.yellow);
+      break;
+    case 'info':
+    default:
+      console.log(`[${timestamp}] ℹ️  ${message}`.blue);
+      break;
   }
 };
 
@@ -288,8 +288,12 @@ const printSummary = summary => {
   }
 
   console.log('\n📁 REPORTS GENERATED:'.blue);
-  if (summary.eslint?.reportFile) {console.log(`  • ESLint: ${summary.eslint.reportFile}`.blue);}
-  if (summary.security?.reportFile) {console.log(`  • Security: ${summary.security.reportFile}`.blue);}
+  if (summary.eslint?.reportFile) {
+    console.log(`  • ESLint: ${summary.eslint.reportFile}`.blue);
+  }
+  if (summary.security?.reportFile) {
+    console.log(`  • Security: ${summary.security.reportFile}`.blue);
+  }
 };
 
 // Main execution

@@ -3,14 +3,14 @@
  * Centralized API communication with error handling and authentication
  */
 
-import { 
-  HTTP_STATUS, 
-  createErrorResponse, 
+import {
+  HTTP_STATUS,
+  createErrorResponse,
   extractErrorMessage,
   isNetworkError,
   isAuthError,
   withRetry,
-  withTimeout
+  withTimeout,
 } from '../../../shared/utils';
 
 // API configuration
@@ -18,7 +18,7 @@ const API_CONFIG = {
   baseURL: process.env.REACT_APP_API_URL || 'http://localhost:5000/api',
   timeout: 30000,
   retryAttempts: 3,
-  retryDelay: 1000
+  retryDelay: 1000,
 };
 
 /**
@@ -29,9 +29,9 @@ class ApiClient {
     this.config = { ...API_CONFIG, ...config };
     this.interceptors = {
       request: [],
-      response: []
+      response: [],
     };
-    
+
     // Setup default interceptors
     this.setupDefaultInterceptors();
   }
@@ -41,12 +41,12 @@ class ApiClient {
    */
   setupDefaultInterceptors() {
     // Request interceptor for authentication
-    this.addRequestInterceptor((config) => {
+    this.addRequestInterceptor(config => {
       const token = this.getAuthToken();
       if (token) {
         config.headers = {
           ...config.headers,
-          Authorization: `Bearer ${token}`
+          Authorization: `Bearer ${token}`,
         };
       }
       return config;
@@ -54,8 +54,8 @@ class ApiClient {
 
     // Response interceptor for error handling
     this.addResponseInterceptor(
-      (response) => response,
-      (error) => this.handleResponseError(error)
+      response => response,
+      error => this.handleResponseError(error)
     );
   }
 
@@ -106,7 +106,7 @@ class ApiClient {
     // Handle authentication errors
     if (isAuthError(error)) {
       this.clearAuthToken();
-      
+
       // Redirect to login if not already there
       if (!window.location.pathname.includes('/login')) {
         window.location.href = '/login';
@@ -126,7 +126,7 @@ class ApiClient {
    */
   async applyRequestInterceptors(config) {
     let processedConfig = config;
-    
+
     for (const interceptor of this.interceptors.request) {
       try {
         if (interceptor.onFulfilled) {
@@ -140,7 +140,7 @@ class ApiClient {
         }
       }
     }
-    
+
     return processedConfig;
   }
 
@@ -150,7 +150,7 @@ class ApiClient {
   async applyResponseInterceptors(response, error = null) {
     let processedResponse = response;
     let processedError = error;
-    
+
     for (const interceptor of this.interceptors.response) {
       try {
         if (processedError && interceptor.onRejected) {
@@ -164,11 +164,11 @@ class ApiClient {
         processedResponse = null;
       }
     }
-    
+
     if (processedError) {
       throw processedError;
     }
-    
+
     return processedResponse;
   }
 
@@ -182,21 +182,21 @@ class ApiClient {
         method: 'GET',
         headers: {
           'Content-Type': 'application/json',
-          ...config.headers
+          ...config.headers,
         },
-        ...config
+        ...config,
       });
 
       // Build full URL
-      const url = processedConfig.url.startsWith('http') 
-        ? processedConfig.url 
+      const url = processedConfig.url.startsWith('http')
+        ? processedConfig.url
         : `${this.config.baseURL}${processedConfig.url}`;
 
       // Prepare fetch options
       const fetchOptions = {
         method: processedConfig.method,
         headers: processedConfig.headers,
-        credentials: 'include'
+        credentials: 'include',
       };
 
       // Add body for non-GET requests
@@ -206,14 +206,11 @@ class ApiClient {
 
       // Make request with timeout and retry
       const response = await withTimeout(
-        withRetry(
-          () => fetch(url, fetchOptions),
-          {
-            maxRetries: this.config.retryAttempts,
-            retryDelay: this.config.retryDelay,
-            retryCondition: (error) => isNetworkError(error)
-          }
-        ),
+        withRetry(() => fetch(url, fetchOptions), {
+          maxRetries: this.config.retryAttempts,
+          retryDelay: this.config.retryDelay,
+          retryCondition: error => isNetworkError(error),
+        }),
         this.config.timeout
       );
 
@@ -232,7 +229,7 @@ class ApiClient {
         status: response.status,
         statusText: response.statusText,
         headers: response.headers,
-        config: processedConfig
+        config: processedConfig,
       };
 
       // Handle HTTP errors
@@ -244,7 +241,6 @@ class ApiClient {
 
       // Apply response interceptors
       return await this.applyResponseInterceptors(responseObj);
-
     } catch (error) {
       // Apply error response interceptors
       await this.applyResponseInterceptors(null, error);

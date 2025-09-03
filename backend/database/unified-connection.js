@@ -22,8 +22,8 @@ class DatabaseManager {
       password: process.env.DB_PASSWORD,
       ssl: isProduction
         ? {
-          rejectUnauthorized: false
-        }
+            rejectUnauthorized: false
+          }
         : false,
 
       // Optimized connection pooling
@@ -85,14 +85,19 @@ class DatabaseManager {
     return this.pool;
   }
 
-  // Execute query with automatic connection management
+  // Execute query with automatic connection management and monitoring
   async query(text, params = []) {
     const pool = await this.getPool();
+    const start = Date.now();
+    let success = true;
+    let error = null;
 
     try {
-      const start = Date.now();
       const result = await pool.query(text, params);
       const duration = Date.now() - start;
+
+      // Track query performance
+      this.trackQueryPerformance(text, params, duration, true);
 
       // Log slow queries (> 1 second)
       if (duration > 1000) {
@@ -100,11 +105,33 @@ class DatabaseManager {
       }
 
       return result;
-    } catch (error) {
-      console.error('❌ Database query error:', error.message);
+    } catch (queryError) {
+      const duration = Date.now() - start;
+      success = false;
+      error = queryError;
+
+      // Track failed query
+      this.trackQueryPerformance(text, params, duration, false, queryError);
+
+      console.error('❌ Database query error:', queryError.message);
       console.error('Query:', text);
       console.error('Params:', params);
-      throw error;
+      throw queryError;
+    }
+  }
+
+  // Track query performance with monitoring service
+  trackQueryPerformance(queryText, params, duration, success, error = null) {
+    try {
+      // Lazy load monitoring service to avoid circular dependencies
+      if (!this.monitoringService) {
+        this.monitoringService = require('../services/realTimeMonitoringService');
+      }
+
+      this.monitoringService.trackQuery(queryText, params, duration, success, error);
+    } catch (monitoringError) {
+      // Don't let monitoring errors affect query execution
+      console.warn('Monitoring service error:', monitoringError.message);
     }
   }
 

@@ -1,5 +1,5 @@
-import React, { useState, useEffect, useCallback } from 'react';
 import axios from 'axios';
+import React, { useState, useEffect, useCallback } from 'react';
 import './StepStyles.css';
 
 const LabelMappingStep = ({ data, onComplete, onBack, canGoBack }) => {
@@ -14,7 +14,7 @@ const LabelMappingStep = ({ data, onComplete, onBack, canGoBack }) => {
       const initialMappings = data.businessCategories.map(category => ({
         categoryName: category.name,
         gmailLabelId: '',
-        gmailLabelName: ''
+        gmailLabelName: '',
       }));
       setMappings(initialMappings);
     }
@@ -28,10 +28,9 @@ const LabelMappingStep = ({ data, onComplete, onBack, canGoBack }) => {
   const fetchGmailLabels = async () => {
     try {
       const token = localStorage.getItem('token');
-      const response = await axios.get(
-        `${process.env.REACT_APP_API_URL}/onboarding/gmail-labels`,
-        { headers: { Authorization: `Bearer ${token}` } }
-      );
+      const response = await axios.get(`${process.env.REACT_APP_API_URL}/onboarding/gmail-labels`, {
+        headers: { Authorization: `Bearer ${token}` },
+      });
       setGmailLabels(response.data.labels);
     } catch (error) {
       console.error('Error fetching Gmail labels:', error);
@@ -42,16 +41,18 @@ const LabelMappingStep = ({ data, onComplete, onBack, canGoBack }) => {
   };
 
   const updateMapping = (categoryName, labelId, labelName) => {
-    setMappings(prev => prev.map(mapping => 
-      mapping.categoryName === categoryName 
-        ? { ...mapping, gmailLabelId: labelId, gmailLabelName: labelName }
-        : mapping
-    ));
+    setMappings(prev =>
+      prev.map(mapping =>
+        mapping.categoryName === categoryName
+          ? { ...mapping, gmailLabelId: labelId, gmailLabelName: labelName }
+          : mapping
+      )
+    );
   };
 
   const handleSave = async () => {
     const completeMappings = mappings.filter(m => m.gmailLabelId);
-    
+
     if (completeMappings.length === 0) {
       setError('Please map at least one category to a Gmail label');
       return;
@@ -69,7 +70,6 @@ const LabelMappingStep = ({ data, onComplete, onBack, canGoBack }) => {
       );
 
       onComplete({ labelMappings: completeMappings });
-
     } catch (error) {
       console.error('Error saving label mappings:', error);
       setError(error.response?.data?.message || 'Failed to save label mappings');
@@ -80,9 +80,9 @@ const LabelMappingStep = ({ data, onComplete, onBack, canGoBack }) => {
 
   if (loading) {
     return (
-      <div className="step-content">
-        <div className="loading-container">
-          <div className="loading-spinner"></div>
+      <div className='step-content'>
+        <div className='loading-container'>
+          <div className='loading-spinner' />
           <p>Loading your Gmail labels...</p>
         </div>
       </div>
@@ -90,38 +90,38 @@ const LabelMappingStep = ({ data, onComplete, onBack, canGoBack }) => {
   }
 
   return (
-    <div className="step-content">
-      <div className="step-description">
+    <div className='step-content'>
+      <div className='step-description'>
         <h3>Map Categories to Gmail Labels</h3>
         <p>
-          Connect your business categories to existing Gmail labels. 
-          This helps us automatically organize your emails.
+          Connect your business categories to existing Gmail labels. This helps us automatically
+          organize your emails.
         </p>
       </div>
 
-      <div className="mapping-section">
-        <div className="mapping-list">
+      <div className='mapping-section'>
+        <div className='mapping-list'>
           {mappings.map((mapping, index) => (
-            <div key={index} className="mapping-item">
-              <div className="category-info">
-                <div className="category-name">{mapping.categoryName}</div>
-                <div className="category-arrow">→</div>
+            <div key={index} className='mapping-item'>
+              <div className='category-info'>
+                <div className='category-name'>{mapping.categoryName}</div>
+                <div className='category-arrow'>→</div>
               </div>
-              
-              <div className="label-selector">
+
+              <div className='label-selector'>
                 <select
                   value={mapping.gmailLabelId}
-                  onChange={(e) => {
+                  onChange={e => {
                     const selectedLabel = gmailLabels.find(label => label.id === e.target.value);
                     updateMapping(
-                      mapping.categoryName, 
-                      e.target.value, 
+                      mapping.categoryName,
+                      e.target.value,
                       selectedLabel ? selectedLabel.name : ''
                     );
                   }}
-                  className="label-dropdown"
+                  className='label-dropdown'
                 >
-                  <option value="">Select Gmail Label</option>
+                  <option value=''>Select Gmail Label</option>
                   {gmailLabels.map(label => (
                     <option key={label.id} value={label.id}>
                       {label.name} {label.messagesTotal ? `(${label.messagesTotal} emails)` : ''}
@@ -133,47 +133,47 @@ const LabelMappingStep = ({ data, onComplete, onBack, canGoBack }) => {
           ))}
         </div>
 
-        <div className="mapping-summary">
+        <div className='mapping-summary'>
           <h4>Mapping Summary</h4>
-          <div className="summary-stats">
-            <div className="stat">
-              <span className="stat-number">{mappings.length}</span>
-              <span className="stat-label">Categories</span>
+          <div className='summary-stats'>
+            <div className='stat'>
+              <span className='stat-number'>{mappings.length}</span>
+              <span className='stat-label'>Categories</span>
             </div>
-            <div className="stat">
-              <span className="stat-number">{mappings.filter(m => m.gmailLabelId).length}</span>
-              <span className="stat-label">Mapped</span>
+            <div className='stat'>
+              <span className='stat-number'>{mappings.filter(m => m.gmailLabelId).length}</span>
+              <span className='stat-label'>Mapped</span>
             </div>
-            <div className="stat">
-              <span className="stat-number">{gmailLabels.length}</span>
-              <span className="stat-label">Gmail Labels</span>
+            <div className='stat'>
+              <span className='stat-number'>{gmailLabels.length}</span>
+              <span className='stat-label'>Gmail Labels</span>
             </div>
           </div>
         </div>
       </div>
 
       {error && (
-        <div className="error-message">
-          <span className="error-icon">⚠️</span>
+        <div className='error-message'>
+          <span className='error-icon'>⚠️</span>
           {error}
         </div>
       )}
 
-      <div className="step-actions">
+      <div className='step-actions'>
         {canGoBack && (
-          <button onClick={onBack} className="secondary-button">
+          <button onClick={onBack} className='secondary-button'>
             Back
           </button>
         )}
-        
-        <button 
+
+        <button
           onClick={handleSave}
           disabled={saving || mappings.filter(m => m.gmailLabelId).length === 0}
-          className="primary-button"
+          className='primary-button'
         >
           {saving ? (
             <>
-              <div className="button-spinner"></div>
+              <div className='button-spinner' />
               Saving...
             </>
           ) : (
@@ -182,7 +182,7 @@ const LabelMappingStep = ({ data, onComplete, onBack, canGoBack }) => {
         </button>
       </div>
 
-      <div className="step-help">
+      <div className='step-help'>
         <h5>💡 Tips for label mapping:</h5>
         <ul>
           <li>Use existing labels when possible to maintain your current organization</li>

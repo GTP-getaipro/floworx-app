@@ -2,6 +2,8 @@ const express = require('express');
 const cors = require('cors');
 require('dotenv').config();
 
+const morgan = require('morgan');
+
 // Enhanced security imports
 const {
   helmet,
@@ -12,16 +14,14 @@ const {
   oauthRateLimit,
   authSlowDown,
   sanitizeInput,
+  sanitizeRequest,
+  sanitizeResponse,
   securityHeaders,
   handleValidationErrors
 } = require('./middleware/security');
 
 // Performance middleware imports
-const {
-  performanceMiddlewareStack,
-  smartCompression,
-  cacheHeaders
-} = require('./middleware/performance');
+const { performanceMiddlewareStack, smartCompression, cacheHeaders } = require('./middleware/performance');
 
 const { initialize: initializeDatabase } = require('./database/unified-connection');
 const authRoutes = require('./routes/auth');
@@ -43,22 +43,50 @@ const PORT = process.env.PORT || 5000;
 // Trust proxy for accurate IP addresses behind load balancers
 app.set('trust proxy', 1);
 
+// Request ID middleware for tracing
+app.use((req, res, next) => {
+  req.id = req.get('X-Request-ID') || require('crypto').randomBytes(16).toString('hex');
+  res.setHeader('X-Request-ID', req.id);
+  next();
+});
+
 // Enhanced security middleware stack
 app.use(helmet); // Comprehensive security headers
 app.use(securityHeaders); // Additional custom security headers
 app.use(sanitizeInput); // Input sanitization
+app.use(sanitizeRequest); // Enhanced request sanitization
+app.use(sanitizeResponse); // Response sanitization
 
 // Performance middleware stack
 app.use(smartCompression); // Response compression
 app.use(cacheHeaders); // Cache control headers
 app.use(...performanceMiddlewareStack); // Performance monitoring
 
+// Memory monitoring for auto-scaling decisions
+app.use((req, res, next) => {
+  const memoryUsage = process.memoryUsage();
+  const used = Math.round(memoryUsage.heapUsed / 1024 / 1024);
+  const total = Math.round(memoryUsage.heapTotal / 1024 / 1024);
+
+  if (used > total * 0.9) {
+    console.error(`⚠️ High memory usage: ${used}MB/${total}MB`);
+    // In production, you might want to trigger auto-scaling
+    if (process.env.NODE_ENV === 'production') {
+      // Notify monitoring service
+      console.error('🚨 Memory threshold exceeded - consider scaling');
+    }
+  }
+  next();
+});
+
 // CORS configuration with enhanced security
 app.use(
   cors({
     origin: function (origin, callback) {
       // Allow requests with no origin (mobile apps, Postman, etc.)
-      if (!origin) return callback(null, true);
+      if (!origin) {
+        return callback(null, true);
+      }
 
       const allowedOrigins = [
         process.env.FRONTEND_URL || 'http://localhost:3000',
@@ -94,24 +122,49 @@ app.use(
 app.use('/api', apiRateLimit);
 
 // Body parsing middleware with security limits
-app.use(express.json({
-  limit: '1mb', // Reduced from 10mb for security
-  strict: true,
-  type: 'application/json'
-}));
-app.use(express.urlencoded({
-  extended: true,
-  limit: '1mb', // Reduced from 10mb for security
-  parameterLimit: 100 // Limit number of parameters
-}));
+app.use(
+  express.json({
+    limit: '1mb', // Reduced from 10mb for security
+    strict: true,
+    type: 'application/json'
+  })
+);
+app.use(
+  express.urlencoded({
+    extended: true,
+    limit: '1mb', // Reduced from 10mb for security
+    parameterLimit: 100 // Limit number of parameters
+  })
+);
 
 // Request validation error handling
 app.use(handleValidationErrors);
 
-// Request logging middleware
-app.use((req, res, next) => {
-  console.log(`${new Date().toISOString()} - ${req.method} ${req.path}`);
-  next();
+// Enhanced logging middleware with Morgan
+app.use(
+  morgan(':requestId :method :url :status :response-time ms - :res[content-length]', {
+    stream: {
+      write: message => {
+        console.log(message.trim());
+      }
+    },
+    skip: req => req.path === '/health'
+  })
+);
+
+// Add request ID token to Morgan
+morgan.token('requestId', req => req.id);
+
+// Error logging middleware
+app.use((err, req, res, next) => {
+  console.error('🚨 Error:', {
+    requestId: req.id,
+    method: req.method,
+    path: req.path,
+    error: err.message,
+    stack: process.env.NODE_ENV === 'development' ? err.stack : undefined
+  });
+  next(err);
 });
 
 // Health check endpoints

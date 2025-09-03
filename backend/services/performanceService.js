@@ -23,12 +23,12 @@ class PerformanceService {
         slowQueryCount: 0
       }
     };
-    
+
     // Performance thresholds (milliseconds)
     this.thresholds = {
-      slowRequest: 1000,    // 1 second
-      slowQuery: 500,       // 500ms
-      slowCache: 50,        // 50ms
+      slowRequest: 1000, // 1 second
+      slowQuery: 500, // 500ms
+      slowCache: 50, // 50ms
       criticalRequest: 5000 // 5 seconds
     };
 
@@ -42,20 +42,20 @@ class PerformanceService {
   trackRequest(req, res, next) {
     const startTime = performance.now();
     const requestId = `${req.method}:${req.path}`;
-    
+
     // Track request start
     req.performanceStart = startTime;
     req.requestId = requestId;
 
     // Override res.end to capture completion time
     const originalEnd = res.end;
-    res.end = function(...args) {
+    res.end = function (...args) {
       const endTime = performance.now();
       const duration = endTime - startTime;
-      
+
       // Update metrics
       this.updateRequestMetrics(requestId, duration, res.statusCode);
-      
+
       // Log slow requests
       if (duration > this.thresholds.slowRequest) {
         console.warn(`🐌 Slow Request (${duration.toFixed(2)}ms): ${req.method} ${req.path}`);
@@ -111,19 +111,19 @@ class PerformanceService {
   async trackQuery(queryText, params, executeFunction) {
     const startTime = performance.now();
     const queryId = this.getQueryId(queryText);
-    
+
     try {
       const result = await executeFunction();
       const duration = performance.now() - startTime;
-      
+
       this.updateQueryMetrics(queryId, duration, true);
-      
+
       // Log slow queries
       if (duration > this.thresholds.slowQuery) {
         console.warn(`🐌 Slow Query (${duration.toFixed(2)}ms): ${queryText.substring(0, 100)}...`);
         this.metrics.system.slowQueryCount++;
       }
-      
+
       return result;
     } catch (error) {
       const duration = performance.now() - startTime;
@@ -166,18 +166,18 @@ class PerformanceService {
    */
   async trackCacheOperation(operation, key, executeFunction) {
     const startTime = performance.now();
-    
+
     try {
       const result = await executeFunction();
       const duration = performance.now() - startTime;
-      
+
       this.updateCacheMetrics(operation, duration, true);
-      
+
       // Log slow cache operations
       if (duration > this.thresholds.slowCache) {
         console.warn(`🐌 Slow Cache ${operation} (${duration.toFixed(2)}ms): ${key}`);
       }
-      
+
       return result;
     } catch (error) {
       const duration = performance.now() - startTime;
@@ -220,11 +220,11 @@ class PerformanceService {
    */
   getQueryId(queryText) {
     return queryText
-      .replace(/\$\d+/g, '$?')           // Replace parameters
-      .replace(/\s+/g, ' ')             // Normalize whitespace
+      .replace(/\$\d+/g, '$?') // Replace parameters
+      .replace(/\s+/g, ' ') // Normalize whitespace
       .replace(/IN\s*\([^)]+\)/gi, 'IN (?)') // Normalize IN clauses
       .trim()
-      .substring(0, 200);               // Limit length
+      .substring(0, 200); // Limit length
   }
 
   /**
@@ -232,29 +232,29 @@ class PerformanceService {
    */
   getPerformanceSummary() {
     const uptime = Date.now() - this.metrics.system.startTime;
-    
+
     // Top slow requests
     const slowRequests = Array.from(this.metrics.requests.entries())
-      .sort(([,a], [,b]) => b.avgTime - a.avgTime)
+      .sort(([, a], [, b]) => b.avgTime - a.avgTime)
       .slice(0, 10)
       .map(([path, metrics]) => ({
         path,
         avgTime: Math.round(metrics.avgTime),
         maxTime: Math.round(metrics.maxTime),
         count: metrics.count,
-        errorRate: (metrics.errors / metrics.count * 100).toFixed(1)
+        errorRate: ((metrics.errors / metrics.count) * 100).toFixed(1)
       }));
 
     // Top slow queries
     const slowQueries = Array.from(this.metrics.queries.entries())
-      .sort(([,a], [,b]) => b.avgTime - a.avgTime)
+      .sort(([, a], [, b]) => b.avgTime - a.avgTime)
       .slice(0, 10)
       .map(([query, metrics]) => ({
         query: query.substring(0, 100) + '...',
         avgTime: Math.round(metrics.avgTime),
         maxTime: Math.round(metrics.maxTime),
         count: metrics.count,
-        errorRate: (metrics.errors / metrics.count * 100).toFixed(1)
+        errorRate: ((metrics.errors / metrics.count) * 100).toFixed(1)
       }));
 
     return {
@@ -264,7 +264,7 @@ class PerformanceService {
         errorCount: this.metrics.system.errorCount,
         slowRequestCount: this.metrics.system.slowRequestCount,
         slowQueryCount: this.metrics.system.slowQueryCount,
-        errorRate: (this.metrics.system.errorCount / this.metrics.system.requestCount * 100).toFixed(2),
+        errorRate: ((this.metrics.system.errorCount / this.metrics.system.requestCount) * 100).toFixed(2),
         requestsPerSecond: (this.metrics.system.requestCount / (uptime / 1000)).toFixed(2)
       },
       slowRequests,
@@ -290,7 +290,7 @@ class PerformanceService {
         avgTime: Math.round(requestMetrics.avgTime),
         minTime: Math.round(requestMetrics.minTime),
         maxTime: Math.round(requestMetrics.maxTime),
-        errorRate: (requestMetrics.errors / requestMetrics.count * 100).toFixed(2)
+        errorRate: ((requestMetrics.errors / requestMetrics.count) * 100).toFixed(2)
       }
     };
   }
@@ -353,17 +353,20 @@ class PerformanceService {
    * Start periodic cleanup of old metrics
    */
   startCleanup() {
-    setInterval(() => {
-      this.cleanupOldMetrics();
-    }, 5 * 60 * 1000); // Every 5 minutes
+    setInterval(
+      () => {
+        this.cleanupOldMetrics();
+      },
+      5 * 60 * 1000
+    ); // Every 5 minutes
   }
 
   /**
    * Clean up old metrics to prevent memory leaks
    */
   cleanupOldMetrics() {
-    const cutoffTime = Date.now() - (24 * 60 * 60 * 1000); // 24 hours ago
-    
+    const cutoffTime = Date.now() - 24 * 60 * 60 * 1000; // 24 hours ago
+
     // Clean up request metrics
     for (const [key, metric] of this.metrics.requests.entries()) {
       if (metric.lastAccess < cutoffTime) {

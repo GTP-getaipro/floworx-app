@@ -24,12 +24,7 @@ const {
   oauthCallbackSchema,
   refreshTokenSchema
 } = require('../schemas/auth');
-const {
-  AuthenticationError,
-  ConflictError,
-  ValidationError,
-  NotFoundError
-} = require('../utils/errors');
+const { AuthenticationError, ConflictError, ValidationError, NotFoundError } = require('../utils/errors');
 
 const router = express.Router();
 
@@ -178,11 +173,7 @@ router.post(
       }
 
       // Generate JWT token
-      const token = jwt.sign(
-        { userId: user.id, email: user.email },
-        process.env.JWT_SECRET,
-        { expiresIn: '24h' }
-      );
+      const token = jwt.sign({ userId: user.id, email: user.email }, process.env.JWT_SECRET, { expiresIn: '24h' });
 
       // Update lockout data for successful attempt
       if (req.updateLockoutData) {
@@ -201,7 +192,6 @@ router.post(
         },
         expiresIn: '24h'
       });
-
     } catch (error) {
       console.error('❌ Login error:', error.message);
 

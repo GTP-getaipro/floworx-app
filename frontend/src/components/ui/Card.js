@@ -1,24 +1,18 @@
 import React from 'react';
 
-const Card = ({ 
-  children, 
-  className = '',
-  padding = 'default',
-  shadow = 'default',
-  ...props 
-}) => {
+const Card = ({ children, className = '', padding = 'default', shadow = 'default', ...props }) => {
   const paddingClasses = {
     none: '',
     sm: 'p-4',
     default: 'p-6',
-    lg: 'p-8'
+    lg: 'p-8',
   };
 
   const shadowClasses = {
     none: '',
     sm: 'shadow-sm',
     default: 'shadow-card',
-    lg: 'shadow-lg'
+    lg: 'shadow-lg',
   };
 
   const classes = `
@@ -26,7 +20,9 @@ const Card = ({
     ${paddingClasses[padding]}
     ${shadowClasses[shadow]}
     ${className}
-  `.replace(/\s+/g, ' ').trim();
+  `
+    .replace(/\s+/g, ' ')
+    .trim();
 
   return (
     <div className={classes} {...props}>
@@ -36,33 +32,21 @@ const Card = ({
 };
 
 const CardHeader = ({ children, className = '' }) => (
-  <div className={`border-b border-surface-border pb-4 mb-4 ${className}`}>
-    {children}
-  </div>
+  <div className={`border-b border-surface-border pb-4 mb-4 ${className}`}>{children}</div>
 );
 
 const CardTitle = ({ children, className = '' }) => (
-  <h3 className={`text-lg font-semibold text-ink ${className}`}>
-    {children}
-  </h3>
+  <h3 className={`text-lg font-semibold text-ink ${className}`}>{children}</h3>
 );
 
 const CardDescription = ({ children, className = '' }) => (
-  <p className={`text-sm text-ink-sub mt-1 ${className}`}>
-    {children}
-  </p>
+  <p className={`text-sm text-ink-sub mt-1 ${className}`}>{children}</p>
 );
 
-const CardContent = ({ children, className = '' }) => (
-  <div className={className}>
-    {children}
-  </div>
-);
+const CardContent = ({ children, className = '' }) => <div className={className}>{children}</div>;
 
 const CardFooter = ({ children, className = '' }) => (
-  <div className={`border-t border-surface-border pt-4 mt-4 ${className}`}>
-    {children}
-  </div>
+  <div className={`border-t border-surface-border pt-4 mt-4 ${className}`}>{children}</div>
 );
 
 Card.Header = CardHeader;

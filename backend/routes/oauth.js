@@ -3,6 +3,7 @@ const { google } = require('googleapis');
 const { query } = require('../database/unified-connection');
 const { encrypt, decrypt } = require('../utils/encryption');
 const { authenticateToken } = require('../middleware/auth');
+const { NotFoundError, ExternalServiceError, asyncHandler } = require('../middleware/errorHandler');
 
 const router = express.Router();
 
@@ -106,29 +107,19 @@ router.get('/google/callback', async (req, res) => {
 
 // DELETE /api/oauth/google
 // Disconnect Google account
-router.delete('/google', authenticateToken, async (req, res) => {
-  try {
-    const deleteQuery = 'DELETE FROM credentials WHERE user_id = $1 AND service_name = $2';
-    const result = await query(deleteQuery, [req.user.id, 'google']);
+router.delete('/google', authenticateToken, asyncHandler(async (req, res) => {
+  const deleteQuery = 'DELETE FROM credentials WHERE user_id = $1 AND service_name = $2';
+  const result = await query(deleteQuery, [req.user.id, 'google']);
 
-    if (result.rowCount === 0) {
-      return res.status(404).json({
-        error: 'Connection not found',
-        message: 'No Google connection found for this user'
-      });
-    }
-
-    res.json({
-      message: 'Google account disconnected successfully'
-    });
-  } catch (error) {
-    console.error('OAuth disconnect error:', error);
-    res.status(500).json({
-      error: 'Disconnect failed',
-      message: 'Unable to disconnect Google account'
-    });
+  if (result.rowCount === 0) {
+    throw new NotFoundError('No Google connection found for this user');
   }
-});
+
+  res.json({
+    success: true,
+    message: 'Google account disconnected successfully'
+  });
+}));
 
 // GET /api/oauth/google/refresh
 // Refresh Google access token (internal use)

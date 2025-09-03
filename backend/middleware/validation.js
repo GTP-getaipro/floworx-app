@@ -1,6 +1,6 @@
 const { body, param, query } = require('express-validator');
-const _validator = require('validator');
 const xss = require('xss');
+const { validationRules, mapToExpressValidatorRules } = require('../../shared/utils/validation');
 const { handleValidationErrors } = require('./errorHandler');
 
 // XSS protection configuration
@@ -52,8 +52,8 @@ const createValidationMiddleware = validations => {
   };
 };
 
-// Common validation rules
-const validationRules = {
+// Common validation rules - extend shared rules
+const commonValidationRules = {
   // Email validation
   email: body('email')
     .isEmail()
@@ -154,18 +154,18 @@ const validationRules = {
 const validationMiddleware = {
   // User registration validation
   register: createValidationMiddleware([
-    validationRules.email,
-    validationRules.password,
-    validationRules.firstName,
-    validationRules.lastName,
-    validationRules.companyName,
-    validationRules.businessType,
-    validationRules.phone
+    commonValidationRules.email,
+    commonValidationRules.password,
+    commonValidationRules.firstName,
+    commonValidationRules.lastName,
+    commonValidationRules.companyName,
+    commonValidationRules.businessType,
+    commonValidationRules.phone
   ]),
 
   // User login validation
   login: createValidationMiddleware([
-    validationRules.email,
+    commonValidationRules.email,
     body('password')
       .notEmpty()
       .withMessage('Password is required')
@@ -174,22 +174,26 @@ const validationMiddleware = {
   ]),
 
   // Password reset request validation
-  passwordResetRequest: createValidationMiddleware([validationRules.email]),
+  passwordResetRequest: createValidationMiddleware([commonValidationRules.email]),
 
   // Password reset validation
-  passwordReset: createValidationMiddleware([validationRules.token, validationRules.password]),
+  passwordReset: createValidationMiddleware([commonValidationRules.token, commonValidationRules.password]),
 
   // Token validation
-  tokenValidation: createValidationMiddleware([validationRules.token]),
+  tokenValidation: createValidationMiddleware([commonValidationRules.token]),
 
   // UUID parameter validation
-  uuidParam: createValidationMiddleware([validationRules.uuid]),
+  uuidParam: createValidationMiddleware([commonValidationRules.uuid]),
 
   // Pagination validation
-  pagination: createValidationMiddleware([validationRules.page, validationRules.limit]),
+  pagination: createValidationMiddleware([commonValidationRules.page, commonValidationRules.limit]),
 
   // Search validation
-  search: createValidationMiddleware([validationRules.search, validationRules.page, validationRules.limit])
+  search: createValidationMiddleware([
+    commonValidationRules.search,
+    commonValidationRules.page,
+    commonValidationRules.limit
+  ])
 };
 
 // SQL injection prevention helper

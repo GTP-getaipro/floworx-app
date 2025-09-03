@@ -1,19 +1,19 @@
 import React from 'react';
 
-const ProgressBar = ({ 
-  value = 0, 
-  max = 100, 
+const ProgressBar = ({
+  value = 0,
+  max = 100,
   size = 'md',
   variant = 'primary',
   showLabel = false,
-  className = '' 
+  className = '',
 }) => {
   const percentage = Math.min(Math.max((value / max) * 100, 0), 100);
 
   const sizes = {
     sm: 'h-1',
     md: 'h-2',
-    lg: 'h-3'
+    lg: 'h-3',
   };
 
   const variants = {
@@ -21,15 +21,15 @@ const ProgressBar = ({
     success: 'bg-success',
     warning: 'bg-warning',
     danger: 'bg-danger',
-    info: 'bg-info'
+    info: 'bg-info',
   };
 
   return (
     <div className={`w-full ${className}`}>
       {showLabel && (
-        <div className="flex justify-between items-center mb-2">
-          <span className="text-sm font-medium text-ink">Progress</span>
-          <span className="text-sm text-ink-sub">{Math.round(percentage)}%</span>
+        <div className='flex justify-between items-center mb-2'>
+          <span className='text-sm font-medium text-ink'>Progress</span>
+          <span className='text-sm text-ink-sub'>{Math.round(percentage)}%</span>
         </div>
       )}
       <div className={`w-full bg-surface-border rounded-full overflow-hidden ${sizes[size]}`}>

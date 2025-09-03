@@ -357,7 +357,7 @@ test.describe('Email Processing & Workflows', () => {
           }
         ]
       });
-      
+
       // Simulate email that triggers workflow
       const emailData = {
         from: 'customer@example.com',
@@ -365,7 +365,7 @@ test.describe('Email Processing & Workflows', () => {
         body: 'Need help with hot tub',
         category: 'service_request'
       };
-      
+
       // Mock auto-response API
       await page.route('**/api/emails/auto-respond', async route => {
         await route.fulfill({
@@ -382,13 +382,13 @@ test.describe('Email Processing & Workflows', () => {
           })
         });
       });
-      
+
       await helpers.simulateEmailReceived(emailData);
-      
+
       // Navigate to email processing page
       await page.goto('/emails');
       await page.reload();
-      
+
       // Verify auto-response was sent
       await expect(page.locator('[data-testid="email-auto-response-status"]')).toContainText('Response sent');
       await expect(page.locator('[data-testid="response-template"]')).toContainText('service_request_acknowledgment');
@@ -396,17 +396,17 @@ test.describe('Email Processing & Workflows', () => {
 
     test('should customize response templates', async ({ page }) => {
       await page.goto('/settings/templates');
-      
+
       // Edit response template
       await page.click('[data-testid="edit-template-service_request_acknowledgment"]');
-      
+
       // Update template content
       await page.fill('[data-testid="template-subject-input"]', 'We received your service request');
       await page.fill('[data-testid="template-body-input"]', 'Thank you for contacting us. We will respond within 24 hours.');
-      
+
       // Save template
       await page.click('[data-testid="save-template-button"]');
-      
+
       // Verify template update
       await helpers.waitForToast('Template updated successfully');
       await expect(page.locator('[data-testid="template-preview"]')).toContainText('We received your service request');
@@ -425,22 +425,229 @@ test.describe('Email Processing & Workflows', () => {
           })
         });
       });
-      
+
       const emailData = {
         from: 'customer@example.com',
         subject: 'Service request',
         body: 'Need help',
         category: 'service_request'
       };
-      
+
       await helpers.simulateEmailReceived(emailData);
       await page.goto('/emails');
       await page.reload();
-      
+
       // Verify failure handling
       await expect(page.locator('[data-testid="email-auto-response-status"]')).toContainText('Failed');
       await expect(page.locator('[data-testid="response-error"]')).toContainText('SMTP server unavailable');
       await expect(page.locator('[data-testid="retry-response-button"]')).toBeVisible();
+    });
+
+    test('should implement retry logic for failed responses', async ({ page }) => {
+      let attemptCount = 0;
+
+      // Mock response delivery with retry success
+      await page.route('**/api/emails/auto-respond', async route => {
+        attemptCount++;
+        if (attemptCount === 1) {
+          // First attempt fails
+          await route.fulfill({
+            status: 500,
+            contentType: 'application/json',
+            body: JSON.stringify({
+              success: false,
+              error: 'Temporary SMTP server error',
+              retryable: true
+            })
+          });
+        } else {
+          // Second attempt succeeds
+          await route.fulfill({
+            status: 200,
+            contentType: 'application/json',
+            body: JSON.stringify({
+              success: true,
+              response: {
+                id: 'response_retry_123',
+                template: 'service_request_acknowledgment',
+                sent: true,
+                sentAt: new Date().toISOString(),
+                retryCount: 1
+              }
+            })
+          });
+        }
+      });
+
+      const emailData = {
+        from: 'customer@example.com',
+        subject: 'Service request with retry',
+        body: 'Need urgent help',
+        category: 'service_request'
+      };
+
+      await helpers.simulateEmailReceived(emailData);
+      await page.goto('/emails');
+      await page.reload();
+
+      // Initially should show failed status
+      await expect(page.locator('[data-testid="email-auto-response-status"]')).toContainText('Failed');
+
+      // Click retry button
+      await page.click('[data-testid="retry-response-button"]');
+
+      // Wait for retry to complete
+      await page.waitForTimeout(1000);
+      await page.reload();
+
+      // Verify retry was successful
+      await expect(page.locator('[data-testid="email-auto-response-status"]')).toContainText('Response sent');
+      await expect(page.locator('[data-testid="response-retry-count"]')).toContainText('1');
+    });
+
+    test('should handle permanent failures gracefully', async ({ page }) => {
+      // Mock permanent failure (non-retryable)
+      await page.route('**/api/emails/auto-respond', async route => {
+        await route.fulfill({
+          status: 400,
+          contentType: 'application/json',
+          body: JSON.stringify({
+            success: false,
+            error: 'Invalid email address',
+            retryable: false
+          })
+        });
+      });
+
+      const emailData = {
+        from: 'invalid-email',
+        subject: 'Service request',
+        body: 'Need help',
+        category: 'service_request'
+      };
+
+      await helpers.simulateEmailReceived(emailData);
+      await page.goto('/emails');
+      await page.reload();
+
+      // Verify permanent failure handling
+      await expect(page.locator('[data-testid="email-auto-response-status"]')).toContainText('Failed');
+      await expect(page.locator('[data-testid="response-error"]')).toContainText('Invalid email address');
+      await expect(page.locator('[data-testid="retry-response-button"]')).not.toBeVisible(); // No retry button for permanent failures
+    });
+
+    test('should handle rate limiting in automated responses', async ({ page }) => {
+      let requestCount = 0;
+
+      // Mock rate limiting after multiple requests
+      await page.route('**/api/emails/auto-respond', async route => {
+        requestCount++;
+        if (requestCount > 3) {
+          await route.fulfill({
+            status: 429,
+            contentType: 'application/json',
+            body: JSON.stringify({
+              success: false,
+              error: 'Rate limit exceeded',
+              retryable: true,
+              retryAfter: 60
+            })
+          });
+        } else {
+          await route.fulfill({
+            status: 200,
+            contentType: 'application/json',
+            body: JSON.stringify({
+              success: true,
+              response: {
+                id: `response_${requestCount}`,
+                template: 'service_request_acknowledgment',
+                sent: true,
+                sentAt: new Date().toISOString()
+              }
+            })
+          });
+        }
+      });
+
+      // Simulate multiple emails to trigger rate limiting
+      for (let i = 1; i <= 5; i++) {
+        const emailData = {
+          from: `customer${i}@example.com`,
+          subject: `Service request ${i}`,
+          body: 'Need help with hot tub',
+          category: 'service_request'
+        };
+
+        await helpers.simulateEmailReceived(emailData);
+      }
+
+      await page.goto('/emails');
+      await page.reload();
+
+      // Verify rate limiting was handled
+      const failedResponses = page.locator('[data-testid="email-auto-response-status"]').filter({ hasText: 'Failed' });
+      await expect(failedResponses).toHaveCount(2); // Last 2 should fail due to rate limiting
+
+      // Verify rate limit error message
+      await expect(page.locator('[data-testid="response-error"]')).toContainText('Rate limit exceeded');
+    });
+
+    test('should validate response template content', async ({ page }) => {
+      await page.goto('/settings/templates');
+
+      // Test template with missing required fields
+      await page.click('[data-testid="edit-template-service_request_acknowledgment"]');
+
+      // Clear required fields
+      await page.fill('[data-testid="template-subject-input"]', '');
+      await page.fill('[data-testid="template-body-input"]', '');
+
+      // Try to save
+      await page.click('[data-testid="save-template-button"]');
+
+      // Verify validation errors
+      await expect(page.locator('[data-testid="subject-error"]')).toContainText('Subject is required');
+      await expect(page.locator('[data-testid="body-error"]')).toContainText('Body content is required');
+
+      // Fill with valid content
+      await page.fill('[data-testid="template-subject-input"]', 'Thank you for your service request');
+      await page.fill('[data-testid="template-body-input"]', 'We have received your request and will respond within 24 hours. Thank you for choosing our service.');
+
+      // Save successfully
+      await page.click('[data-testid="save-template-button"]');
+      await helpers.waitForToast('Template updated successfully');
+    });
+
+    test('should handle template rendering errors', async ({ page }) => {
+      // Mock template rendering failure
+      await page.route('**/api/emails/auto-respond', async route => {
+        await route.fulfill({
+          status: 500,
+          contentType: 'application/json',
+          body: JSON.stringify({
+            success: false,
+            error: 'Template rendering failed: missing variable',
+            retryable: false
+          })
+        });
+      });
+
+      const emailData = {
+        from: 'customer@example.com',
+        subject: 'Service request',
+        body: 'Need help',
+        category: 'service_request'
+      };
+
+      await helpers.simulateEmailReceived(emailData);
+      await page.goto('/emails');
+      await page.reload();
+
+      // Verify template error handling
+      await expect(page.locator('[data-testid="email-auto-response-status"]')).toContainText('Failed');
+      await expect(page.locator('[data-testid="response-error"]')).toContainText('Template rendering failed');
+      await expect(page.locator('[data-testid="template-error-details"]')).toContainText('missing variable');
     });
   });
 });

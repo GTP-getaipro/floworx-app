@@ -1,8 +1,9 @@
 const { validationResult } = require('express-validator');
+const errorTrackingService = require('../services/errorTrackingService');
 
 /**
  * Centralized Error Handler Middleware for FloWorx SaaS
- * Implements consistent error responses and security-aware logging
+ * Implements consistent error responses, security-aware logging, and comprehensive error tracking
  */
 
 // Error types and their corresponding HTTP status codes
@@ -120,22 +121,22 @@ const parseDatabaseError = error => {
   // PostgreSQL error codes
   if (error.code) {
     switch (error.code) {
-    case '23505': // Unique violation
-      return new ConflictError('Resource already exists', {
-        constraint: error.constraint,
-        detail: error.detail
-      });
-    case '23503': // Foreign key violation
-      return new ValidationError('Referenced resource does not exist');
-    case '23502': // Not null violation
-      return new ValidationError('Required field is missing');
-    case '22001': // String data too long
-      return new ValidationError('Input data too long');
-    case '08006': // Connection failure
-    case '08001': // Unable to connect
-      return new DatabaseError('Database connection failed');
-    default:
-      return new DatabaseError('Database operation failed');
+      case '23505': // Unique violation
+        return new ConflictError('Resource already exists', {
+          constraint: error.constraint,
+          detail: error.detail
+        });
+      case '23503': // Foreign key violation
+        return new ValidationError('Referenced resource does not exist');
+      case '23502': // Not null violation
+        return new ValidationError('Required field is missing');
+      case '22001': // String data too long
+        return new ValidationError('Input data too long');
+      case '08006': // Connection failure
+      case '08001': // Unable to connect
+        return new DatabaseError('Database connection failed');
+      default:
+        return new DatabaseError('Database operation failed');
     }
   }
 
@@ -185,6 +186,18 @@ const errorHandler = (error, req, res, _next) => {
   }
 
   console.error('Error:', JSON.stringify(logData, null, 2));
+
+  // Track error for monitoring and analytics
+  errorTrackingService.trackError(err, {
+    req,
+    user: req.user,
+    endpoint: req.route?.path || req.originalUrl,
+    statusCode: err.statusCode,
+    userAgent: req.get('User-Agent'),
+    ip: req.ip
+  }).catch(trackingError => {
+    console.error('Error tracking failed:', trackingError.message);
+  });
 
   // Prepare response
   const response = {

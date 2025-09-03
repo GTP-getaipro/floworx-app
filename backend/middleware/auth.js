@@ -1,83 +1,137 @@
 const jwt = require('jsonwebtoken');
-const { pool } = require('../database/connection');
+const { query } = require('../database/unified-connection');
+const { createError } = require('./errorHandler');
 
-// Middleware to verify JWT tokens
-const authenticateToken = async (req, res, next) => {
-  const authHeader = req.headers['authorization'];
-  const token = authHeader && authHeader.split(' ')[1]; // Bearer TOKEN
+// Cache of recently verified tokens and their user data
+const tokenCache = new Map();
+const TOKEN_CACHE_TTL = 5 * 60 * 1000; // 5 minutes
 
-  if (!token) {
-    return res.status(401).json({
-      error: 'Access token required',
-      message: 'Please provide a valid authentication token'
-    });
+/**
+ * Verify user exists and get their data
+ * @param {string} userId - User ID from JWT token
+ * @returns {Promise<Object>} User data
+ */
+const verifyAndGetUser = async userId => {
+  const userQuery = 'SELECT id, email, first_name, last_name, email_verified, account_locked_until FROM users WHERE id = $1 AND deleted_at IS NULL';
+  const userResult = await query(userQuery, [userId]);
+
+  if (userResult.rows.length === 0) {
+    throw createError('Unauthorized', 401, 'User no longer exists');
   }
 
+  const user = userResult.rows[0];
+
+  // Check if account is locked
+  if (user.account_locked_until && new Date(user.account_locked_until) > new Date()) {
+    throw createError('Forbidden', 403, 'Account is locked');
+  }
+
+  // Check if email is verified
+  if (!user.email_verified) {
+    throw createError('Forbidden', 403, 'Email not verified');
+  }
+
+  return {
+    id: user.id,
+    email: user.email,
+    firstName: user.first_name,
+    lastName: user.last_name,
+    emailVerified: user.email_verified
+  };
+};
+
+/**
+ * Middleware to verify JWT tokens
+ * @param {Request} req - Express request object
+ * @param {Response} res - Express response object
+ * @param {NextFunction} next - Express next function
+ */
+const authenticateToken = async (req, res, next) => {
   try {
+    const authHeader = req.headers['authorization'];
+    const token = authHeader && authHeader.split(' ')[1]; // Bearer TOKEN
+
+    if (!token) {
+      throw createError('Unauthorized', 401, 'Access token required');
+    }
+
+    // Check token cache first
+    const cachedData = tokenCache.get(token);
+    if (cachedData) {
+      req.user = cachedData.user;
+      return next();
+    }
+
     // Verify the JWT token
     const decoded = jwt.verify(token, process.env.JWT_SECRET);
 
-    // Verify user still exists in database
-    const userQuery = 'SELECT id, email FROM users WHERE id = $1';
-    const userResult = await pool.query(userQuery, [decoded.userId]);
+    // Get user data and verify status
+    const user = await verifyAndGetUser(decoded.userId);
 
-    if (userResult.rows.length === 0) {
-      return res.status(401).json({
-        error: 'Invalid token',
-        message: 'User no longer exists'
-      });
+    // Cache the verified token and user data
+    tokenCache.set(token, {
+      user,
+      timestamp: Date.now()
+    });
+
+    // Clean up expired cache entries
+    const now = Date.now();
+    for (const [key, value] of tokenCache.entries()) {
+      if (now - value.timestamp > TOKEN_CACHE_TTL) {
+        tokenCache.delete(key);
+      }
     }
 
-    // Add user info to request object
-    req.user = {
-      id: decoded.userId,
-      email: userResult.rows[0].email
-    };
-
+    req.user = user;
     next();
   } catch (error) {
     if (error.name === 'TokenExpiredError') {
-      return res.status(401).json({
-        error: 'Token expired',
-        message: 'Please log in again'
-      });
+      next(createError('Unauthorized', 401, 'Token has expired'));
     } else if (error.name === 'JsonWebTokenError') {
-      return res.status(401).json({
-        error: 'Invalid token',
-        message: 'Please provide a valid authentication token'
-      });
+      next(createError('Unauthorized', 401, 'Invalid token format'));
     } else {
-      console.error('Auth middleware error:', error);
-      return res.status(500).json({
-        error: 'Authentication error',
-        message: 'Internal server error during authentication'
-      });
+      next(error);
     }
   }
 };
 
-// Middleware for optional authentication (doesn't fail if no token)
+/**
+ * Middleware for optional authentication (doesn't fail if no token)
+ * @param {Request} req - Express request object
+ * @param {Response} res - Express response object
+ * @param {NextFunction} next - Express next function
+ */
 const optionalAuth = async (req, res, next) => {
-  const authHeader = req.headers['authorization'];
-  const token = authHeader && authHeader.split(' ')[1];
-
-  if (!token) {
-    req.user = null;
-    return next();
-  }
-
   try {
-    const decoded = jwt.verify(token, process.env.JWT_SECRET);
-    const userQuery = 'SELECT id, email FROM users WHERE id = $1';
-    const userResult = await pool.query(userQuery, [decoded.userId]);
+    const authHeader = req.headers['authorization'];
+    const token = authHeader && authHeader.split(' ')[1];
 
-    req.user =
-      userResult.rows.length > 0
-        ? {
-          id: decoded.userId,
-          email: userResult.rows[0].email
-        }
-        : null;
+    if (!token) {
+      req.user = null;
+      return next();
+    }
+
+    // Check token cache first
+    const cachedData = tokenCache.get(token);
+    if (cachedData) {
+      req.user = cachedData.user;
+      return next();
+    }
+
+    // Verify and get user data
+    const decoded = jwt.verify(token, process.env.JWT_SECRET);
+    const user = await verifyAndGetUser(decoded.userId).catch(() => null);
+
+    if (user) {
+      // Cache the verified token and user data
+      tokenCache.set(token, {
+        user,
+        timestamp: Date.now()
+      });
+      req.user = user;
+    } else {
+      req.user = null;
+    }
   } catch (_error) {
     req.user = null;
   }
@@ -85,7 +139,31 @@ const optionalAuth = async (req, res, next) => {
   next();
 };
 
+/**
+ * Middleware to check user roles
+ * @param {string[]} roles - Array of required roles
+ * @returns {function} Middleware function
+ */
+const requireRoles = roles => {
+  return (req, res, next) => {
+    try {
+      if (!req.user) {
+        throw createError('Unauthorized', 401, 'Authentication required');
+      }
+
+      if (!roles.includes(req.user.role)) {
+        throw createError('Forbidden', 403, 'Insufficient permissions');
+      }
+
+      next();
+    } catch (error) {
+      next(error);
+    }
+  };
+};
+
 module.exports = {
   authenticateToken,
-  optionalAuth
+  optionalAuth,
+  requireRoles
 };

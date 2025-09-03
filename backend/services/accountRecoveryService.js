@@ -1,5 +1,5 @@
 const crypto = require('crypto');
-const { pool } = require('../database/connection');
+const { query } = require('../database/unified-connection');
 const emailService = require('./emailService');
 const encryptionService = require('./encryptionService');
 
@@ -212,17 +212,17 @@ class AccountRecoveryService {
         // Perform recovery actions based on type
         let result;
         switch (tokenVerification.recoveryType) {
-        case 'email_change':
-          result = await this.handleEmailChangeRecovery(client, tokenVerification, recoveryActions);
-          break;
-        case 'account_recovery':
-          result = await this.handleAccountRecovery(client, tokenVerification, recoveryActions);
-          break;
-        case 'emergency_access':
-          result = await this.handleEmergencyAccess(client, tokenVerification, recoveryActions);
-          break;
-        default:
-          throw new Error('Unknown recovery type');
+          case 'email_change':
+            result = await this.handleEmailChangeRecovery(client, tokenVerification, recoveryActions);
+            break;
+          case 'account_recovery':
+            result = await this.handleAccountRecovery(client, tokenVerification, recoveryActions);
+            break;
+          case 'emergency_access':
+            result = await this.handleEmergencyAccess(client, tokenVerification, recoveryActions);
+            break;
+          default:
+            throw new Error('Unknown recovery type');
         }
 
         // Mark token as used

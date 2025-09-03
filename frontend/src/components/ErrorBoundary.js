@@ -1,5 +1,5 @@
-import React from 'react';
 import axios from 'axios';
+import React from 'react';
 import './ErrorBoundary.css';
 
 class ErrorBoundary extends React.Component {
@@ -11,26 +11,26 @@ class ErrorBoundary extends React.Component {
       errorInfo: null,
       errorId: null,
       retryCount: 0,
-      isRecovering: false
+      isRecovering: false,
     };
   }
 
   static getDerivedStateFromError(error) {
     // Update state so the next render will show the fallback UI
-    return { 
+    return {
       hasError: true,
-      errorId: Date.now().toString()
+      errorId: Date.now().toString(),
     };
   }
 
   componentDidCatch(error, errorInfo) {
     // Log error details
     console.error('Error Boundary caught an error:', error, errorInfo);
-    
+
     this.setState({
       error,
       errorInfo,
-      errorId: Date.now().toString()
+      errorId: Date.now().toString(),
     });
 
     // Report error to backend for analysis
@@ -42,25 +42,28 @@ class ErrorBoundary extends React.Component {
       const token = localStorage.getItem('token');
       if (!token) return;
 
-      await axios.post(`${process.env.REACT_APP_API_URL}/recovery/report-error`, {
-        error: {
-          message: error.message,
-          stack: error.stack,
-          name: error.name
+      await axios.post(
+        `${process.env.REACT_APP_API_URL}/recovery/report-error`,
+        {
+          error: {
+            message: error.message,
+            stack: error.stack,
+            name: error.name,
+          },
+          errorInfo: {
+            componentStack: errorInfo.componentStack,
+          },
+          context: {
+            url: window.location.href,
+            userAgent: navigator.userAgent,
+            timestamp: new Date().toISOString(),
+            props: this.props.context || {},
+          },
         },
-        errorInfo: {
-          componentStack: errorInfo.componentStack
-        },
-        context: {
-          url: window.location.href,
-          userAgent: navigator.userAgent,
-          timestamp: new Date().toISOString(),
-          props: this.props.context || {}
+        {
+          headers: { Authorization: `Bearer ${token}` },
         }
-      }, {
-        headers: { Authorization: `Bearer ${token}` }
-      });
-
+      );
     } catch (reportError) {
       console.error('Failed to report error:', reportError);
     }
@@ -73,7 +76,7 @@ class ErrorBoundary extends React.Component {
       errorInfo: null,
       errorId: null,
       retryCount: prevState.retryCount + 1,
-      isRecovering: false
+      isRecovering: false,
     }));
   };
 
@@ -88,28 +91,31 @@ class ErrorBoundary extends React.Component {
 
       // Get recovery information
       const response = await axios.get(`${process.env.REACT_APP_API_URL}/recovery/session`, {
-        headers: { Authorization: `Bearer ${token}` }
+        headers: { Authorization: `Bearer ${token}` },
       });
 
       if (response.data.success && response.data.recovery.hasRecoveryData) {
         // Resume from last checkpoint
-        await axios.post(`${process.env.REACT_APP_API_URL}/recovery/resume`, {
-          fromStep: response.data.recovery.lastSuccessfulStep
-        }, {
-          headers: { Authorization: `Bearer ${token}` }
-        });
+        await axios.post(
+          `${process.env.REACT_APP_API_URL}/recovery/resume`,
+          {
+            fromStep: response.data.recovery.lastSuccessfulStep,
+          },
+          {
+            headers: { Authorization: `Bearer ${token}` },
+          }
+        );
 
         // Reset error state and trigger re-render
         this.handleRetry();
       } else {
         throw new Error('No recovery data available');
       }
-
     } catch (recoveryError) {
       console.error('Recovery failed:', recoveryError);
-      this.setState({ 
+      this.setState({
         isRecovering: false,
-        error: new Error('Recovery failed: ' + recoveryError.message)
+        error: new Error('Recovery failed: ' + recoveryError.message),
       });
     }
   };
@@ -118,7 +124,7 @@ class ErrorBoundary extends React.Component {
     // Clear all local storage and restart
     localStorage.removeItem('onboardingProgress');
     localStorage.removeItem('onboardingSession');
-    
+
     // Redirect to beginning of onboarding
     window.location.href = '/dashboard';
   };
@@ -130,30 +136,32 @@ class ErrorBoundary extends React.Component {
       const canRetry = retryCount < maxRetries;
 
       return (
-        <div className="error-boundary">
-          <div className="error-container">
-            <div className="error-header">
-              <div className="error-icon">⚠️</div>
+        <div className='error-boundary'>
+          <div className='error-container'>
+            <div className='error-header'>
+              <div className='error-icon'>⚠️</div>
               <h2>Oops! Something went wrong</h2>
               <p>We encountered an unexpected error, but don't worry - we can help you recover.</p>
             </div>
 
-            <div className="error-details">
-              <div className="error-summary">
+            <div className='error-details'>
+              <div className='error-summary'>
                 <h3>What happened?</h3>
                 <p>{error?.message || 'An unexpected error occurred'}</p>
-                
+
                 {retryCount > 0 && (
-                  <div className="retry-info">
-                    <small>Retry attempts: {retryCount}/{maxRetries}</small>
+                  <div className='retry-info'>
+                    <small>
+                      Retry attempts: {retryCount}/{maxRetries}
+                    </small>
                   </div>
                 )}
               </div>
 
               {process.env.NODE_ENV === 'development' && errorInfo && (
-                <details className="error-technical">
+                <details className='error-technical'>
                   <summary>Technical Details (Development)</summary>
-                  <pre className="error-stack">
+                  <pre className='error-stack'>
                     {error?.stack}
                     {errorInfo.componentStack}
                   </pre>
@@ -161,25 +169,25 @@ class ErrorBoundary extends React.Component {
               )}
             </div>
 
-            <div className="error-actions">
+            <div className='error-actions'>
               {canRetry && (
-                <button 
+                <button
                   onClick={this.handleRetry}
-                  className="retry-button primary"
+                  className='retry-button primary'
                   disabled={isRecovering}
                 >
                   Try Again
                 </button>
               )}
 
-              <button 
+              <button
                 onClick={this.handleRecovery}
-                className="recovery-button secondary"
+                className='recovery-button secondary'
                 disabled={isRecovering}
               >
                 {isRecovering ? (
                   <>
-                    <div className="button-spinner"></div>
+                    <div className='button-spinner' />
                     Recovering...
                   </>
                 ) : (
@@ -187,41 +195,38 @@ class ErrorBoundary extends React.Component {
                 )}
               </button>
 
-              <button 
+              <button
                 onClick={this.handleRestart}
-                className="restart-button tertiary"
+                className='restart-button tertiary'
                 disabled={isRecovering}
               >
                 Start Over
               </button>
             </div>
 
-            <div className="error-help">
+            <div className='error-help'>
               <h4>Need additional help?</h4>
-              <div className="help-options">
-                <a 
-                  href="mailto:support@floworx-iq.com?subject=Error Report&body=Error ID: {this.state.errorId}"
-                  className="help-link"
+              <div className='help-options'>
+                <a
+                  href='mailto:support@floworx-iq.com?subject=Error Report&body=Error ID: {this.state.errorId}'
+                  className='help-link'
                 >
                   📧 Contact Support
                 </a>
-                <a 
-                  href="https://docs.floworx-iq.com/troubleshooting"
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="help-link"
+                <a
+                  href='https://docs.floworx-iq.com/troubleshooting'
+                  target='_blank'
+                  rel='noopener noreferrer'
+                  className='help-link'
                 >
                   📚 View Documentation
                 </a>
-                <button 
-                  onClick={() => window.location.reload()}
-                  className="help-link refresh-link"
-                >
+                <button onClick={() => window.location.reload()} className='help-link refresh-link'>
                   🔄 Refresh Page
                 </button>
               </div>
-              
-              <div className="error-id">
+
+              <div className='error-id'>
                 <small>Error ID: {this.state.errorId}</small>
               </div>
             </div>
@@ -252,22 +257,25 @@ export const useErrorReporting = () => {
       const token = localStorage.getItem('token');
       if (!token) return;
 
-      await axios.post(`${process.env.REACT_APP_API_URL}/recovery/report-error`, {
-        error: {
-          message: error.message,
-          stack: error.stack,
-          name: error.name
+      await axios.post(
+        `${process.env.REACT_APP_API_URL}/recovery/report-error`,
+        {
+          error: {
+            message: error.message,
+            stack: error.stack,
+            name: error.name,
+          },
+          context: {
+            url: window.location.href,
+            userAgent: navigator.userAgent,
+            timestamp: new Date().toISOString(),
+            ...context,
+          },
         },
-        context: {
-          url: window.location.href,
-          userAgent: navigator.userAgent,
-          timestamp: new Date().toISOString(),
-          ...context
+        {
+          headers: { Authorization: `Bearer ${token}` },
         }
-      }, {
-        headers: { Authorization: `Bearer ${token}` }
-      });
-
+      );
     } catch (reportError) {
       console.error('Failed to report error:', reportError);
     }

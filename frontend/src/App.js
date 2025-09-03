@@ -1,61 +1,111 @@
-import React from 'react';
+// React import removed - not needed with new JSX transform
 import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom';
+
+import Dashboard from './components/Dashboard';
+import EmailVerification from './components/EmailVerification';
+import ErrorBoundary from './components/ErrorBoundary';
+import ForgotPassword from './components/ForgotPassword';
+import Login from './components/Login';
+import ProtectedRoute from './components/ProtectedRoute';
+import AccountRecoveryDashboard from './components/recovery/AccountRecoveryDashboard';
+import Register from './components/Register';
+import ResetPassword from './components/ResetPassword';
 import { AuthProvider } from './contexts/AuthContext';
 import { ErrorProvider } from './contexts/ErrorContext';
-import ProtectedRoute from './components/ProtectedRoute';
-import Login from './components/Login';
-import Register from './components/Register';
-import EmailVerification from './components/EmailVerification';
-import ForgotPassword from './components/ForgotPassword';
-import ResetPassword from './components/ResetPassword';
-import AccountRecoveryDashboard from './components/recovery/AccountRecoveryDashboard';
-import Dashboard from './components/Dashboard';
 import './App.css';
 
 function App() {
   return (
-    <ErrorProvider>
-      <AuthProvider>
-        <Router>
-          <div className="App">
-            <header className="App-header">
-              <h1>FloWorx</h1>
-              <p>Email AI Built by Hot Tub Pros—For Hot Tub Pros</p>
-            </header>
-          
-          <main className="App-main">
-            <Routes>
-              {/* Public routes */}
-              <Route path="/login" element={<Login />} />
-              <Route path="/register" element={<Register />} />
-              <Route path="/verify-email" element={<EmailVerification />} />
-              <Route path="/forgot-password" element={<ForgotPassword />} />
-              <Route path="/reset-password" element={<ResetPassword />} />
-              <Route path="/account-recovery" element={<AccountRecoveryDashboard />} />
-              
-              {/* Protected routes */}
-              <Route 
-                path="/dashboard" 
-                element={
-                  <ProtectedRoute>
-                    <Dashboard />
-                  </ProtectedRoute>
-                } 
-              />
-              
-              {/* Default redirect */}
-              <Route path="/" element={<Navigate to="/dashboard" replace />} />
-              <Route path="*" element={<Navigate to="/dashboard" replace />} />
-            </Routes>
-          </main>
-          
-          <footer className="App-footer">
-            <p>&copy; 2024 FloWorx. Email AI for Hot Tub Professionals.</p>
-          </footer>
-        </div>
-      </Router>
-    </AuthProvider>
-    </ErrorProvider>
+    <ErrorBoundary>
+      <ErrorProvider>
+        <AuthProvider>
+          <Router>
+            <>
+              <div className='App'>
+                <header className='App-header'>
+                  <h1>FloWorx</h1>
+                  <p>Email AI Built by Hot Tub Pros—For Hot Tub Pros</p>
+                </header>
+
+                <main className='App-main'>
+                  <Routes>
+                    {/* Public routes with error boundaries */}
+                    <Route
+                      path='/login'
+                      element={
+                        <ErrorBoundary key='login'>
+                          <Login />
+                        </ErrorBoundary>
+                      }
+                    />
+                    <Route
+                      path='/register'
+                      element={
+                        <ErrorBoundary key='register'>
+                          <Register />
+                        </ErrorBoundary>
+                      }
+                    />
+                    <Route
+                      path='/verify-email'
+                      element={
+                        <ErrorBoundary key='verify-email'>
+                          <EmailVerification />
+                        </ErrorBoundary>
+                      }
+                    />
+                    <Route
+                      path='/forgot-password'
+                      element={
+                        <ErrorBoundary key='forgot-password'>
+                          <ForgotPassword />
+                        </ErrorBoundary>
+                      }
+                    />
+                    <Route
+                      path='/reset-password'
+                      element={
+                        <ErrorBoundary key='reset-password'>
+                          <ResetPassword />
+                        </ErrorBoundary>
+                      }
+                    />
+                    <Route
+                      path='/account-recovery'
+                      element={
+                        <ErrorBoundary key='account-recovery'>
+                          <AccountRecoveryDashboard />
+                        </ErrorBoundary>
+                      }
+                    />
+
+                    {/* Protected routes with error boundaries */}
+                    <Route
+                      path='/dashboard'
+                      element={
+                        <ErrorBoundary key='dashboard'>
+                          <ProtectedRoute>
+                            <Dashboard />
+                          </ProtectedRoute>
+                        </ErrorBoundary>
+                      }
+                    />
+
+                    {/* Default redirect */}
+                    <Route path='/' element={<Navigate to='/dashboard' replace />} />
+                    <Route path='*' element={<Navigate to='/dashboard' replace />} />
+                  </Routes>
+                </main>
+
+                <footer className='App-footer'>
+                  <p>&copy; 2024 FloWorx. Email AI for Hot Tub Professionals.</p>
+                </footer>
+              </div>
+            </>
+          </Router>
+        </AuthProvider>
+      </ErrorProvider>
+    </ErrorBoundary>
   );
 }
 

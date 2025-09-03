@@ -18,34 +18,31 @@ const helmetConfig = {
     directives: {
       defaultSrc: ["'self'"],
       styleSrc: [
-        "'self'", 
+        "'self'",
         "'unsafe-inline'", // Required for some UI frameworks
-        "https://fonts.googleapis.com",
-        "https://cdn.jsdelivr.net"
+        'https://fonts.googleapis.com',
+        'https://cdn.jsdelivr.net'
       ],
       scriptSrc: [
         "'self'",
-        "https://apis.google.com", // Google OAuth
-        "https://accounts.google.com"
+        'https://apis.google.com', // Google OAuth
+        'https://accounts.google.com'
       ],
       imgSrc: [
-        "'self'", 
-        "data:", 
-        "https:",
-        "https://lh3.googleusercontent.com" // Google profile images
-      ],
-      fontSrc: [
         "'self'",
-        "https://fonts.gstatic.com"
+        'data:',
+        'https:',
+        'https://lh3.googleusercontent.com' // Google profile images
       ],
+      fontSrc: ["'self'", 'https://fonts.gstatic.com'],
       connectSrc: [
         "'self'",
-        "https://api.floworx-iq.com",
-        "https://accounts.google.com",
-        "https://oauth2.googleapis.com"
+        'https://api.floworx-iq.com',
+        'https://accounts.google.com',
+        'https://oauth2.googleapis.com'
       ],
       frameSrc: [
-        "https://accounts.google.com" // Google OAuth iframe
+        'https://accounts.google.com' // Google OAuth iframe
       ],
       objectSrc: ["'none'"],
       mediaSrc: ["'self'"],
@@ -59,10 +56,10 @@ const helmetConfig = {
   crossOriginEmbedderPolicy: false, // Disabled for OAuth compatibility
 
   // Cross-Origin Opener Policy
-  crossOriginOpenerPolicy: { policy: "same-origin-allow-popups" },
+  crossOriginOpenerPolicy: { policy: 'same-origin-allow-popups' },
 
   // Cross-Origin Resource Policy
-  crossOriginResourcePolicy: { policy: "cross-origin" },
+  crossOriginResourcePolicy: { policy: 'cross-origin' },
 
   // DNS Prefetch Control
   dnsPrefetchControl: { allow: false },
@@ -102,7 +99,7 @@ const helmetConfig = {
   originAgentCluster: true,
 
   // Referrer Policy
-  referrerPolicy: { policy: "strict-origin-when-cross-origin" },
+  referrerPolicy: { policy: 'strict-origin-when-cross-origin' },
 
   // X-Frame-Options
   frameguard: { action: 'deny' },
@@ -204,11 +201,63 @@ const slowDownConfigs = {
 };
 
 /**
+ * Enhanced sanitization middleware
+ */
+const sanitizeRequest = (req, res, next) => {
+  // Sanitize headers for potential injection
+  const sanitizeHeaders = headers => {
+    const sanitized = {};
+    for (const [key, value] of Object.entries(headers)) {
+      // Remove potentially dangerous characters from header values
+      sanitized[key] = typeof value === 'string' ? value.replace(/[<>{}]/g, '') : value;
+    }
+    return sanitized;
+  };
+
+  req.headers = sanitizeHeaders(req.headers);
+  next();
+};
+
+const sanitizeResponse = (req, res, next) => {
+  // Wrap res.json to sanitize response data
+  const originalJson = res.json;
+  res.json = function (data) {
+    // Sanitize response data
+    const sanitizeData = obj => {
+      if (typeof obj !== 'object' || obj === null) {
+        return obj;
+      }
+
+      return Object.entries(obj).reduce(
+        (acc, [key, value]) => {
+          if (typeof value === 'object' && value !== null) {
+            acc[key] = sanitizeData(value);
+          } else if (typeof value === 'string') {
+            // Remove potential XSS and injection patterns
+            acc[key] = value
+              .replace(/<script\b[^<]*(?:(?!<\/script>)<[^<]*)*<\/script>/gi, '')
+              .replace(/javascript:/gi, '')
+              .replace(/data:text\/html/gi, '');
+          } else {
+            acc[key] = value;
+          }
+          return acc;
+        },
+        Array.isArray(obj) ? [] : {}
+      );
+    };
+
+    return originalJson.call(this, sanitizeData(data));
+  };
+  next();
+};
+
+/**
  * Input sanitization middleware
  */
 const sanitizeInput = (req, res, next) => {
   // Sanitize common dangerous patterns
-  const sanitizeValue = (value) => {
+  const sanitizeValue = value => {
     if (typeof value === 'string') {
       // Remove potential XSS patterns
       return value
@@ -220,7 +269,7 @@ const sanitizeInput = (req, res, next) => {
     return value;
   };
 
-  const sanitizeObject = (obj) => {
+  const sanitizeObject = obj => {
     if (obj && typeof obj === 'object') {
       for (const key in obj) {
         if (obj.hasOwnProperty(key)) {
@@ -252,11 +301,11 @@ const securityHeaders = (req, res, next) => {
   res.setHeader('X-XSS-Protection', '1; mode=block');
   res.setHeader('Referrer-Policy', 'strict-origin-when-cross-origin');
   res.setHeader('Permissions-Policy', 'camera=(), microphone=(), geolocation=()');
-  
+
   // Remove server information
   res.removeHeader('X-Powered-By');
   res.removeHeader('Server');
-  
+
   next();
 };
 
@@ -283,9 +332,11 @@ module.exports = {
   rateLimits: rateLimitConfigs,
   slowDown: slowDownConfigs,
   sanitizeInput,
+  sanitizeRequest,
+  sanitizeResponse,
   securityHeaders,
   handleValidationErrors,
-  
+
   // Convenience exports
   apiRateLimit: rateLimitConfigs.api,
   authRateLimit: rateLimitConfigs.auth,

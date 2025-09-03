@@ -1,5 +1,5 @@
-import React, { useState, useEffect } from 'react';
 import axios from 'axios';
+import React, { useState, useEffect } from 'react';
 import './StepStyles.css';
 
 const TeamSetupStep = ({ data, onComplete, onBack, canGoBack }) => {
@@ -31,14 +31,14 @@ const TeamSetupStep = ({ data, onComplete, onBack, canGoBack }) => {
     setError(null);
   };
 
-  const removeTeamMember = (index) => {
+  const removeTeamMember = index => {
     setTeamMembers(teamMembers.filter((_, i) => i !== index));
   };
 
   const updateTeamMember = (index, field, value) => {
-    setTeamMembers(prev => prev.map((member, i) => 
-      i === index ? { ...member, [field]: value } : member
-    ));
+    setTeamMembers(prev =>
+      prev.map((member, i) => (i === index ? { ...member, [field]: value } : member))
+    );
   };
 
   const handleSave = async () => {
@@ -54,7 +54,6 @@ const TeamSetupStep = ({ data, onComplete, onBack, canGoBack }) => {
       );
 
       onComplete({ teamMembers });
-
     } catch (error) {
       console.error('Error saving team setup:', error);
       setError(error.response?.data?.message || 'Failed to save team setup');
@@ -68,53 +67,53 @@ const TeamSetupStep = ({ data, onComplete, onBack, canGoBack }) => {
   };
 
   return (
-    <div className="step-content">
-      <div className="step-description">
+    <div className='step-content'>
+      <div className='step-description'>
         <h3>Set Up Team Notifications</h3>
         <p>
-          Add team members who should be notified when specific types of emails arrive. 
-          This is optional - you can always add team members later.
+          Add team members who should be notified when specific types of emails arrive. This is
+          optional - you can always add team members later.
         </p>
       </div>
 
-      <div className="team-setup-section">
-        <div className="add-member-section">
+      <div className='team-setup-section'>
+        <div className='add-member-section'>
           <h4>Add Team Member</h4>
-          <div className="member-form">
-            <div className="form-row">
+          <div className='member-form'>
+            <div className='form-row'>
               <input
-                type="text"
-                placeholder="Team member name"
+                type='text'
+                placeholder='Team member name'
                 value={newMember.name}
-                onChange={(e) => setNewMember({ ...newMember, name: e.target.value })}
-                className="form-input"
+                onChange={e => setNewMember({ ...newMember, name: e.target.value })}
+                className='form-input'
               />
               <input
-                type="email"
-                placeholder="Email address"
+                type='email'
+                placeholder='Email address'
                 value={newMember.email}
-                onChange={(e) => setNewMember({ ...newMember, email: e.target.value })}
-                className="form-input"
+                onChange={e => setNewMember({ ...newMember, email: e.target.value })}
+                className='form-input'
               />
             </div>
-            
-            <div className="form-row">
+
+            <div className='form-row'>
               <select
                 value={newMember.categoryName}
-                onChange={(e) => setNewMember({ ...newMember, categoryName: e.target.value })}
-                className="form-select"
+                onChange={e => setNewMember({ ...newMember, categoryName: e.target.value })}
+                className='form-select'
               >
-                <option value="">All categories (optional)</option>
+                <option value=''>All categories (optional)</option>
                 {data.businessCategories?.map(category => (
                   <option key={category.name} value={category.name}>
                     {category.name}
                   </option>
                 ))}
               </select>
-              
-              <button 
+
+              <button
                 onClick={addTeamMember}
-                className="add-button"
+                className='add-button'
                 disabled={!newMember.name.trim() || !newMember.email.trim()}
               >
                 Add Member
@@ -123,40 +122,44 @@ const TeamSetupStep = ({ data, onComplete, onBack, canGoBack }) => {
           </div>
         </div>
 
-        <div className="team-members-section">
+        <div className='team-members-section'>
           <h4>Team Members ({teamMembers.length})</h4>
-          
+
           {teamMembers.length === 0 ? (
-            <div className="empty-state">
+            <div className='empty-state'>
               <p>No team members added yet. Add team members above or skip this step.</p>
             </div>
           ) : (
-            <div className="members-list">
+            <div className='members-list'>
               {teamMembers.map((member, index) => (
-                <div key={index} className="member-item">
-                  <div className="member-info">
-                    <div className="member-name">{member.name}</div>
-                    <div className="member-email">{member.email}</div>
-                    <div className="member-category">
-                      {member.categoryName ? `Notified for: ${member.categoryName}` : 'Notified for: All categories'}
+                <div key={index} className='member-item'>
+                  <div className='member-info'>
+                    <div className='member-name'>{member.name}</div>
+                    <div className='member-email'>{member.email}</div>
+                    <div className='member-category'>
+                      {member.categoryName
+                        ? `Notified for: ${member.categoryName}`
+                        : 'Notified for: All categories'}
                     </div>
                   </div>
-                  
-                  <div className="member-controls">
-                    <label className="notification-toggle">
+
+                  <div className='member-controls'>
+                    <label className='notification-toggle'>
                       <input
-                        type="checkbox"
+                        type='checkbox'
                         checked={member.notificationEnabled}
-                        onChange={(e) => updateTeamMember(index, 'notificationEnabled', e.target.checked)}
+                        onChange={e =>
+                          updateTeamMember(index, 'notificationEnabled', e.target.checked)
+                        }
                       />
-                      <span className="toggle-slider"></span>
-                      <span className="toggle-label">Notifications</span>
+                      <span className='toggle-slider' />
+                      <span className='toggle-label'>Notifications</span>
                     </label>
-                    
-                    <button 
+
+                    <button
                       onClick={() => removeTeamMember(index)}
-                      className="remove-button"
-                      title="Remove team member"
+                      className='remove-button'
+                      title='Remove team member'
                     >
                       ×
                     </button>
@@ -169,35 +172,27 @@ const TeamSetupStep = ({ data, onComplete, onBack, canGoBack }) => {
       </div>
 
       {error && (
-        <div className="error-message">
-          <span className="error-icon">⚠️</span>
+        <div className='error-message'>
+          <span className='error-icon'>⚠️</span>
           {error}
         </div>
       )}
 
-      <div className="step-actions">
+      <div className='step-actions'>
         {canGoBack && (
-          <button onClick={onBack} className="secondary-button">
+          <button onClick={onBack} className='secondary-button'>
             Back
           </button>
         )}
-        
-        <button 
-          onClick={handleSkip}
-          className="secondary-button"
-          disabled={saving}
-        >
+
+        <button onClick={handleSkip} className='secondary-button' disabled={saving}>
           Skip for Now
         </button>
-        
-        <button 
-          onClick={handleSave}
-          disabled={saving}
-          className="primary-button"
-        >
+
+        <button onClick={handleSave} disabled={saving} className='primary-button'>
           {saving ? (
             <>
-              <div className="button-spinner"></div>
+              <div className='button-spinner' />
               Saving...
             </>
           ) : (
@@ -206,7 +201,7 @@ const TeamSetupStep = ({ data, onComplete, onBack, canGoBack }) => {
         </button>
       </div>
 
-      <div className="step-help">
+      <div className='step-help'>
         <h5>💡 Team notification tips:</h5>
         <ul>
           <li>Team members will receive email alerts when new emails arrive</li>

@@ -8,7 +8,7 @@
  * @param {Function} fn - The async function to wrap
  * @returns {Function} - Express middleware function
  */
-const asyncWrapper = (fn) => {
+const asyncWrapper = fn => {
   return (req, res, next) => {
     // Execute the async function and catch any errors
     Promise.resolve(fn(req, res, next)).catch(next);
@@ -35,7 +35,7 @@ const asyncWrapperMultiple = (...middlewares) => {
  * @param {Array} options.middleware - Additional middleware to run before handler
  * @returns {Array} - Array of middleware functions
  */
-const createRoute = (options) => {
+const createRoute = options => {
   const { validation, handler, middleware = [] } = options;
   const middlewares = [];
 
@@ -61,27 +61,29 @@ const createRoute = (options) => {
  * @param {Class} ControllerClass - The controller class to wrap
  * @returns {Class} - Wrapped controller class
  */
-const wrapController = (ControllerClass) => {
+const wrapController = ControllerClass => {
   const prototype = ControllerClass.prototype;
   const methodNames = Object.getOwnPropertyNames(prototype);
 
   methodNames.forEach(methodName => {
     if (methodName !== 'constructor' && typeof prototype[methodName] === 'function') {
       const originalMethod = prototype[methodName];
-      
+
       // Check if method is async or returns a Promise
-      if (originalMethod.constructor.name === 'AsyncFunction' || 
-          (originalMethod.toString().includes('Promise') || originalMethod.toString().includes('await'))) {
-        
-        prototype[methodName] = function(...args) {
+      if (
+        originalMethod.constructor.name === 'AsyncFunction' ||
+        originalMethod.toString().includes('Promise') ||
+        originalMethod.toString().includes('await')
+      ) {
+        prototype[methodName] = function (...args) {
           const result = originalMethod.apply(this, args);
-          
+
           // If this looks like an Express middleware (3 args with next)
           if (args.length === 3 && typeof args[2] === 'function') {
             const [req, res, next] = args;
             return Promise.resolve(result).catch(next);
           }
-          
+
           return result;
         };
       }
@@ -141,13 +143,16 @@ const safeAsync = (handler, options = {}) => {
  * @returns {Object} - Service object with wrapped methods
  */
 const wrapService = (service, methods = null) => {
-  const methodsToWrap = methods || Object.getOwnPropertyNames(Object.getPrototypeOf(service))
-    .filter(name => name !== 'constructor' && typeof service[name] === 'function');
+  const methodsToWrap =
+    methods ||
+    Object.getOwnPropertyNames(Object.getPrototypeOf(service)).filter(
+      name => name !== 'constructor' && typeof service[name] === 'function'
+    );
 
   methodsToWrap.forEach(methodName => {
     const originalMethod = service[methodName];
-    
-    service[methodName] = async function(...args) {
+
+    service[methodName] = async function (...args) {
       try {
         return await originalMethod.apply(this, args);
       } catch (error) {
@@ -155,7 +160,7 @@ const wrapService = (service, methods = null) => {
         error.service = service.constructor.name;
         error.method = methodName;
         error.timestamp = new Date().toISOString();
-        
+
         throw error;
       }
     };

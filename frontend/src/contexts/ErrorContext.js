@@ -1,4 +1,5 @@
 import React, { createContext, useContext, useState, useCallback } from 'react';
+
 import Alert from '../components/ui/Alert';
 
 const ErrorContext = createContext();
@@ -6,14 +7,18 @@ const ErrorContext = createContext();
 export const ErrorProvider = ({ children }) => {
   const [errors, setErrors] = useState([]);
 
-  const reportError = useCallback((error) => {
-    const errorMessage = error.response?.data?.message || error.message || 'An unexpected error occurred';
-    
-    setErrors(prev => [...prev, {
-      id: Date.now(),
-      message: errorMessage,
-      timestamp: new Date()
-    }]);
+  const reportError = useCallback(error => {
+    const errorMessage =
+      error.response?.data?.message || error.message || 'An unexpected error occurred';
+
+    setErrors(prev => [
+      ...prev,
+      {
+        id: Date.now(),
+        message: errorMessage,
+        timestamp: new Date(),
+      },
+    ]);
 
     // Log error to monitoring service in production
     if (process.env.NODE_ENV === 'production') {
@@ -22,7 +27,7 @@ export const ErrorProvider = ({ children }) => {
     }
   }, []);
 
-  const dismissError = useCallback((errorId) => {
+  const dismissError = useCallback(errorId => {
     setErrors(prev => prev.filter(error => error.id !== errorId));
   }, []);
 
@@ -36,7 +41,7 @@ export const ErrorProvider = ({ children }) => {
       {errors.map(error => (
         <Alert
           key={error.id}
-          type="error"
+          type='error'
           message={error.message}
           onDismiss={() => dismissError(error.id)}
           autoHideDuration={5000}

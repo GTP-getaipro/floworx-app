@@ -26,8 +26,8 @@
     "test:e2e:api": "node tests/e2e/runner.js --suite api-integration",
     "test:e2e:frontend": "node tests/e2e/runner.js --suite frontend-integration",
     "test:regression": "npm run test:e2e",
-    "test:security": "npm audit && node tests/security/security-scan.js",
-    "test:performance": "node tests/performance/load-test.js",
+    "test:security": "npm run validate:hybrid-setup && npx playwright test tests/edge-cases.spec.js --grep=\"Security|XSS|SQL\"",
+    "test:performance": "npm run validate:hybrid-setup && npx playwright test tests/mobile-responsive.spec.js --grep=\"Performance\"",
     "test:all": "npm run test:backend && npm run test:frontend && npm run test:e2e",
     "test:regression:full": "node run-e2e-tests.js",
     "test:playwright": "playwright test",
@@ -56,9 +56,18 @@
     "test:edge-cases": "npm run validate:hybrid-setup && npx playwright test tests/edge-cases.spec.js",
     "test:mobile-responsive": "npm run validate:hybrid-setup && npx playwright test tests/mobile-responsive.spec.js",
     "test:comprehensive": "npm run validate:hybrid-setup && npx playwright test tests/business-logic.spec.js tests/api-integration.spec.js tests/edge-cases.spec.js tests/mobile-responsive.spec.js",
-    "test:performance": "npm run validate:hybrid-setup && npx playwright test tests/mobile-responsive.spec.js --grep=\"Performance\"",
     "test:concurrent": "npm run validate:hybrid-setup && npx playwright test tests/edge-cases.spec.js --grep=\"Concurrent\"",
-    "test:security": "npm run validate:hybrid-setup && npx playwright test tests/edge-cases.spec.js --grep=\"Security|XSS|SQL\""
+    "lint": "npm run lint:backend && npm run lint:frontend",
+    "lint:fix": "npm run lint:backend -- --fix && npm run lint:frontend -- --fix",
+    "lint:backend": "cd backend && npx eslint . --ext .js --max-warnings 0",
+    "lint:frontend": "cd frontend && npx eslint src --ext .js,.jsx --max-warnings 0",
+    "format": "prettier --write .",
+    "format:check": "prettier --check .",
+    "format:backend": "cd backend && npm run format",
+    "format:frontend": "cd frontend && npm run format",
+    "quality:check": "npm run lint && npm run format:check",
+    "quality:fix": "npm run lint:fix && npm run format",
+    "prepare": "husky"
   },
   "keywords": [
     "saas",
@@ -68,6 +77,7 @@
   "author": "",
   "license": "ISC",
   "devDependencies": {
+    "@babel/core": "^7.28.3",
     "@babel/preset-env": "^7.28.3",
     "@babel/preset-react": "^7.27.1",
     "@badeball/cypress-cucumber-preprocessor": "^23.0.0",
@@ -80,16 +90,20 @@
     "chai": "^4.3.7",
     "chalk": "^5.6.0",
     "concurrently": "^8.2.2",
+    "cross-env": "^10.0.0",
     "cypress": "^15.0.0",
     "cypress-mochawesome-reporter": "^4.0.2",
     "dotenv": "^17.2.1",
     "esbuild": "^0.25.9",
     "express": "^5.1.0",
     "identity-obj-proxy": "^3.0.0",
-    "jest": "^30.1.2",
+    "jest": "^30.1.3",
+    "jest-cli": "^30.1.3",
     "jest-environment-jsdom": "^30.1.2",
+    "jest-environment-node": "^30.1.2",
     "jest-html-reporters": "^3.1.7",
     "jest-junit": "^16.0.0",
+    "jest-watch-typeahead": "^3.0.1",
     "joi": "^17.11.0",
     "jsonwebtoken": "^9.0.2",
     "mocha": "^10.2.0",
@@ -99,17 +113,43 @@
     "react-dom": "^19.1.1",
     "react-router-dom": "^7.8.2",
     "supertest": "^7.1.4",
-    "uuid": "^9.0.0"
+    "uuid": "^9.0.0",
+    "eslint": "^8.57.0",
+    "eslint-config-prettier": "^9.1.0",
+    "eslint-plugin-import": "^2.29.1",
+    "eslint-plugin-jsx-a11y": "^6.8.0",
+    "eslint-plugin-prettier": "^5.1.3",
+    "eslint-plugin-react": "^7.34.0",
+    "eslint-plugin-react-hooks": "^4.6.0",
+    "eslint-plugin-security": "^2.1.1",
+    "prettier": "^3.2.5",
+    "husky": "^9.0.11",
+    "lint-staged": "^15.2.2"
   },
   "dependencies": {
-    "@supabase/supabase-js": "^2.56.1",
+    "@supabase/supabase-js": "^2.57.0",
     "axios": "^1.11.0",
     "bcryptjs": "^3.0.2",
+    "body-parser": "^2.2.0",
+    "cors": "^2.8.5",
     "faker": "^6.6.6",
+    "morgan": "^1.10.1",
     "nodemailer": "^7.0.6",
     "pg": "^8.16.3"
   },
   "engines": {
     "node": ">=18.0.0"
+  },
+  "lint-staged": {
+    "*.{js,jsx}": [
+      "eslint --fix",
+      "prettier --write"
+    ],
+    "*.{json,md,yml,yaml,css,scss,html}": [
+      "prettier --write"
+    ],
+    "*.sql": [
+      "prettier --write"
+    ]
   }
 }

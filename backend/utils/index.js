@@ -18,20 +18,20 @@ const validateRequest = require('./validateRequest');
 module.exports = {
   // Shared utilities (available across frontend and backend)
   ...sharedUtils,
-  
+
   // Backend-specific utilities
   asyncWrapper,
   encryption,
   pagination,
   security,
   validateRequest,
-  
+
   // Override shared errors with backend-specific implementations where needed
   errors: {
     ...sharedUtils.errors,
     ...backendErrors
   },
-  
+
   // Convenience aliases for commonly used functions
   formatDate: sharedUtils.formatDate,
   formatCurrency: sharedUtils.formatCurrency,
@@ -52,14 +52,14 @@ module.exports = {
   chunk: sharedUtils.chunk,
   sortBy: sharedUtils.sortBy,
   groupBy: sharedUtils.groupBy,
-  
+
   // API utilities
   createSuccessResponse: sharedUtils.createSuccessResponse,
   createErrorResponse: sharedUtils.createErrorResponse,
   createPaginatedResponse: sharedUtils.createPaginatedResponse,
   parseQueryParams: sharedUtils.parseQueryParams,
   buildQueryString: sharedUtils.buildQueryString,
-  
+
   // Constants
   HTTP_STATUS: sharedUtils.HTTP_STATUS,
   API_STATUS: sharedUtils.API_STATUS,

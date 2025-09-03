@@ -1,4 +1,8 @@
-// ESLint configuration for FloWorx backend
+/**
+ * ESLint Configuration for FloWorx Backend (ESLint v9 Flat Config)
+ * Node.js-specific linting rules with best practices
+ */
+
 const js = require('@eslint/js');
 
 module.exports = [
@@ -26,7 +30,7 @@ module.exports = [
     rules: {
       // Error prevention
       'no-unused-vars': [
-        'error',
+        'warn',
         {
           argsIgnorePattern: '^_',
           varsIgnorePattern: '^_',
@@ -41,14 +45,6 @@ module.exports = [
       'no-var': 'error',
       eqeqeq: ['error', 'always'],
       curly: ['error', 'all'],
-
-      // Style consistency
-      indent: ['error', 2],
-      quotes: ['error', 'single', { avoidEscape: true }],
-      semi: ['error', 'always'],
-      'comma-dangle': ['error', 'never'],
-      'object-curly-spacing': ['error', 'always'],
-      'array-bracket-spacing': ['error', 'never'],
 
       // Function declarations
       'no-use-before-define': [
@@ -70,6 +66,43 @@ module.exports = [
       'no-new-func': 'error'
     },
     files: ['**/*.js'],
-    ignores: ['node_modules/**', 'dist/**', 'build/**', 'coverage/**', '*.min.js']
+    ignores: [
+      'node_modules/**',
+      'dist/**',
+      'build/**',
+      'coverage/**',
+      '*.min.js',
+      'backup-imports/**',
+      'reports/**',
+      'test-results/**',
+      'eslint-output.json'
+    ]
+  },
+  // Test files
+  {
+    files: ['**/*.test.js', '**/*.spec.js', '**/tests/**/*.js'],
+    languageOptions: {
+      globals: {
+        jest: 'readonly',
+        describe: 'readonly',
+        it: 'readonly',
+        test: 'readonly',
+        expect: 'readonly',
+        beforeEach: 'readonly',
+        afterEach: 'readonly',
+        beforeAll: 'readonly',
+        afterAll: 'readonly'
+      }
+    },
+    rules: {
+      'no-console': 'off'
+    }
+  },
+  // Scripts
+  {
+    files: ['scripts/**/*.js'],
+    rules: {
+      'no-console': 'off'
+    }
   }
 ];

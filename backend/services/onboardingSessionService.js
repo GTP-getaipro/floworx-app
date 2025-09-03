@@ -1,4 +1,4 @@
-const { pool } = require('../database/connection');
+const { query } = require('../database/unified-connection');
 const transactionService = require('./transactionService');
 const crypto = require('crypto');
 

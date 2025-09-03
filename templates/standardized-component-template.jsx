@@ -13,7 +13,7 @@ import {
   createErrorResponse 
 } from '../utils';
 import { useAuth } from '../contexts/AuthContext';
-import { useErrorReporting } from './ErrorBoundary';
+import { useErrorReporting } from '../components/ErrorBoundary';
 import { Button, Input, Alert, Card, Loading } from './ui';
 
 /**

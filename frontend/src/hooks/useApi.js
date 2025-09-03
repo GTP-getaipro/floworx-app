@@ -1,12 +1,13 @@
-import { useState, useCallback } from 'react';
 import axios from 'axios';
+import { useState, useCallback } from 'react';
+
 import { useErrorReporting } from '../contexts/ErrorContext';
 
 const api = axios.create({
   baseURL: process.env.REACT_APP_API_URL,
   headers: {
-    'Content-Type': 'application/json'
-  }
+    'Content-Type': 'application/json',
+  },
 });
 
 // Add request interceptor for authentication
@@ -39,27 +40,30 @@ const useApi = () => {
   const [error, setError] = useState(null);
   const { reportError } = useErrorReporting();
 
-  const request = useCallback(async (method, url, data = null, options = {}) => {
-    setLoading(true);
-    setError(null);
+  const request = useCallback(
+    async (method, url, data = null, options = {}) => {
+      setLoading(true);
+      setError(null);
 
-    try {
-      const response = await api({
-        method,
-        url,
-        data,
-        ...options
-      });
-      return response.data;
-    } catch (err) {
-      const errorMessage = err.response?.data?.message || err.message || 'An error occurred';
-      setError(errorMessage);
-      reportError(err);
-      throw err;
-    } finally {
-      setLoading(false);
-    }
-  }, [reportError]);
+      try {
+        const response = await api({
+          method,
+          url,
+          data,
+          ...options,
+        });
+        return response.data;
+      } catch (err) {
+        const errorMessage = err.response?.data?.message || err.message || 'An error occurred';
+        setError(errorMessage);
+        reportError(err);
+        throw err;
+      } finally {
+        setLoading(false);
+      }
+    },
+    [reportError]
+  );
 
   const get = useCallback((url, options) => request('GET', url, null, options), [request]);
   const post = useCallback((url, data, options) => request('POST', url, data, options), [request]);
@@ -74,7 +78,7 @@ const useApi = () => {
     put,
     delete: del,
     setError,
-    api
+    api,
   };
 };
 

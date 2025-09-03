@@ -156,7 +156,7 @@ const UserQueries = {
       FROM users 
       WHERE id = $1 AND deleted_at IS NULL
     `;
-    
+
     try {
       const result = await query(queryText, [userId]);
       return result.rows[0] || null;
@@ -177,7 +177,7 @@ const UserQueries = {
       VALUES ($1, $2, $3, $4, $5, $6, $7, NOW(), NOW())
       RETURNING id, email, first_name, last_name, created_at
     `;
-    
+
     const values = [
       userData.email.toLowerCase(),
       userData.passwordHash,
@@ -187,7 +187,7 @@ const UserQueries = {
       userData.phone || null,
       userData.emailVerified || false
     ];
-    
+
     try {
       const result = await query(queryText, values);
       return result.rows[0];
@@ -243,14 +243,16 @@ const UserQueries = {
    * Update login tracking (secure)
    */
   async updateLoginTracking(userId, success = true, ipAddress = null) {
-    const queryText = success ? `
+    const queryText = success
+      ? `
       UPDATE users 
       SET last_login_at = NOW(), 
           failed_login_attempts = 0,
           account_locked_until = NULL,
           updated_at = NOW()
       WHERE id = $1
-    ` : `
+    `
+      : `
       UPDATE users 
       SET failed_login_attempts = COALESCE(failed_login_attempts, 0) + 1,
           account_locked_until = CASE 
@@ -266,7 +268,7 @@ const UserQueries = {
 
     try {
       await query(queryText, values);
-      
+
       // Log security event
       if (!success) {
         await this.logSecurityEvent(userId, 'failed_login_attempt', { ipAddress });
@@ -287,13 +289,7 @@ const UserQueries = {
       VALUES ($1, $2, $3, $4, $5, NOW())
     `;
 
-    const values = [
-      userId,
-      eventType,
-      JSON.stringify(details),
-      details.ipAddress || null,
-      details.userAgent || null
-    ];
+    const values = [userId, eventType, JSON.stringify(details), details.ipAddress || null, details.userAgent || null];
 
     try {
       await query(queryText, values);
@@ -358,12 +354,9 @@ const AuthQueries = {
    * Use password reset token (secure)
    */
   async usePasswordResetToken(tokenId, newPasswordHash) {
-    return await transaction(async (client) => {
+    return await transaction(async client => {
       // Mark token as used
-      await client.query(
-        'UPDATE password_reset_tokens SET used = true, used_at = NOW() WHERE id = $1',
-        [tokenId]
-      );
+      await client.query('UPDATE password_reset_tokens SET used = true, used_at = NOW() WHERE id = $1', [tokenId]);
 
       // Update user password
       const result = await client.query(
@@ -391,7 +384,8 @@ const QueryMonitor = {
    * Log slow queries for optimization
    */
   logSlowQuery(queryText, duration, params = []) {
-    if (duration > 1000) { // Log queries taking more than 1 second
+    if (duration > 1000) {
+      // Log queries taking more than 1 second
       console.warn(`🐌 Slow Query (${duration}ms):`, {
         query: queryText.substring(0, 200),
         params: params.length,
@@ -406,7 +400,7 @@ const QueryMonitor = {
   validateParams(params) {
     for (let i = 0; i < params.length; i++) {
       const param = params[i];
-      
+
       // Check for potential SQL injection patterns
       if (typeof param === 'string') {
         const suspiciousPatterns = [

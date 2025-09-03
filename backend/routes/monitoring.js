@@ -137,10 +137,10 @@ router.post('/thresholds', authenticateToken, requireAdmin, asyncHandler(async (
   const { slowQuery, criticalQuery, highConnectionCount, errorRate } = req.body;
   
   const newThresholds = {};
-  if (slowQuery !== undefined) newThresholds.slowQuery = parseInt(slowQuery);
-  if (criticalQuery !== undefined) newThresholds.criticalQuery = parseInt(criticalQuery);
-  if (highConnectionCount !== undefined) newThresholds.highConnectionCount = parseInt(highConnectionCount);
-  if (errorRate !== undefined) newThresholds.errorRate = parseFloat(errorRate);
+  if (slowQuery !== undefined) {newThresholds.slowQuery = parseInt(slowQuery);}
+  if (criticalQuery !== undefined) {newThresholds.criticalQuery = parseInt(criticalQuery);}
+  if (highConnectionCount !== undefined) {newThresholds.highConnectionCount = parseInt(highConnectionCount);}
+  if (errorRate !== undefined) {newThresholds.errorRate = parseFloat(errorRate);}
   
   realTimeMonitoringService.updateThresholds(newThresholds);
   

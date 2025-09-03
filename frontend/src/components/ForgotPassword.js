@@ -1,5 +1,5 @@
+import React, { useState, useEffect, useCallback } from 'react';
 import axios from 'axios';
-import { useState, useEffect, useCallback } from 'react';
 import { Link } from 'react-router-dom';
 // UI components are used in JSX but not directly referenced
 import './PasswordReset.css';
@@ -139,62 +139,61 @@ const ForgotPassword = () => {
 
   if (success) {
     return (
-      <div className='auth-container'>
-        <div className='auth-card'>
-          <div className='success-message'>
-            <div className='success-icon'>
-              <span>📧</span>
-            </div>
-            <h2>Check Your Email</h2>
-            <p>
-              We've sent a password reset link to <strong>{email}</strong>
-            </p>
+      <div className='auth-card'>
+        <div className='success-message'>
+          <div className='success-icon'>
+            <span>📧</span>
+          </div>
+          <h2>Check Your Email</h2>
+          <p>
+            We've sent a password reset link to <strong>{email}</strong>
+          </p>
 
-            <div className='email-instructions'>
-              <h3>What to do next:</h3>
-              <ol>
-                <li>Check your email inbox for a message from Floworx</li>
-                <li>Click the "Reset My Password" button in the email</li>
-                <li>Create a new secure password</li>
-                <li>Log in with your new password</li>
-              </ol>
+          <div className='email-instructions'>
+            <h3>What to do next:</h3>
+            <ol>
+              <li>Check your email inbox for a message from Floworx</li>
+              <li>Click the "Reset My Password" button in the email</li>
+              <li>Create a new secure password</li>
+              <li>Log in with your new password</li>
+            </ol>
 
-              <div className='help-text'>
-                <p>
-                  <strong>Didn't receive the email?</strong>
-                </p>
-                <ul>
-                  <li>Check your spam/junk folder</li>
-                  <li>Make sure you entered the correct email address</li>
-                  <li>Wait a few minutes and check again</li>
-                  <li>The link expires in 60 minutes for security</li>
-                </ul>
-              </div>
+            <div className='help-text'>
+              <p>
+                <strong>Didn't receive the email?</strong>
+              </p>
+              <ul>
+                <li>Check your spam/junk folder</li>
+                <li>Make sure you entered the correct email address</li>
+                <li>Wait a few minutes and check again</li>
+                <li>The link expires in 60 minutes for security</li>
+              </ul>
             </div>
+          </div>
 
-            <div className='action-buttons'>
-              <button
-                onClick={() => {
-                  setSuccess(false);
-                  setEmail('');
-                }}
-                className='auth-button secondary'
-              >
-                Send Another Reset Link
-              </button>
-              <Link to='/login' className='auth-button primary'>
-                Back to Login
-              </Link>
-            </div>
+          <div className='action-buttons'>
+            <button
+              onClick={() => {
+                setSuccess(false);
+                setEmail('');
+              }}
+              className='auth-button secondary'
+            >
+              Send Another Reset Link
+            </button>
+            <Link to='/login' className='auth-button primary'>
+              Back to Login
+            </Link>
           </div>
         </div>
       </div>
     );
   }
 
+
   return (
-    <div className='auth-container'>
-      <div className='auth-card'>
+    <div className='auth-card'>
+
         <div className='auth-header'>
           <h2>Reset Your Password</h2>
           <p className='auth-subtitle'>
@@ -312,8 +311,8 @@ const ForgotPassword = () => {
           </p>
         </div>
       </div>
-    </div>
   );
 };
+
 
 export default ForgotPassword;

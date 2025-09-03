@@ -8,7 +8,7 @@ const queryOptimizationService = require('../../services/queryOptimizationServic
 const cacheService = require('../../services/cacheService');
 
 describe('Database Performance Tests', () => {
-  let testUsers = [];
+  const testUsers = [];
   const PERFORMANCE_THRESHOLD = {
     FAST_QUERY: 100,    // < 100ms
     MEDIUM_QUERY: 500,  // < 500ms

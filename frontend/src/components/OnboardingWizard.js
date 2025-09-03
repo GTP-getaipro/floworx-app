@@ -1,5 +1,5 @@
-import axios from 'axios';
 import { useState, useEffect, useCallback, useMemo } from 'react';
+import axios from 'axios';
 
 import useAnalytics from '../hooks/useAnalytics';
 

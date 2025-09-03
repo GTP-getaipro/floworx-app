@@ -158,6 +158,23 @@ const useFormValidation = (initialValues, validationRules, options = {}) => {
   );
 
   /**
+   * Resets the form to its initial state
+   * @param {Object} [newInitialValues] - Optional new initial values
+   */
+  const resetForm = useCallback(
+    (newInitialValues = initialValues) => {
+      setValues(newInitialValues);
+      setErrors({});
+      setTouched({});
+      setIsSubmitting(false);
+      setIsDirty(false);
+      hasSubmitted.current = false;
+      previousValues.current = newInitialValues;
+    },
+    [initialValues]
+  );
+
+  /**
    * Handles form submission
    * @param {Function} onSubmit - Submission handler function
    * @param {Event} [e] - Optional event object
@@ -202,23 +219,6 @@ const useFormValidation = (initialValues, validationRules, options = {}) => {
       }
     },
     [validateForm, values, errors, resetForm]
-  );
-
-  /**
-   * Resets the form to its initial state
-   * @param {Object} [newInitialValues] - Optional new initial values
-   */
-  const resetForm = useCallback(
-    (newInitialValues = initialValues) => {
-      setValues(newInitialValues);
-      setErrors({});
-      setTouched({});
-      setIsSubmitting(false);
-      setIsDirty(false);
-      hasSubmitted.current = false;
-      previousValues.current = newInitialValues;
-    },
-    [initialValues]
   );
 
   /**

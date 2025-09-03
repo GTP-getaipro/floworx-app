@@ -53,10 +53,10 @@ router.get('/groups', authenticateToken, requireAdmin, asyncHandler(async (req, 
   } = req.query;
 
   const filters = {};
-  if (category) filters.category = category;
-  if (severity) filters.severity = severity;
-  if (startDate) filters.startDate = new Date(startDate).getTime();
-  if (endDate) filters.endDate = new Date(endDate).getTime();
+  if (category) {filters.category = category;}
+  if (severity) {filters.severity = severity;}
+  if (startDate) {filters.startDate = new Date(startDate).getTime();}
+  if (endDate) {filters.endDate = new Date(endDate).getTime();}
 
   const errorGroups = errorTrackingService.getErrorGroups(
     parseInt(limit), 
@@ -65,10 +65,10 @@ router.get('/groups', authenticateToken, requireAdmin, asyncHandler(async (req, 
 
   // Apply filters
   const filteredGroups = errorGroups.filter(group => {
-    if (filters.category && group.category !== filters.category) return false;
-    if (filters.severity && group.severity !== filters.severity) return false;
-    if (filters.startDate && group.lastSeen < filters.startDate) return false;
-    if (filters.endDate && group.firstSeen > filters.endDate) return false;
+    if (filters.category && group.category !== filters.category) {return false;}
+    if (filters.severity && group.severity !== filters.severity) {return false;}
+    if (filters.startDate && group.lastSeen < filters.startDate) {return false;}
+    if (filters.endDate && group.firstSeen > filters.endDate) {return false;}
     return true;
   });
 
@@ -154,10 +154,10 @@ router.get('/search', authenticateToken, requireAdmin, asyncHandler(async (req, 
   }
 
   const filters = {};
-  if (category) filters.category = category;
-  if (severity) filters.severity = severity;
-  if (startDate) filters.startDate = new Date(startDate).getTime();
-  if (endDate) filters.endDate = new Date(endDate).getTime();
+  if (category) {filters.category = category;}
+  if (severity) {filters.severity = severity;}
+  if (startDate) {filters.startDate = new Date(startDate).getTime();}
+  if (endDate) {filters.endDate = new Date(endDate).getTime();}
 
   const results = errorTrackingService.searchErrors(query, filters);
   

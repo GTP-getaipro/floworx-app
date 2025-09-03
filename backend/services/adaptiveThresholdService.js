@@ -86,7 +86,7 @@ class AdaptiveThresholdService extends EventEmitter {
    * Initialize adaptive threshold service
    */
   async initialize() {
-    if (this.isInitialized) return;
+    if (this.isInitialized) {return;}
 
     try {
       // Load historical data
@@ -361,7 +361,7 @@ class AdaptiveThresholdService extends EventEmitter {
     const hourlyData = {};
     data.forEach(point => {
       const hour = point.context.hourOfDay;
-      if (!hourlyData[hour]) hourlyData[hour] = [];
+      if (!hourlyData[hour]) {hourlyData[hour] = [];}
       hourlyData[hour].push(point.value);
     });
 

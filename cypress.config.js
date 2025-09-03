@@ -30,8 +30,8 @@ module.exports = defineConfig({
     
     // Environment variables
     env: {
-      API_BASE_URL: 'https://floworx-app.vercel.app/api',
-      OAUTH_REDIRECT_URI: 'https://floworx-app.vercel.app/api/oauth/google/callback',
+      API_BASE_URL: 'https://app.floworx-iq.com/api',
+      OAUTH_REDIRECT_URI: 'https://app.floworx-iq.com/api/oauth/google/callback',
       TEST_USER_EMAIL: 'cypress-test@floworx.com',
       TEST_USER_PASSWORD: 'CypressTest123!',
       TEST_USER_FIRST_NAME: 'Cypress',

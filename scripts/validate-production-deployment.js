@@ -18,7 +18,7 @@ async function validateProductionDeployment() {
     userExperience: { passed: 0, total: 0, details: [] }
   };
 
-  const PRODUCTION_URL = 'https://floworx-app.vercel.app';
+  const PRODUCTION_URL = 'https://app.floworx-iq.com';
 
   // =====================================================
   // 1. FRONTEND VALIDATION

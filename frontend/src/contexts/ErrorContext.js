@@ -1,7 +1,5 @@
 import React, { createContext, useContext, useState, useCallback } from 'react';
 
-import Alert from '../components/ui/Alert';
-
 const ErrorContext = createContext();
 
 export const ErrorProvider = ({ children }) => {
@@ -37,16 +35,6 @@ export const ErrorProvider = ({ children }) => {
 
   return (
     <ErrorContext.Provider value={{ errors, reportError, dismissError, clearErrors }}>
-      {/* Global Error Display */}
-      {errors.map(error => (
-        <Alert
-          key={error.id}
-          type='error'
-          message={error.message}
-          onDismiss={() => dismissError(error.id)}
-          autoHideDuration={5000}
-        />
-      ))}
       {children}
     </ErrorContext.Provider>
   );

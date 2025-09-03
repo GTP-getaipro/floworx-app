@@ -41,7 +41,7 @@ class RealTimeMonitoringService extends EventEmitter {
    * Start real-time monitoring
    */
   startMonitoring() {
-    if (this.isMonitoring) return;
+    if (this.isMonitoring) {return;}
 
     this.isMonitoring = true;
     console.log('🔍 Starting real-time query monitoring...');
@@ -66,7 +66,7 @@ class RealTimeMonitoringService extends EventEmitter {
    * Stop monitoring
    */
   stopMonitoring() {
-    if (!this.isMonitoring) return;
+    if (!this.isMonitoring) {return;}
 
     this.isMonitoring = false;
     if (this.monitoringInterval) {

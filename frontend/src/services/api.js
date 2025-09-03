@@ -256,8 +256,6 @@ class ApiService {
   }
 }
 
-
-
 // Create singleton instance
 const apiService = new ApiService();
 

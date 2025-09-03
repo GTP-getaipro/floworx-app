@@ -33,7 +33,7 @@ class BusinessAlertingEngine extends EventEmitter {
    * Initialize the business alerting engine
    */
   async initialize() {
-    if (this.isInitialized) return;
+    if (this.isInitialized) {return;}
 
     try {
       // Set up rule evaluation intervals
@@ -65,7 +65,7 @@ class BusinessAlertingEngine extends EventEmitter {
    * Evaluate business rules against current metrics
    */
   async evaluateBusinessRules(metrics) {
-    if (!this.isInitialized) return;
+    if (!this.isInitialized) {return;}
 
     try {
       // Update business context
@@ -305,13 +305,13 @@ class BusinessAlertingEngine extends EventEmitter {
    */
   async escalateAlert(alertId) {
     const alert = this.activeAlerts.get(alertId);
-    if (!alert) return;
+    if (!alert) {return;}
 
     const currentLevel = alert.escalation.level;
     const nextLevel = Math.min(currentLevel + 1, 4); // Max level 4
 
     const escalationProcedure = this.rules.escalationProcedures[`level${nextLevel}`];
-    if (!escalationProcedure) return;
+    if (!escalationProcedure) {return;}
 
     // Update alert escalation
     alert.escalation.level = nextLevel;

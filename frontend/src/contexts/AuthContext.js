@@ -93,7 +93,7 @@ export const AuthProvider = ({ children }) => {
   // Register function
   const register = async userData => {
     try {
-      const response = await axios.post(`${process.env.REACT_APP_API_URL}/auth/register`, userData);
+      const response = await axios.post('/auth/register', userData);
       return {
         success: true,
         requiresVerification: response.data.requiresVerification,

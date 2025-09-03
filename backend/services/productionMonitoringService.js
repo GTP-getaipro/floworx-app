@@ -34,7 +34,7 @@ class ProductionMonitoringService extends EventEmitter {
    * Initialize production monitoring
    */
   async initialize() {
-    if (this.isInitialized) return;
+    if (this.isInitialized) {return;}
 
     try {
       logger.info('Initializing production monitoring services...', {

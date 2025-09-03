@@ -58,7 +58,7 @@ class StakeholderReportingService extends EventEmitter {
    * Initialize the reporting service
    */
   async initialize() {
-    if (this.isInitialized) return;
+    if (this.isInitialized) {return;}
 
     try {
       // Set up report templates

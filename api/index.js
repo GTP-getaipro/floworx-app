@@ -254,6 +254,33 @@ const routes = {
     }
   },
 
+  'GET /auth/verify': async (req, res) => {
+    try {
+      const user = await authenticate(req);
+      res.status(200).json({
+        message: 'Token is valid',
+        user: {
+          id: user.id,
+          email: user.email,
+          firstName: user.firstName,
+          lastName: user.lastName
+        }
+      });
+    } catch (error) {
+      console.error('Token verification error:', error);
+      if (error.message === 'No token provided' || error.message === 'Invalid token' || error.message === 'Token expired') {
+        return res.status(401).json({
+          error: 'Authentication required',
+          message: 'Please log in to access this resource'
+        });
+      }
+      res.status(500).json({
+        error: 'Verification failed',
+        message: 'Something went wrong during token verification'
+      });
+    }
+  },
+
   // User endpoints
   'GET /user/status': async (req, res) => {
     try {
@@ -686,10 +713,12 @@ const routes = {
 
 // Main handler
 export default async function handler(req, res) {
-  // Set CORS headers
+  // Set CORS headers for production
+  res.setHeader('Access-Control-Allow-Credentials', 'true');
   res.setHeader('Access-Control-Allow-Origin', '*');
   res.setHeader('Access-Control-Allow-Methods', 'GET, POST, PUT, DELETE, OPTIONS');
   res.setHeader('Access-Control-Allow-Headers', 'Content-Type, Authorization');
+
 
   // Handle preflight requests
   if (req.method === 'OPTIONS') {

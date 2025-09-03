@@ -2,12 +2,8 @@
   "version": 2,
   "builds": [
     {
-      "src": "frontend/package.json",
-      "use": "@vercel/static-build",
-      "config": {
-        "distDir": "build",
-        "framework": "create-react-app"
-      }
+      "src": "frontend/build/**",
+      "use": "@vercel/static"
     },
     {
       "src": "api/index.js",
@@ -39,7 +35,7 @@
       "dest": "/frontend/build/robots.txt"
     },
     {
-      "src": "/(.*\\.(js|css|png|jpg|jpeg|gif|svg|ico|woff|woff2|ttf|eot))",
+      "src": "/(.*\\.(js|css|png|jpg|jpeg|gif|svg|ico|woff|woff2|ttf|eot|map))",
       "dest": "/frontend/build/$1"
     },
     {
@@ -51,29 +47,11 @@
     "CI": "false",
     "GENERATE_SOURCEMAP": "false",
     "NODE_ENV": "production",
-    "REACT_APP_API_URL": "https://floworx-gxl5ke7q0-floworxdevelopers-projects.vercel.app/api",
-    "FRONTEND_URL": "https://floworx-gxl5ke7q0-floworxdevelopers-projects.vercel.app",
+    "REACT_APP_API_URL": "https://app.floworx-iq.com/api",
+    "FRONTEND_URL": "https://app.floworx-iq.com",
     "DISABLE_ESLINT_PLUGIN": "true",
     "ESLINT_NO_DEV_ERRORS": "true",
     "TSC_COMPILE_ON_ERROR": "true"
   },
-  "build": {
-    "env": {
-      "CI": "false",
-      "GENERATE_SOURCEMAP": "false",
-      "NODE_ENV": "production",
-      "REACT_APP_API_URL": "https://floworx-gxl5ke7q0-floworxdevelopers-projects.vercel.app/api",
-      "FRONTEND_URL": "https://floworx-gxl5ke7q0-floworxdevelopers-projects.vercel.app",
-      "DISABLE_ESLINT_PLUGIN": "true",
-      "ESLINT_NO_DEV_ERRORS": "true",
-      "TSC_COMPILE_ON_ERROR": "true"
-    }
-  },
-  "regions": ["iad1"],
-  "cleanUrls": true,
-  "functions": {
-    "api/index.js": {
-      "maxDuration": 30
-    }
-  }
+  "regions": ["iad1"]
 }

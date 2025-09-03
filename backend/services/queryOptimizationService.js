@@ -258,7 +258,7 @@ class QueryOptimizationService {
    * Transform flat user data into structured format
    */
   transformUserData(rows) {
-    if (!rows.length) return null;
+    if (!rows.length) {return null;}
 
     const user = {
       id: rows[0].id,
@@ -323,7 +323,7 @@ class QueryOptimizationService {
    * Transform onboarding data
    */
   transformOnboardingData(rows) {
-    if (!rows.length) return { completed: false, steps: [], summary: {} };
+    if (!rows.length) {return { completed: false, steps: [], summary: {} };}
 
     const steps = rows.map(row => ({
       step: row.step_completed,

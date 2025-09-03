@@ -48,7 +48,7 @@ class ErrorTrackingService extends EventEmitter {
    * Initialize error tracking service
    */
   async initialize() {
-    if (this.isInitialized) return;
+    if (this.isInitialized) {return;}
 
     try {
       // Create log directory if it doesn't exist
@@ -246,7 +246,7 @@ class ErrorTrackingService extends EventEmitter {
    * Extract stack trace
    */
   extractStackTrace(error) {
-    if (!error.stack) return null;
+    if (!error.stack) {return null;}
 
     return error.stack
       .split('\n')
@@ -260,7 +260,7 @@ class ErrorTrackingService extends EventEmitter {
    */
   extractUserContext(context) {
     const user = context.user || context.req?.user;
-    if (!user) return null;
+    if (!user) {return null;}
 
     return {
       id: user.id,
@@ -275,7 +275,7 @@ class ErrorTrackingService extends EventEmitter {
    */
   extractRequestContext(context) {
     const req = context.req;
-    if (!req) return null;
+    if (!req) {return null;}
 
     return {
       method: req.method,
@@ -294,7 +294,7 @@ class ErrorTrackingService extends EventEmitter {
    * Sanitize headers (remove sensitive data)
    */
   sanitizeHeaders(headers) {
-    if (!headers) return null;
+    if (!headers) {return null;}
 
     const sanitized = { ...headers };
     const sensitiveHeaders = ['authorization', 'cookie', 'x-api-key'];
@@ -312,7 +312,7 @@ class ErrorTrackingService extends EventEmitter {
    * Sanitize request body (remove sensitive data)
    */
   sanitizeBody(body) {
-    if (!body || typeof body !== 'object') return body;
+    if (!body || typeof body !== 'object') {return body;}
 
     const sanitized = { ...body };
     const sensitiveFields = ['password', 'token', 'secret', 'key', 'auth'];
@@ -588,8 +588,8 @@ class ErrorTrackingService extends EventEmitter {
     const groups = Array.from(this.errors.values());
     
     groups.sort((a, b) => {
-      if (sortBy === 'count') return b.count - a.count;
-      if (sortBy === 'firstSeen') return b.firstSeen - a.firstSeen;
+      if (sortBy === 'count') {return b.count - a.count;}
+      if (sortBy === 'firstSeen') {return b.firstSeen - a.firstSeen;}
       return b.lastSeen - a.lastSeen; // default: lastSeen
     });
 
@@ -609,7 +609,7 @@ class ErrorTrackingService extends EventEmitter {
   getErrorById(errorId) {
     for (const errorGroup of this.errors.values()) {
       const error = errorGroup.occurrences.find(err => err.id === errorId);
-      if (error) return error;
+      if (error) {return error;}
     }
     return null;
   }
@@ -623,10 +623,10 @@ class ErrorTrackingService extends EventEmitter {
 
     for (const errorGroup of this.errors.values()) {
       // Apply filters
-      if (filters.category && errorGroup.category !== filters.category) continue;
-      if (filters.severity && errorGroup.severity !== filters.severity) continue;
-      if (filters.startDate && errorGroup.lastSeen < filters.startDate) continue;
-      if (filters.endDate && errorGroup.firstSeen > filters.endDate) continue;
+      if (filters.category && errorGroup.category !== filters.category) {continue;}
+      if (filters.severity && errorGroup.severity !== filters.severity) {continue;}
+      if (filters.startDate && errorGroup.lastSeen < filters.startDate) {continue;}
+      if (filters.endDate && errorGroup.firstSeen > filters.endDate) {continue;}
 
       // Search in message and stack trace
       const matchingOccurrences = errorGroup.occurrences.filter(err => {

@@ -155,74 +155,44 @@ const ResetPassword = () => {
 
   if (verifying) {
     return (
-      <div className='auth-container'>
-        <div className='auth-card'>
-          <div className='loading-state'>
-            <div className='loading-spinner' />
-            <h2>Verifying Reset Link...</h2>
-            <p>Please wait while we verify your password reset link.</p>
-          </div>
+      <div className='auth-card'>
+        <div className='loading-state'>
+          <div className='loading-spinner' />
+          <h2>Verifying Reset Link...</h2>
+          <p>Please wait while we verify your password reset link.</p>
         </div>
       </div>
     );
   }
+
 
   if (!tokenValid) {
     return (
-      <div className='auth-container'>
-        <div className='auth-card'>
-          <div className='error-state'>
-            <div className='error-icon'>
-              <span>❌</span>
-            </div>
-            <h2>Invalid Reset Link</h2>
-            <p>{error}</p>
-
-            <div className='help-text'>
-              <p>
-                <strong>This could happen if:</strong>
-              </p>
-              <ul>
-                <li>The link has expired (links expire after 60 minutes)</li>
-                <li>The link has already been used</li>
-                <li>The link was copied incorrectly</li>
-              </ul>
-            </div>
-
-            <div className='action-buttons'>
-              <Link to='/forgot-password' className='auth-button primary'>
-                Request New Reset Link
-              </Link>
-              <Link to='/login' className='auth-button secondary'>
-                Back to Login
-              </Link>
-            </div>
+      <div className='auth-card'>
+        <div className='error-state'>
+          <div className='error-icon'>
+            <span>❌</span>
           </div>
-        </div>
-      </div>
-    );
-  }
+          <h2>Invalid Reset Link</h2>
+          <p>{error}</p>
 
-  if (success) {
-    return (
-      <div className='auth-container'>
-        <div className='auth-card'>
-          <div className='success-message'>
-            <div className='success-icon'>
-              <span>✅</span>
-            </div>
-            <h2>Password Reset Successful!</h2>
+          <div className='help-text'>
             <p>
-              Your password has been successfully reset for <strong>{userInfo?.email}</strong>
+              <strong>This could happen if:</strong>
             </p>
+            <ul>
+              <li>The link has expired (links expire after 60 minutes)</li>
+              <li>The link has already been used</li>
+              <li>The link was copied incorrectly</li>
+            </ul>
+          </div>
 
-            <div className='success-details'>
-              <p>You can now log in with your new password.</p>
-              <p>Redirecting to login page in 3 seconds...</p>
-            </div>
-
-            <Link to='/login' className='auth-button primary'>
-              Go to Login Now
+          <div className='action-buttons'>
+            <Link to='/forgot-password' className='auth-button primary'>
+              Request New Reset Link
+            </Link>
+            <Link to='/login' className='auth-button secondary'>
+              Back to Login
             </Link>
           </div>
         </div>
@@ -230,10 +200,37 @@ const ResetPassword = () => {
     );
   }
 
-  return (
-    <div className='auth-container'>
+
+  if (success) {
+    return (
       <div className='auth-card'>
-        <div className='auth-header'>
+        <div className='success-message'>
+          <div className='success-icon'>
+            <span>✅</span>
+          </div>
+          <h2>Password Reset Successful!</h2>
+          <p>
+            Your password has been successfully reset for <strong>{userInfo?.email}</strong>
+          </p>
+
+          <div className='success-details'>
+            <p>You can now log in with your new password.</p>
+            <p>Redirecting to login page in 3 seconds...</p>
+          </div>
+
+          <Link to='/login' className='auth-button primary'>
+            Go to Login Now
+          </Link>
+        </div>
+      </div>
+    );
+  }
+
+
+  return (
+    <div className='auth-card'>
+      <div className='auth-header'>
+
           <h2>Create New Password</h2>
           <p className='auth-subtitle'>
             Enter a new password for <strong>{userInfo?.email}</strong>
@@ -334,8 +331,9 @@ const ResetPassword = () => {
           </Link>
         </div>
       </div>
-    </div>
   );
 };
+
+
 
 export default ResetPassword;

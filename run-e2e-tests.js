@@ -144,23 +144,29 @@ class E2ETestExecutor {
     console.log(`✅ Node.js ${nodeVersion}`);
 
     // Check required commands
-    const requiredCommands = ['npm', 'psql', 'node'];
+    const requiredCommands = ['npm', 'node'];
+    const isWindows = process.platform === 'win32';
+
     for (const cmd of requiredCommands) {
       try {
-        execSync(`which ${cmd}`, { stdio: 'pipe' });
+        const checkCmd = isWindows ? `where ${cmd}` : `which ${cmd}`;
+        execSync(checkCmd, { stdio: 'pipe' });
         console.log(`✅ ${cmd} available`);
       } catch (error) {
         throw new Error(`Required command not found: ${cmd}`);
       }
     }
 
-    // Check PostgreSQL
+    // Check PostgreSQL (optional for some tests)
     try {
-      execSync('psql --version', { stdio: 'pipe' });
-      console.log('✅ PostgreSQL available');
+      const checkCmd = isWindows ? 'where psql' : 'which psql';
+      execSync(checkCmd, { stdio: 'pipe' });
+      console.log(`✅ psql available`);
     } catch (error) {
-      throw new Error('PostgreSQL not available');
+      console.log(`⚠️  psql not available (some tests may be skipped)`);
     }
+
+    // PostgreSQL check moved to optional above
 
     // Check available ports
     const requiredPorts = [

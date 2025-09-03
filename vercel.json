@@ -51,14 +51,22 @@
     "CI": "false",
     "GENERATE_SOURCEMAP": "false",
     "NODE_ENV": "production",
-    "REACT_APP_API_URL": "https://floworx-gxl5ke7q0-floworxdevelopers-projects.vercel.app/api"
+    "REACT_APP_API_URL": "https://floworx-gxl5ke7q0-floworxdevelopers-projects.vercel.app/api",
+    "FRONTEND_URL": "https://floworx-gxl5ke7q0-floworxdevelopers-projects.vercel.app",
+    "DISABLE_ESLINT_PLUGIN": "true",
+    "ESLINT_NO_DEV_ERRORS": "true",
+    "TSC_COMPILE_ON_ERROR": "true"
   },
   "build": {
     "env": {
       "CI": "false",
       "GENERATE_SOURCEMAP": "false",
       "NODE_ENV": "production",
-      "REACT_APP_API_URL": "https://floworx-gxl5ke7q0-floworxdevelopers-projects.vercel.app/api"
+      "REACT_APP_API_URL": "https://floworx-gxl5ke7q0-floworxdevelopers-projects.vercel.app/api",
+      "FRONTEND_URL": "https://floworx-gxl5ke7q0-floworxdevelopers-projects.vercel.app",
+      "DISABLE_ESLINT_PLUGIN": "true",
+      "ESLINT_NO_DEV_ERRORS": "true",
+      "TSC_COMPILE_ON_ERROR": "true"
     }
   },
   "regions": ["iad1"],

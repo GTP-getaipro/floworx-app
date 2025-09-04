@@ -74,7 +74,9 @@ const RegisterForm = () => {
         password: values.password,
         firstName: values.firstName,
         lastName: values.lastName,
-        companyName: values.companyName,
+        businessName: values.companyName,
+        agreeToTerms: true,
+        marketingConsent: false
       });
 
       if (result.success) {

@@ -93,7 +93,8 @@ app.use(
         'https://floworx-app.vercel.app',
         'https://app.floworx-iq.com',
         'http://localhost:3000',
-        'http://localhost:3001'
+        'http://localhost:3001',
+        'https://floworx-7hw0k2qc5-floworxdevelopers-projects.vercel.app'
       ];
 
       if (allowedOrigins.includes(origin)) {

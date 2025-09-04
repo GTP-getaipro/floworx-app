@@ -15,6 +15,7 @@ const authenticate = async (req) => {
 
   try {
     const decoded = jwt.verify(token, process.env.JWT_SECRET);
+    console.log('Token decoded successfully, userId:', decoded.userId);
 
     // Verify user still exists in database
     const supabase = getSupabaseAdmin();
@@ -24,7 +25,14 @@ const authenticate = async (req) => {
       .eq('id', decoded.userId)
       .single();
 
-    if (userError || !user) {
+    console.log('User lookup result:', { user: user ? 'found' : 'not found', error: userError });
+
+    if (userError) {
+      console.error('User lookup error:', userError);
+      throw new Error(`User lookup failed: ${userError.message}`);
+    }
+
+    if (!user) {
       throw new Error('User no longer exists');
     }
 
@@ -35,6 +43,7 @@ const authenticate = async (req) => {
       lastName: user.last_name
     };
   } catch (error) {
+    console.error('Authentication error:', error);
     if (error.name === 'TokenExpiredError') {
       throw new Error('Token expired');
     } else if (error.name === 'JsonWebTokenError') {
@@ -644,6 +653,7 @@ const routes = {
       const user = await authenticate(req);
       console.log('Dashboard user authenticated:', user.id);
 
+      // Get additional user details if needed
       const supabase = getSupabaseAdmin();
       const { data: userDetails, error: userError } = await supabase
         .from('users')
@@ -653,12 +663,19 @@ const routes = {
 
       console.log('Dashboard user query result:', { userDetails, userError });
 
-      if (userError || !userDetails) {
-        console.error('Dashboard user error:', userError);
-        return res.status(404).json({
-          error: 'User not found',
-          message: 'User account not found'
-        });
+      // Use authenticated user data as fallback if database query fails
+      const userData = userDetails || {
+        id: user.id,
+        email: user.email,
+        first_name: user.firstName,
+        last_name: user.lastName,
+        company_name: null,
+        created_at: null,
+        last_login: null
+      };
+
+      if (userError) {
+        console.warn('Dashboard user query failed, using authenticated user data:', userError);
       }
 
       // Try to get oauth tokens, but handle gracefully if table doesn't exist
@@ -667,7 +684,7 @@ const routes = {
         const { data: oauthTokens } = await supabase
           .from('oauth_tokens')
           .select('provider, created_at, expires_at, access_token')
-          .eq('user_id', userDetails.id)
+          .eq('user_id', userData.id)
           .not('access_token', 'is', null);
 
         if (oauthTokens) {
@@ -687,13 +704,13 @@ const routes = {
 
       const dashboardData = {
         user: {
-          id: userDetails.id,
-          email: userDetails.email,
-          firstName: userDetails.first_name,
-          lastName: userDetails.last_name,
-          companyName: userDetails.company_name,
-          createdAt: userDetails.created_at,
-          lastLogin: userDetails.last_login
+          id: userData.id,
+          email: userData.email,
+          firstName: userData.first_name,
+          lastName: userData.last_name,
+          companyName: userData.company_name,
+          createdAt: userData.created_at,
+          lastLogin: userData.last_login
         },
         stats: {
           emailsProcessed: 0,

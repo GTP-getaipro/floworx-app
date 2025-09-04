@@ -25,6 +25,8 @@ const { performanceMiddlewareStack, smartCompression, cacheHeaders } = require('
 
 const { initialize: initializeDatabase } = require('./database/unified-connection');
 const authRoutes = require('./routes/auth');
+const userRoutes = require('./routes/user');
+const dashboardRoutes = require('./routes/dashboard');
 const { router: oauthRoutes } = require('./routes/oauth');
 const onboardingRoutes = require('./routes/onboarding');
 const recoveryRoutes = require('./routes/recovery');
@@ -230,6 +232,8 @@ app.get('/api/user/profile', (req, res) => {
 
 // API routes with enhanced rate limiting
 app.use('/api/auth', authRateLimit, authSlowDown, authRoutes);
+app.use('/api/user', userRoutes);
+app.use('/api/dashboard', dashboardRoutes);
 app.use('/api/oauth', oauthRateLimit, oauthRoutes);
 app.use('/api/onboarding', onboardingRoutes);
 app.use('/api/recovery', recoveryRoutes);

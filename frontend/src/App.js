@@ -2,6 +2,7 @@ import React from 'react';
 import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom';
 
 import Dashboard from './components/Dashboard';
+import DatabaseTest from './components/DatabaseTest';
 import EmailVerification from './components/EmailVerification';
 import ErrorBoundary from './components/ErrorBoundary';
 import ForgotPassword from './components/ForgotPassword';
@@ -78,6 +79,14 @@ function App() {
                       element={
                         <ErrorBoundary key='account-recovery'>
                           <AccountRecoveryDashboard />
+                        </ErrorBoundary>
+                      }
+                    />
+                    <Route
+                      path='/database-test'
+                      element={
+                        <ErrorBoundary key='database-test'>
+                          <DatabaseTest />
                         </ErrorBoundary>
                       }
                     />

@@ -79,7 +79,7 @@ const Toast = ({
   return (
     <div
       className={`
-        fixed top-4 right-4 z-50 max-w-md w-full sm:max-w-lg
+        fixed top-4 right-4 z-50 max-w-xs sm:max-w-md lg:max-w-lg w-full
         ${variant_config.container}
         rounded-lg p-4 transition-all duration-300 ease-in-out
         ${className}

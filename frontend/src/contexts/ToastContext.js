@@ -76,7 +76,7 @@ export const ToastProvider = ({ children }) => {
       {children}
       
       {/* Enhanced Toast Container */}
-      <div className="fixed top-4 right-4 z-50 space-y-2 max-w-md w-full sm:max-w-lg">
+      <div className="fixed top-4 right-4 z-50 space-y-2 max-w-xs sm:max-w-md lg:max-w-lg w-full">
         {toasts.map((toast, index) => (
           <div
             key={toast.id}

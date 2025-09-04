@@ -78,7 +78,7 @@ router.post(
       passwordHash,
       firstName,
       lastName,
-      companyName,
+      businessName || null,
       trialStartsAt,
       trialEndsAt,
       'trial'
@@ -90,11 +90,20 @@ router.post(
     const verificationToken = emailService.generateVerificationToken();
     await emailService.storeVerificationToken(user.id, verificationToken);
 
-    // Send verification email
-    await emailService.sendVerificationEmail(email, firstName, verificationToken);
+    // Send verification email (with error handling)
+    let emailSent = false;
+    try {
+      await emailService.sendVerificationEmail(email, firstName, verificationToken);
+      emailSent = true;
+    } catch (emailError) {
+      console.error('Failed to send verification email:', emailError.message);
+      // Continue with registration even if email fails
+    }
 
     res.status(201).json({
-      message: 'User registered successfully. Please check your email to verify your account.',
+      message: emailSent
+        ? 'User registered successfully. Please check your email to verify your account.'
+        : 'User registered successfully. Email verification is temporarily unavailable.',
       requiresVerification: true,
       user: {
         id: user.id,

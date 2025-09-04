@@ -1,5 +1,4 @@
-import { validationRules } from '../../../shared/utils/validation/rules';
-import { validateValue, validateObject } from '../../../shared/utils/validation/utils';
+import { validationRules } from '../utils/validationRules';
 
 /**
  * Form validation service for frontend components
@@ -11,13 +10,18 @@ class ValidationService {
    * @param {*} value - Field value
    * @returns {Object} - { isValid, errors }
    */
-  static validateField(field, value) {
-    const rules = validationRules[field];
-    if (!rules) {
+  static validateField(field, value, allValues = {}) {
+    const validator = validationRules[field];
+    if (!validator) {
       console.warn(`No validation rules found for field: ${field}`);
-      return { isValid: true, errors: [] };
+      return { isValid: true, error: null };
     }
-    return validateValue(value, rules);
+
+    const error = validator(value, allValues);
+    return {
+      isValid: !error,
+      error: error || null
+    };
   }
 
   /**
@@ -25,14 +29,22 @@ class ValidationService {
    * @param {Object} values - Object containing field values
    * @returns {Object} - { isValid, errors }
    */
-  static validateForm(values) {
-    const fieldsToValidate = {};
-    Object.keys(values).forEach(field => {
+  static validateForm(values, fields = null) {
+    const fieldsToValidate = fields || Object.keys(values);
+    const errors = {};
+    let isValid = true;
+
+    fieldsToValidate.forEach(field => {
       if (validationRules[field]) {
-        fieldsToValidate[field] = validationRules[field];
+        const result = this.validateField(field, values[field], values);
+        if (!result.isValid) {
+          errors[field] = result.error;
+          isValid = false;
+        }
       }
     });
-    return validateObject(values, fieldsToValidate);
+
+    return { isValid, errors };
   }
 
   /**
@@ -40,14 +52,8 @@ class ValidationService {
    * @param {Object} customRules - Custom validation rules
    * @returns {Object} - Validation rules object
    */
-  static createCustomRules(customRules) {
-    return Object.entries(customRules).reduce((acc, [field, rules]) => {
-      acc[field] = {
-        ...(validationRules[field] || {}),
-        ...rules,
-      };
-      return acc;
-    }, {});
+  static getAvailableRules() {
+    return Object.keys(validationRules);
   }
 }
 

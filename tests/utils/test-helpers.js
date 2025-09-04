@@ -227,7 +227,8 @@ class TestHelpers {
 
   // UI interaction helpers
   async waitForToast(message, type = 'success') {
-    const toast = this.page.locator(`[data-testid="toast-${type}"]`);
+    // Use .first() to handle multiple toast elements
+    const toast = this.page.locator(`[data-testid="toast-${type}"]`).first();
     await expect(toast).toBeVisible();
     if (message) {
       await expect(toast).toContainText(message);

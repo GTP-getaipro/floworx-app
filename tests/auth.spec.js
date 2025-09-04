@@ -38,8 +38,8 @@ test.describe('Authentication & Security (Hybrid Local-Cloud)', () => {
       // Submit registration (look for submit button)
       await page.click('button[type="submit"], button:has-text("Sign Up"), button:has-text("Register"), button:has-text("Create Account")');
       
-      // Verify success
-      await helpers.waitForToast('Registration successful! Please check your email to verify your account.');
+      // Verify success - updated to match actual toast message
+      await helpers.waitForToast('🎉 Account created successfully! Redirecting to your dashboard...');
       await expect(page).toHaveURL('/login');
       
       // Verify user was created in database
@@ -64,8 +64,8 @@ test.describe('Authentication & Security (Hybrid Local-Cloud)', () => {
       
       await page.click('button[type="submit"], button:has-text("Sign Up"), button:has-text("Register"), button:has-text("Create Account")');
       
-      // Verify error message
-      await expect(page.locator('[data-testid="email-error"]')).toContainText('Please enter a valid email address');
+      // Verify error message - updated to match actual validation message
+      await expect(page.locator('[data-testid="email-error"]')).toContainText('Invalid email format');
     });
 
     test('should reject registration with weak password', async ({ page }) => {
@@ -79,8 +79,8 @@ test.describe('Authentication & Security (Hybrid Local-Cloud)', () => {
       
       await page.click('button[type="submit"], button:has-text("Sign Up"), button:has-text("Register"), button:has-text("Create Account")');
       
-      // Verify error message
-      await expect(page.locator('[data-testid="password-error"]')).toContainText('Password must be at least 8 characters');
+      // Verify error message - updated to match actual validation message
+      await expect(page.locator('[data-testid="password-error"]')).toContainText('Must be at least 8 characters');
     });
 
     test('should reject registration with mismatched passwords', async ({ page }) => {

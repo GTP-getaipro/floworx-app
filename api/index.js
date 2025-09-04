@@ -73,6 +73,39 @@ const routes = {
     }
   },
 
+  // Database health endpoint
+  'GET /health/db': async (req, res) => {
+    try {
+      const supabase = getSupabaseClient();
+      const { data, error } = await supabase.from('users').select('count').limit(1);
+      const databaseConnected = !error || error.message.includes('row-level security');
+
+      if (databaseConnected) {
+        res.status(200).json({
+          database: 'connected',
+          timestamp: new Date().toISOString(),
+          status: 'healthy',
+          provider: 'Supabase'
+        });
+      } else {
+        res.status(503).json({
+          database: 'disconnected',
+          timestamp: new Date().toISOString(),
+          status: 'unhealthy',
+          error: error?.message || 'Database connection failed'
+        });
+      }
+    } catch (error) {
+      console.error('Database health check failed:', error);
+      res.status(503).json({
+        database: 'disconnected',
+        timestamp: new Date().toISOString(),
+        status: 'unhealthy',
+        error: error.message
+      });
+    }
+  },
+
   // Auth endpoints
   'POST /auth/forgot-password': async (req, res) => {
     try {
@@ -343,6 +376,20 @@ const routes = {
         message: 'Something went wrong during token verification'
       });
     }
+  },
+
+  // Password requirements endpoint
+  'GET /auth/password-requirements': async (req, res) => {
+    res.status(200).json({
+      requirements: {
+        minLength: 8,
+        requireUppercase: true,
+        requireLowercase: true,
+        requireNumbers: true,
+        requireSpecialChars: false
+      },
+      description: 'Password must be at least 8 characters long and contain uppercase letters, lowercase letters, and numbers.'
+    });
   },
 
   // User endpoints

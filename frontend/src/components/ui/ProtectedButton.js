@@ -21,12 +21,14 @@ const ProtectedButton = ({
 
     // For submit buttons with no onClick handler, allow natural form submission
     const isSubmitButton = props.type === 'submit';
-    const hasOnClickHandler = onClick && typeof onClick === 'function' && onClick.toString() !== '() => {}';
+    const onClickString = onClick ? onClick.toString().replace(/\s+/g, '') : '';
+    const hasOnClickHandler = onClick && typeof onClick === 'function' &&
+      onClickString !== '()=>{}' && onClickString !== 'function(){}' && onClickString !== '()=>undefined';
 
     console.log('🚀 DEBUG: ProtectedButton handleClick called');
     console.log('🚀 DEBUG: isSubmitButton:', isSubmitButton);
     console.log('🚀 DEBUG: onClick type:', typeof onClick);
-    console.log('🚀 DEBUG: onClick string:', onClick ? onClick.toString() : 'null');
+    console.log('🚀 DEBUG: onClick string (normalized):', onClickString);
     console.log('🚀 DEBUG: hasOnClickHandler:', hasOnClickHandler);
 
     if (isSubmitButton && !hasOnClickHandler) {

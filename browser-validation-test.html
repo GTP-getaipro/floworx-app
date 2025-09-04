@@ -1,0 +1,232 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>FloworX Browser Validation Test</title>
+    <style>
+        body { font-family: Arial, sans-serif; margin: 20px; background: #f5f5f5; }
+        .container { max-width: 800px; margin: 0 auto; background: white; padding: 20px; border-radius: 8px; }
+        .test-section { margin: 20px 0; padding: 15px; border: 1px solid #ddd; border-radius: 5px; }
+        .success { background: #d4edda; border-color: #c3e6cb; color: #155724; }
+        .error { background: #f8d7da; border-color: #f5c6cb; color: #721c24; }
+        .info { background: #d1ecf1; border-color: #bee5eb; color: #0c5460; }
+        .loading { background: #fff3cd; border-color: #ffeaa7; color: #856404; }
+        button { padding: 10px 20px; margin: 5px; background: #007bff; color: white; border: none; border-radius: 4px; cursor: pointer; }
+        button:hover { background: #0056b3; }
+        pre { background: #f8f9fa; padding: 10px; border-radius: 4px; overflow-x: auto; font-size: 12px; }
+        .status { font-weight: bold; margin-bottom: 10px; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🔍 FloworX Browser Validation Test</h1>
+        <p>This test validates the current state of the FloworX application from the browser perspective.</p>
+        
+        <div class="test-section">
+            <button onclick="runAllTests()">🚀 Run All Tests</button>
+            <button onclick="clearResults()">🧹 Clear Results</button>
+        </div>
+
+        <div id="results"></div>
+    </div>
+
+    <script>
+        const API_BASE = 'https://app.floworx-iq.com';
+        let testResults = [];
+
+        function log(message, type = 'info') {
+            const timestamp = new Date().toLocaleTimeString();
+            testResults.push({ timestamp, message, type });
+            updateDisplay();
+        }
+
+        function updateDisplay() {
+            const resultsDiv = document.getElementById('results');
+            resultsDiv.innerHTML = testResults.map(result => 
+                `<div class="test-section ${result.type}">
+                    <div class="status">[${result.timestamp}] ${result.message}</div>
+                </div>`
+            ).join('');
+            resultsDiv.scrollTop = resultsDiv.scrollHeight;
+        }
+
+        function clearResults() {
+            testResults = [];
+            updateDisplay();
+        }
+
+        async function testCORS() {
+            log('🔍 Testing CORS Configuration...', 'loading');
+            
+            try {
+                // Test preflight request
+                const response = await fetch(`${API_BASE}/api/health`, {
+                    method: 'GET',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Origin': window.location.origin
+                    }
+                });
+
+                if (response.ok) {
+                    log('✅ CORS: Basic request successful', 'success');
+                    
+                    // Check CORS headers
+                    const corsHeaders = {
+                        'Access-Control-Allow-Origin': response.headers.get('Access-Control-Allow-Origin'),
+                        'Access-Control-Allow-Methods': response.headers.get('Access-Control-Allow-Methods'),
+                        'Access-Control-Allow-Headers': response.headers.get('Access-Control-Allow-Headers'),
+                        'Access-Control-Allow-Credentials': response.headers.get('Access-Control-Allow-Credentials')
+                    };
+                    
+                    log(`📋 CORS Headers: ${JSON.stringify(corsHeaders, null, 2)}`, 'info');
+                } else {
+                    log(`❌ CORS: Request failed with status ${response.status}`, 'error');
+                }
+            } catch (error) {
+                log(`❌ CORS: ${error.message}`, 'error');
+                if (error.message.includes('CORS')) {
+                    log('🚨 CORS is still blocking requests!', 'error');
+                }
+            }
+        }
+
+        async function testAPIEndpoints() {
+            log('🔍 Testing API Endpoints...', 'loading');
+            
+            const endpoints = [
+                { path: '/api/health', method: 'GET', requiresAuth: false },
+                { path: '/api/user/status', method: 'GET', requiresAuth: true },
+                { path: '/api/onboarding/status', method: 'GET', requiresAuth: true },
+                { path: '/api/dashboard', method: 'GET', requiresAuth: true }
+            ];
+
+            for (const endpoint of endpoints) {
+                try {
+                    const headers = { 'Content-Type': 'application/json' };
+                    
+                    if (endpoint.requiresAuth) {
+                        const token = localStorage.getItem('token');
+                        if (!token) {
+                            log(`⚠️ ${endpoint.path}: Skipped (no auth token)`, 'info');
+                            continue;
+                        }
+                        headers['Authorization'] = `Bearer ${token}`;
+                    }
+
+                    const response = await fetch(`${API_BASE}${endpoint.path}`, {
+                        method: endpoint.method,
+                        headers
+                    });
+
+                    if (response.ok) {
+                        log(`✅ ${endpoint.path}: ${response.status}`, 'success');
+                    } else {
+                        log(`❌ ${endpoint.path}: ${response.status} ${response.statusText}`, 'error');
+                    }
+                } catch (error) {
+                    log(`❌ ${endpoint.path}: ${error.message}`, 'error');
+                }
+            }
+        }
+
+        async function testAuthentication() {
+            log('🔍 Testing Authentication...', 'loading');
+            
+            const token = localStorage.getItem('token');
+            if (!token) {
+                log('⚠️ No authentication token found in localStorage', 'info');
+                log('💡 Try logging in first at: https://app.floworx-iq.com', 'info');
+                return;
+            }
+
+            log('✅ Token found in localStorage', 'success');
+            
+            try {
+                const response = await fetch(`${API_BASE}/api/user/status`, {
+                    headers: {
+                        'Authorization': `Bearer ${token}`,
+                        'Content-Type': 'application/json'
+                    }
+                });
+
+                if (response.ok) {
+                    const data = await response.json();
+                    log('✅ Authentication: Token is valid', 'success');
+                    log(`👤 User: ${data.email} (${data.firstName} ${data.lastName})`, 'info');
+                } else {
+                    log(`❌ Authentication: Token invalid (${response.status})`, 'error');
+                    if (response.status === 401) {
+                        log('💡 Token may be expired. Try logging in again.', 'info');
+                    }
+                }
+            } catch (error) {
+                log(`❌ Authentication test failed: ${error.message}`, 'error');
+            }
+        }
+
+        async function testBrowserEnvironment() {
+            log('🔍 Testing Browser Environment...', 'loading');
+            
+            // Check current URL
+            log(`🌐 Current URL: ${window.location.href}`, 'info');
+            
+            // Check localStorage
+            const storageItems = [];
+            for (let i = 0; i < localStorage.length; i++) {
+                const key = localStorage.key(i);
+                storageItems.push(key);
+            }
+            log(`💾 localStorage items: ${storageItems.join(', ') || 'none'}`, 'info');
+            
+            // Check if we're on the right domain
+            if (window.location.hostname === 'app.floworx-iq.com') {
+                log('✅ Running on production domain', 'success');
+            } else {
+                log(`⚠️ Running on ${window.location.hostname} (not production)`, 'info');
+            }
+            
+            // Check console errors
+            log('📋 Check browser console for any JavaScript errors', 'info');
+        }
+
+        async function testNetworkConnectivity() {
+            log('🔍 Testing Network Connectivity...', 'loading');
+            
+            try {
+                const start = Date.now();
+                const response = await fetch(`${API_BASE}/api/health`);
+                const duration = Date.now() - start;
+                
+                if (response.ok) {
+                    log(`✅ Network: Connected to ${API_BASE} (${duration}ms)`, 'success');
+                } else {
+                    log(`❌ Network: Server responded with ${response.status}`, 'error');
+                }
+            } catch (error) {
+                log(`❌ Network: Cannot reach ${API_BASE} - ${error.message}`, 'error');
+            }
+        }
+
+        async function runAllTests() {
+            clearResults();
+            log('🚀 Starting comprehensive browser validation...', 'loading');
+            
+            await testBrowserEnvironment();
+            await testNetworkConnectivity();
+            await testCORS();
+            await testAuthentication();
+            await testAPIEndpoints();
+            
+            log('✅ All tests completed! Check results above.', 'success');
+            log('💡 If you see CORS errors, the issue is not fully resolved.', 'info');
+        }
+
+        // Auto-run tests when page loads
+        window.addEventListener('load', () => {
+            log('🔄 Page loaded. Click "Run All Tests" to validate the application.', 'info');
+        });
+    </script>
+</body>
+</html>

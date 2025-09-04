@@ -34,9 +34,22 @@ Then('I should see quick action buttons', () => {
 
 // User status information steps
 When('the dashboard loads my user status', () => {
-  cy.intercept('GET', '/api/user/status').as('getUserStatus');
-  cy.reload();
-  cy.wait('@getUserStatus');
+  // Make a real API call to get user status
+  cy.window().then((window) => {
+    const token = window.localStorage.getItem('authToken');
+    if (token) {
+      cy.request({
+        method: 'GET',
+        url: '/api/user/status',
+        headers: {
+          'Authorization': `Bearer ${token}`
+        },
+        failOnStatusCode: false
+      }).then((response) => {
+        cy.wrap(response).as('userStatusResponse');
+      });
+    }
+  });
 });
 
 Then('I should see my profile information:', (dataTable) => {

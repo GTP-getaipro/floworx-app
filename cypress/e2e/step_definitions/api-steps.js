@@ -11,13 +11,65 @@ Given('I have valid user registration data:', (dataTable) => {
 });
 
 Given('I have a registered user with email {string} and password {string}', (email, password) => {
-  // Mock user creation for testing
-  cy.wrap({ email, password }).as('testUser');
+  // Create a real test user
+  cy.request({
+    method: 'POST',
+    url: '/api/auth/register',
+    body: {
+      firstName: 'Test',
+      lastName: 'User',
+      email: email,
+      password: password,
+      companyName: 'Test Company',
+      agreeToTerms: true
+    },
+    failOnStatusCode: false
+  }).then((response) => {
+    // Registration successful or user already exists
+    expect([201, 409]).to.include(response.status);
+    cy.wrap({ email, password }).as('testUser');
+  });
 });
 
 Given('I am authenticated with a valid JWT token', () => {
-  const mockToken = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOiJ0ZXN0LXVzZXItaWQiLCJlbWFpbCI6InRlc3RAZmxvd29yeC5jb20iLCJpYXQiOjE2MzQ1NjcwMDAsImV4cCI6MTYzNDY1MzQwMH0.test-signature';
-  cy.wrap(mockToken).as('authToken');
+  // Login to get a real JWT token
+  const testEmail = Cypress.env('TEST_USER_EMAIL');
+  const testPassword = Cypress.env('TEST_USER_PASSWORD');
+
+  cy.request({
+    method: 'POST',
+    url: '/api/auth/login',
+    body: {
+      email: testEmail,
+      password: testPassword
+    },
+    failOnStatusCode: false
+  }).then((response) => {
+    if (response.status === 200 && response.body.token) {
+      cy.wrap(response.body.token).as('authToken');
+    } else {
+      // If login fails, create the user first
+      cy.request({
+        method: 'POST',
+        url: '/api/auth/register',
+        body: {
+          firstName: 'Cypress',
+          lastName: 'Test',
+          email: testEmail,
+          password: testPassword,
+          companyName: 'Test Company',
+          agreeToTerms: true
+        },
+        failOnStatusCode: false
+      }).then((registerResponse) => {
+        if (registerResponse.status === 201 && registerResponse.body.token) {
+          cy.wrap(registerResponse.body.token).as('authToken');
+        } else {
+          throw new Error('Failed to create test user or get auth token');
+        }
+      });
+    }
+  });
 });
 
 Given('I have a valid OAuth authorization code {string}', (authCode) => {

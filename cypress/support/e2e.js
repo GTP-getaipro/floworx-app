@@ -26,15 +26,8 @@ before(() => {
   cy.clearLocalStorage();
   cy.clearCookies();
   
-  // Set up API interceptors for common endpoints
-  cy.intercept('GET', '/api/health', {
-    statusCode: 200,
-    body: {
-      status: 'healthy',
-      timestamp: new Date().toISOString(),
-      version: '1.0.0'
-    }
-  }).as('healthCheck');
+  // Log that we're using real API endpoints
+  cy.log('Using real API endpoints at https://app.floworx-iq.com/api');
 });
 
 // Global beforeEach hook
@@ -43,8 +36,7 @@ beforeEach(() => {
   cy.clearLocalStorage();
   cy.clearCookies();
   
-  // Set up common interceptors
-  cy.setupCommonInterceptors();
+  // Using real API endpoints - no interceptors needed
   
   // Set viewport to desktop by default
   cy.viewport(1280, 720);
@@ -60,103 +52,7 @@ afterEach(() => {
   cy.log('Test completed, cleaning up...');
 });
 
-// Custom Cypress configuration
-Cypress.Commands.add('setupCommonInterceptors', () => {
-  // Health check
-  cy.intercept('GET', '/api/health', {
-    statusCode: 200,
-    body: {
-      status: 'healthy',
-      timestamp: new Date().toISOString(),
-      database: { connected: true, provider: 'Supabase' },
-      environment: 'test',
-      version: '1.0.0'
-    }
-  }).as('healthCheck');
-  
-  // User status
-  cy.intercept('GET', '/api/user/status', (req) => {
-    if (req.headers.authorization) {
-      req.reply({
-        statusCode: 200,
-        body: {
-          id: 'test-user-id',
-          email: 'test@floworx.com',
-          firstName: 'Test',
-          lastName: 'User',
-          companyName: 'Test Company',
-          createdAt: new Date().toISOString(),
-          lastLogin: new Date().toISOString(),
-          emailVerified: true,
-          connected_services: [],
-          oauth_connections: [],
-          has_google_connection: false
-        }
-      });
-    } else {
-      req.reply({
-        statusCode: 401,
-        body: {
-          error: 'Authentication required',
-          message: 'Please log in to access this resource'
-        }
-      });
-    }
-  }).as('getUserStatus');
-  
-  // Dashboard data
-  cy.intercept('GET', '/api/dashboard', (req) => {
-    if (req.headers.authorization) {
-      req.reply({
-        statusCode: 200,
-        body: {
-          user: {
-            id: 'test-user-id',
-            email: 'test@floworx.com',
-            firstName: 'Test',
-            lastName: 'User',
-            companyName: 'Test Company',
-            createdAt: new Date().toISOString(),
-            lastLogin: new Date().toISOString()
-          },
-          stats: {
-            emailsProcessed: 0,
-            workflowsActive: 0,
-            totalAutomations: 0,
-            lastActivity: new Date().toISOString()
-          },
-          connections: {
-            google: { connected: false, status: 'not_connected' }
-          },
-          recentActivities: [],
-          quickActions: [
-            {
-              id: 'connect_google',
-              title: 'Connect Google Account',
-              description: 'Connect your Google account to start automating emails',
-              action: '/api/oauth/google',
-              enabled: true,
-              priority: 1
-            }
-          ],
-          systemStatus: {
-            apiHealthy: true,
-            databaseConnected: true,
-            lastUpdated: new Date().toISOString()
-          }
-        }
-      });
-    } else {
-      req.reply({
-        statusCode: 401,
-        body: {
-          error: 'Authentication required',
-          message: 'Please log in to access this resource'
-        }
-      });
-    }
-  }).as('getDashboard');
-});
+// Custom Cypress configuration for real API testing
 
 // Add custom assertion for JWT tokens
 Cypress.Commands.add('shouldBeValidJWT', { prevSubject: true }, (subject) => {
@@ -166,9 +62,11 @@ Cypress.Commands.add('shouldBeValidJWT', { prevSubject: true }, (subject) => {
 
 // Add custom command for API testing
 Cypress.Commands.add('apiRequest', (method, url, body = null, headers = {}) => {
+  const fullUrl = url.startsWith('http') ? url : `${Cypress.env('API_BASE_URL')}${url}`;
+
   return cy.request({
     method,
-    url: `${Cypress.env('API_BASE_URL')}${url}`,
+    url: fullUrl,
     body,
     headers: {
       'Content-Type': 'application/json',
@@ -181,11 +79,18 @@ Cypress.Commands.add('apiRequest', (method, url, body = null, headers = {}) => {
 // Add custom command for authenticated API requests
 Cypress.Commands.add('authenticatedApiRequest', (method, url, body = null) => {
   return cy.window().then((window) => {
-    const token = window.localStorage.getItem('authToken') || 
+    const token = window.localStorage.getItem('authToken') ||
                   window.sessionStorage.getItem('authToken');
-    
-    return cy.apiRequest(method, url, body, {
-      'Authorization': `Bearer ${token}`
+
+    return cy.request({
+      method,
+      url: url.startsWith('http') ? url : `${Cypress.env('API_BASE_URL')}${url}`,
+      body,
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': `Bearer ${token}`
+      },
+      failOnStatusCode: false
     });
   });
 });

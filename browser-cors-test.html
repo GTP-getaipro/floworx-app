@@ -1,0 +1,223 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>FloworX CORS Browser Test</title>
+    <style>
+        body { font-family: Arial, sans-serif; margin: 20px; background: #f5f5f5; }
+        .container { max-width: 900px; margin: 0 auto; background: white; padding: 20px; border-radius: 8px; }
+        .test-section { margin: 15px 0; padding: 15px; border: 1px solid #ddd; border-radius: 5px; }
+        .success { background: #d4edda; border-color: #c3e6cb; color: #155724; }
+        .error { background: #f8d7da; border-color: #f5c6cb; color: #721c24; }
+        .info { background: #d1ecf1; border-color: #bee5eb; color: #0c5460; }
+        .warning { background: #fff3cd; border-color: #ffeaa7; color: #856404; }
+        button { padding: 10px 20px; margin: 5px; background: #007bff; color: white; border: none; border-radius: 4px; cursor: pointer; }
+        button:hover { background: #0056b3; }
+        button.clear { background: #6c757d; }
+        button.clear:hover { background: #545b62; }
+        pre { background: #f8f9fa; padding: 10px; border-radius: 4px; overflow-x: auto; font-size: 11px; }
+        .status { font-weight: bold; margin-bottom: 10px; }
+        .timestamp { font-size: 0.9em; color: #666; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🔍 FloworX CORS Browser Test</h1>
+        <p><strong>Purpose:</strong> Test CORS functionality directly in the browser to identify any caching or browser-specific issues.</p>
+        
+        <div class="test-section info">
+            <div class="status">📋 Instructions:</div>
+            <ol>
+                <li><strong>Clear browser cache first:</strong> Press Ctrl+Shift+R (or Cmd+Shift+R on Mac)</li>
+                <li><strong>Open Developer Tools:</strong> Press F12 and go to Console tab</li>
+                <li><strong>Run the test:</strong> Click "Test CORS" button below</li>
+                <li><strong>Check results:</strong> Look for any CORS errors in both this page and the console</li>
+            </ol>
+        </div>
+        
+        <div class="test-section">
+            <button onclick="testCORS()">🚀 Test CORS</button>
+            <button onclick="testWithAuth()">🔐 Test with Auth Token</button>
+            <button onclick="clearCache()">🧹 Clear Browser Cache</button>
+            <button onclick="clearResults()" class="clear">Clear Results</button>
+        </div>
+
+        <div id="results"></div>
+    </div>
+
+    <script>
+        const API_BASE = 'https://app.floworx-iq.com';
+        let testResults = [];
+
+        function log(message, type = 'info') {
+            const timestamp = new Date().toLocaleTimeString();
+            testResults.push({ timestamp, message, type });
+            updateDisplay();
+            
+            // Also log to console for debugging
+            console.log(`[${timestamp}] ${message}`);
+        }
+
+        function updateDisplay() {
+            const resultsDiv = document.getElementById('results');
+            resultsDiv.innerHTML = testResults.map(result => 
+                `<div class="test-section ${result.type}">
+                    <div class="status">${result.message}</div>
+                    <div class="timestamp">${result.timestamp}</div>
+                </div>`
+            ).join('');
+            resultsDiv.scrollTop = resultsDiv.scrollHeight;
+        }
+
+        function clearResults() {
+            testResults = [];
+            updateDisplay();
+            console.clear();
+        }
+
+        async function testCORS() {
+            clearResults();
+            log('🚀 Starting CORS test...', 'info');
+            log(`🌐 Testing against: ${API_BASE}`, 'info');
+            log(`📍 Current origin: ${window.location.origin}`, 'info');
+            
+            // Test 1: Simple GET request
+            try {
+                log('📡 Test 1: Simple GET request to /api/health', 'info');
+                
+                const response = await fetch(`${API_BASE}/api/health`, {
+                    method: 'GET',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    }
+                });
+
+                if (response.ok) {
+                    const data = await response.json();
+                    log('✅ Test 1 PASSED: Simple GET request successful', 'success');
+                    log(`📊 Response: ${JSON.stringify(data).substring(0, 100)}...`, 'info');
+                } else {
+                    log(`❌ Test 1 FAILED: Response status ${response.status}`, 'error');
+                }
+            } catch (error) {
+                log(`❌ Test 1 FAILED: ${error.message}`, 'error');
+                if (error.message.includes('CORS')) {
+                    log('🚨 CORS ERROR DETECTED! This confirms the browser is blocking the request.', 'error');
+                }
+            }
+
+            // Test 2: Request with custom headers (triggers preflight)
+            try {
+                log('📡 Test 2: Request with Authorization header (triggers preflight)', 'info');
+                
+                const response = await fetch(`${API_BASE}/api/user/status`, {
+                    method: 'GET',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Authorization': 'Bearer test-token'
+                    }
+                });
+
+                if (response.status === 401) {
+                    log('✅ Test 2 PASSED: Preflight successful (401 expected for invalid token)', 'success');
+                } else if (response.ok) {
+                    log('✅ Test 2 PASSED: Request successful', 'success');
+                } else {
+                    log(`❌ Test 2 FAILED: Unexpected status ${response.status}`, 'error');
+                }
+            } catch (error) {
+                log(`❌ Test 2 FAILED: ${error.message}`, 'error');
+                if (error.message.includes('CORS')) {
+                    log('🚨 CORS ERROR ON PREFLIGHT! The OPTIONS request is being blocked.', 'error');
+                }
+            }
+
+            // Test 3: Manual OPTIONS request
+            try {
+                log('📡 Test 3: Manual OPTIONS (preflight) request', 'info');
+                
+                const response = await fetch(`${API_BASE}/api/user/status`, {
+                    method: 'OPTIONS',
+                    headers: {
+                        'Origin': window.location.origin,
+                        'Access-Control-Request-Method': 'GET',
+                        'Access-Control-Request-Headers': 'Content-Type, Authorization'
+                    }
+                });
+
+                if (response.ok) {
+                    log('✅ Test 3 PASSED: OPTIONS request successful', 'success');
+                    
+                    // Check CORS headers in response
+                    const corsHeaders = {
+                        'Access-Control-Allow-Origin': response.headers.get('Access-Control-Allow-Origin'),
+                        'Access-Control-Allow-Methods': response.headers.get('Access-Control-Allow-Methods'),
+                        'Access-Control-Allow-Headers': response.headers.get('Access-Control-Allow-Headers')
+                    };
+                    
+                    log(`📋 CORS Headers received: ${JSON.stringify(corsHeaders, null, 2)}`, 'info');
+                } else {
+                    log(`❌ Test 3 FAILED: OPTIONS request failed with ${response.status}`, 'error');
+                }
+            } catch (error) {
+                log(`❌ Test 3 FAILED: ${error.message}`, 'error');
+            }
+
+            log('🏁 CORS test completed. Check results above.', 'info');
+        }
+
+        async function testWithAuth() {
+            const token = localStorage.getItem('token');
+            if (!token) {
+                log('⚠️ No auth token found. Please login first at https://app.floworx-iq.com', 'warning');
+                return;
+            }
+
+            log('🔐 Testing with real auth token...', 'info');
+            
+            try {
+                const response = await fetch(`${API_BASE}/api/user/status`, {
+                    method: 'GET',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Authorization': `Bearer ${token}`
+                    }
+                });
+
+                if (response.ok) {
+                    const data = await response.json();
+                    log('✅ Authenticated request successful!', 'success');
+                    log(`👤 User: ${data.email}`, 'info');
+                } else {
+                    log(`❌ Authenticated request failed: ${response.status}`, 'error');
+                }
+            } catch (error) {
+                log(`❌ Authenticated request error: ${error.message}`, 'error');
+            }
+        }
+
+        function clearCache() {
+            log('🧹 Attempting to clear browser cache...', 'info');
+            
+            // Clear localStorage
+            localStorage.clear();
+            log('✅ localStorage cleared', 'success');
+            
+            // Clear sessionStorage
+            sessionStorage.clear();
+            log('✅ sessionStorage cleared', 'success');
+            
+            // Suggest manual cache clear
+            log('💡 For complete cache clear, press Ctrl+Shift+R (or Cmd+Shift+R)', 'warning');
+            log('💡 Or go to DevTools > Application > Storage > Clear site data', 'warning');
+        }
+
+        // Auto-run basic info on load
+        window.addEventListener('load', () => {
+            log('🔄 Page loaded. Ready for testing.', 'info');
+            log('💡 Make sure to clear browser cache before testing!', 'warning');
+        });
+    </script>
+</body>
+</html>

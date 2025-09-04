@@ -4,65 +4,79 @@
 Cypress.Commands.add('loginAsTestUser', (email = null, password = null) => {
   const testEmail = email || Cypress.env('TEST_USER_EMAIL');
   const testPassword = password || Cypress.env('TEST_USER_PASSWORD');
-  
+
   cy.session([testEmail, testPassword], () => {
-    cy.visit('/login');
-    
-    // Mock successful login response
-    cy.intercept('POST', '/api/auth/login', {
-      statusCode: 200,
+    // First, ensure the test user exists by trying to register
+    cy.request({
+      method: 'POST',
+      url: '/api/auth/register',
       body: {
-        message: 'Login successful',
-        user: {
-          id: 'test-user-id',
+        firstName: Cypress.env('TEST_USER_FIRST_NAME') || 'Cypress',
+        lastName: Cypress.env('TEST_USER_LAST_NAME') || 'Tester',
+        email: testEmail,
+        password: testPassword,
+        companyName: Cypress.env('TEST_COMPANY_NAME') || 'Test Company',
+        agreeToTerms: true
+      },
+      failOnStatusCode: false
+    }).then((registerResponse) => {
+      // Registration successful or user already exists
+      expect([201, 409]).to.include(registerResponse.status);
+
+      // Now attempt to login
+      cy.request({
+        method: 'POST',
+        url: '/api/auth/login',
+        body: {
           email: testEmail,
-          firstName: 'Test',
-          lastName: 'User',
-          companyName: 'Test Company',
-          createdAt: new Date().toISOString()
+          password: testPassword
         },
-        token: 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOiJ0ZXN0LXVzZXItaWQiLCJlbWFpbCI6InRlc3RAZmxvd29yeC5jb20iLCJpYXQiOjE2MzQ1NjcwMDAsImV4cCI6MTYzNDY1MzQwMH0.test-signature',
-        expiresIn: '24h'
-      }
-    }).as('loginRequest');
-    
-    cy.get('[data-testid="email-input"]').type(testEmail);
-    cy.get('[data-testid="password-input"]').type(testPassword);
-    cy.get('[data-testid="login-submit-button"]').click();
-    
-    cy.wait('@loginRequest');
-    
-    // Verify login success
-    cy.url().should('include', '/dashboard');
-    cy.window().then((window) => {
-      expect(window.localStorage.getItem('authToken')).to.exist;
+        failOnStatusCode: false
+      }).then((loginResponse) => {
+        if (loginResponse.status === 200 && loginResponse.body.token) {
+          // Store the authentication token
+          window.localStorage.setItem('authToken', loginResponse.body.token);
+          cy.wrap(loginResponse.body).as('loginData');
+        } else {
+          throw new Error(`Login failed: ${loginResponse.body?.message || 'Unknown error'}`);
+        }
+      });
     });
   });
 });
 
 Cypress.Commands.add('createTestUser', (email = null, password = null) => {
-  const testEmail = email || `test-${Date.now()}@floworx.com`;
+  const testEmail = email || `cypress-test-${Date.now()}@floworx.com`;
   const testPassword = password || 'TestPassword123!';
-  
-  // Mock user creation
-  cy.intercept('POST', '/api/auth/register', {
-    statusCode: 201,
+
+  // Create a real test user via API
+  return cy.request({
+    method: 'POST',
+    url: '/api/auth/register',
     body: {
-      message: 'User registered successfully',
-      user: {
-        id: 'new-test-user-id',
-        email: testEmail,
-        firstName: 'Test',
-        lastName: 'User',
-        companyName: 'Test Company',
-        createdAt: new Date().toISOString()
-      },
-      token: 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOiJuZXctdGVzdC11c2VyLWlkIiwiZW1haWwiOiJ0ZXN0QGZsb3dvcnguY29tIiwiaWF0IjoxNjM0NTY3MDAwLCJleHAiOjE2MzQ2NTM0MDB9.test-signature',
-      expiresIn: '24h'
+      firstName: 'Cypress',
+      lastName: 'Test',
+      email: testEmail,
+      password: testPassword,
+      companyName: 'Cypress Test Company',
+      agreeToTerms: true
+    },
+    failOnStatusCode: false
+  }).then((response) => {
+    // Registration successful or user already exists
+    expect([201, 409]).to.include(response.status);
+
+    if (response.status === 201 && response.body.token) {
+      // Store the token if registration was successful
+      window.localStorage.setItem('authToken', response.body.token);
     }
-  }).as('registerRequest');
-  
-  return cy.wrap({ email: testEmail, password: testPassword });
+
+    return cy.wrap({
+      email: testEmail,
+      password: testPassword,
+      response: response.body
+    });
+  });
 });
 
 Cypress.Commands.add('logout', () => {

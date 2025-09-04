@@ -39,8 +39,8 @@ module.exports = defineConfig({
       TEST_COMPANY_NAME: 'FloWorx Test Company'
     },
     
-    // Cucumber configuration
-    specPattern: 'cypress/e2e/features/**/*.feature',
+    // Test configuration - support both .cy.js and .feature files
+    specPattern: ['cypress/e2e/**/*.cy.js', 'cypress/e2e/features/**/*.feature'],
     supportFile: 'cypress/support/e2e.js',
     
     async setupNodeEvents(on, config) {

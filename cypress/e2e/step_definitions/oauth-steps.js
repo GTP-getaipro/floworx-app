@@ -30,15 +30,25 @@ When('I click the {string} button', (buttonText) => {
 });
 
 Then('I should be redirected to Google\'s OAuth authorization page', () => {
-  // Since we can't actually test Google's OAuth in Cypress, we'll mock this
-  cy.intercept('GET', '/api/oauth/google', {
-    statusCode: 302,
-    headers: {
-      'Location': 'https://accounts.google.com/o/oauth2/v2/auth?client_id=test'
+  // Test the real OAuth initiation endpoint
+  cy.request({
+    method: 'GET',
+    url: '/api/oauth/google',
+    followRedirect: false,
+    failOnStatusCode: false
+  }).then((response) => {
+    // Should redirect (302) or return OAuth URL (200)
+    expect([200, 302]).to.include(response.status);
+
+    if (response.status === 302) {
+      expect(response.headers.location).to.include('accounts.google.com');
+    } else if (response.status === 200) {
+      expect(response.body).to.have.property('authUrl');
+      expect(response.body.authUrl).to.include('accounts.google.com');
     }
-  }).as('oauthInitiation');
-  
-  cy.get('@oauthInitiation').should('exist');
+
+    cy.wrap(response).as('oauthInitiation');
+  });
 });
 
 Then('the OAuth URL should contain the correct parameters:', (dataTable) => {

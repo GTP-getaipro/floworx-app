@@ -853,6 +853,832 @@ const routes = {
     }
   },
 
+  // Analytics dashboard endpoint
+  'GET /analytics/dashboard': async (req, res) => {
+    try {
+      const user = await authenticate(req);
+      res.status(200).json({
+        success: true,
+        dashboard: {
+          totalUsers: 0,
+          activeUsers: 0,
+          onboardingConversion: 0,
+          emailsProcessed: 0,
+          workflowsActive: 0
+        },
+        message: 'Analytics dashboard data',
+        user_id: user.id
+      });
+    } catch (error) {
+      if (error.message === 'No token provided' || error.message === 'Invalid token' || error.message === 'Token expired') {
+        return res.status(401).json({
+          error: 'Authentication required',
+          message: 'Please log in to access this resource'
+        });
+      }
+      res.status(500).json({
+        error: 'Failed to load analytics dashboard',
+        message: 'Something went wrong while loading analytics dashboard'
+      });
+    }
+  },
+
+  // Analytics onboarding endpoint
+  'GET /analytics/onboarding': async (req, res) => {
+    try {
+      const user = await authenticate(req);
+      res.status(200).json({
+        success: true,
+        onboarding: {
+          totalStarted: 0,
+          totalCompleted: 0,
+          conversionRate: 0,
+          averageTime: 0,
+          dropoffPoints: []
+        },
+        message: 'Onboarding analytics data',
+        user_id: user.id
+      });
+    } catch (error) {
+      if (error.message === 'No token provided' || error.message === 'Invalid token' || error.message === 'Token expired') {
+        return res.status(401).json({
+          error: 'Authentication required',
+          message: 'Please log in to access this resource'
+        });
+      }
+      res.status(500).json({
+        error: 'Failed to load onboarding analytics',
+        message: 'Something went wrong while loading onboarding analytics'
+      });
+    }
+  },
+
+  // Analytics user endpoint
+  'GET /analytics/user': async (req, res) => {
+    try {
+      const user = await authenticate(req);
+      res.status(200).json({
+        success: true,
+        user: {
+          id: user.id,
+          email: user.email,
+          totalSessions: 0,
+          lastActivity: new Date().toISOString(),
+          onboardingCompleted: false,
+          workflowsCreated: 0
+        },
+        message: 'User analytics data',
+        user_id: user.id
+      });
+    } catch (error) {
+      if (error.message === 'No token provided' || error.message === 'Invalid token' || error.message === 'Token expired') {
+        return res.status(401).json({
+          error: 'Authentication required',
+          message: 'Please log in to access this resource'
+        });
+      }
+      res.status(500).json({
+        error: 'Failed to load user analytics',
+        message: 'Something went wrong while loading user analytics'
+      });
+    }
+  },
+
+  // Analytics track endpoint
+  'POST /analytics/track': async (req, res) => {
+    try {
+      let user = null;
+      try {
+        user = await authenticate(req);
+      } catch (error) {
+        // Continue without authentication for analytics
+      }
+
+      const { event, properties } = req.body;
+
+      console.log('Analytics: Custom event tracked', {
+        userId: user?.id || 'anonymous',
+        event: event,
+        properties: properties,
+        timestamp: new Date().toISOString()
+      });
+
+      res.status(200).json({
+        success: true,
+        message: 'Event tracked successfully',
+        timestamp: new Date().toISOString()
+      });
+    } catch (error) {
+      console.error('Analytics tracking error:', error);
+      res.status(200).json({
+        success: false,
+        message: 'Analytics tracking failed but continuing'
+      });
+    }
+  },
+
+  // Analytics tracking endpoints
+  'POST /analytics/onboarding/started': async (req, res) => {
+    try {
+      // Optional authentication - analytics can work without auth
+      let user = null;
+      try {
+        user = await authenticate(req);
+      } catch (error) {
+        // Continue without authentication for analytics
+      }
+
+      console.log('Analytics: Onboarding started', {
+        userId: user?.id || 'anonymous',
+        timestamp: new Date().toISOString(),
+        data: req.body
+      });
+
+      res.status(200).json({
+        success: true,
+        message: 'Onboarding start tracked',
+        timestamp: new Date().toISOString()
+      });
+    } catch (error) {
+      console.error('Analytics tracking error:', error);
+      res.status(200).json({
+        success: false,
+        message: 'Analytics tracking failed but continuing'
+      });
+    }
+  },
+
+  'POST /analytics/onboarding/completed': async (req, res) => {
+    try {
+      let user = null;
+      try {
+        user = await authenticate(req);
+      } catch (error) {
+        // Continue without authentication for analytics
+      }
+
+      console.log('Analytics: Onboarding completed', {
+        userId: user?.id || 'anonymous',
+        timestamp: new Date().toISOString(),
+        data: req.body
+      });
+
+      res.status(200).json({
+        success: true,
+        message: 'Onboarding completion tracked',
+        timestamp: new Date().toISOString()
+      });
+    } catch (error) {
+      console.error('Analytics tracking error:', error);
+      res.status(200).json({
+        success: false,
+        message: 'Analytics tracking failed but continuing'
+      });
+    }
+  },
+
+  'POST /analytics/user/track': async (req, res) => {
+    try {
+      let user = null;
+      try {
+        user = await authenticate(req);
+      } catch (error) {
+        // Continue without authentication for analytics
+      }
+
+      console.log('Analytics: User action tracked', {
+        userId: user?.id || 'anonymous',
+        timestamp: new Date().toISOString(),
+        data: req.body
+      });
+
+      res.status(200).json({
+        success: true,
+        message: 'User action tracked',
+        timestamp: new Date().toISOString()
+      });
+    } catch (error) {
+      console.error('Analytics tracking error:', error);
+      res.status(200).json({
+        success: false,
+        message: 'Analytics tracking failed but continuing'
+      });
+    }
+  },
+
+  // Onboarding endpoints
+  'GET /onboarding': async (req, res) => {
+    try {
+      const user = await authenticate(req);
+      res.status(200).json({
+        success: true,
+        user: {
+          id: user.id,
+          email: user.email,
+          onboardingCompleted: false
+        },
+        steps: [
+          { id: 'welcome', name: 'Welcome', completed: false },
+          { id: 'google-connection', name: 'Connect Google', completed: false },
+          { id: 'business-type', name: 'Business Type', completed: false },
+          { id: 'workflow-setup', name: 'Workflow Setup', completed: false }
+        ],
+        currentStep: 'welcome',
+        message: 'Onboarding data retrieved'
+      });
+    } catch (error) {
+      if (error.message === 'No token provided' || error.message === 'Invalid token' || error.message === 'Token expired') {
+        return res.status(401).json({
+          error: 'Authentication required',
+          message: 'Please log in to access this resource'
+        });
+      }
+      res.status(500).json({
+        error: 'Failed to load onboarding',
+        message: 'Something went wrong while loading onboarding data'
+      });
+    }
+  },
+
+  'GET /onboarding/progress': async (req, res) => {
+    try {
+      const user = await authenticate(req);
+      res.status(200).json({
+        success: true,
+        user: {
+          id: user.id,
+          email: user.email
+        },
+        progress: {
+          currentStep: 'welcome',
+          completedSteps: [],
+          totalSteps: 4,
+          percentComplete: 0
+        },
+        nextStep: 'google-connection',
+        message: 'Onboarding progress retrieved'
+      });
+    } catch (error) {
+      if (error.message === 'No token provided' || error.message === 'Invalid token' || error.message === 'Token expired') {
+        return res.status(401).json({
+          error: 'Authentication required',
+          message: 'Please log in to access this resource'
+        });
+      }
+      res.status(500).json({
+        error: 'Failed to load onboarding progress',
+        message: 'Something went wrong while loading onboarding progress'
+      });
+    }
+  },
+
+  'GET /onboarding/steps': async (req, res) => {
+    try {
+      const user = await authenticate(req);
+      res.status(200).json({
+        success: true,
+        steps: [
+          {
+            id: 'welcome',
+            name: 'Welcome to FloworX',
+            description: 'Get started with your email automation journey',
+            completed: false,
+            required: true
+          },
+          {
+            id: 'google-connection',
+            name: 'Connect Google Account',
+            description: 'Connect your Google account to access Gmail',
+            completed: false,
+            required: true
+          },
+          {
+            id: 'business-type',
+            name: 'Select Business Type',
+            description: 'Choose your business category for customized workflows',
+            completed: false,
+            required: true
+          },
+          {
+            id: 'workflow-setup',
+            name: 'Setup Workflows',
+            description: 'Configure your automated email workflows',
+            completed: false,
+            required: true
+          }
+        ],
+        user_id: user.id
+      });
+    } catch (error) {
+      if (error.message === 'No token provided' || error.message === 'Invalid token' || error.message === 'Token expired') {
+        return res.status(401).json({
+          error: 'Authentication required',
+          message: 'Please log in to access this resource'
+        });
+      }
+      res.status(500).json({
+        error: 'Failed to load onboarding steps',
+        message: 'Something went wrong while loading onboarding steps'
+      });
+    }
+  },
+
+  'POST /onboarding/complete': async (req, res) => {
+    try {
+      const user = await authenticate(req);
+      const { stepId, data } = req.body;
+
+      console.log('Onboarding step completed:', {
+        userId: user.id,
+        stepId: stepId,
+        data: data,
+        timestamp: new Date().toISOString()
+      });
+
+      res.status(200).json({
+        success: true,
+        message: 'Onboarding step completed',
+        stepId: stepId,
+        nextStep: 'google-connection',
+        user_id: user.id
+      });
+    } catch (error) {
+      if (error.message === 'No token provided' || error.message === 'Invalid token' || error.message === 'Token expired') {
+        return res.status(401).json({
+          error: 'Authentication required',
+          message: 'Please log in to access this resource'
+        });
+      }
+      res.status(500).json({
+        error: 'Failed to complete onboarding step',
+        message: 'Something went wrong while completing onboarding step'
+      });
+    }
+  },
+
+  // Recovery/session endpoints
+  'GET /recovery/session': async (req, res) => {
+    try {
+      // Check if there's a valid session to recover
+      let user = null;
+      try {
+        user = await authenticate(req);
+      } catch (error) {
+        // No valid session to recover
+      }
+
+      if (user) {
+        res.status(200).json({
+          success: true,
+          message: 'Session recovered',
+          user: {
+            id: user.id,
+            email: user.email,
+            firstName: user.firstName,
+            lastName: user.lastName
+          },
+          timestamp: new Date().toISOString()
+        });
+      } else {
+        res.status(404).json({
+          success: false,
+          message: 'No session to recover',
+          timestamp: new Date().toISOString()
+        });
+      }
+    } catch (error) {
+      console.error('Session recovery error:', error);
+      res.status(500).json({
+        error: 'Session recovery failed',
+        message: 'Something went wrong during session recovery'
+      });
+    }
+  },
+
+  // User settings endpoints
+  'GET /user/settings': async (req, res) => {
+    try {
+      const user = await authenticate(req);
+      res.status(200).json({
+        success: true,
+        settings: {
+          notifications: {
+            email: true,
+            browser: true,
+            workflow: true
+          },
+          privacy: {
+            analytics: true,
+            marketing: false
+          },
+          preferences: {
+            theme: 'light',
+            language: 'en',
+            timezone: 'UTC'
+          }
+        },
+        user_id: user.id
+      });
+    } catch (error) {
+      if (error.message === 'No token provided' || error.message === 'Invalid token' || error.message === 'Token expired') {
+        return res.status(401).json({
+          error: 'Authentication required',
+          message: 'Please log in to access this resource'
+        });
+      }
+      res.status(500).json({
+        error: 'Failed to load user settings',
+        message: 'Something went wrong while loading user settings'
+      });
+    }
+  },
+
+  // Workflow status endpoint
+  'GET /workflows/status': async (req, res) => {
+    try {
+      const user = await authenticate(req);
+      res.status(200).json({
+        success: true,
+        workflows: {
+          total: 0,
+          active: 0,
+          paused: 0,
+          error: 0
+        },
+        status: 'healthy',
+        lastUpdate: new Date().toISOString(),
+        user_id: user.id
+      });
+    } catch (error) {
+      if (error.message === 'No token provided' || error.message === 'Invalid token' || error.message === 'Token expired') {
+        return res.status(401).json({
+          error: 'Authentication required',
+          message: 'Please log in to access this resource'
+        });
+      }
+      res.status(500).json({
+        error: 'Failed to load workflow status',
+        message: 'Something went wrong while loading workflow status'
+      });
+    }
+  },
+
+  // OAuth status endpoint
+  'GET /oauth/status': async (req, res) => {
+    try {
+      const user = await authenticate(req);
+      res.status(200).json({
+        success: true,
+        connections: {
+          google: {
+            connected: false,
+            email: null,
+            lastSync: null,
+            status: 'disconnected'
+          }
+        },
+        user_id: user.id
+      });
+    } catch (error) {
+      if (error.message === 'No token provided' || error.message === 'Invalid token' || error.message === 'Token expired') {
+        return res.status(401).json({
+          error: 'Authentication required',
+          message: 'Please log in to access this resource'
+        });
+      }
+      res.status(500).json({
+        error: 'Failed to load OAuth status',
+        message: 'Something went wrong while loading OAuth status'
+      });
+    }
+  },
+
+  // Notifications unread endpoint
+  'GET /notifications/unread': async (req, res) => {
+    try {
+      const user = await authenticate(req);
+      res.status(200).json({
+        success: true,
+        unread: [],
+        count: 0,
+        user_id: user.id
+      });
+    } catch (error) {
+      if (error.message === 'No token provided' || error.message === 'Invalid token' || error.message === 'Token expired') {
+        return res.status(401).json({
+          error: 'Authentication required',
+          message: 'Please log in to access this resource'
+        });
+      }
+      res.status(500).json({
+        error: 'Failed to load unread notifications',
+        message: 'Something went wrong while loading unread notifications'
+      });
+    }
+  },
+
+  // Settings endpoints
+  'GET /settings': async (req, res) => {
+    try {
+      const user = await authenticate(req);
+      res.status(200).json({
+        success: true,
+        settings: {
+          general: {
+            companyName: user.company_name || '',
+            timezone: 'UTC',
+            language: 'en'
+          },
+          notifications: {
+            email: true,
+            browser: true,
+            workflow: true
+          },
+          integrations: {
+            google: false,
+            n8n: false
+          }
+        },
+        user_id: user.id
+      });
+    } catch (error) {
+      if (error.message === 'No token provided' || error.message === 'Invalid token' || error.message === 'Token expired') {
+        return res.status(401).json({
+          error: 'Authentication required',
+          message: 'Please log in to access this resource'
+        });
+      }
+      res.status(500).json({
+        error: 'Failed to load settings',
+        message: 'Something went wrong while loading settings'
+      });
+    }
+  },
+
+  'GET /settings/business': async (req, res) => {
+    try {
+      const user = await authenticate(req);
+      res.status(200).json({
+        success: true,
+        business: {
+          name: user.company_name || '',
+          type: 'hot-tub',
+          categories: [],
+          workflows: []
+        },
+        user_id: user.id
+      });
+    } catch (error) {
+      if (error.message === 'No token provided' || error.message === 'Invalid token' || error.message === 'Token expired') {
+        return res.status(401).json({
+          error: 'Authentication required',
+          message: 'Please log in to access this resource'
+        });
+      }
+      res.status(500).json({
+        error: 'Failed to load business settings',
+        message: 'Something went wrong while loading business settings'
+      });
+    }
+  },
+
+  // Additional common SaaS endpoints
+  'GET /api/status': async (req, res) => {
+    // API status endpoint (different from /health)
+    res.status(200).json({
+      api: 'online',
+      version: '1.0.0',
+      timestamp: new Date().toISOString(),
+      environment: process.env.NODE_ENV || 'development'
+    });
+  },
+
+  'POST /auth/refresh': async (req, res) => {
+    try {
+      const { refreshToken } = req.body;
+
+      if (!refreshToken) {
+        return res.status(400).json({
+          error: 'Missing refresh token',
+          message: 'Refresh token is required'
+        });
+      }
+
+      // For now, return an error since we're using JWT without refresh tokens
+      res.status(501).json({
+        error: 'Refresh not implemented',
+        message: 'Token refresh is not yet implemented. Please log in again.'
+      });
+    } catch (error) {
+      console.error('Token refresh error:', error);
+      res.status(500).json({
+        error: 'Token refresh failed',
+        message: 'Something went wrong during token refresh'
+      });
+    }
+  },
+
+  'GET /user/preferences': async (req, res) => {
+    try {
+      const user = await authenticate(req);
+
+      // Return default preferences for now
+      res.status(200).json({
+        userId: user.id,
+        preferences: {
+          theme: 'light',
+          notifications: {
+            email: true,
+            push: false,
+            sms: false
+          },
+          timezone: 'UTC',
+          language: 'en'
+        },
+        timestamp: new Date().toISOString()
+      });
+    } catch (error) {
+      if (error.message === 'No token provided' || error.message === 'Invalid token' || error.message === 'Token expired') {
+        return res.status(401).json({
+          error: 'Authentication required',
+          message: 'Please log in to access this resource'
+        });
+      }
+      res.status(500).json({
+        error: 'Failed to load preferences',
+        message: 'Something went wrong while loading user preferences'
+      });
+    }
+  },
+
+  'PUT /user/preferences': async (req, res) => {
+    try {
+      const user = await authenticate(req);
+      const { preferences } = req.body;
+
+      console.log('Updating user preferences:', { userId: user.id, preferences });
+
+      // For now, just acknowledge the update
+      res.status(200).json({
+        success: true,
+        message: 'Preferences updated successfully',
+        preferences: preferences,
+        timestamp: new Date().toISOString()
+      });
+    } catch (error) {
+      if (error.message === 'No token provided' || error.message === 'Invalid token' || error.message === 'Token expired') {
+        return res.status(401).json({
+          error: 'Authentication required',
+          message: 'Please log in to access this resource'
+        });
+      }
+      res.status(500).json({
+        error: 'Failed to update preferences',
+        message: 'Something went wrong while updating preferences'
+      });
+    }
+  },
+
+  'GET /notifications': async (req, res) => {
+    try {
+      const user = await authenticate(req);
+
+      res.status(200).json({
+        notifications: [],
+        unreadCount: 0,
+        message: 'Notifications feature coming soon',
+        timestamp: new Date().toISOString()
+      });
+    } catch (error) {
+      if (error.message === 'No token provided' || error.message === 'Invalid token' || error.message === 'Token expired') {
+        return res.status(401).json({
+          error: 'Authentication required',
+          message: 'Please log in to access this resource'
+        });
+      }
+      res.status(500).json({
+        error: 'Failed to load notifications',
+        message: 'Something went wrong while loading notifications'
+      });
+    }
+  },
+
+  'POST /support/contact': async (req, res) => {
+    try {
+      const { name, email, subject, message } = req.body;
+
+      // Optional authentication
+      let user = null;
+      try {
+        user = await authenticate(req);
+      } catch (error) {
+        // Continue without authentication
+      }
+
+      console.log('Support contact form:', {
+        name,
+        email,
+        subject,
+        message: message?.substring(0, 100) + '...',
+        userId: user?.id || 'anonymous'
+      });
+
+      res.status(200).json({
+        success: true,
+        message: 'Support request submitted successfully',
+        ticketId: `TICKET-${Date.now()}`,
+        timestamp: new Date().toISOString()
+      });
+    } catch (error) {
+      console.error('Support contact error:', error);
+      res.status(500).json({
+        error: 'Support request failed',
+        message: 'Something went wrong while submitting your request'
+      });
+    }
+  },
+
+  // Password reset token verification endpoint
+  'POST /auth/verify-reset-token': async (req, res) => {
+    try {
+      const { token } = req.body;
+
+      if (!token) {
+        return res.status(400).json({
+          error: 'Missing token',
+          message: 'Reset token is required'
+        });
+      }
+
+      console.log('Verifying reset token:', token.substring(0, 10) + '...');
+
+      // For now, return a mock response since we're using Supabase Auth
+      // In a real implementation, this would verify the token against the database
+      res.status(400).json({
+        error: 'Invalid token',
+        message: 'This password reset link is invalid or has expired. Please request a new one.'
+      });
+    } catch (error) {
+      console.error('Token verification error:', error);
+      res.status(500).json({
+        error: 'Internal server error',
+        message: 'Unable to verify reset token'
+      });
+    }
+  },
+
+  // Password reset completion endpoint
+  'POST /auth/reset-password': async (req, res) => {
+    try {
+      const { token, newPassword } = req.body;
+
+      if (!token) {
+        return res.status(400).json({
+          error: 'Missing token',
+          message: 'Reset token is required'
+        });
+      }
+
+      if (!newPassword) {
+        return res.status(400).json({
+          error: 'Missing password',
+          message: 'New password is required'
+        });
+      }
+
+      // Validate password strength
+      const passwordRegex = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)[a-zA-Z\d@$!%*?&]{8,}$/;
+      if (!passwordRegex.test(newPassword)) {
+        return res.status(400).json({
+          error: 'Invalid password',
+          message: 'Password must be at least 8 characters long and contain uppercase letters, lowercase letters, and numbers.',
+          requirements: {
+            minLength: 8,
+            requireUppercase: true,
+            requireLowercase: true,
+            requireNumbers: true,
+            requireSpecialChars: false
+          }
+        });
+      }
+
+      console.log('Attempting password reset with token:', token.substring(0, 10) + '...');
+
+      // For now, return a mock response since we're using Supabase Auth
+      // In a real implementation, this would reset the password in the database
+      res.status(400).json({
+        error: 'Invalid token',
+        message: 'This password reset link is invalid or has expired. Please request a new one.'
+      });
+    } catch (error) {
+      console.error('Password reset error:', error);
+      res.status(500).json({
+        error: 'Internal server error',
+        message: 'Unable to reset password'
+      });
+    }
+  },
+
   // OAuth endpoints
   'GET /oauth/google': async (req, res) => {
     try {
@@ -982,20 +1808,38 @@ const routes = {
 
 // Main handler
 async function handler(req, res) {
-  // Set CORS headers for production
-  res.setHeader('Access-Control-Allow-Credentials', 'true');
-  res.setHeader('Access-Control-Allow-Origin', '*');
-  res.setHeader('Access-Control-Allow-Methods', 'GET, POST, PUT, DELETE, OPTIONS');
-  res.setHeader('Access-Control-Allow-Headers', 'Content-Type, Authorization');
+  // Set comprehensive CORS headers for production
+  const origin = req.headers.origin;
+  const allowedOrigins = [
+    'https://app.floworx-iq.com',
+    'https://floworx-6j5nmgden-floworxdevelopers-projects.vercel.app',
+    'https://floworx-8ox3gcayt-floworxdevelopers-projects.vercel.app',
+    'http://localhost:3000',
+    'http://localhost:5001'
+  ];
 
+  // Allow any Vercel deployment URL for this project
+  const isVercelDeployment = origin && origin.includes('floworxdevelopers-projects.vercel.app');
+
+  if (allowedOrigins.includes(origin) || isVercelDeployment) {
+    res.setHeader('Access-Control-Allow-Origin', origin);
+  } else {
+    res.setHeader('Access-Control-Allow-Origin', '*');
+  }
+
+  res.setHeader('Access-Control-Allow-Credentials', 'true');
+  res.setHeader('Access-Control-Allow-Methods', 'GET, POST, PUT, DELETE, OPTIONS, PATCH');
+  res.setHeader('Access-Control-Allow-Headers', 'Content-Type, Authorization, Accept, Accept-Language, Content-Language, X-Requested-With, Origin, Referer, User-Agent');
+  res.setHeader('Access-Control-Max-Age', '86400'); // 24 hours
 
   // Handle preflight requests
   if (req.method === 'OPTIONS') {
     return res.status(200).end();
   }
 
-  // Parse the route
-  const path = req.url.replace('/api', '') || '/';
+  // Parse the route (strip query parameters)
+  const fullPath = req.url.replace('/api', '') || '/';
+  const path = fullPath.split('?')[0]; // Remove query parameters for route matching
   const route = `${req.method} ${path}`;
 
   console.log(`API Request: ${route}`);

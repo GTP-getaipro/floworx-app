@@ -47,7 +47,7 @@ const Dashboard = () => {
         const headers = { Authorization: `Bearer ${token}` };
 
         // Fetch user status
-        const userResponse = await axios.get(`${process.env.REACT_APP_API_URL}/auth/user/status`, {
+        const userResponse = await axios.get(`${process.env.REACT_APP_API_URL}/user/status`, {
           headers,
         });
         setUserStatus(userResponse.data);
@@ -94,7 +94,7 @@ const Dashboard = () => {
       await axios.delete('/oauth/google');
       setMessage('Google account disconnected successfully.');
       // Refresh status
-      const response = await axios.get('/auth/user/status');
+      const response = await axios.get('/user/status');
       setUserStatus(response.data);
     } catch (error) {
       setError('Failed to disconnect Google account. Please try again.');

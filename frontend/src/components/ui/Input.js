@@ -3,6 +3,9 @@ import React from 'react';
 const Input = ({ label, error, helperText, required = false, className = '', id, name, ...props }) => {
   const inputId = id || `input-${Math.random().toString(36).substr(2, 9)}`;
 
+  // Convert camelCase to kebab-case for data-testid
+  const kebabCaseName = name ? name.replace(/([A-Z])/g, '-$1').toLowerCase() : null;
+
   const inputClasses = `
     w-full px-3 py-2 border rounded-lg text-ink bg-surface
     placeholder:text-ink-sub
@@ -31,14 +34,14 @@ const Input = ({ label, error, helperText, required = false, className = '', id,
       <input
         id={inputId}
         name={name}
-        data-testid={props['data-testid'] || (name ? `${name}-input` : undefined)}
+        data-testid={props['data-testid'] || (kebabCaseName ? `${kebabCaseName}-input` : undefined)}
         className={inputClasses}
         {...props}
       />
 
       {error && (
         <p
-          data-testid={name ? `${name}-error` : 'input-error'}
+          data-testid={kebabCaseName ? `${kebabCaseName}-error` : 'input-error'}
           className='text-sm text-danger flex items-start gap-1 break-words'
         >
           <svg className='w-4 h-4 flex-shrink-0 mt-0.5' fill='currentColor' viewBox='0 0 20 20'>

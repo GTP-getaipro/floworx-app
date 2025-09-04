@@ -21,8 +21,9 @@ const validationRules = {
       const hasUpperCase = /[A-Z]/.test(value);
       const hasLowerCase = /[a-z]/.test(value);
       const hasNumbers = /\d/.test(value);
-      if (!hasUpperCase || !hasLowerCase || !hasNumbers) {
-        return 'Password must contain at least one uppercase letter, one lowercase letter, and one number';
+      const hasSpecialChar = /[@$!%*?&]/.test(value);
+      if (!hasUpperCase || !hasLowerCase || !hasNumbers || !hasSpecialChar) {
+        return 'Password must contain at least one uppercase letter, one lowercase letter, one number, and one special character (@$!%*?&)';
       }
       return '';
     },
@@ -414,7 +415,7 @@ const RegisterForm = () => {
             placeholder='Create a password (min. 8 characters)'
             required
             disabled={loading}
-            helperText='Password must be at least 8 characters long'
+            helperText='Password must be at least 8 characters with uppercase, lowercase, number, and special character (@$!%*?&)'
             minLength={8}
             maxLength={128}
             autoComplete='new-password'

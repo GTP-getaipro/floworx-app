@@ -29,7 +29,7 @@ const email = (value) => {
 
 const password = (value) => {
   if (value && !PASSWORD_REGEX.test(value)) {
-    return 'Password must contain at least one uppercase letter, one lowercase letter, one number, and one special character';
+    return 'Password must contain at least one uppercase letter, one lowercase letter, one number, and one special character (@$!%*?&)';
   }
   return '';
 };

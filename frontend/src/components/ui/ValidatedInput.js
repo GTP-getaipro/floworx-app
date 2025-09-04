@@ -43,8 +43,8 @@ const ValidatedInput = ({
       if (!/(?=.*\d)/.test(fieldValue)) {
         return 'Password must contain at least one number';
       }
-      if (!/(?=.*[!@#$%^&*])/.test(fieldValue)) {
-        return 'Password must contain at least one special character';
+      if (!/(?=.*[@$!%*?&])/.test(fieldValue)) {
+        return 'Password must contain at least one special character (@$!%*?&)';
       }
     }
 

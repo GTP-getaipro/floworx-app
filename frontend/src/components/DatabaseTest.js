@@ -1,0 +1,282 @@
+import React, { useState, useEffect } from 'react';
+import './DatabaseTest.css';
+
+const DatabaseTest = () => {
+  const [testResults, setTestResults] = useState({
+    health: null,
+    database: null,
+    userRegistration: null,
+    userLogin: null,
+    loading: false,
+  });
+
+  const [testUser, setTestUser] = useState({
+    firstName: 'Frontend',
+    lastName: 'Test',
+    email: `frontend.test.${Date.now()}@example.com`,
+    password: 'TestPassword123!',
+    businessName: 'Frontend Test Company',
+    agreeToTerms: true,
+  });
+
+  const API_BASE =
+    process.env.NODE_ENV === 'production' ? 'https://app.floworx-iq.com' : 'http://localhost:5001';
+
+  const runTest = async (testName, testFunction) => {
+    setTestResults(prev => ({
+      ...prev,
+      [testName]: { status: 'running', message: 'Testing...', data: null },
+    }));
+
+    try {
+      const result = await testFunction();
+      setTestResults(prev => ({
+        ...prev,
+        [testName]: {
+          status: 'success',
+          message: result.message || 'Test passed',
+          data: result.data,
+          timestamp: new Date().toISOString(),
+        },
+      }));
+    } catch (error) {
+      setTestResults(prev => ({
+        ...prev,
+        [testName]: {
+          status: 'error',
+          message: error.message,
+          data: error.response?.data || null,
+          timestamp: new Date().toISOString(),
+        },
+      }));
+    }
+  };
+
+  const testHealthEndpoint = async () => {
+    const response = await fetch(`${API_BASE}/api/health`);
+    if (!response.ok) {
+      throw new Error(`Health check failed: ${response.status}`);
+    }
+    const data = await response.json();
+    return {
+      message: `Health check passed - Status: ${data.status}`,
+      data: data,
+    };
+  };
+
+  const testDatabaseConnection = async () => {
+    const response = await fetch(`${API_BASE}/api/health/db`);
+    if (!response.ok) {
+      throw new Error(`Database connection failed: ${response.status}`);
+    }
+    const data = await response.json();
+    return {
+      message: `Database connected - Status: ${data.status}`,
+      data: data,
+    };
+  };
+
+  const testUserRegistration = async () => {
+    const response = await fetch(`${API_BASE}/api/auth/register`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify(testUser),
+    });
+
+    if (!response.ok) {
+      const errorData = await response.json();
+      throw new Error(
+        `Registration failed: ${response.status} - ${errorData.message || 'Unknown error'}`
+      );
+    }
+
+    const data = await response.json();
+
+    // Store token for login test
+    if (data.token) {
+      localStorage.setItem('testToken', data.token);
+    }
+
+    return {
+      message: `User registered successfully - ID: ${data.user?.id?.substring(0, 8)}...`,
+      data: {
+        userId: data.user?.id,
+        email: data.user?.email,
+        token: data.token ? `${data.token.substring(0, 20)}...` : null,
+      },
+    };
+  };
+
+  const testUserLogin = async () => {
+    const response = await fetch(`${API_BASE}/api/auth/login`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({
+        email: testUser.email,
+        password: testUser.password,
+      }),
+    });
+
+    if (!response.ok) {
+      const errorData = await response.json();
+      throw new Error(`Login failed: ${response.status} - ${errorData.message || 'Unknown error'}`);
+    }
+
+    const data = await response.json();
+    return {
+      message: `Login successful - Welcome ${data.user?.firstName}!`,
+      data: {
+        userId: data.user?.id,
+        email: data.user?.email,
+        token: data.token ? `${data.token.substring(0, 20)}...` : null,
+      },
+    };
+  };
+
+  const runAllTests = async () => {
+    setTestResults(prev => ({ ...prev, loading: true }));
+
+    // Generate new test user email for each test run
+    setTestUser(prev => ({
+      ...prev,
+      email: `frontend.test.${Date.now()}@example.com`,
+    }));
+
+    await runTest('health', testHealthEndpoint);
+    await runTest('database', testDatabaseConnection);
+    await runTest('userRegistration', testUserRegistration);
+
+    // Wait a moment before login test
+    setTimeout(async () => {
+      await runTest('userLogin', testUserLogin);
+      setTestResults(prev => ({ ...prev, loading: false }));
+    }, 1000);
+  };
+
+  const getStatusIcon = status => {
+    switch (status) {
+      case 'success':
+        return '✅';
+      case 'error':
+        return '❌';
+      case 'running':
+        return '⏳';
+      default:
+        return '⚪';
+    }
+  };
+
+  const getStatusClass = status => {
+    switch (status) {
+      case 'success':
+        return 'test-success';
+      case 'error':
+        return 'test-error';
+      case 'running':
+        return 'test-running';
+      default:
+        return 'test-pending';
+    }
+  };
+
+  return (
+    <div className='database-test'>
+      <div className='test-header'>
+        <h2>🔍 Frontend Database Test Suite</h2>
+        <p>Testing database connectivity and core functionality from the frontend</p>
+        <div className='test-info'>
+          <span>
+            <strong>API Base:</strong> {API_BASE}
+          </span>
+          <span>
+            <strong>Environment:</strong> {process.env.NODE_ENV || 'development'}
+          </span>
+        </div>
+      </div>
+
+      <div className='test-controls'>
+        <button onClick={runAllTests} disabled={testResults.loading} className='run-tests-btn'>
+          {testResults.loading ? '⏳ Running Tests...' : '🚀 Run All Tests'}
+        </button>
+      </div>
+
+      <div className='test-results'>
+        <div className={`test-item ${getStatusClass(testResults.health?.status)}`}>
+          <div className='test-header-item'>
+            <span className='test-icon'>{getStatusIcon(testResults.health?.status)}</span>
+            <h3>Health Endpoint Test</h3>
+          </div>
+          <p className='test-message'>{testResults.health?.message || 'Not tested yet'}</p>
+          {testResults.health?.data && (
+            <div className='test-data'>
+              <pre>{JSON.stringify(testResults.health.data, null, 2)}</pre>
+            </div>
+          )}
+        </div>
+
+        <div className={`test-item ${getStatusClass(testResults.database?.status)}`}>
+          <div className='test-header-item'>
+            <span className='test-icon'>{getStatusIcon(testResults.database?.status)}</span>
+            <h3>Database Connection Test</h3>
+          </div>
+          <p className='test-message'>{testResults.database?.message || 'Not tested yet'}</p>
+          {testResults.database?.data && (
+            <div className='test-data'>
+              <pre>{JSON.stringify(testResults.database.data, null, 2)}</pre>
+            </div>
+          )}
+        </div>
+
+        <div className={`test-item ${getStatusClass(testResults.userRegistration?.status)}`}>
+          <div className='test-header-item'>
+            <span className='test-icon'>{getStatusIcon(testResults.userRegistration?.status)}</span>
+            <h3>User Registration Test</h3>
+          </div>
+          <p className='test-message'>
+            {testResults.userRegistration?.message || 'Not tested yet'}
+          </p>
+          <p className='test-email'>Test Email: {testUser.email}</p>
+          {testResults.userRegistration?.data && (
+            <div className='test-data'>
+              <pre>{JSON.stringify(testResults.userRegistration.data, null, 2)}</pre>
+            </div>
+          )}
+        </div>
+
+        <div className={`test-item ${getStatusClass(testResults.userLogin?.status)}`}>
+          <div className='test-header-item'>
+            <span className='test-icon'>{getStatusIcon(testResults.userLogin?.status)}</span>
+            <h3>User Login Test</h3>
+          </div>
+          <p className='test-message'>{testResults.userLogin?.message || 'Not tested yet'}</p>
+          {testResults.userLogin?.data && (
+            <div className='test-data'>
+              <pre>{JSON.stringify(testResults.userLogin.data, null, 2)}</pre>
+            </div>
+          )}
+        </div>
+      </div>
+
+      <div className='test-summary'>
+        <h3>📊 Test Summary</h3>
+        <div className='summary-stats'>
+          <span className='stat'>
+            ✅ Passed: {Object.values(testResults).filter(r => r?.status === 'success').length}
+          </span>
+          <span className='stat'>
+            ❌ Failed: {Object.values(testResults).filter(r => r?.status === 'error').length}
+          </span>
+          <span className='stat'>
+            ⏳ Running: {Object.values(testResults).filter(r => r?.status === 'running').length}
+          </span>
+        </div>
+      </div>
+    </div>
+  );
+};
+
+export default DatabaseTest;

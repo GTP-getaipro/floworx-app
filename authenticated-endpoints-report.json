@@ -1,0 +1,57 @@
+{
+  "timestamp": "2025-09-04T13:36:54.756Z",
+  "testUser": {
+    "email": "test.78351e9da53eaa1a@example.com"
+  },
+  "userStatusWorking": false,
+  "dashboardWorking": false,
+  "endpointResults": [
+    {
+      "endpoint": "GET /api/health",
+      "status": 200,
+      "success": true,
+      "requiresAuth": false
+    },
+    {
+      "endpoint": "GET /api/auth/verify",
+      "status": 200,
+      "success": true,
+      "requiresAuth": true
+    },
+    {
+      "endpoint": "GET /api/user/status",
+      "status": 500,
+      "success": false,
+      "requiresAuth": true
+    },
+    {
+      "endpoint": "GET /api/dashboard",
+      "status": 404,
+      "success": false,
+      "requiresAuth": true
+    },
+    {
+      "endpoint": "GET /api/user/profile",
+      "status": 404,
+      "success": false,
+      "requiresAuth": true
+    },
+    {
+      "endpoint": "GET /api/workflows",
+      "status": 404,
+      "success": false,
+      "requiresAuth": true
+    },
+    {
+      "endpoint": "GET /api/analytics",
+      "status": 404,
+      "success": false,
+      "requiresAuth": true
+    }
+  ],
+  "summary": {
+    "workingEndpoints": 2,
+    "totalEndpoints": 7,
+    "successRate": 29
+  }
+}

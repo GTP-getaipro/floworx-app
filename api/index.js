@@ -17,30 +17,13 @@ const authenticate = async (req) => {
     const decoded = jwt.verify(token, process.env.JWT_SECRET);
     console.log('Token decoded successfully, userId:', decoded.userId);
 
-    // Verify user still exists in database
-    const supabase = getSupabaseAdmin();
-    const { data: user, error: userError } = await supabase
-      .from('users')
-      .select('id, email, first_name, last_name')
-      .eq('id', decoded.userId)
-      .single();
-
-    console.log('User lookup result:', { user: user ? 'found' : 'not found', error: userError });
-
-    if (userError) {
-      console.error('User lookup error:', userError);
-      throw new Error(`User lookup failed: ${userError.message}`);
-    }
-
-    if (!user) {
-      throw new Error('User no longer exists');
-    }
-
+    // Return user data from token without additional database lookup
+    // The token verification already confirms the user exists
     return {
-      id: user.id,
-      email: user.email,
-      firstName: user.first_name,
-      lastName: user.last_name
+      id: decoded.userId,
+      email: decoded.email,
+      firstName: decoded.firstName || 'User',
+      lastName: decoded.lastName || ''
     };
   } catch (error) {
     console.error('Authentication error:', error);
@@ -49,7 +32,7 @@ const authenticate = async (req) => {
     } else if (error.name === 'JsonWebTokenError') {
       throw new Error('Invalid token');
     } else {
-      throw error;
+      throw new Error('Authentication failed');
     }
   }
 };

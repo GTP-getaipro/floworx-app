@@ -370,6 +370,63 @@ const routes = {
     }
   },
 
+  'GET /user/profile': async (req, res) => {
+    try {
+      console.log('User profile endpoint called');
+      const user = await authenticate(req);
+      console.log('User authenticated:', user.id);
+
+      // Get user profile information from database
+      const supabase = getSupabaseAdmin();
+      const { data: userDetails, error: userError } = await supabase
+        .from('users')
+        .select('id, email, first_name, last_name, company_name, created_at, last_login, email_verified')
+        .eq('id', user.id)
+        .single();
+
+      console.log('User profile query result:', { userDetails, userError });
+
+      // Use fallback data if database query fails
+      const userData = userDetails || {
+        id: user.id,
+        email: user.email,
+        first_name: user.firstName,
+        last_name: user.lastName,
+        company_name: null,
+        created_at: new Date().toISOString(),
+        last_login: null,
+        email_verified: false
+      };
+
+      if (userError) {
+        console.warn('User profile query failed, using token data:', userError);
+      }
+
+      res.status(200).json({
+        id: userData.id,
+        email: userData.email,
+        firstName: userData.first_name,
+        lastName: userData.last_name,
+        companyName: userData.company_name,
+        createdAt: userData.created_at,
+        lastLogin: userData.last_login,
+        emailVerified: userData.email_verified || false
+      });
+    } catch (error) {
+      console.error('User profile error:', error);
+      if (error.message === 'No token provided' || error.message === 'Invalid token' || error.message === 'Token expired') {
+        return res.status(401).json({
+          error: 'Authentication required',
+          message: 'Please log in to access this resource'
+        });
+      }
+      res.status(500).json({
+        error: 'Failed to load user profile',
+        message: 'Something went wrong while loading user profile'
+      });
+    }
+  },
+
   // Test endpoint
   'GET /test': async (req, res) => {
     res.status(200).json({
@@ -685,6 +742,57 @@ const routes = {
       res.status(500).json({
         error: 'Failed to load dashboard',
         message: 'Something went wrong while loading dashboard data'
+      });
+    }
+  },
+
+  // Workflows endpoints (placeholder)
+  'GET /workflows': async (req, res) => {
+    try {
+      const user = await authenticate(req);
+      res.status(200).json({
+        workflows: [],
+        message: 'Workflows feature coming soon',
+        user_id: user.id
+      });
+    } catch (error) {
+      if (error.message === 'No token provided' || error.message === 'Invalid token' || error.message === 'Token expired') {
+        return res.status(401).json({
+          error: 'Authentication required',
+          message: 'Please log in to access this resource'
+        });
+      }
+      res.status(500).json({
+        error: 'Failed to load workflows',
+        message: 'Something went wrong while loading workflows'
+      });
+    }
+  },
+
+  // Analytics endpoints (placeholder)
+  'GET /analytics': async (req, res) => {
+    try {
+      const user = await authenticate(req);
+      res.status(200).json({
+        analytics: {
+          emailsProcessed: 0,
+          workflowsActive: 0,
+          totalAutomations: 0,
+          conversionRate: 0
+        },
+        message: 'Analytics feature coming soon',
+        user_id: user.id
+      });
+    } catch (error) {
+      if (error.message === 'No token provided' || error.message === 'Invalid token' || error.message === 'Token expired') {
+        return res.status(401).json({
+          error: 'Authentication required',
+          message: 'Please log in to access this resource'
+        });
+      }
+      res.status(500).json({
+        error: 'Failed to load analytics',
+        message: 'Something went wrong while loading analytics'
       });
     }
   },

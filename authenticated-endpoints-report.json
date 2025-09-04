@@ -1,10 +1,10 @@
 {
-  "timestamp": "2025-09-04T14:18:10.396Z",
+  "timestamp": "2025-09-04T14:22:56.636Z",
   "testUser": {
-    "email": "test.0aa506f0a3c9550f@example.com"
+    "email": "test.2cf5f5256a4596aa@example.com"
   },
-  "userStatusWorking": false,
-  "dashboardWorking": false,
+  "userStatusWorking": true,
+  "dashboardWorking": true,
   "endpointResults": [
     {
       "endpoint": "GET /api/health",
@@ -20,14 +20,14 @@
     },
     {
       "endpoint": "GET /api/user/status",
-      "status": 500,
-      "success": false,
+      "status": 200,
+      "success": true,
       "requiresAuth": true
     },
     {
       "endpoint": "GET /api/dashboard",
-      "status": 500,
-      "success": false,
+      "status": 200,
+      "success": true,
       "requiresAuth": true
     },
     {
@@ -50,8 +50,8 @@
     }
   ],
   "summary": {
-    "workingEndpoints": 2,
+    "workingEndpoints": 4,
     "totalEndpoints": 7,
-    "successRate": 29
+    "successRate": 57
   }
 }

@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Floworx - Test Page</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+        }
+        .container {
+            text-align: center;
+            padding: 2rem;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 10px;
+            backdrop-filter: blur(10px);
+        }
+        .status {
+            color: #4ade80;
+            font-size: 1.2rem;
+            margin-bottom: 1rem;
+        }
+        .loading {
+            color: #fbbf24;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🚀 Floworx Deployment Test</h1>
+        <div class="status" id="status">✅ Static files are working!</div>
+        <p>Testing Vercel deployment configuration...</p>
+        <div id="api-test">
+            <p class="loading">🔄 Testing API connection...</p>
+        </div>
+    </div>
+
+    <script>
+        // Test API connection
+        fetch('/api/health')
+            .then(response => {
+                if (response.ok) {
+                    document.getElementById('api-test').innerHTML = '<p class="status">✅ API is working!</p>';
+                } else {
+                    document.getElementById('api-test').innerHTML = '<p style="color: #ef4444;">❌ API connection failed</p>';
+                }
+            })
+            .catch(error => {
+                document.getElementById('api-test').innerHTML = '<p style="color: #ef4444;">❌ API connection error: ' + error.message + '</p>';
+            });
+    </script>
+</body>
+</html>

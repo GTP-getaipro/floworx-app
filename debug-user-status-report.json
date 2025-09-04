@@ -1,15 +1,15 @@
 {
-  "timestamp": "2025-09-04T13:38:13.437Z",
+  "timestamp": "2025-09-04T22:10:52.904Z",
   "testUser": {
-    "email": "debug.54d602f447e8c943@example.com",
-    "id": "0dc0b18f-7afc-49f3-a93a-22efaef54b6c"
+    "email": "debug.018b6decd307ecba@example.com",
+    "id": "c0522852-b6dc-426f-a478-251fd3e294de"
   },
   "token": "eyJhbGciOiJIUzI1NiIsInR5cCI6Ik...",
   "results": {
     "registration": true,
     "tokenValidation": true,
-    "userStatus": false,
-    "dashboard": false
+    "userStatus": true,
+    "dashboard": true
   },
   "responses": {
     "registration": {
@@ -18,14 +18,14 @@
       "data": {
         "message": "User registered successfully",
         "user": {
-          "id": "0dc0b18f-7afc-49f3-a93a-22efaef54b6c",
-          "email": "debug.54d602f447e8c943@example.com",
+          "id": "c0522852-b6dc-426f-a478-251fd3e294de",
+          "email": "debug.018b6decd307ecba@example.com",
           "firstName": "Debug",
           "lastName": "User",
           "companyName": "Debug Company",
-          "createdAt": "2025-09-04T13:38:13.137+00:00"
+          "createdAt": "2025-09-04T22:10:52.98+00:00"
         },
-        "token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOiIwZGMwYjE4Zi03YWZjLTQ5ZjMtYTkzYS0yMmVmYWVmNTRiNmMiLCJlbWFpbCI6ImRlYnVnLjU0ZDYwMmY0NDdlOGM5NDNAZXhhbXBsZS5jb20iLCJpYXQiOjE3NTY5OTMwOTMsImV4cCI6MTc1NzA3OTQ5M30.7mCKpBOnN5KR8MnL1wiaoPaufk4VoBT58Z7tyrWwSOw",
+        "token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOiJjMDUyMjg1Mi1iNmRjLTQyNmYtYTQ3OC0yNTFmZDNlMjk0ZGUiLCJlbWFpbCI6ImRlYnVnLjAxOGI2ZGVjZDMwN2VjYmFAZXhhbXBsZS5jb20iLCJpYXQiOjE3NTcwMjM4NTMsImV4cCI6MTc1NzExMDI1M30.PG_XmFap2lhy6VTetX8UrBLsz6p_gbwxVZ_kffSBgfc",
         "expiresIn": "24h"
       },
       "headers": {
@@ -34,14 +34,14 @@
         "access-control-allow-methods": "GET, POST, PUT, DELETE, OPTIONS",
         "access-control-allow-origin": "*",
         "cache-control": "public, max-age=0, must-revalidate",
-        "content-length": "533",
+        "content-length": "532",
         "content-type": "application/json; charset=utf-8",
-        "date": "Thu, 04 Sep 2025 13:38:13 GMT",
-        "etag": "W/\"215-9s8FmZZJuONeWtu2XnorwVLNdDw\"",
+        "date": "Thu, 04 Sep 2025 22:10:53 GMT",
+        "etag": "W/\"214-lFIxHLP9U5fUJUXVYHkP/Hltt7I\"",
         "server": "Vercel",
         "strict-transport-security": "max-age=63072000",
         "x-vercel-cache": "MISS",
-        "x-vercel-id": "pdx1::iad1::v27bm-1756993092499-7ee4a53be9e7"
+        "x-vercel-id": "pdx1::iad1::5cn6v-1757023852349-6df3200dcd1e"
       }
     },
     "tokenValidation": {
@@ -50,10 +50,10 @@
       "data": {
         "message": "Token is valid",
         "user": {
-          "id": "0dc0b18f-7afc-49f3-a93a-22efaef54b6c",
-          "email": "debug.54d602f447e8c943@example.com",
-          "firstName": "Debug",
-          "lastName": "User"
+          "id": "c0522852-b6dc-426f-a478-251fd3e294de",
+          "email": "debug.018b6decd307ecba@example.com",
+          "firstName": "User",
+          "lastName": ""
         }
       },
       "headers": {
@@ -62,22 +62,31 @@
         "access-control-allow-methods": "GET, POST, PUT, DELETE, OPTIONS",
         "access-control-allow-origin": "*",
         "cache-control": "public, max-age=0, must-revalidate",
-        "content-length": "164",
+        "content-length": "159",
         "content-type": "application/json; charset=utf-8",
-        "date": "Thu, 04 Sep 2025 13:38:13 GMT",
-        "etag": "W/\"a4-NgdtNd9OPUBX7qAL+NGFJEUqzzU\"",
+        "date": "Thu, 04 Sep 2025 22:10:53 GMT",
+        "etag": "W/\"9f-7jAcoQNH00YBzZHZvZh6krxTvio\"",
         "server": "Vercel",
         "strict-transport-security": "max-age=63072000",
         "x-vercel-cache": "BYPASS",
-        "x-vercel-id": "pdx1::iad1::v27bm-1756993093336-b7f0052462ec"
+        "x-vercel-id": "pdx1::iad1::lmr6g-1757023853120-e0c1b6094541"
       }
     },
     "userStatus": {
-      "success": false,
-      "status": 500,
+      "success": true,
+      "status": 200,
       "data": {
-        "error": "Failed to load user status",
-        "message": "Something went wrong while loading user information"
+        "id": "c0522852-b6dc-426f-a478-251fd3e294de",
+        "email": "debug.018b6decd307ecba@example.com",
+        "firstName": "User",
+        "lastName": "",
+        "companyName": null,
+        "createdAt": "2025-09-04T22:10:53.353Z",
+        "lastLogin": null,
+        "emailVerified": false,
+        "connected_services": [],
+        "oauth_connections": [],
+        "has_google_connection": false
       },
       "headers": {
         "access-control-allow-credentials": "true",
@@ -85,23 +94,56 @@
         "access-control-allow-methods": "GET, POST, PUT, DELETE, OPTIONS",
         "access-control-allow-origin": "*",
         "cache-control": "public, max-age=0, must-revalidate",
-        "content-length": "102",
+        "content-length": "297",
         "content-type": "application/json; charset=utf-8",
-        "date": "Thu, 04 Sep 2025 13:38:13 GMT",
-        "etag": "W/\"66-gJ4LBJPxYr8jh9EWxyrOCOML1w8\"",
+        "date": "Thu, 04 Sep 2025 22:10:53 GMT",
+        "etag": "W/\"129-vovxlnyxLUUYNcW5lV0o65SwuvA\"",
         "server": "Vercel",
         "strict-transport-security": "max-age=63072000",
         "x-vercel-cache": "BYPASS",
-        "x-vercel-id": "pdx1::iad1::brx64-1756993093576-92a47d0587a5"
-      },
-      "error": "Request failed with status code 500"
+        "x-vercel-id": "pdx1::iad1::lmr6g-1757023853248-af512288507f"
+      }
     },
     "dashboard": {
-      "success": false,
-      "status": 404,
+      "success": true,
+      "status": 200,
       "data": {
-        "error": "User not found",
-        "message": "User account not found"
+        "user": {
+          "id": "c0522852-b6dc-426f-a478-251fd3e294de",
+          "email": "debug.018b6decd307ecba@example.com",
+          "firstName": "User",
+          "lastName": "",
+          "companyName": null,
+          "createdAt": "2025-09-04T22:10:53.587Z",
+          "lastLogin": null
+        },
+        "stats": {
+          "emailsProcessed": 0,
+          "workflowsActive": 0,
+          "totalAutomations": 0,
+          "lastActivity": null
+        },
+        "connections": {
+          "google": {
+            "connected": false
+          }
+        },
+        "recentActivities": [],
+        "quickActions": [
+          {
+            "id": "connect_google",
+            "title": "Connect Google Account",
+            "description": "Connect your Google account to start automating emails",
+            "action": "/api/oauth/google",
+            "enabled": true,
+            "priority": 1
+          }
+        ],
+        "systemStatus": {
+          "apiHealthy": true,
+          "databaseConnected": true,
+          "lastUpdated": "2025-09-04T22:10:53.587Z"
+        }
       },
       "headers": {
         "access-control-allow-credentials": "true",
@@ -109,16 +151,15 @@
         "access-control-allow-methods": "GET, POST, PUT, DELETE, OPTIONS",
         "access-control-allow-origin": "*",
         "cache-control": "public, max-age=0, must-revalidate",
-        "content-length": "61",
+        "content-length": "668",
         "content-type": "application/json; charset=utf-8",
-        "date": "Thu, 04 Sep 2025 13:38:14 GMT",
-        "etag": "W/\"3d-ydTIHVce7m9rMM5RIpwuWpFrVcE\"",
+        "date": "Thu, 04 Sep 2025 22:10:53 GMT",
+        "etag": "W/\"29c-uPQ/JmV1sF7uUF2khAQmfls81ME\"",
         "server": "Vercel",
         "strict-transport-security": "max-age=63072000",
         "x-vercel-cache": "BYPASS",
-        "x-vercel-id": "pdx1::iad1::brx64-1756993093851-c6d79a3aeda6"
-      },
-      "error": "Request failed with status code 404"
+        "x-vercel-id": "pdx1::iad1::lmr6g-1757023853428-7be3bde1b969"
+      }
     }
   }
 }

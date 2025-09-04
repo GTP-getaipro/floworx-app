@@ -1,0 +1,252 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Debug Token Issue - Floworx</title>
+    <style>
+        body { font-family: Arial, sans-serif; margin: 20px; background: #f5f5f5; }
+        .container { max-width: 800px; margin: 0 auto; background: white; padding: 20px; border-radius: 8px; }
+        .result { margin: 10px 0; padding: 10px; border-radius: 4px; }
+        .success { background: #d4edda; color: #155724; border: 1px solid #c3e6cb; }
+        .error { background: #f8d7da; color: #721c24; border: 1px solid #f5c6cb; }
+        .info { background: #d1ecf1; color: #0c5460; border: 1px solid #bee5eb; }
+        .warning { background: #fff3cd; color: #856404; border: 1px solid #ffeaa7; }
+        button { background: #007bff; color: white; border: none; padding: 10px 20px; border-radius: 4px; cursor: pointer; margin: 5px; }
+        button:hover { background: #0056b3; }
+        pre { background: #f8f9fa; padding: 10px; border-radius: 4px; overflow-x: auto; }
+        .token-display { word-break: break-all; font-family: monospace; font-size: 12px; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🔍 Debug Token Issue - Floworx Dashboard</h1>
+        <p>This page will help us debug why "Failed to load user status" is appearing.</p>
+        
+        <div id="results"></div>
+        
+        <div style="margin-top: 20px;">
+            <button onclick="runFullDiagnostic()">🔍 Run Full Diagnostic</button>
+            <button onclick="testLogin()">🔑 Test Login</button>
+            <button onclick="clearStorage()">🗑️ Clear Storage</button>
+            <button onclick="testUserStatus()">👤 Test User Status</button>
+        </div>
+    </div>
+
+    <script>
+        const API_BASE = 'https://app.floworx-iq.com/api';
+        
+        function addResult(type, title, message) {
+            const results = document.getElementById('results');
+            const div = document.createElement('div');
+            div.className = `result ${type}`;
+            div.innerHTML = `<strong>${title}</strong><br>${message}`;
+            results.appendChild(div);
+        }
+        
+        function clearResults() {
+            document.getElementById('results').innerHTML = '';
+        }
+        
+        async function runFullDiagnostic() {
+            clearResults();
+            addResult('info', '🚀 Starting Full Diagnostic', 'Checking all aspects of the authentication system...');
+            
+            // Step 1: Check localStorage
+            const floworxToken = localStorage.getItem('floworx_token');
+            const oldToken = localStorage.getItem('token');
+            
+            if (floworxToken) {
+                addResult('success', '✅ FloworX Token Found', `Token: ${floworxToken.substring(0, 50)}...<br>Length: ${floworxToken.length} characters`);
+            } else {
+                addResult('error', '❌ No FloworX Token', 'floworx_token not found in localStorage');
+            }
+            
+            if (oldToken) {
+                addResult('warning', '⚠️ Old Token Found', `Found old "token" key: ${oldToken.substring(0, 30)}...<br>This might cause conflicts!`);
+            }
+            
+            // Step 2: Test token validity
+            if (floworxToken) {
+                await testTokenValidity(floworxToken);
+            }
+            
+            // Step 3: Test API endpoints
+            await testApiEndpoints(floworxToken);
+            
+            // Step 4: Check browser environment
+            checkBrowserEnvironment();
+        }
+        
+        async function testTokenValidity(token) {
+            addResult('info', '🔍 Testing Token Validity', 'Checking if the token is properly formatted...');
+            
+            try {
+                // Decode JWT without verification (just to check format)
+                const parts = token.split('.');
+                if (parts.length !== 3) {
+                    addResult('error', '❌ Invalid Token Format', 'JWT should have 3 parts separated by dots');
+                    return;
+                }
+                
+                const payload = JSON.parse(atob(parts[1]));
+                const now = Math.floor(Date.now() / 1000);
+                
+                addResult('success', '✅ Token Format Valid', `
+                    User ID: ${payload.userId}<br>
+                    Issued: ${new Date(payload.iat * 1000).toLocaleString()}<br>
+                    Expires: ${new Date(payload.exp * 1000).toLocaleString()}<br>
+                    ${payload.exp < now ? '⚠️ TOKEN EXPIRED!' : '✅ Token not expired'}
+                `);
+                
+                if (payload.exp < now) {
+                    addResult('error', '❌ Token Expired', 'The token has expired. User needs to log in again.');
+                }
+                
+            } catch (e) {
+                addResult('error', '❌ Token Decode Failed', `Cannot decode token: ${e.message}`);
+            }
+        }
+        
+        async function testApiEndpoints(token) {
+            addResult('info', '🌐 Testing API Endpoints', 'Testing various API endpoints...');
+            
+            // Test health endpoint
+            try {
+                const healthResponse = await fetch(`${API_BASE}/health`);
+                const healthData = await healthResponse.json();
+                addResult('success', '✅ Health Endpoint', `API is responding: ${healthData.status}`);
+            } catch (e) {
+                addResult('error', '❌ Health Endpoint Failed', `Cannot reach API: ${e.message}`);
+                return;
+            }
+            
+            // Test user status endpoint
+            if (token) {
+                try {
+                    const statusResponse = await fetch(`${API_BASE}/user/status`, {
+                        headers: {
+                            'Authorization': `Bearer ${token}`,
+                            'Content-Type': 'application/json'
+                        }
+                    });
+                    
+                    const statusData = await statusResponse.json();
+                    
+                    if (statusResponse.ok) {
+                        addResult('success', '✅ User Status Endpoint', `
+                            Status: ${statusResponse.status}<br>
+                            User: ${statusData.email}<br>
+                            ID: ${statusData.id}
+                        `);
+                    } else {
+                        addResult('error', '❌ User Status Failed', `
+                            Status: ${statusResponse.status}<br>
+                            Error: ${statusData.error}<br>
+                            Message: ${statusData.message}
+                        `);
+                    }
+                } catch (e) {
+                    addResult('error', '❌ User Status Request Failed', `Network error: ${e.message}`);
+                }
+            }
+        }
+        
+        function checkBrowserEnvironment() {
+            addResult('info', '🌍 Browser Environment', `
+                URL: ${window.location.href}<br>
+                User Agent: ${navigator.userAgent}<br>
+                Cookies Enabled: ${navigator.cookieEnabled}<br>
+                Local Storage Available: ${typeof(Storage) !== "undefined"}
+            `);
+        }
+        
+        async function testLogin() {
+            clearResults();
+            addResult('info', '🔑 Testing Login', 'Attempting to log in with test credentials...');
+            
+            const email = 'dizell2007@gmail.com';
+            const password = prompt('Enter password for dizell2007@gmail.com:');
+            
+            if (!password) {
+                addResult('warning', '⚠️ Login Cancelled', 'Password not provided');
+                return;
+            }
+            
+            try {
+                const response = await fetch(`${API_BASE}/auth/login`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({ email, password })
+                });
+                
+                const data = await response.json();
+                
+                if (response.ok) {
+                    addResult('success', '✅ Login Successful', `Token received and stored!`);
+                    localStorage.setItem('floworx_token', data.token);
+                    
+                    // Test user status immediately
+                    setTimeout(() => testUserStatus(), 1000);
+                } else {
+                    addResult('error', '❌ Login Failed', `${data.error}: ${data.message}`);
+                }
+            } catch (e) {
+                addResult('error', '❌ Login Request Failed', `Network error: ${e.message}`);
+            }
+        }
+        
+        async function testUserStatus() {
+            const token = localStorage.getItem('floworx_token');
+            if (!token) {
+                addResult('error', '❌ No Token', 'No token found. Please log in first.');
+                return;
+            }
+            
+            addResult('info', '👤 Testing User Status', 'Calling /api/user/status...');
+            
+            try {
+                const response = await fetch(`${API_BASE}/user/status`, {
+                    headers: {
+                        'Authorization': `Bearer ${token}`,
+                        'Content-Type': 'application/json'
+                    }
+                });
+                
+                const data = await response.json();
+                
+                if (response.ok) {
+                    addResult('success', '✅ User Status Success', `
+                        Email: ${data.email}<br>
+                        Name: ${data.firstName} ${data.lastName}<br>
+                        Company: ${data.companyName}<br>
+                        Google Connected: ${data.has_google_connection}
+                    `);
+                } else {
+                    addResult('error', '❌ User Status Failed', `
+                        Status: ${response.status}<br>
+                        Error: ${data.error}<br>
+                        Message: ${data.message}
+                    `);
+                }
+            } catch (e) {
+                addResult('error', '❌ User Status Request Failed', `Network error: ${e.message}`);
+            }
+        }
+        
+        function clearStorage() {
+            localStorage.removeItem('floworx_token');
+            localStorage.removeItem('token');
+            sessionStorage.clear();
+            addResult('success', '✅ Storage Cleared', 'All tokens and session data cleared');
+        }
+        
+        // Auto-run diagnostic on page load
+        window.onload = () => {
+            setTimeout(runFullDiagnostic, 500);
+        };
+    </script>
+</body>
+</html>

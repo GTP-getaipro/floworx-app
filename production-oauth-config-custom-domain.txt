@@ -1,0 +1,26 @@
+# PRODUCTION OAUTH CONFIGURATION - CUSTOM DOMAIN
+# Use these settings for your Google Cloud Console OAuth configuration
+
+## PRIMARY PRODUCTION DOMAIN (USE THIS)
+https://app.floworx-iq.com/api/oauth/google/callback
+
+## BACKUP/FALLBACK DOMAINS (Keep these for redundancy)
+https://floworx-k7mqfh12i-floworxdevelopers-projects.vercel.app/api/oauth/google/callback
+
+## DEVELOPMENT DOMAINS (Keep for local development)
+http://localhost:3000/api/oauth/google/callback
+http://localhost:5001/api/oauth/google/callback
+
+## GOOGLE CLOUD CONSOLE INSTRUCTIONS:
+## 1. Go to: https://console.cloud.google.com/auth/clients/636568831348-komtul497r7lg9eacu09n1ghtso6revc.apps.googleusercontent.com?project=floworx-iq
+## 2. Scroll to "Authorized redirect URIs"
+## 3. Click "ADD URI" and add the PRIMARY domain above
+## 4. Keep existing localhost URIs for development
+## 5. Optionally add the backup Vercel URL for redundancy
+## 6. Click "SAVE"
+
+## ENVIRONMENT VARIABLE UPDATE:
+## Update your Vercel environment variables to use:
+## GOOGLE_REDIRECT_URI=https://app.floworx-iq.com/api/oauth/google/callback
+## FRONTEND_URL=https://app.floworx-iq.com
+## REACT_APP_API_URL=https://app.floworx-iq.com/api

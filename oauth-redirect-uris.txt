@@ -1,0 +1,19 @@
+# Google OAuth Redirect URIs Configuration
+# Add ALL of these to your Google Cloud Console OAuth client
+
+## Development URIs (keep these for local development)
+http://localhost:3000/api/oauth/google/callback
+http://localhost:5001/api/oauth/google/callback
+
+## Production URI (ADD THIS NEW ONE)
+https://floworx-k7mqfh12i-floworxdevelopers-projects.vercel.app/api/oauth/google/callback
+
+## Future Custom Domain URI (add when you set up custom domain)
+https://app.floworx-iq.com/api/oauth/google/callback
+
+# Instructions:
+# 1. In Google Cloud Console, go to the OAuth client page you have open
+# 2. Scroll to "Authorized redirect URIs"
+# 3. Click "ADD URI" for each production URI above
+# 4. Keep existing localhost URIs for development
+# 5. Click "SAVE"

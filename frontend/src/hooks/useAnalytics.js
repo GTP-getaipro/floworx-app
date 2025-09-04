@@ -18,7 +18,7 @@ const useAnalytics = () => {
   };
 
   const getRequestConfig = () => {
-    const token = localStorage.getItem('token');
+    const token = localStorage.getItem('floworx_token');
     return {
       headers: {
         Authorization: `Bearer ${token}`,

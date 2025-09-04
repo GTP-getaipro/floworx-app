@@ -10,7 +10,7 @@ import ValidatedInput from './ui/ValidatedInput';
 import ProtectedButton from './ui/ProtectedButton';
 import ProgressIndicator from './ui/ProgressIndicator';
 
-import { Alert, Card, Link } from './ui';
+import { Alert, Card, Link, Logo } from './ui';
 
 const validationRules = {
   email: [commonValidationRules.required, commonValidationRules.email],
@@ -293,6 +293,13 @@ const RegisterForm = () => {
   return (
     <div className='max-w-md w-full space-y-8'>
       <div className='text-center'>
+        <div className='flex justify-center mb-4'>
+          <Logo
+            variant='transparent-with-text'
+            size='medium'
+            alt='FloWorx - Email AI for Hot Tub Professionals'
+          />
+        </div>
         <h2 className='text-3xl font-bold text-ink'>Create Your Floworx Account</h2>
         <p className='mt-2 text-ink-sub'>Start automating your workflow today</p>
       </div>

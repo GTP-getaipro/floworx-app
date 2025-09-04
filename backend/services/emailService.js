@@ -311,6 +311,7 @@ class EmailService {
    * Get verification email template
    */
   getVerificationEmailTemplate(firstName, verificationUrl) {
+    const logoUrl = `${process.env.FRONTEND_URL || 'https://app.floworx-iq.com'}/logo192.png`;
     return `
     <!DOCTYPE html>
     <html>
@@ -322,6 +323,7 @@ class EmailService {
             body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; line-height: 1.6; color: #333; margin: 0; padding: 0; background-color: #f4f4f4; }
             .container { max-width: 600px; margin: 0 auto; background: white; padding: 0; border-radius: 10px; box-shadow: 0 0 20px rgba(0,0,0,0.1); }
             .header { background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white; padding: 40px 30px; text-align: center; border-radius: 10px 10px 0 0; }
+            .logo { max-width: 120px; height: auto; margin-bottom: 20px; }
             .content { padding: 40px 30px; }
             .button { display: inline-block; background: linear-gradient(135deg, #4CAF50, #45a049); color: white; padding: 15px 30px; text-decoration: none; border-radius: 8px; font-weight: bold; margin: 20px 0; }
             .footer { background: #f8f9fa; padding: 20px 30px; text-align: center; color: #666; border-radius: 0 0 10px 10px; }
@@ -330,6 +332,7 @@ class EmailService {
     <body>
         <div class="container">
             <div class="header">
+                <img src="${logoUrl}" alt="FloWorx Logo" class="logo" />
                 <h1>🚀 Welcome to Floworx!</h1>
                 <p>Your Intelligent Email Automation Platform</p>
             </div>
@@ -370,6 +373,7 @@ class EmailService {
    * Get welcome email template
    */
   getWelcomeEmailTemplate(firstName, dashboardUrl) {
+    const logoUrl = `${process.env.FRONTEND_URL || 'https://app.floworx-iq.com'}/logo192.png`;
     return `
     <!DOCTYPE html>
     <html>
@@ -381,6 +385,7 @@ class EmailService {
             body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; line-height: 1.6; color: #333; margin: 0; padding: 0; background-color: #f4f4f4; }
             .container { max-width: 600px; margin: 0 auto; background: white; padding: 0; border-radius: 10px; box-shadow: 0 0 20px rgba(0,0,0,0.1); }
             .header { background: linear-gradient(135deg, #4CAF50, #45a049); color: white; padding: 40px 30px; text-align: center; border-radius: 10px 10px 0 0; }
+            .logo { max-width: 120px; height: auto; margin-bottom: 20px; }
             .content { padding: 40px 30px; }
             .button { display: inline-block; background: linear-gradient(135deg, #667eea, #764ba2); color: white; padding: 15px 30px; text-decoration: none; border-radius: 8px; font-weight: bold; margin: 20px 0; }
             .step { background: #f8f9fa; padding: 20px; margin: 15px 0; border-radius: 8px; border-left: 4px solid #4CAF50; }
@@ -390,6 +395,7 @@ class EmailService {
     <body>
         <div class="container">
             <div class="header">
+                <img src="${logoUrl}" alt="FloWorx Logo" class="logo" />
                 <h1>🎉 Email Verified Successfully!</h1>
                 <p>You're ready to start automating your emails</p>
             </div>

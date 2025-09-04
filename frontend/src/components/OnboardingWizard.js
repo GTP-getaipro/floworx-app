@@ -114,9 +114,40 @@ const OnboardingWizard = ({ onComplete }) => {
         console.warn('Could not fetch recovery info:', recoveryError);
       }
 
-      const response = await axios.get(`${process.env.REACT_APP_API_URL}/onboarding/status`, {
-        headers: { Authorization: `Bearer ${token}` },
-      });
+      let response;
+      try {
+        response = await axios.get(`${process.env.REACT_APP_API_URL}/onboarding/status`, {
+          headers: { Authorization: `Bearer ${token}` },
+        });
+      } catch (onboardingError) {
+        console.warn('Onboarding status endpoint not available, using user status fallback');
+
+        // Fallback: Get user status instead
+        const userResponse = await axios.get(`${process.env.REACT_APP_API_URL}/user/status`, {
+          headers: { Authorization: `Bearer ${token}` },
+        });
+
+        // Create onboarding-like response from user status
+        response = {
+          data: {
+            success: true,
+            user: {
+              id: userResponse.data.id,
+              email: userResponse.data.email,
+              firstName: userResponse.data.firstName,
+              companyName: userResponse.data.companyName,
+              emailVerified: userResponse.data.emailVerified,
+              onboardingCompleted: userResponse.data.onboardingCompleted || false
+            },
+            googleConnected: userResponse.data.has_google_connection || false,
+            completedSteps: [],
+            stepData: {},
+            nextStep: userResponse.data.has_google_connection ? 'business-type' : 'google-connection',
+            businessConfig: null,
+            onboardingCompleted: userResponse.data.onboardingCompleted || false
+          }
+        };
+      }
 
       const { user, googleConnected, completedSteps, stepData, nextStep } = response.data;
 

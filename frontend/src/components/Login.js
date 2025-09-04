@@ -9,6 +9,7 @@ import Button from './ui/Button';
 import Alert from './ui/Alert';
 import Card from './ui/Card';
 import UILink from './ui/Link';
+import Logo from './ui/Logo';
 
 const Login = () => {
   const { login, isAuthenticated } = useAuth();
@@ -70,6 +71,13 @@ const Login = () => {
     <div className='w-full max-w-lg mx-auto py-6 px-4 sm:px-6 lg:px-8'>
       <div className='w-full space-y-6'>
         <div className='text-center'>
+          <div className='flex justify-center mb-4'>
+            <Logo
+              variant='transparent-with-text'
+              size='medium'
+              alt='FloWorx - Email AI for Hot Tub Professionals'
+            />
+          </div>
           <h2 className='text-3xl font-bold text-ink'>Sign In to Floworx</h2>
           <p className='mt-2 text-base text-ink-sub'>Access your automation dashboard</p>
         </div>

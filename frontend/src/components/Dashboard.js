@@ -43,7 +43,9 @@ const Dashboard = () => {
   useEffect(() => {
     const fetchUserStatus = async () => {
       try {
-        const token = localStorage.getItem('token');
+        const token = localStorage.getItem('floworx_token');
+        console.log('Dashboard: Token found:', token ? 'Yes' : 'No');
+        console.log('Dashboard: API URL:', process.env.REACT_APP_API_URL);
         const headers = { Authorization: `Bearer ${token}` };
 
         // Fetch user status
@@ -52,16 +54,46 @@ const Dashboard = () => {
         });
         setUserStatus(userResponse.data);
 
-        // Fetch onboarding status
-        const onboardingResponse = await axios.get(
-          `${process.env.REACT_APP_API_URL}/onboarding/status`,
-          { headers }
-        );
-        setOnboardingStatus(onboardingResponse.data);
+        // Fetch onboarding status (with fallback)
+        try {
+          const onboardingResponse = await axios.get(
+            `${process.env.REACT_APP_API_URL}/onboarding/status`,
+            { headers }
+          );
+          setOnboardingStatus(onboardingResponse.data);
 
-        // Show onboarding if not completed
-        if (!onboardingResponse.data.user.onboardingCompleted) {
-          setShowOnboarding(true);
+          // Show onboarding if not completed
+          if (!onboardingResponse.data.user.onboardingCompleted) {
+            setShowOnboarding(true);
+          }
+        } catch (onboardingError) {
+          console.warn('Onboarding status endpoint not available, using user status data');
+
+          // Fallback: Create onboarding status from user status
+          const fallbackOnboardingStatus = {
+            success: true,
+            user: {
+              id: userResponse.data.id,
+              email: userResponse.data.email,
+              firstName: userResponse.data.firstName,
+              companyName: userResponse.data.companyName,
+              emailVerified: userResponse.data.emailVerified,
+              onboardingCompleted: userResponse.data.onboardingCompleted || false
+            },
+            googleConnected: userResponse.data.has_google_connection || false,
+            completedSteps: [],
+            stepData: {},
+            nextStep: userResponse.data.has_google_connection ? 'business-type' : 'google-connection',
+            businessConfig: null,
+            onboardingCompleted: userResponse.data.onboardingCompleted || false
+          };
+
+          setOnboardingStatus(fallbackOnboardingStatus);
+
+          // Show onboarding if not completed
+          if (!fallbackOnboardingStatus.user.onboardingCompleted) {
+            setShowOnboarding(true);
+          }
         }
       } catch (error) {
         console.error('Error fetching status:', error);

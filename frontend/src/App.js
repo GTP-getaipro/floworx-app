@@ -14,6 +14,7 @@ import Register from './components/Register';
 import ResetPassword from './components/ResetPassword';
 import UserManagement from './components/UserManagement';
 import Settings from './components/Settings';
+import { Logo } from './components/ui';
 import { AuthProvider } from './contexts/AuthContext';
 import { ErrorProvider } from './contexts/ErrorContext';
 import { ToastProvider } from './contexts/ToastContext';
@@ -29,8 +30,17 @@ function App() {
             <>
               <div className='App'>
                 <header className='App-header'>
-                  <h1>FloWorx</h1>
-                  <p>Email AI Built by Hot Tub Pros—For Hot Tub Pros</p>
+                  <div className='flex items-center justify-center space-x-4'>
+                    <Logo
+                      variant='white-on-blue'
+                      size='small'
+                      alt='FloWorx - Email AI for Hot Tub Professionals'
+                    />
+                    <div className='text-center'>
+                      <h1 className='text-3xl font-bold'>FloWorx</h1>
+                      <p className='text-lg opacity-90'>Email AI Built by Hot Tub Pros—For Hot Tub Pros</p>
+                    </div>
+                  </div>
                 </header>
 
                 <main className='App-main'>

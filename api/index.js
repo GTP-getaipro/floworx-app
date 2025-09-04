@@ -512,7 +512,119 @@ const routes = {
     }
   },
 
+  // Onboarding endpoints
+  'GET /onboarding/status': async (req, res) => {
+    try {
+      console.log('Onboarding status endpoint called');
+      const user = await authenticate(req);
+      console.log('User authenticated:', user.id);
 
+      const supabase = getSupabaseAdmin();
+
+      // Get user's basic info
+      const { data: userData, error: userError } = await supabase
+        .from('users')
+        .select('email, email_verified, onboarding_completed, first_name, company_name')
+        .eq('id', user.id)
+        .single();
+
+      if (userError) {
+        throw userError;
+      }
+
+      // Check if Google is connected
+      const { data: credentials, error: credError } = await supabase
+        .from('credentials')
+        .select('id, service_name, created_at')
+        .eq('user_id', user.id)
+        .eq('service_name', 'google');
+
+      const googleConnected = credentials && credentials.length > 0;
+
+      // Get onboarding progress (if table exists)
+      let onboardingProgress = null;
+      try {
+        const { data: progress, error: progressError } = await supabase
+          .from('onboarding_progress')
+          .select('current_step, completed_steps, step_data, google_connected, completed')
+          .eq('user_id', user.id)
+          .single();
+
+        if (!progressError) {
+          onboardingProgress = progress;
+        }
+      } catch (e) {
+        // Table might not exist, that's okay
+        console.log('Onboarding progress table not found, using defaults');
+      }
+
+      // Get business config (if table exists)
+      let businessConfig = null;
+      try {
+        const { data: config, error: configError } = await supabase
+          .from('business_configs')
+          .select('config, version, created_at, updated_at')
+          .eq('user_id', user.id)
+          .eq('is_active', true)
+          .single();
+
+        if (!configError) {
+          businessConfig = config;
+        }
+      } catch (e) {
+        // Table might not exist, that's okay
+        console.log('Business configs table not found, using defaults');
+      }
+
+      // Determine next step based on progress
+      let nextStep = 'welcome';
+      const completedSteps = onboardingProgress ? onboardingProgress.completed_steps : [];
+
+      if (!googleConnected) {
+        nextStep = 'google-connection';
+      } else if (!userData.company_name && !completedSteps.includes('business-type')) {
+        nextStep = 'business-type';
+      } else if (!businessConfig && !completedSteps.includes('business-categories')) {
+        nextStep = 'business-categories';
+      } else if (!onboardingProgress || !onboardingProgress.completed) {
+        nextStep = 'workflow-deployment';
+      } else {
+        nextStep = 'completed';
+      }
+
+      res.status(200).json({
+        success: true,
+        user: {
+          id: user.id,
+          email: userData.email,
+          firstName: userData.first_name,
+          companyName: userData.company_name,
+          emailVerified: userData.email_verified || false,
+          onboardingCompleted: userData.onboarding_completed || false
+        },
+        googleConnected,
+        completedSteps: completedSteps || [],
+        stepData: onboardingProgress ? onboardingProgress.step_data : {},
+        nextStep,
+        businessConfig: businessConfig ? businessConfig.config : null,
+        onboardingCompleted: onboardingProgress ? onboardingProgress.completed : false
+      });
+
+    } catch (error) {
+      console.error('Onboarding status error:', error);
+      if (error.message === 'No token provided' || error.message === 'Invalid token' || error.message === 'Token expired') {
+        return res.status(401).json({
+          error: 'Authentication required',
+          message: 'Please log in to access this resource'
+        });
+      }
+      res.status(500).json({
+        success: false,
+        error: 'Failed to load onboarding status',
+        message: 'Something went wrong while loading onboarding information'
+      });
+    }
+  },
 
   'PUT /user/profile': async (req, res) => {
     try {

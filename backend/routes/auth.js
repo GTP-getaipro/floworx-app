@@ -234,7 +234,7 @@ router.get('/verify', authenticateToken, (req, res) => {
   });
 });
 
-// GET /api/user/status
+// GET /api/auth/user/status
 // Get user's connection status for dashboard
 router.get('/user/status', authenticateToken, async (req, res) => {
   try {
@@ -694,6 +694,45 @@ router.get('/password-requirements', (req, res) => {
     description:
       'Password must be at least 8 characters long and contain uppercase letters, lowercase letters, and numbers.'
   });
+});
+
+// GET /api/auth/test-status
+// Test endpoint to verify deployment and user status
+router.get('/test-status', authenticateToken, async (req, res) => {
+  try {
+    console.log(`Test status request from user: ${req.user.id}`);
+
+    // Get basic user info
+    const userQuery = 'SELECT id, email, first_name, last_name, company_name FROM users WHERE id = $1';
+    const userResult = await query(userQuery, [req.user.id]);
+
+    if (userResult.rows.length === 0) {
+      return res.status(404).json({
+        error: 'User not found'
+      });
+    }
+
+    const user = userResult.rows[0];
+
+    res.status(200).json({
+      message: 'Test status endpoint working',
+      user: {
+        id: user.id,
+        email: user.email,
+        firstName: user.first_name,
+        lastName: user.last_name,
+        companyName: user.company_name
+      },
+      timestamp: new Date().toISOString(),
+      deployment: 'latest'
+    });
+  } catch (error) {
+    console.error('Test status error:', error);
+    res.status(500).json({
+      error: 'Test status failed',
+      message: error.message
+    });
+  }
 });
 
 // GET /api/auth/welcome

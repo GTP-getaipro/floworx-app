@@ -512,63 +512,7 @@ const routes = {
     }
   },
 
-  'GET /user/profile': async (req, res) => {
-    try {
-      const user = await authenticate(req);
 
-      const supabase = getSupabaseAdmin();
-      const { data: userProfile, error: userError } = await supabase
-        .from('users')
-        .select(`
-          id,
-          email,
-          first_name,
-          last_name,
-          company_name,
-          created_at,
-          last_login,
-          email_verified,
-          profile_picture_url,
-          timezone,
-          notification_preferences
-        `)
-        .eq('id', user.id)
-        .single();
-
-      if (userError || !userProfile) {
-        return res.status(404).json({
-          error: 'User not found',
-          message: 'User profile not found'
-        });
-      }
-
-      res.status(200).json({
-        id: userProfile.id,
-        email: userProfile.email,
-        firstName: userProfile.first_name,
-        lastName: userProfile.last_name,
-        companyName: userProfile.company_name,
-        createdAt: userProfile.created_at,
-        lastLogin: userProfile.last_login,
-        emailVerified: userProfile.email_verified || false,
-        profilePictureUrl: userProfile.profile_picture_url,
-        timezone: userProfile.timezone,
-        notificationPreferences: userProfile.notification_preferences || {}
-      });
-    } catch (error) {
-      console.error('Get profile error:', error);
-      if (error.message === 'No token provided' || error.message === 'Invalid token') {
-        return res.status(401).json({
-          error: 'Authentication required',
-          message: 'Please log in to access this resource'
-        });
-      }
-      res.status(500).json({
-        error: 'Failed to load profile',
-        message: 'Something went wrong while loading your profile'
-      });
-    }
-  },
 
   'PUT /user/profile': async (req, res) => {
     try {

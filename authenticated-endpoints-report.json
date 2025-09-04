@@ -1,7 +1,7 @@
 {
-  "timestamp": "2025-09-04T14:22:56.636Z",
+  "timestamp": "2025-09-04T14:25:41.856Z",
   "testUser": {
-    "email": "test.2cf5f5256a4596aa@example.com"
+    "email": "test.211b2d124537aa8f@example.com"
   },
   "userStatusWorking": true,
   "dashboardWorking": true,
@@ -38,20 +38,20 @@
     },
     {
       "endpoint": "GET /api/workflows",
-      "status": 404,
-      "success": false,
+      "status": 200,
+      "success": true,
       "requiresAuth": true
     },
     {
       "endpoint": "GET /api/analytics",
-      "status": 404,
-      "success": false,
+      "status": 200,
+      "success": true,
       "requiresAuth": true
     }
   ],
   "summary": {
-    "workingEndpoints": 4,
+    "workingEndpoints": 6,
     "totalEndpoints": 7,
-    "successRate": 57
+    "successRate": 86
   }
 }

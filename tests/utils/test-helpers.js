@@ -66,12 +66,39 @@ class TestHelpers {
   }
 
   // Authentication helpers
+  async createTestUser(userData = {}) {
+    const defaultUser = {
+      firstName: 'Test',
+      lastName: 'User',
+      companyName: 'Test Company',
+      email: `test.${Date.now()}@example.com`,
+      password: 'TestPassword123!'
+    };
+
+    const user = { ...defaultUser, ...userData };
+
+    // Register the user
+    await this.page.goto('/register');
+    await this.page.fill('input[name="firstName"]', user.firstName);
+    await this.page.fill('input[name="lastName"]', user.lastName);
+    await this.page.fill('input[name="companyName"]', user.companyName);
+    await this.page.fill('input[name="email"]', user.email);
+    await this.page.fill('input[name="password"]', user.password);
+    await this.page.fill('input[name="confirmPassword"]', user.password);
+    await this.page.click('button[type="submit"]');
+
+    // Wait for registration to complete
+    await this.page.waitForTimeout(3000);
+
+    return user;
+  }
+
   async loginUser(email = 'test.user@example.com', password = 'TestPassword123!') {
     await this.page.goto('/login');
     await this.page.fill('input[name="email"], input[type="email"]', email);
     await this.page.fill('input[name="password"], input[type="password"]', password);
     await this.page.click('button[type="submit"], button:has-text("Sign In"), button:has-text("Login")');
-    
+
     // Wait for successful login
     await this.page.waitForURL('/dashboard', { timeout: 10000 });
     await expect(this.page.locator('[data-testid="user-menu"]')).toBeVisible();

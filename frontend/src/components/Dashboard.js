@@ -118,11 +118,11 @@ const Dashboard = () => {
 
   if (loading) {
     return (
-      <div className='min-h-screen bg-surface-soft flex items-center justify-center'>
+      <div className='min-h-screen bg-surface-soft flex items-center justify-center' data-testid="dashboard-loading">
         <Card className='text-center py-12'>
           <div className='flex flex-col items-center space-y-4'>
-            <div className='animate-spin rounded-full h-8 w-8 border-b-2 border-brand-primary' />
-            <p className='text-ink-sub'>Loading dashboard...</p>
+            <div className='animate-spin rounded-full h-8 w-8 border-b-2 border-brand-primary' data-testid="loading-spinner" />
+            <p className='text-ink-sub' data-testid="loading-text">Loading dashboard...</p>
           </div>
         </Card>
       </div>
@@ -132,30 +132,30 @@ const Dashboard = () => {
   const hasGoogleConnection = userStatus?.has_google_connection;
 
   return (
-    <div className='min-h-screen bg-surface-soft'>
-      <div className='bg-surface border-b border-surface-border'>
+    <div className='min-h-screen bg-surface-soft' data-testid="dashboard-container">
+      <div className='bg-surface border-b border-surface-border' data-testid="dashboard-header">
         <div className='max-w-6xl mx-auto px-6 py-6'>
           <div className='flex justify-between items-center'>
             <div>
-              <h1 className='text-2xl font-bold text-ink'>Welcome, {user?.email}</h1>
-              <p className='text-ink-sub mt-1'>Manage your email automation connections</p>
+              <h1 className='text-2xl font-bold text-ink' data-testid="welcome-message">Welcome, {user?.email}</h1>
+              <p className='text-ink-sub mt-1' data-testid="dashboard-subtitle">Manage your email automation connections</p>
             </div>
-            <Button onClick={handleLogout} variant='secondary'>
+            <Button onClick={handleLogout} variant='secondary' data-testid="sign-out-button">
               Sign Out
             </Button>
           </div>
         </div>
       </div>
 
-      <div className='max-w-6xl mx-auto px-6 py-8'>
+      <div className='max-w-6xl mx-auto px-6 py-8' data-testid="dashboard-content">
         {message && (
-          <Alert variant='success' className='mb-6'>
+          <Alert variant='success' className='mb-6' data-testid="success-alert">
             {message}
           </Alert>
         )}
 
         {error && (
-          <Alert variant='danger' className='mb-6'>
+          <Alert variant='danger' className='mb-6' data-testid="error-alert">
             {error}
           </Alert>
         )}
@@ -171,10 +171,10 @@ const Dashboard = () => {
               </div>
             </Card.Header>
 
-            <Card.Content>
+            <Card.Content data-testid="connection-card-content">
               {hasGoogleConnection ? (
-                <div className='text-center py-8'>
-                  <div className='w-16 h-16 bg-success/10 rounded-full flex items-center justify-center mx-auto mb-4'>
+                <div className='text-center py-8' data-testid="connected-state">
+                  <div className='w-16 h-16 bg-success/10 rounded-full flex items-center justify-center mx-auto mb-4' data-testid="success-icon">
                     <svg className='w-8 h-8 text-success' fill='currentColor' viewBox='0 0 20 20'>
                       <path
                         fillRule='evenodd'
@@ -183,8 +183,8 @@ const Dashboard = () => {
                       />
                     </svg>
                   </div>
-                  <h3 className='text-lg font-semibold text-ink mb-2'>Connection Successful!</h3>
-                  <p className='text-ink-sub mb-4'>
+                  <h3 className='text-lg font-semibold text-ink mb-2' data-testid="connection-success-title">Connection Successful!</h3>
+                  <p className='text-ink-sub mb-4' data-testid="connection-success-message">
                     Your FloWorx email automations are now active and running.
                   </p>
                   <p className='text-sm text-ink-sub mb-6'>
@@ -198,8 +198,8 @@ const Dashboard = () => {
                   </Button>
                 </div>
               ) : (
-                <div className='text-center py-8'>
-                  <div className='w-16 h-16 bg-brand-primary-50 rounded-full flex items-center justify-center mx-auto mb-4'>
+                <div className='text-center py-8' data-testid="not-connected-state">
+                  <div className='w-16 h-16 bg-brand-primary-50 rounded-full flex items-center justify-center mx-auto mb-4' data-testid="connect-icon">
                     <svg
                       className='w-8 h-8 text-brand-primary'
                       fill='none'
@@ -214,32 +214,32 @@ const Dashboard = () => {
                       />
                     </svg>
                   </div>
-                  <h3 className='text-lg font-semibold text-ink mb-2'>
+                  <h3 className='text-lg font-semibold text-ink mb-2' data-testid="connect-title">
                     Connect Your Google Account
                   </h3>
-                  <p className='text-ink-sub mb-6'>
+                  <p className='text-ink-sub mb-6' data-testid="connect-description">
                     Connect your Google account to start automating your hot tub business emails
                     with FloWorx AI.
                   </p>
-                  <div className='grid grid-cols-2 gap-4 mb-8 text-left'>
-                    <div className='flex items-center space-x-2'>
+                  <div className='grid grid-cols-2 gap-4 mb-8 text-left' data-testid="feature-benefits">
+                    <div className='flex items-center space-x-2' data-testid="feature-email-sorting">
                       <span className='text-brand-primary'>📧</span>
                       <span className='text-sm text-ink'>Automated email sorting</span>
                     </div>
-                    <div className='flex items-center space-x-2'>
+                    <div className='flex items-center space-x-2' data-testid="feature-ai-responses">
                       <span className='text-brand-primary'>🤖</span>
                       <span className='text-sm text-ink'>AI-powered responses</span>
                     </div>
-                    <div className='flex items-center space-x-2'>
+                    <div className='flex items-center space-x-2' data-testid="feature-response-times">
                       <span className='text-brand-primary'>⚡</span>
                       <span className='text-sm text-ink'>Faster response times</span>
                     </div>
-                    <div className='flex items-center space-x-2'>
+                    <div className='flex items-center space-x-2' data-testid="feature-security">
                       <span className='text-brand-primary'>🔒</span>
                       <span className='text-sm text-ink'>Secure connections</span>
                     </div>
                   </div>
-                  <Button onClick={handleConnectGoogle} variant='primary' size='lg'>
+                  <Button onClick={handleConnectGoogle} variant='primary' size='lg' data-testid="connect-google-button">
                     Connect Your Google Account
                   </Button>
                 </div>

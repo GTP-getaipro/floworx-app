@@ -2,11 +2,12 @@
   "version": 2,
   "buildCommand": "npm run build",
   "outputDirectory": "frontend/build",
-  "functions": {
-    "api/*.js": {
-      "runtime": "@vercel/node@3"
+  "builds": [
+    {
+      "src": "api/index.js",
+      "use": "@vercel/node"
     }
-  },
+  ],
   "routes": [
     {
       "src": "/api/(.*)",

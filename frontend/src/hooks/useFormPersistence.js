@@ -33,6 +33,7 @@ const useFormPersistence = (formKey, initialValues = {}, options = {}) => {
         setValues(prev => ({ ...prev, ...filteredData }));
         setHasPersistedData(true);
         console.log('📥 Form data restored from', storage, ':', Object.keys(filteredData));
+        console.log('🔍 hasPersistedData set to true');
       }
     } catch (error) {
       console.warn('Failed to load persisted form data:', error);

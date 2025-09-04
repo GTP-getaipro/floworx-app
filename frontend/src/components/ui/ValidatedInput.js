@@ -93,6 +93,7 @@ const ValidatedInput = ({
       setLocalError(validationError);
     }
 
+    // Always call the form's onBlur handler for form-level validation
     onBlur(e);
   };
 
@@ -103,7 +104,7 @@ const ValidatedInput = ({
     }
   }, [error]);
 
-  // Determine which error to show
+  // Determine which error to show - prioritize form validation error
   const displayError = error || localError;
 
   return (

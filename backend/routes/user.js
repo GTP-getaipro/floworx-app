@@ -8,6 +8,8 @@ const router = express.Router();
 // Get user's connection status for dashboard
 router.get('/status', authenticateToken, async (req, res) => {
   try {
+    console.log('User status endpoint called for user:', req.user?.id);
+
     // Get user's full information
     const userQuery = `
       SELECT id, email, first_name, last_name, company_name, created_at, last_login, email_verified
@@ -15,6 +17,7 @@ router.get('/status', authenticateToken, async (req, res) => {
       WHERE id = $1
     `;
     const userResult = await query(userQuery, [req.user.id]);
+    console.log('User query result:', userResult.rows.length, 'rows');
     
     if (userResult.rows.length === 0) {
       return res.status(404).json({
@@ -78,9 +81,15 @@ router.get('/status', authenticateToken, async (req, res) => {
     });
   } catch (error) {
     console.error('User status error:', error);
+    console.error('Error details:', {
+      message: error.message,
+      stack: error.stack,
+      userId: req.user?.id
+    });
     res.status(500).json({
       error: 'Failed to load user status',
-      message: 'Something went wrong while loading user information'
+      message: 'Something went wrong while loading user information',
+      debug: process.env.NODE_ENV === 'development' ? error.message : undefined
     });
   }
 });

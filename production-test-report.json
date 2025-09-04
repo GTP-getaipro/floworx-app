@@ -1,8 +1,8 @@
 {
-  "timestamp": "2025-09-04T13:37:11.084Z",
+  "timestamp": "2025-09-04T13:57:21.175Z",
   "baseURL": "https://app.floworx-iq.com",
   "testUser": {
-    "email": "test.aaa4355439838231@example.com"
+    "email": "test.2a2d295390e27e1b@example.com"
   },
   "results": {
     "passed": 4,
@@ -17,7 +17,7 @@
         "status": "PASSED",
         "details": {
           "status": "healthy",
-          "timestamp": "2025-09-04T13:37:09.283Z",
+          "timestamp": "2025-09-04T13:57:19.332Z",
           "database": {
             "connected": true,
             "provider": "Supabase"
@@ -29,18 +29,18 @@
       {
         "test": "User Registration",
         "status": "PASSED",
-        "email": "test.aaa4355439838231@example.com",
+        "email": "test.2a2d295390e27e1b@example.com",
         "response": {
           "message": "User registered successfully",
           "user": {
-            "id": "31ecd794-cd70-44da-bfb4-0e8fabd44893",
-            "email": "test.aaa4355439838231@example.com",
+            "id": "132a4bae-da7e-4dd4-820d-ab19a0721049",
+            "email": "test.2a2d295390e27e1b@example.com",
             "firstName": "Test",
             "lastName": "User",
             "companyName": "Test Company",
-            "createdAt": "2025-09-04T13:37:09.99+00:00"
+            "createdAt": "2025-09-04T13:57:20.011+00:00"
           },
-          "token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOiIzMWVjZDc5NC1jZDcwLTQ0ZGEtYmZiNC0wZThmYWJkNDQ4OTMiLCJlbWFpbCI6InRlc3QuYWFhNDM1NTQzOTgzODIzMUBleGFtcGxlLmNvbSIsImlhdCI6MTc1Njk5MzAzMCwiZXhwIjoxNzU3MDc5NDMwfQ.0tp3Vwl00NV37ZCZQcDmrIifw8-Kfd4a8m3dItfKKpA",
+          "token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOiIxMzJhNGJhZS1kYTdlLTRkZDQtODIwZC1hYjE5YTA3MjEwNDkiLCJlbWFpbCI6InRlc3QuMmEyZDI5NTM5MGUyN2UxYkBleGFtcGxlLmNvbSIsImlhdCI6MTc1Njk5NDI0MCwiZXhwIjoxNzU3MDgwNjQwfQ.cBjwK5wptSPHSgUVohaF_9RnEXAVn1x066GhIT3m1IM",
           "expiresIn": "24h"
         }
       },
@@ -54,7 +54,7 @@
         "status": "PASSED",
         "response": {
           "message": "Password reset email sent successfully",
-          "email": "test.aaa4355439838231@example.com"
+          "email": "test.2a2d295390e27e1b@example.com"
         }
       }
     ]

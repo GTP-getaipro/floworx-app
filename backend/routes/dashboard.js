@@ -8,6 +8,8 @@ const router = express.Router();
 // Get user dashboard data
 router.get('/', authenticateToken, async (req, res) => {
   try {
+    console.log('Dashboard endpoint called for user:', req.user?.id);
+
     // Get user's full information
     const userQuery = `
       SELECT id, email, first_name, last_name, company_name, created_at, last_login
@@ -15,6 +17,7 @@ router.get('/', authenticateToken, async (req, res) => {
       WHERE id = $1
     `;
     const userResult = await query(userQuery, [req.user.id]);
+    console.log('Dashboard user query result:', userResult.rows.length, 'rows');
     
     if (userResult.rows.length === 0) {
       return res.status(404).json({
@@ -105,9 +108,15 @@ router.get('/', authenticateToken, async (req, res) => {
     res.status(200).json(dashboardData);
   } catch (error) {
     console.error('Dashboard error:', error);
+    console.error('Error details:', {
+      message: error.message,
+      stack: error.stack,
+      userId: req.user?.id
+    });
     res.status(500).json({
       error: 'Failed to load dashboard',
-      message: 'Something went wrong while loading dashboard data'
+      message: 'Something went wrong while loading dashboard data',
+      debug: process.env.NODE_ENV === 'development' ? error.message : undefined
     });
   }
 });

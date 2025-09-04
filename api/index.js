@@ -357,29 +357,46 @@ const routes = {
         .eq('id', user.id)
         .single();
 
-      if (userError) throw userError;
+      if (userError) {
+        console.error('User details error:', userError);
+        throw new Error('Failed to load user details');
+      }
 
-      const { data: credentials } = await supabase
-        .from('credentials')
-        .select('service_name, created_at, expiry_date')
-        .eq('user_id', user.id);
+      // Try to get credentials and oauth connections, but handle gracefully if tables don't exist
+      let connectedServices = [];
+      let oauthServices = [];
 
-      const { data: oauthConnections } = await supabase
-        .from('oauth_connections')
-        .select('provider, connected_at, status')
-        .eq('user_id', user.id);
+      try {
+        const { data: credentials } = await supabase
+          .from('credentials')
+          .select('service_name, created_at, expiry_date')
+          .eq('user_id', user.id);
 
-      const connectedServices = credentials ? credentials.map(cred => ({
-        service: cred.service_name,
-        connected_at: cred.created_at,
-        expires_at: cred.expiry_date
-      })) : [];
+        connectedServices = credentials ? credentials.map(cred => ({
+          service: cred.service_name,
+          connected_at: cred.created_at,
+          expires_at: cred.expiry_date
+        })) : [];
+      } catch (credError) {
+        console.log('Credentials table not available:', credError.message);
+        // Continue without credentials data
+      }
 
-      const oauthServices = oauthConnections ? oauthConnections.map(conn => ({
-        service: conn.provider,
-        connected_at: conn.connected_at,
-        status: conn.status
-      })) : [];
+      try {
+        const { data: oauthConnections } = await supabase
+          .from('oauth_connections')
+          .select('provider, connected_at, status')
+          .eq('user_id', user.id);
+
+        oauthServices = oauthConnections ? oauthConnections.map(conn => ({
+          service: conn.provider,
+          connected_at: conn.connected_at,
+          status: conn.status
+        })) : [];
+      } catch (oauthError) {
+        console.log('OAuth connections table not available:', oauthError.message);
+        // Continue without oauth data
+      }
 
       res.status(200).json({
         id: userDetails.id,
@@ -397,7 +414,7 @@ const routes = {
       });
     } catch (error) {
       console.error('User status error:', error);
-      if (error.message === 'No token provided' || error.message === 'Invalid token') {
+      if (error.message === 'No token provided' || error.message === 'Invalid token' || error.message === 'Token expired') {
         return res.status(401).json({
           error: 'Authentication required',
           message: 'Please log in to access this resource'
@@ -571,27 +588,34 @@ const routes = {
         .single();
 
       if (userError || !userDetails) {
+        console.error('Dashboard user error:', userError);
         return res.status(404).json({
           error: 'User not found',
           message: 'User account not found'
         });
       }
 
-      const { data: oauthConnections } = await supabase
-        .from('oauth_connections')
-        .select('provider, connected_at, status, last_sync')
-        .eq('user_id', userDetails.id);
-
+      // Try to get oauth connections, but handle gracefully if table doesn't exist
       const connections = {};
-      if (oauthConnections) {
-        oauthConnections.forEach(conn => {
-          connections[conn.provider] = {
-            connected: conn.status === 'active',
-            connectedAt: conn.connected_at,
-            lastSync: conn.last_sync,
-            status: conn.status
-          };
-        });
+      try {
+        const { data: oauthConnections } = await supabase
+          .from('oauth_connections')
+          .select('provider, connected_at, status, last_sync')
+          .eq('user_id', userDetails.id);
+
+        if (oauthConnections) {
+          oauthConnections.forEach(conn => {
+            connections[conn.provider] = {
+              connected: conn.status === 'active',
+              connectedAt: conn.connected_at,
+              lastSync: conn.last_sync,
+              status: conn.status
+            };
+          });
+        }
+      } catch (oauthError) {
+        console.log('OAuth connections table not available:', oauthError.message);
+        // Continue without oauth data
       }
 
       const dashboardData = {

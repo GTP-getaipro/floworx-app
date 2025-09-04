@@ -1,9 +1,13 @@
 {
   "version": 2,
+  "buildCommand": "npm run vercel-build",
   "builds": [
     {
-      "src": "frontend/build/**",
-      "use": "@vercel/static"
+      "src": "frontend/package.json",
+      "use": "@vercel/static-build",
+      "config": {
+        "distDir": "build"
+      }
     },
     {
       "src": "api/index.js",
@@ -20,27 +24,27 @@
     },
     {
       "src": "/static/(.*)",
-      "dest": "/frontend/build/static/$1"
+      "dest": "/static/$1"
     },
     {
       "src": "/manifest.json",
-      "dest": "/frontend/build/manifest.json"
+      "dest": "/manifest.json"
     },
     {
       "src": "/favicon.ico",
-      "dest": "/frontend/build/favicon.ico"
+      "dest": "/favicon.ico"
     },
     {
       "src": "/robots.txt",
-      "dest": "/frontend/build/robots.txt"
+      "dest": "/robots.txt"
     },
     {
       "src": "/(.*\\.(js|css|png|jpg|jpeg|gif|svg|ico|woff|woff2|ttf|eot|map))",
-      "dest": "/frontend/build/$1"
+      "dest": "/$1"
     },
     {
       "src": "/(.*)",
-      "dest": "/frontend/build/index.html"
+      "dest": "/index.html"
     }
   ],
   "env": {

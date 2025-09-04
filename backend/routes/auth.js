@@ -534,4 +534,15 @@ router.get('/password-requirements', (req, res) => {
   });
 });
 
+// GET /api/auth/welcome
+// Welcome endpoint that logs requests and returns a welcome message
+router.get('/welcome', (req, res) => {
+  // Log request metadata
+  console.log(`Request received: ${req.method} ${req.path} at ${new Date().toISOString()}`);
+
+  res.status(200).json({
+    message: 'Welcome to the FloworxInvite API!'
+  });
+});
+
 module.exports = router;

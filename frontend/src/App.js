@@ -8,8 +8,11 @@ import ForgotPassword from './components/ForgotPassword';
 import Login from './components/Login';
 import ProtectedRoute from './components/ProtectedRoute';
 import AccountRecoveryDashboard from './components/recovery/AccountRecoveryDashboard';
+import NotFoundPage from './components/NotFoundPage';
 import Register from './components/Register';
 import ResetPassword from './components/ResetPassword';
+import UserManagement from './components/UserManagement';
+import Settings from './components/Settings';
 import { AuthProvider } from './contexts/AuthContext';
 import { ErrorProvider } from './contexts/ErrorContext';
 import './App.css';
@@ -90,10 +93,37 @@ function App() {
                         </ErrorBoundary>
                       }
                     />
+                    <Route
+                      path='/user-management'
+                      element={
+                        <ErrorBoundary key='user-management'>
+                          <ProtectedRoute>
+                            <UserManagement />
+                          </ProtectedRoute>
+                        </ErrorBoundary>
+                      }
+                    />
+                    <Route
+                      path='/settings'
+                      element={
+                        <ErrorBoundary key='settings'>
+                          <ProtectedRoute>
+                            <Settings />
+                          </ProtectedRoute>
+                        </ErrorBoundary>
+                      }
+                    />
 
                     {/* Default redirect */}
                     <Route path='/' element={<Navigate to='/dashboard' replace />} />
-                    <Route path='*' element={<Navigate to='/dashboard' replace />} />
+                    <Route
+                      path='*'
+                      element={
+                        <ErrorBoundary key='not-found'>
+                          <NotFoundPage />
+                        </ErrorBoundary>
+                      }
+                    />
                   </Routes>
                 </main>
 

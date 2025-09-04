@@ -5,11 +5,12 @@ const useFormPersistence = (formKey, initialValues = {}, options = {}) => {
     storage = 'sessionStorage', // 'localStorage' or 'sessionStorage'
     excludeFields = [], // Fields to exclude from persistence
     clearOnSubmit = true, // Clear persisted data on successful submit
-    debounceMs = 500 // Debounce time for saving
+    debounceMs = 500, // Debounce time for saving
   } = options;
 
   const [values, setValues] = useState(initialValues);
   const [isLoaded, setIsLoaded] = useState(false);
+  const [hasPersistedData, setHasPersistedData] = useState(false);
 
   const storageKey = `form_${formKey}`;
   const storageAPI = storage === 'localStorage' ? localStorage : sessionStorage;
@@ -20,7 +21,7 @@ const useFormPersistence = (formKey, initialValues = {}, options = {}) => {
       const persistedData = storageAPI.getItem(storageKey);
       if (persistedData) {
         const parsedData = JSON.parse(persistedData);
-        
+
         // Merge with initial values, excluding sensitive fields
         const filteredData = Object.keys(parsedData).reduce((acc, key) => {
           if (!excludeFields.includes(key)) {
@@ -30,6 +31,7 @@ const useFormPersistence = (formKey, initialValues = {}, options = {}) => {
         }, {});
 
         setValues(prev => ({ ...prev, ...filteredData }));
+        setHasPersistedData(true);
         console.log('📥 Form data restored from', storage, ':', Object.keys(filteredData));
       }
     } catch (error) {
@@ -41,7 +43,7 @@ const useFormPersistence = (formKey, initialValues = {}, options = {}) => {
 
   // Debounced save function
   const saveToStorage = useCallback(
-    debounce((dataToSave) => {
+    debounce(dataToSave => {
       try {
         // Filter out excluded fields and empty values
         const filteredData = Object.keys(dataToSave).reduce((acc, key) => {
@@ -63,24 +65,31 @@ const useFormPersistence = (formKey, initialValues = {}, options = {}) => {
   );
 
   // Update values and persist
-  const updateValues = useCallback((newValues) => {
-    setValues(prev => {
-      const updated = { ...prev, ...newValues };
-      saveToStorage(updated);
-      return updated;
-    });
-  }, [saveToStorage]);
+  const updateValues = useCallback(
+    newValues => {
+      setValues(prev => {
+        const updated = { ...prev, ...newValues };
+        saveToStorage(updated);
+        return updated;
+      });
+    },
+    [saveToStorage]
+  );
 
   // Handle individual field changes
-  const handleChange = useCallback((e) => {
-    const { name, value } = e.target;
-    updateValues({ [name]: value });
-  }, [updateValues]);
+  const handleChange = useCallback(
+    e => {
+      const { name, value } = e.target;
+      updateValues({ [name]: value });
+    },
+    [updateValues]
+  );
 
   // Clear persisted data
   const clearPersistedData = useCallback(() => {
     try {
       storageAPI.removeItem(storageKey);
+      setHasPersistedData(false);
       console.log('🗑️ Persisted form data cleared');
     } catch (error) {
       console.warn('Failed to clear persisted data:', error);
@@ -94,16 +103,6 @@ const useFormPersistence = (formKey, initialValues = {}, options = {}) => {
     }
   }, [clearOnSubmit, clearPersistedData]);
 
-  // Check if form has persisted data
-  const hasPersistedData = useCallback(() => {
-    try {
-      const persistedData = storageAPI.getItem(storageKey);
-      return persistedData && JSON.parse(persistedData) && Object.keys(JSON.parse(persistedData)).length > 0;
-    } catch {
-      return false;
-    }
-  }, [storageKey]);
-
   return {
     values,
     isLoaded,
@@ -111,7 +110,7 @@ const useFormPersistence = (formKey, initialValues = {}, options = {}) => {
     updateValues,
     clearPersistedData,
     handleSubmitSuccess,
-    hasPersistedData: hasPersistedData()
+    hasPersistedData,
   };
 };
 

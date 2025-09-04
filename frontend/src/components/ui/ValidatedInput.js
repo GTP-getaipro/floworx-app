@@ -1,23 +1,23 @@
 import React, { useState, useEffect } from 'react';
 import Input from './Input';
 
-const ValidatedInput = ({ 
-  name, 
-  value, 
-  onChange, 
-  onBlur, 
-  error, 
+const ValidatedInput = ({
+  name,
+  value,
+  onChange,
+  onBlur,
+  error,
   validationRules = {},
   realTimeValidation = true,
-  ...props 
+  ...props
 }) => {
   const [localError, setLocalError] = useState('');
   const [isValidating, setIsValidating] = useState(false);
   const [hasBeenTouched, setHasBeenTouched] = useState(false);
 
   // Real-time validation function
-  const validateField = (fieldValue) => {
-    if (!realTimeValidation || !hasBeenTouched) return '';
+  const validateField = fieldValue => {
+    if (!realTimeValidation) return '';
 
     // Email validation
     if (name === 'email' && fieldValue) {
@@ -48,8 +48,8 @@ const ValidatedInput = ({
       }
     }
 
-    // Required field validation
-    if (validationRules.required && !fieldValue) {
+    // Required field validation (only check if field has been touched)
+    if (validationRules.required && !fieldValue && hasBeenTouched) {
       return `${props.label || name} is required`;
     }
 
@@ -67,12 +67,12 @@ const ValidatedInput = ({
   };
 
   // Handle input change with real-time validation
-  const handleChange = (e) => {
+  const handleChange = e => {
     const newValue = e.target.value;
-    
+
     if (hasBeenTouched && realTimeValidation) {
       setIsValidating(true);
-      
+
       // Debounce validation for better performance
       setTimeout(() => {
         const validationError = validateField(newValue);
@@ -80,19 +80,19 @@ const ValidatedInput = ({
         setIsValidating(false);
       }, 300);
     }
-    
+
     onChange(e);
   };
 
   // Handle input blur
-  const handleBlur = (e) => {
+  const handleBlur = e => {
     setHasBeenTouched(true);
-    
+
     if (realTimeValidation) {
       const validationError = validateField(e.target.value);
       setLocalError(validationError);
     }
-    
+
     onBlur(e);
   };
 
@@ -107,7 +107,7 @@ const ValidatedInput = ({
   const displayError = error || localError;
 
   return (
-    <div className="relative">
+    <div className='relative'>
       <Input
         {...props}
         name={name}
@@ -116,19 +116,23 @@ const ValidatedInput = ({
         onBlur={handleBlur}
         error={displayError}
       />
-      
+
       {/* Real-time validation indicator */}
       {isValidating && (
-        <div className="absolute right-3 top-1/2 transform -translate-y-1/2">
-          <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-blue-500"></div>
+        <div className='absolute right-3 top-1/2 transform -translate-y-1/2'>
+          <div className='animate-spin rounded-full h-4 w-4 border-b-2 border-blue-500' />
         </div>
       )}
-      
+
       {/* Success indicator */}
       {hasBeenTouched && !displayError && !isValidating && value && (
-        <div className="absolute right-3 top-1/2 transform -translate-y-1/2">
-          <svg className="w-4 h-4 text-green-500" fill="currentColor" viewBox="0 0 20 20">
-            <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clipRule="evenodd" />
+        <div className='absolute right-3 top-1/2 transform -translate-y-1/2'>
+          <svg className='w-4 h-4 text-green-500' fill='currentColor' viewBox='0 0 20 20'>
+            <path
+              fillRule='evenodd'
+              d='M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z'
+              clipRule='evenodd'
+            />
           </svg>
         </div>
       )}

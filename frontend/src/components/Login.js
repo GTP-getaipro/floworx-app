@@ -21,19 +21,8 @@ const Login = () => {
     password: [validationRules.required, validationRules.minLength(8)],
   };
 
-  const {
-    values,
-    errors,
-    isSubmitting,
-    handleChange,
-    handleBlur,
-    handleSubmit,
-    setErrors,
-  } = useFormValidation(
-    { email: '', password: '' },
-    formValidationRules,
-    { validateOnBlur: true }
-  );
+  const { values, errors, isSubmitting, handleChange, handleBlur, handleSubmit, setErrors } =
+    useFormValidation({ email: '', password: '' }, formValidationRules, { validateOnBlur: true });
 
   useEffect(() => {
     if (isAuthenticated()) {
@@ -42,12 +31,12 @@ const Login = () => {
     }
   }, [isAuthenticated, navigate, location.state]);
 
-  const handleInputChange = (e) => {
+  const handleInputChange = e => {
     if (errors.submit) setErrors(errs => ({ ...errs, submit: undefined }));
     handleChange(e);
   };
 
-  const submitLogin = async (formValues) => {
+  const submitLogin = async formValues => {
     try {
       console.log('🚀 Starting login with email:', formValues.email);
 
@@ -78,59 +67,65 @@ const Login = () => {
   };
 
   return (
-    <div className="min-h-screen bg-surface-soft flex items-center justify-center py-12 px-4 sm:px-6 lg:px-8">
-      <div className="max-w-md w-full space-y-8">
-        <div className="text-center">
-          <h2 className="text-3xl font-bold text-ink">Sign In to Floworx</h2>
-          <p className="mt-2 text-ink-sub">Access your automation dashboard</p>
+    <div className='w-full max-w-md mx-auto py-4 px-4 sm:px-6 lg:px-8'>
+      <div className='w-full space-y-4'>
+        <div className='text-center'>
+          <h2 className='text-2xl font-bold text-ink'>Sign In to Floworx</h2>
+          <p className='mt-1 text-sm text-ink-sub'>Access your automation dashboard</p>
         </div>
-        <Card className="mt-8">
+        <Card className='mt-4' padding='sm'>
           {errors.submit && (
-            <Alert variant="danger" className="mb-6">
+            <Alert variant='danger' className='mb-6'>
               {errors.submit}
             </Alert>
           )}
-          <form onSubmit={(e) => handleSubmit(submitLogin, e)} className="space-y-6">
+          <form onSubmit={e => handleSubmit(submitLogin, e)} className='space-y-4'>
             <Input
-              label="Email Address"
-              type="email"
-              name="email"
+              label='Email Address'
+              type='email'
+              name='email'
               value={values.email}
               onChange={handleInputChange}
               onBlur={handleBlur}
               error={errors.email}
-              placeholder="Enter your email"
-              required={true}
+              placeholder='Enter your email'
+              required
               disabled={isSubmitting}
               maxLength={255}
-              autoComplete="email"
+              autoComplete='email'
             />
             <Input
-              label="Password"
-              type="password"
-              name="password"
+              label='Password'
+              type='password'
+              name='password'
               value={values.password}
               onChange={handleInputChange}
               onBlur={handleBlur}
               error={errors.password}
-              placeholder="Enter your password"
-              required={true}
+              placeholder='Enter your password'
+              required
               disabled={isSubmitting}
               minLength={8}
               maxLength={128}
-              autoComplete="current-password"
+              autoComplete='current-password'
             />
-            <Button type="submit" variant="primary" size="lg" loading={isSubmitting} className="w-full">
+            <Button
+              type='submit'
+              variant='primary'
+              size='lg'
+              loading={isSubmitting}
+              className='w-full'
+            >
               Sign In
             </Button>
           </form>
-          <div className="mt-6 space-y-4 text-center">
-            <UILink to="/forgot-password" variant="primary">
+          <div className='mt-4 space-y-3 text-center'>
+            <UILink to='/forgot-password' variant='primary'>
               Forgot your password?
             </UILink>
-            <p className="text-ink-sub">
+            <p className='text-ink-sub'>
               Don't have an account?{' '}
-              <UILink to="/register" variant="primary">
+              <UILink to='/register' variant='primary'>
                 Create one here
               </UILink>
             </p>

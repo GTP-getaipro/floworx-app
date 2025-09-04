@@ -50,23 +50,27 @@ const RegisterForm = () => {
     handleChange: handlePersistenceChange,
     handleSubmitSuccess,
     hasPersistedData,
-    clearPersistedData
-  } = useFormPersistence('registration', {
-    firstName: '',
-    lastName: '',
-    companyName: '',
-    email: ''
-  }, {
-    excludeFields: ['password', 'confirmPassword'], // Don't persist sensitive data
-    storage: 'sessionStorage',
-    debounceMs: 300
-  });
+    clearPersistedData,
+  } = useFormPersistence(
+    'registration',
+    {
+      firstName: '',
+      lastName: '',
+      companyName: '',
+      email: '',
+    },
+    {
+      excludeFields: ['password', 'confirmPassword'], // Don't persist sensitive data
+      storage: 'sessionStorage',
+      debounceMs: 300,
+    }
+  );
 
   // Registration steps for progress indicator
   const registrationSteps = [
     { title: 'Personal Info', description: 'Name and company' },
     { title: 'Account Details', description: 'Email and password' },
-    { title: 'Verification', description: 'Complete setup' }
+    { title: 'Verification', description: 'Complete setup' },
   ];
 
   const {
@@ -76,14 +80,15 @@ const RegisterForm = () => {
     handleChange: originalHandleChange,
     handleBlur,
     handleSubmit,
+    setValues,
   } = useFormValidation(
     {
-      email: persistedValues.email || '',
+      email: '',
       password: '',
       confirmPassword: '',
-      firstName: persistedValues.firstName || '',
-      lastName: persistedValues.lastName || '',
-      companyName: persistedValues.companyName || '',
+      firstName: '',
+      lastName: '',
+      companyName: '',
     },
     validationRules,
     {
@@ -92,8 +97,26 @@ const RegisterForm = () => {
     }
   );
 
+  // Update form values when persistence is loaded
+  useEffect(() => {
+    console.log('🔍 Persistence effect triggered:', { persistenceLoaded, persistedValues });
+    if (persistenceLoaded && Object.keys(persistedValues).length > 0) {
+      console.log('🔄 Updating form with persisted values:', persistedValues);
+      setValues(prev => ({
+        ...prev,
+        email: persistedValues.email || prev.email,
+        firstName: persistedValues.firstName || prev.firstName,
+        lastName: persistedValues.lastName || prev.lastName,
+        companyName: persistedValues.companyName || prev.companyName,
+        // Never restore passwords
+        password: '',
+        confirmPassword: '',
+      }));
+    }
+  }, [persistenceLoaded, persistedValues, setValues]);
+
   // Enhanced change handler with persistence
-  const handleChange = (e) => {
+  const handleChange = e => {
     originalHandleChange(e);
     handlePersistenceChange(e);
 
@@ -134,7 +157,9 @@ const RegisterForm = () => {
   // Show notification for persisted data
   useEffect(() => {
     if (persistenceLoaded && hasPersistedData) {
-      showInfo('📝 We restored your previous form data. You can continue where you left off or clear it to start fresh.');
+      showInfo(
+        '📝 We restored your previous form data. You can continue where you left off or clear it to start fresh.'
+      );
     }
   }, [persistenceLoaded, hasPersistedData, showInfo]);
 
@@ -142,7 +167,7 @@ const RegisterForm = () => {
     try {
       console.log('🚀 Starting registration with data:', {
         ...values,
-        password: '[HIDDEN]'
+        password: '[HIDDEN]',
       });
 
       // Show processing feedback
@@ -156,7 +181,7 @@ const RegisterForm = () => {
         lastName: values.lastName,
         companyName: values.companyName,
         agreeToTerms: true,
-        marketingConsent: false
+        marketingConsent: false,
       });
 
       console.log('📊 Registration result:', result);
@@ -262,7 +287,6 @@ const RegisterForm = () => {
     );
   }
 
-
   return (
     <div className='max-w-md w-full space-y-8'>
       <div className='text-center'>
@@ -273,11 +297,7 @@ const RegisterForm = () => {
       <Card className='mt-8'>
         {/* Progress Indicator */}
         <div className='mb-6'>
-          <ProgressIndicator
-            steps={registrationSteps}
-            currentStep={currentStep}
-            size="sm"
-          />
+          <ProgressIndicator steps={registrationSteps} currentStep={currentStep} size='sm' />
         </div>
 
         {/* Persisted Data Notification */}
@@ -285,13 +305,17 @@ const RegisterForm = () => {
           <div className='bg-blue-50 border border-blue-200 rounded-lg p-3 mb-6'>
             <div className='flex items-center justify-between'>
               <div className='flex items-center'>
-                <svg className="w-4 h-4 text-blue-400 mr-2" fill="currentColor" viewBox="0 0 20 20">
-                  <path fillRule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7-4a1 1 0 11-2 0 1 1 0 012 0zM9 9a1 1 0 000 2v3a1 1 0 001 1h1a1 1 0 100-2v-3a1 1 0 00-1-1H9z" clipRule="evenodd" />
+                <svg className='w-4 h-4 text-blue-400 mr-2' fill='currentColor' viewBox='0 0 20 20'>
+                  <path
+                    fillRule='evenodd'
+                    d='M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7-4a1 1 0 11-2 0 1 1 0 012 0zM9 9a1 1 0 000 2v3a1 1 0 001 1h1a1 1 0 100-2v-3a1 1 0 00-1-1H9z'
+                    clipRule='evenodd'
+                  />
                 </svg>
                 <span className='text-sm text-blue-800'>Previous data restored</span>
               </div>
               <button
-                type="button"
+                type='button'
                 onClick={clearPersistedData}
                 className='text-xs text-blue-600 hover:text-blue-800 underline'
               >
@@ -322,9 +346,9 @@ const RegisterForm = () => {
               required
               minLength={2}
               maxLength={50}
-              autoComplete="given-name"
+              autoComplete='given-name'
               validationRules={{ required: true, minLength: 2, maxLength: 50 }}
-              realTimeValidation={true}
+              realTimeValidation
             />
 
             <ValidatedInput
@@ -340,9 +364,9 @@ const RegisterForm = () => {
               required
               minLength={2}
               maxLength={50}
-              autoComplete="family-name"
+              autoComplete='family-name'
               validationRules={{ required: true, minLength: 2, maxLength: 50 }}
-              realTimeValidation={true}
+              realTimeValidation
             />
           </div>
 
@@ -357,9 +381,9 @@ const RegisterForm = () => {
             placeholder='Your company name (optional)'
             disabled={loading}
             maxLength={100}
-            autoComplete="organization"
+            autoComplete='organization'
             validationRules={{ maxLength: 100 }}
-            realTimeValidation={true}
+            realTimeValidation
           />
 
           <ValidatedInput
@@ -374,9 +398,9 @@ const RegisterForm = () => {
             required
             disabled={loading}
             maxLength={255}
-            autoComplete="email"
+            autoComplete='email'
             validationRules={{ required: true, maxLength: 255 }}
-            realTimeValidation={true}
+            realTimeValidation
           />
 
           <ValidatedInput
@@ -393,9 +417,9 @@ const RegisterForm = () => {
             helperText='Password must be at least 8 characters long'
             minLength={8}
             maxLength={128}
-            autoComplete="new-password"
+            autoComplete='new-password'
             validationRules={{ required: true, minLength: 8, maxLength: 128 }}
-            realTimeValidation={true}
+            realTimeValidation
           />
 
           <ValidatedInput
@@ -411,9 +435,9 @@ const RegisterForm = () => {
             disabled={loading}
             minLength={8}
             maxLength={128}
-            autoComplete="new-password"
+            autoComplete='new-password'
             validationRules={{ required: true, minLength: 8, maxLength: 128 }}
-            realTimeValidation={true}
+            realTimeValidation
           />
 
           <ProtectedButton
@@ -423,9 +447,10 @@ const RegisterForm = () => {
             disabled={loading}
             className='w-full'
             debounceMs={1000}
-            showLoadingState={true}
+            showLoadingState
             loadingText='Creating Account...'
             onClick={() => {}} // Will be handled by form onSubmit
+            forceLoading={loading} // Pass form loading state to button
           >
             Create Account
           </ProtectedButton>
@@ -442,7 +467,6 @@ const RegisterForm = () => {
       </Card>
     </div>
   );
-
 };
 
 export default RegisterForm;

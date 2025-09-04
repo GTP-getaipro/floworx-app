@@ -1,29 +1,30 @@
 import React, { useState, useRef } from 'react';
 import Button from './Button';
 
-const ProtectedButton = ({ 
-  onClick, 
-  disabled = false, 
+const ProtectedButton = ({
+  onClick,
+  disabled = false,
   debounceMs = 1000,
   showLoadingState = true,
   loadingText = 'Processing...',
+  forceLoading = false, // External loading state
   children,
-  ...props 
+  ...props
 }) => {
   const [isProcessing, setIsProcessing] = useState(false);
   const [clickCount, setClickCount] = useState(0);
   const lastClickTime = useRef(0);
   const processingTimeout = useRef(null);
 
-  const handleClick = async (e) => {
+  const handleClick = async e => {
     const now = Date.now();
-    
+
     // Prevent rapid clicks
     if (now - lastClickTime.current < debounceMs) {
       console.log('🛡️ Rapid click prevented');
       return;
     }
-    
+
     // Prevent multiple clicks while processing
     if (isProcessing) {
       console.log('🛡️ Click prevented - already processing');
@@ -40,9 +41,9 @@ const ProtectedButton = ({
         // Minimum loading time for better UX
         const minLoadingTime = 500;
         const startTime = Date.now();
-        
+
         await onClick(e);
-        
+
         const elapsedTime = Date.now() - startTime;
         if (elapsedTime < minLoadingTime) {
           await new Promise(resolve => setTimeout(resolve, minLoadingTime - elapsedTime));
@@ -69,21 +70,38 @@ const ProtectedButton = ({
     };
   }, []);
 
-  const isDisabled = disabled || isProcessing;
+  const isDisabled = disabled || isProcessing || forceLoading;
+  const isLoading = isProcessing || forceLoading;
 
   return (
-    <div className="relative">
+    <div className='relative'>
       <Button
         {...props}
         onClick={handleClick}
         disabled={isDisabled}
-        className={`${props.className || ''} ${isProcessing ? 'cursor-not-allowed' : ''}`}
+        className={`${props.className || ''} ${isLoading ? 'cursor-not-allowed' : ''}`}
       >
-        {isProcessing && showLoadingState ? (
-          <div className="flex items-center justify-center">
-            <svg className="animate-spin -ml-1 mr-3 h-5 w-5 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
-              <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
-              <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+        {isLoading && showLoadingState ? (
+          <div className='flex items-center justify-center'>
+            <svg
+              className='animate-spin -ml-1 mr-3 h-5 w-5 text-white'
+              xmlns='http://www.w3.org/2000/svg'
+              fill='none'
+              viewBox='0 0 24 24'
+            >
+              <circle
+                className='opacity-25'
+                cx='12'
+                cy='12'
+                r='10'
+                stroke='currentColor'
+                strokeWidth='4'
+              />
+              <path
+                className='opacity-75'
+                fill='currentColor'
+                d='M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z'
+              />
             </svg>
             {loadingText}
           </div>
@@ -91,10 +109,10 @@ const ProtectedButton = ({
           children
         )}
       </Button>
-      
+
       {/* Click counter for debugging (remove in production) */}
       {process.env.NODE_ENV === 'development' && clickCount > 1 && (
-        <div className="absolute -top-2 -right-2 bg-red-500 text-white text-xs rounded-full w-5 h-5 flex items-center justify-center">
+        <div className='absolute -top-2 -right-2 bg-red-500 text-white text-xs rounded-full w-5 h-5 flex items-center justify-center'>
           {clickCount}
         </div>
       )}

@@ -65,12 +65,12 @@ router.post(
     const trialStartsAt = new Date();
     const trialEndsAt = new Date(Date.now() + 14 * 24 * 60 * 60 * 1000);
 
-    // Create new user with extended fields
+    // Create new user with extended fields and auto-verify email for production
     const insertUserQuery = `
       INSERT INTO users (
         email, password_hash, first_name, last_name, company_name,
-        trial_started_at, trial_ends_at, subscription_status
-      ) VALUES ($1, $2, $3, $4, $5, $6, $7, $8)
+        trial_started_at, trial_ends_at, subscription_status, email_verified
+      ) VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9)
       RETURNING id, email, first_name, last_name, company_name, created_at
     `;
     const newUser = await query(insertUserQuery, [
@@ -81,7 +81,8 @@ router.post(
       businessName || null,
       trialStartsAt,
       trialEndsAt,
-      'trial'
+      'trial',
+      true // Auto-verify email for production
     ]);
 
     const user = newUser.rows[0];
@@ -130,7 +131,7 @@ router.post(
 
     try {
       // Find user by email using direct optimized query
-      const userQuery = 'SELECT id, email, password_hash, email_verified, first_name FROM users WHERE email = $1';
+      const userQuery = 'SELECT id, email, password_hash, email_verified, first_name, last_name, company_name, created_at FROM users WHERE email = $1';
       const userResult = await query(userQuery, [email.toLowerCase()]);
 
       if (userResult.rows.length === 0) {
@@ -197,7 +198,10 @@ router.post(
         user: {
           id: user.id,
           email: user.email,
-          firstName: user.first_name
+          firstName: user.first_name,
+          lastName: user.last_name,
+          companyName: user.company_name,
+          createdAt: user.created_at
         },
         expiresIn: '24h'
       });

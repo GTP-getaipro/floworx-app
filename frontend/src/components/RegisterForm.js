@@ -1,11 +1,16 @@
-import React, { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 
 import { useAuth } from '../contexts/AuthContext';
+import { useToast } from '../contexts/ToastContext';
 import useApiRequest from '../hooks/useApiRequest';
 import useFormValidation, { commonValidationRules } from '../hooks/useFormValidation';
+import useFormPersistence from '../hooks/useFormPersistence';
+import ValidatedInput from './ui/ValidatedInput';
+import ProtectedButton from './ui/ProtectedButton';
+import ProgressIndicator from './ui/ProgressIndicator';
 
-import { Button, Input, Alert, Card, Link } from './ui';
+import { Alert, Card, Link } from './ui';
 
 const validationRules = {
   email: [commonValidationRules.required, commonValidationRules.email],
@@ -33,25 +38,52 @@ const validationRules = {
 
 const RegisterForm = () => {
   const { register, isAuthenticated } = useAuth();
+  const { showSuccess, showError, showInfo } = useToast();
   const navigate = useNavigate();
-  const _api = useApiRequest();
   const [submitResult, setSubmitResult] = useState(null);
+  const [currentStep, setCurrentStep] = useState(0);
+
+  // Form persistence
+  const {
+    values: persistedValues,
+    isLoaded: persistenceLoaded,
+    handleChange: handlePersistenceChange,
+    handleSubmitSuccess,
+    hasPersistedData,
+    clearPersistedData
+  } = useFormPersistence('registration', {
+    firstName: '',
+    lastName: '',
+    companyName: '',
+    email: ''
+  }, {
+    excludeFields: ['password', 'confirmPassword'], // Don't persist sensitive data
+    storage: 'sessionStorage',
+    debounceMs: 300
+  });
+
+  // Registration steps for progress indicator
+  const registrationSteps = [
+    { title: 'Personal Info', description: 'Name and company' },
+    { title: 'Account Details', description: 'Email and password' },
+    { title: 'Verification', description: 'Complete setup' }
+  ];
 
   const {
     values: formData,
     errors,
     isSubmitting: loading,
-    handleChange,
+    handleChange: originalHandleChange,
     handleBlur,
     handleSubmit,
   } = useFormValidation(
     {
-      email: '',
+      email: persistedValues.email || '',
       password: '',
       confirmPassword: '',
-      firstName: '',
-      lastName: '',
-      companyName: '',
+      firstName: persistedValues.firstName || '',
+      lastName: persistedValues.lastName || '',
+      companyName: persistedValues.companyName || '',
     },
     validationRules,
     {
@@ -60,24 +92,74 @@ const RegisterForm = () => {
     }
   );
 
+  // Enhanced change handler with persistence
+  const handleChange = (e) => {
+    originalHandleChange(e);
+    handlePersistenceChange(e);
+
+    // Update progress based on form completion
+    const { name, value } = e.target;
+    updateProgress(name, value);
+  };
+
+  // Progress tracking
+  const updateProgress = (fieldName, fieldValue) => {
+    const personalInfoFields = ['firstName', 'lastName', 'companyName'];
+    const accountFields = ['email', 'password', 'confirmPassword'];
+
+    const personalComplete = personalInfoFields.every(field =>
+      field === fieldName ? fieldValue : formData[field]
+    );
+
+    const accountComplete = accountFields.every(field =>
+      field === fieldName ? fieldValue : formData[field]
+    );
+
+    if (accountComplete) {
+      setCurrentStep(2);
+    } else if (personalComplete) {
+      setCurrentStep(1);
+    } else {
+      setCurrentStep(0);
+    }
+  };
+
   // Redirect if already authenticated
-  React.useEffect(() => {
+  useEffect(() => {
     if (isAuthenticated()) {
       navigate('/dashboard', { replace: true });
     }
   }, [isAuthenticated, navigate]);
 
+  // Show notification for persisted data
+  useEffect(() => {
+    if (persistenceLoaded && hasPersistedData) {
+      showInfo('📝 We restored your previous form data. You can continue where you left off or clear it to start fresh.');
+    }
+  }, [persistenceLoaded, hasPersistedData, showInfo]);
+
   const handleRegistration = async values => {
     try {
+      console.log('🚀 Starting registration with data:', {
+        ...values,
+        password: '[HIDDEN]'
+      });
+
+      // Show processing feedback
+      showInfo('Creating your account...');
+      setCurrentStep(2); // Move to verification step
+
       const result = await register({
         email: values.email,
         password: values.password,
         firstName: values.firstName,
         lastName: values.lastName,
-        businessName: values.companyName,
+        companyName: values.companyName,
         agreeToTerms: true,
         marketingConsent: false
       });
+
+      console.log('📊 Registration result:', result);
 
       if (result.success) {
         const successResult = {
@@ -85,22 +167,56 @@ const RegisterForm = () => {
           requiresVerification: result.requiresVerification,
           email: values.email,
         };
-        
+
         setSubmitResult(successResult);
 
+        // Clear persisted data on success
+        handleSubmitSuccess();
+
+        // Show enhanced success toast with next steps
+        showSuccess(
+          result.requiresVerification
+            ? '🎉 Account created! Please check your email to verify your account and complete setup.'
+            : '🎉 Account created successfully! Redirecting to your dashboard...'
+        );
+
         if (!result.requiresVerification) {
-          // Auto-redirect to dashboard after 2 seconds
-          setTimeout(() => {
-            navigate('/dashboard');
-          }, 2000);
+          // Auto-redirect to dashboard after 3 seconds with countdown
+          let countdown = 3;
+          const countdownInterval = setInterval(() => {
+            countdown--;
+            if (countdown > 0) {
+              showInfo(`Redirecting to dashboard in ${countdown} seconds...`);
+            } else {
+              clearInterval(countdownInterval);
+              navigate('/dashboard');
+            }
+          }, 1000);
         }
 
         return successResult;
       }
 
+      // Show detailed error feedback
+      const errorMessage = result.error || 'Registration failed. Please try again.';
+      showError(`❌ ${errorMessage}`);
+
+      // Reset progress on error
+      setCurrentStep(1);
+
       throw new Error(result.error || 'Registration failed');
     } catch (error) {
-      throw new Error('An unexpected error occurred. Please try again.');
+      console.error('❌ Registration error:', error);
+
+      // Show user-friendly error message
+      if (!error.message.includes('Registration failed')) {
+        showError('❌ An unexpected error occurred. Please check your connection and try again.');
+      }
+
+      // Reset progress on error
+      setCurrentStep(1);
+
+      throw error;
     }
   };
 
@@ -155,6 +271,36 @@ const RegisterForm = () => {
       </div>
 
       <Card className='mt-8'>
+        {/* Progress Indicator */}
+        <div className='mb-6'>
+          <ProgressIndicator
+            steps={registrationSteps}
+            currentStep={currentStep}
+            size="sm"
+          />
+        </div>
+
+        {/* Persisted Data Notification */}
+        {hasPersistedData && (
+          <div className='bg-blue-50 border border-blue-200 rounded-lg p-3 mb-6'>
+            <div className='flex items-center justify-between'>
+              <div className='flex items-center'>
+                <svg className="w-4 h-4 text-blue-400 mr-2" fill="currentColor" viewBox="0 0 20 20">
+                  <path fillRule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7-4a1 1 0 11-2 0 1 1 0 012 0zM9 9a1 1 0 000 2v3a1 1 0 001 1h1a1 1 0 100-2v-3a1 1 0 00-1-1H9z" clipRule="evenodd" />
+                </svg>
+                <span className='text-sm text-blue-800'>Previous data restored</span>
+              </div>
+              <button
+                type="button"
+                onClick={clearPersistedData}
+                className='text-xs text-blue-600 hover:text-blue-800 underline'
+              >
+                Clear & Start Fresh
+              </button>
+            </div>
+          </div>
+        )}
+
         {errors.submit && (
           <Alert variant='danger' className='mb-6'>
             {errors.submit}
@@ -163,7 +309,7 @@ const RegisterForm = () => {
 
         <form onSubmit={e => handleSubmit(handleRegistration, e)} className='space-y-6'>
           <div className='grid grid-cols-2 gap-4'>
-            <Input
+            <ValidatedInput
               label='First Name'
               type='text'
               name='firstName'
@@ -174,9 +320,14 @@ const RegisterForm = () => {
               placeholder='Your first name'
               disabled={loading}
               required
+              minLength={2}
+              maxLength={50}
+              autoComplete="given-name"
+              validationRules={{ required: true, minLength: 2, maxLength: 50 }}
+              realTimeValidation={true}
             />
 
-            <Input
+            <ValidatedInput
               label='Last Name'
               type='text'
               name='lastName'
@@ -187,10 +338,15 @@ const RegisterForm = () => {
               placeholder='Your last name'
               disabled={loading}
               required
+              minLength={2}
+              maxLength={50}
+              autoComplete="family-name"
+              validationRules={{ required: true, minLength: 2, maxLength: 50 }}
+              realTimeValidation={true}
             />
           </div>
 
-          <Input
+          <ValidatedInput
             label='Company Name'
             type='text'
             name='companyName'
@@ -200,9 +356,13 @@ const RegisterForm = () => {
             error={errors.companyName}
             placeholder='Your company name (optional)'
             disabled={loading}
+            maxLength={100}
+            autoComplete="organization"
+            validationRules={{ maxLength: 100 }}
+            realTimeValidation={true}
           />
 
-          <Input
+          <ValidatedInput
             label='Email Address'
             type='email'
             name='email'
@@ -213,9 +373,13 @@ const RegisterForm = () => {
             placeholder='Enter your business email'
             required
             disabled={loading}
+            maxLength={255}
+            autoComplete="email"
+            validationRules={{ required: true, maxLength: 255 }}
+            realTimeValidation={true}
           />
 
-          <Input
+          <ValidatedInput
             label='Password'
             type='password'
             name='password'
@@ -227,9 +391,14 @@ const RegisterForm = () => {
             required
             disabled={loading}
             helperText='Password must be at least 8 characters long'
+            minLength={8}
+            maxLength={128}
+            autoComplete="new-password"
+            validationRules={{ required: true, minLength: 8, maxLength: 128 }}
+            realTimeValidation={true}
           />
 
-          <Input
+          <ValidatedInput
             label='Confirm Password'
             type='password'
             name='confirmPassword'
@@ -240,11 +409,26 @@ const RegisterForm = () => {
             placeholder='Confirm your password'
             required
             disabled={loading}
+            minLength={8}
+            maxLength={128}
+            autoComplete="new-password"
+            validationRules={{ required: true, minLength: 8, maxLength: 128 }}
+            realTimeValidation={true}
           />
 
-          <Button type='submit' variant='primary' size='lg' loading={loading} className='w-full'>
+          <ProtectedButton
+            type='submit'
+            variant='primary'
+            size='lg'
+            disabled={loading}
+            className='w-full'
+            debounceMs={1000}
+            showLoadingState={true}
+            loadingText='Creating Account...'
+            onClick={() => {}} // Will be handled by form onSubmit
+          >
             Create Account
-          </Button>
+          </ProtectedButton>
         </form>
 
         <div className='mt-6 text-center'>

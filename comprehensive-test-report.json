@@ -1,0 +1,84 @@
+{
+  "summary": {
+    "total": 12,
+    "passed": 12,
+    "failed": 0,
+    "successRate": "100.00%"
+  },
+  "timestamp": "2025-09-04T14:39:42.214Z",
+  "environment": "Production (https://app.floworx-iq.com)",
+  "tests": [
+    {
+      "name": "Health Endpoint",
+      "status": "PASS",
+      "details": "Status: 200",
+      "timestamp": "2025-09-04T14:39:39.060Z"
+    },
+    {
+      "name": "Database Health Endpoint",
+      "status": "PASS",
+      "details": "Status: 200",
+      "timestamp": "2025-09-04T14:39:39.352Z"
+    },
+    {
+      "name": "User Registration",
+      "status": "PASS",
+      "details": "User created: e0608b83-4e8d-444d-a220-a7c5c106317b",
+      "timestamp": "2025-09-04T14:39:40.334Z"
+    },
+    {
+      "name": "Token Verification",
+      "status": "PASS",
+      "details": "Token validated successfully",
+      "timestamp": "2025-09-04T14:39:40.458Z"
+    },
+    {
+      "name": "User Status",
+      "status": "PASS",
+      "details": "Status: 200",
+      "timestamp": "2025-09-04T14:39:40.793Z"
+    },
+    {
+      "name": "Dashboard",
+      "status": "PASS",
+      "details": "Status: 200",
+      "timestamp": "2025-09-04T14:39:41.104Z"
+    },
+    {
+      "name": "User Profile",
+      "status": "PASS",
+      "details": "Status: 200",
+      "timestamp": "2025-09-04T14:39:41.428Z"
+    },
+    {
+      "name": "Workflows",
+      "status": "PASS",
+      "details": "Status: 200",
+      "timestamp": "2025-09-04T14:39:41.568Z"
+    },
+    {
+      "name": "Analytics",
+      "status": "PASS",
+      "details": "Status: 200",
+      "timestamp": "2025-09-04T14:39:41.695Z"
+    },
+    {
+      "name": "Password Reset Request",
+      "status": "PASS",
+      "details": "Status: 200",
+      "timestamp": "2025-09-04T14:39:41.953Z"
+    },
+    {
+      "name": "404 Error Handling",
+      "status": "PASS",
+      "details": "Correctly returns 404 for invalid endpoints",
+      "timestamp": "2025-09-04T14:39:42.070Z"
+    },
+    {
+      "name": "401 Unauthorized Handling",
+      "status": "PASS",
+      "details": "Correctly returns 401 for unauthorized access",
+      "timestamp": "2025-09-04T14:39:42.214Z"
+    }
+  ]
+}

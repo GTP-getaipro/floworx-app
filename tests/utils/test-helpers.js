@@ -68,9 +68,9 @@ class TestHelpers {
   // Authentication helpers
   async loginUser(email = 'test.user@example.com', password = 'TestPassword123!') {
     await this.page.goto('/login');
-    await this.page.fill('[data-testid="email-input"]', email);
-    await this.page.fill('[data-testid="password-input"]', password);
-    await this.page.click('[data-testid="login-button"]');
+    await this.page.fill('input[name="email"], input[type="email"]', email);
+    await this.page.fill('input[name="password"], input[type="password"]', password);
+    await this.page.click('button[type="submit"], button:has-text("Sign In"), button:has-text("Login")');
     
     // Wait for successful login
     await this.page.waitForURL('/dashboard', { timeout: 10000 });

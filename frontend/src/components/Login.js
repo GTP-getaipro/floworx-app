@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate, useLocation, Link } from 'react-router-dom';
 import { useAuth } from '../contexts/AuthContext';
+import { useToast } from '../contexts/ToastContext';
 import useFormValidation from '../hooks/useFormValidation';
 import { validationRules } from '../utils/validationRules';
 import Input from './ui/Input';
@@ -11,6 +12,7 @@ import UILink from './ui/Link';
 
 const Login = () => {
   const { login, isAuthenticated } = useAuth();
+  const { showSuccess, showError } = useToast();
   const navigate = useNavigate();
   const location = useLocation();
 
@@ -47,16 +49,30 @@ const Login = () => {
 
   const submitLogin = async (formValues) => {
     try {
+      console.log('🚀 Starting login with email:', formValues.email);
+
       const result = await login(formValues.email, formValues.password);
+
+      console.log('📊 Login result:', result);
+
       if (result.success) {
+        showSuccess('Login successful! Redirecting to dashboard...');
+
         const from = location.state?.from?.pathname || '/dashboard';
         navigate(from, { replace: true });
         return { success: true };
       }
+
+      // Show error toast
+      showError(result.error || 'Login failed. Please check your credentials.');
       setErrors({ submit: result.error });
       return { success: false };
     } catch (error) {
-      setErrors({ submit: 'An unexpected error occurred. Please try again.' });
+      console.error('❌ Login error:', error);
+
+      const errorMessage = 'An unexpected error occurred. Please try again.';
+      showError(errorMessage);
+      setErrors({ submit: errorMessage });
       return { success: false };
     }
   };
@@ -86,6 +102,8 @@ const Login = () => {
               placeholder="Enter your email"
               required={true}
               disabled={isSubmitting}
+              maxLength={255}
+              autoComplete="email"
             />
             <Input
               label="Password"
@@ -98,6 +116,9 @@ const Login = () => {
               placeholder="Enter your password"
               required={true}
               disabled={isSubmitting}
+              minLength={8}
+              maxLength={128}
+              autoComplete="current-password"
             />
             <Button type="submit" variant="primary" size="lg" loading={isSubmitting} className="w-full">
               Sign In

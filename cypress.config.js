@@ -6,7 +6,7 @@ const { createEsbuildPlugin } = require('@badeball/cypress-cucumber-preprocessor
 module.exports = defineConfig({
   e2e: {
     // Base URL for the FloWorx SaaS application
-    baseUrl: 'https://floworx-app.vercel.app',
+    baseUrl: 'https://app.floworx-iq.com',
     
     // Viewport settings
     viewportWidth: 1280,

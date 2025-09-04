@@ -1,23 +1,20 @@
 {
-  "timestamp": "2025-09-04T14:09:08.549Z",
+  "timestamp": "2025-09-04T14:31:23.853Z",
   "baseURL": "https://app.floworx-iq.com",
   "testUser": {
-    "email": "test.e9a41fa80e39d235@example.com"
+    "email": "test.957fe03612f342dc@example.com"
   },
   "results": {
-    "passed": 4,
-    "failed": 2,
-    "issues": [
-      "User status endpoint not working with valid token",
-      "Dashboard endpoint not working with valid token"
-    ],
+    "passed": 6,
+    "failed": 0,
+    "issues": [],
     "details": [
       {
         "test": "Health Endpoint",
         "status": "PASSED",
         "details": {
           "status": "healthy",
-          "timestamp": "2025-09-04T14:09:06.768Z",
+          "timestamp": "2025-09-04T14:31:22.273Z",
           "database": {
             "connected": true,
             "provider": "Supabase"
@@ -29,18 +26,18 @@
       {
         "test": "User Registration",
         "status": "PASSED",
-        "email": "test.e9a41fa80e39d235@example.com",
+        "email": "test.957fe03612f342dc@example.com",
         "response": {
           "message": "User registered successfully",
           "user": {
-            "id": "52cb3fcc-b18d-4cb0-8da2-bda29eb00a2f",
-            "email": "test.e9a41fa80e39d235@example.com",
+            "id": "5c05ede5-1503-44b9-b37a-1a1e315dbbf9",
+            "email": "test.957fe03612f342dc@example.com",
             "firstName": "Test",
             "lastName": "User",
             "companyName": "Test Company",
-            "createdAt": "2025-09-04T14:09:07.454+00:00"
+            "createdAt": "2025-09-04T14:31:22.942+00:00"
           },
-          "token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOiI1MmNiM2ZjYy1iMThkLTRjYjAtOGRhMi1iZGEyOWViMDBhMmYiLCJlbWFpbCI6InRlc3QuZTlhNDFmYTgwZTM5ZDIzNUBleGFtcGxlLmNvbSIsImlhdCI6MTc1Njk5NDk0NywiZXhwIjoxNzU3MDgxMzQ3fQ.lTdOuLmLMJNQD401i-lp7iaY9Zztg0y_4CYwZP3USug",
+          "token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOiI1YzA1ZWRlNS0xNTAzLTQ0YjktYjM3YS0xYTFlMzE1ZGJiZjkiLCJlbWFpbCI6InRlc3QuOTU3ZmUwMzYxMmYzNDJkY0BleGFtcGxlLmNvbSIsImlhdCI6MTc1Njk5NjI4MywiZXhwIjoxNzU3MDgyNjgzfQ.TVsOQ7MSvVTc9Uk9ayAl9bYdxYA3qz0CuXayFRmrJgQ",
           "expiresIn": "24h"
         }
       },
@@ -54,7 +51,7 @@
         "status": "PASSED",
         "response": {
           "message": "Password reset email sent successfully",
-          "email": "test.e9a41fa80e39d235@example.com"
+          "email": "test.957fe03612f342dc@example.com"
         }
       }
     ]

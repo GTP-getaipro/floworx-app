@@ -27,16 +27,16 @@ test.describe('Authentication & Security (Hybrid Local-Cloud)', () => {
 
       await page.goto('/register');
       
-      // Fill registration form
-      await page.fill('[data-testid="first-name-input"]', userData.firstName);
-      await page.fill('[data-testid="last-name-input"]', userData.lastName);
-      await page.fill('[data-testid="email-input"]', userData.email);
-      await page.fill('[data-testid="password-input"]', userData.password);
-      await page.fill('[data-testid="confirm-password-input"]', userData.password);
-      await page.selectOption('[data-testid="business-type-select"]', userData.businessType);
+      // Fill registration form (using name attributes for production)
+      await page.fill('input[name="firstName"]', userData.firstName);
+      await page.fill('input[name="lastName"]', userData.lastName);
+      await page.fill('input[name="email"]', userData.email);
+      await page.fill('input[name="password"]', userData.password);
+      await page.fill('input[name="confirmPassword"]', userData.password);
+      // Note: Production form doesn't have business type select on initial registration
       
-      // Submit registration
-      await page.click('[data-testid="register-button"]');
+      // Submit registration (look for submit button)
+      await page.click('button[type="submit"], button:has-text("Sign Up"), button:has-text("Register"), button:has-text("Create Account")');
       
       // Verify success
       await helpers.waitForToast('Registration successful! Please check your email to verify your account.');
@@ -56,13 +56,13 @@ test.describe('Authentication & Security (Hybrid Local-Cloud)', () => {
     test('should reject registration with invalid email', async ({ page }) => {
       await page.goto('/register');
       
-      await page.fill('[data-testid="first-name-input"]', 'John');
-      await page.fill('[data-testid="last-name-input"]', 'Doe');
-      await page.fill('[data-testid="email-input"]', 'invalid-email');
-      await page.fill('[data-testid="password-input"]', 'SecurePassword123!');
-      await page.fill('[data-testid="confirm-password-input"]', 'SecurePassword123!');
+      await page.fill('input[name="firstName"]', 'John');
+      await page.fill('input[name="lastName"]', 'Doe');
+      await page.fill('input[name="email"]', 'invalid-email');
+      await page.fill('input[name="password"]', 'SecurePassword123!');
+      await page.fill('input[name="confirmPassword"]', 'SecurePassword123!');
       
-      await page.click('[data-testid="register-button"]');
+      await page.click('button[type="submit"], button:has-text("Sign Up"), button:has-text("Register"), button:has-text("Create Account")');
       
       // Verify error message
       await expect(page.locator('[data-testid="email-error"]')).toContainText('Please enter a valid email address');
@@ -71,13 +71,13 @@ test.describe('Authentication & Security (Hybrid Local-Cloud)', () => {
     test('should reject registration with weak password', async ({ page }) => {
       await page.goto('/register');
       
-      await page.fill('[data-testid="first-name-input"]', 'John');
-      await page.fill('[data-testid="last-name-input"]', 'Doe');
-      await page.fill('[data-testid="email-input"]', `john.${Date.now()}@example.com`);
-      await page.fill('[data-testid="password-input"]', '123');
-      await page.fill('[data-testid="confirm-password-input"]', '123');
+      await page.fill('input[name="firstName"]', 'John');
+      await page.fill('input[name="lastName"]', 'Doe');
+      await page.fill('input[name="email"]', `john.${Date.now()}@example.com`);
+      await page.fill('input[name="password"]', '123');
+      await page.fill('input[name="confirmPassword"]', '123');
       
-      await page.click('[data-testid="register-button"]');
+      await page.click('button[type="submit"], button:has-text("Sign Up"), button:has-text("Register"), button:has-text("Create Account")');
       
       // Verify error message
       await expect(page.locator('[data-testid="password-error"]')).toContainText('Password must be at least 8 characters');
@@ -86,13 +86,13 @@ test.describe('Authentication & Security (Hybrid Local-Cloud)', () => {
     test('should reject registration with mismatched passwords', async ({ page }) => {
       await page.goto('/register');
       
-      await page.fill('[data-testid="first-name-input"]', 'John');
-      await page.fill('[data-testid="last-name-input"]', 'Doe');
-      await page.fill('[data-testid="email-input"]', `john.${Date.now()}@example.com`);
-      await page.fill('[data-testid="password-input"]', 'SecurePassword123!');
-      await page.fill('[data-testid="confirm-password-input"]', 'DifferentPassword123!');
+      await page.fill('input[name="firstName"]', 'John');
+      await page.fill('input[name="lastName"]', 'Doe');
+      await page.fill('input[name="email"]', `john.${Date.now()}@example.com`);
+      await page.fill('input[name="password"]', 'SecurePassword123!');
+      await page.fill('input[name="confirmPassword"]', 'DifferentPassword123!');
       
-      await page.click('[data-testid="register-button"]');
+      await page.click('button[type="submit"], button:has-text("Sign Up"), button:has-text("Register"), button:has-text("Create Account")');
       
       // Verify error message
       await expect(page.locator('[data-testid="confirm-password-error"]')).toContainText('Passwords do not match');
@@ -106,13 +106,13 @@ test.describe('Authentication & Security (Hybrid Local-Cloud)', () => {
       
       // Try to register with same email
       await page.goto('/register');
-      await page.fill('[data-testid="first-name-input"]', 'John');
-      await page.fill('[data-testid="last-name-input"]', 'Doe');
-      await page.fill('[data-testid="email-input"]', email);
-      await page.fill('[data-testid="password-input"]', 'SecurePassword123!');
-      await page.fill('[data-testid="confirm-password-input"]', 'SecurePassword123!');
-      
-      await page.click('[data-testid="register-button"]');
+      await page.fill('input[name="firstName"]', 'John');
+      await page.fill('input[name="lastName"]', 'Doe');
+      await page.fill('input[name="email"]', email);
+      await page.fill('input[name="password"]', 'SecurePassword123!');
+      await page.fill('input[name="confirmPassword"]', 'SecurePassword123!');
+
+      await page.click('button[type="submit"], button:has-text("Sign Up"), button:has-text("Register"), button:has-text("Create Account")');
       
       // Verify error message
       await helpers.waitForToast('An account with this email already exists', 'error');

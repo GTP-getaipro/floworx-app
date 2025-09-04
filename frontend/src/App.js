@@ -16,14 +16,16 @@ import UserManagement from './components/UserManagement';
 import Settings from './components/Settings';
 import { AuthProvider } from './contexts/AuthContext';
 import { ErrorProvider } from './contexts/ErrorContext';
+import { ToastProvider } from './contexts/ToastContext';
 import './App.css';
 
 function App() {
   return (
     <ErrorBoundary>
       <ErrorProvider>
-        <AuthProvider>
-          <Router>
+        <ToastProvider>
+          <AuthProvider>
+            <Router>
             <>
               <div className='App'>
                 <header className='App-header'>
@@ -141,8 +143,9 @@ function App() {
                 </footer>
               </div>
             </>
-          </Router>
-        </AuthProvider>
+            </Router>
+          </AuthProvider>
+        </ToastProvider>
       </ErrorProvider>
     </ErrorBoundary>
   );

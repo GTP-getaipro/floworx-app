@@ -65,9 +65,9 @@ const Alert = ({
     <div className={`rounded-lg p-4 ${container} ${className}`}>
       <div className='flex'>
         <div className='flex-shrink-0'>{icon}</div>
-        <div className='ml-3 flex-1'>
-          {title && <h3 className='text-sm font-medium mb-1 text-ink'>{title}</h3>}
-          <div className='text-sm text-ink-sub'>{children}</div>
+        <div className='ml-3 flex-1 min-w-0'>
+          {title && <h3 className='text-sm font-medium mb-1 text-ink break-words'>{title}</h3>}
+          <div className='text-sm text-ink-sub break-words whitespace-pre-wrap'>{children}</div>
         </div>
         {dismissible && (
           <div className='ml-auto pl-3'>

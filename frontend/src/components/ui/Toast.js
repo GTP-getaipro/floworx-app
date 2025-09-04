@@ -79,7 +79,7 @@ const Toast = ({
   return (
     <div
       className={`
-        fixed top-4 right-4 z-50 max-w-sm w-full
+        fixed top-4 right-4 z-50 max-w-md w-full sm:max-w-lg
         ${variant_config.container}
         rounded-lg p-4 transition-all duration-300 ease-in-out
         ${className}
@@ -90,8 +90,8 @@ const Toast = ({
     >
       <div className='flex items-start'>
         <div className='flex-shrink-0'>{variant_config.icon}</div>
-        <div className='ml-3 flex-1'>
-          <div className='text-sm text-ink'>{children}</div>
+        <div className='ml-3 flex-1 min-w-0'>
+          <div className='text-sm text-ink break-words whitespace-pre-wrap'>{children}</div>
         </div>
         {onClose && (
           <div className='ml-4 flex-shrink-0'>

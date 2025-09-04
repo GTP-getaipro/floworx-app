@@ -76,7 +76,7 @@ export const ToastProvider = ({ children }) => {
       {children}
       
       {/* Enhanced Toast Container */}
-      <div className="fixed top-4 right-4 z-50 space-y-2 max-w-sm">
+      <div className="fixed top-4 right-4 z-50 space-y-2 max-w-md w-full sm:max-w-lg">
         {toasts.map((toast, index) => (
           <div
             key={toast.id}
@@ -117,8 +117,8 @@ export const ToastProvider = ({ children }) => {
                     </svg>
                   )}
                 </div>
-                <div className="ml-3 w-0 flex-1">
-                  <p className="text-sm font-medium">
+                <div className="ml-3 flex-1 min-w-0">
+                  <p className="text-sm font-medium break-words whitespace-pre-wrap">
                     {toast.message}
                   </p>
                 </div>

@@ -67,19 +67,19 @@ const Login = () => {
   };
 
   return (
-    <div className='w-full max-w-md mx-auto py-4 px-4 sm:px-6 lg:px-8'>
-      <div className='w-full space-y-4'>
+    <div className='w-full max-w-lg mx-auto py-6 px-4 sm:px-6 lg:px-8'>
+      <div className='w-full space-y-6'>
         <div className='text-center'>
-          <h2 className='text-2xl font-bold text-ink'>Sign In to Floworx</h2>
-          <p className='mt-1 text-sm text-ink-sub'>Access your automation dashboard</p>
+          <h2 className='text-3xl font-bold text-ink'>Sign In to Floworx</h2>
+          <p className='mt-2 text-base text-ink-sub'>Access your automation dashboard</p>
         </div>
-        <Card className='mt-4' padding='sm'>
+        <Card className='mt-6' padding='default'>
           {errors.submit && (
             <Alert variant='danger' className='mb-6'>
               {errors.submit}
             </Alert>
           )}
-          <form onSubmit={e => handleSubmit(submitLogin, e)} className='space-y-4'>
+          <form onSubmit={e => handleSubmit(submitLogin, e)} className='space-y-6'>
             <Input
               label='Email Address'
               type='email'
@@ -108,6 +108,9 @@ const Login = () => {
               minLength={8}
               maxLength={128}
               autoComplete='current-password'
+              spellCheck={false}
+              autoCapitalize='none'
+              autoCorrect='off'
             />
             <Button
               type='submit'
@@ -119,7 +122,7 @@ const Login = () => {
               Sign In
             </Button>
           </form>
-          <div className='mt-4 space-y-3 text-center'>
+          <div className='mt-6 space-y-4 text-center'>
             <UILink to='/forgot-password' variant='primary'>
               Forgot your password?
             </UILink>

@@ -19,15 +19,27 @@ const ProtectedButton = ({
   const handleClick = async e => {
     const now = Date.now();
 
+    // For submit buttons with no onClick handler, allow natural form submission
+    const isSubmitButton = props.type === 'submit';
+    const hasOnClickHandler = onClick && typeof onClick === 'function' && onClick.toString() !== '() => {}';
+
+    if (isSubmitButton && !hasOnClickHandler) {
+      console.log('🚀 DEBUG: Submit button clicked - allowing natural form submission');
+      // Don't prevent default, let the form handle submission
+      return;
+    }
+
     // Prevent rapid clicks
     if (now - lastClickTime.current < debounceMs) {
       console.log('🛡️ Rapid click prevented');
+      e.preventDefault();
       return;
     }
 
     // Prevent multiple clicks while processing
     if (isProcessing) {
       console.log('🛡️ Click prevented - already processing');
+      e.preventDefault();
       return;
     }
 

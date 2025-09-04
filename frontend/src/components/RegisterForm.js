@@ -109,9 +109,7 @@ const RegisterForm = () => {
         firstName: persistedValues.firstName || prev.firstName,
         lastName: persistedValues.lastName || prev.lastName,
         companyName: persistedValues.companyName || prev.companyName,
-        // Never restore passwords
-        password: '',
-        confirmPassword: '',
+        // Don't override password fields - let them maintain their current values
       }));
     }
   }, [persistenceLoaded, persistedValues, setValues]);

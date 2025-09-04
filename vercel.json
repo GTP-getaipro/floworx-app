@@ -1,6 +1,5 @@
 {
   "version": 2,
-<<<<<<< HEAD
   "builds": [
     {
       "src": "frontend/package.json",
@@ -14,8 +13,6 @@
       "use": "@vercel/node"
     }
   ],
-=======
->>>>>>> blackboxai/routing-update
   "routes": [
     {
       "src": "/api/(.*)",

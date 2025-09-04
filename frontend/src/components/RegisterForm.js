@@ -164,6 +164,10 @@ const RegisterForm = () => {
 
   const handleRegistration = async values => {
     try {
+      console.log('🚀 DEBUG: handleRegistration called with values:', {
+        ...values,
+        password: '[HIDDEN]',
+      });
       console.log('🚀 Starting registration with data:', {
         ...values,
         password: '[HIDDEN]',
@@ -330,7 +334,13 @@ const RegisterForm = () => {
           </Alert>
         )}
 
-        <form onSubmit={e => handleSubmit(handleRegistration, e)} className='space-y-6'>
+        <form onSubmit={e => {
+          console.log('🚀 DEBUG: Form onSubmit triggered');
+          console.log('🚀 DEBUG: Event object:', e);
+          console.log('🚀 DEBUG: handleSubmit function:', typeof handleSubmit);
+          console.log('🚀 DEBUG: handleRegistration function:', typeof handleRegistration);
+          return handleSubmit(handleRegistration, e);
+        }} className='space-y-6'>
           <div className='grid grid-cols-2 gap-4'>
             <ValidatedInput
               label='First Name'

@@ -395,7 +395,9 @@ const routes = {
   // User endpoints
   'GET /user/status': async (req, res) => {
     try {
+      console.log('User status endpoint called');
       const user = await authenticate(req);
+      console.log('User authenticated:', user.id);
 
       const supabase = getSupabaseAdmin();
       const { data: userDetails, error: userError } = await supabase
@@ -403,6 +405,8 @@ const routes = {
         .select('id, email, first_name, last_name, company_name, created_at, last_login, email_verified')
         .eq('id', user.id)
         .single();
+
+      console.log('User query result:', { userDetails, userError });
 
       if (userError) {
         console.error('User details error:', userError);
@@ -627,7 +631,9 @@ const routes = {
   // Dashboard endpoint
   'GET /dashboard': async (req, res) => {
     try {
+      console.log('Dashboard endpoint called');
       const user = await authenticate(req);
+      console.log('Dashboard user authenticated:', user.id);
 
       const supabase = getSupabaseAdmin();
       const { data: userDetails, error: userError } = await supabase
@@ -635,6 +641,8 @@ const routes = {
         .select('id, email, first_name, last_name, company_name, created_at, last_login')
         .eq('id', user.id)
         .single();
+
+      console.log('Dashboard user query result:', { userDetails, userError });
 
       if (userError || !userDetails) {
         console.error('Dashboard user error:', userError);

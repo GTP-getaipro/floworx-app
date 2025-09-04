@@ -1,4 +1,4 @@
-import { createClient } from '@supabase/supabase-js';
+const { createClient } = require('@supabase/supabase-js');
 
 // Create Supabase client for serverless functions
 let supabase;
@@ -44,9 +44,9 @@ const getSupabaseAdmin = () => {
   return supabaseAdmin;
 };
 
-export {
+module.exports = {
   getSupabaseClient,
   getSupabaseAdmin,
   // Legacy support - will be removed
-  getSupabaseClient as getPool
+  getPool: getSupabaseClient
 };

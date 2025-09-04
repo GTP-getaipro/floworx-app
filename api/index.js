@@ -1,7 +1,7 @@
 // Single API handler for all routes to work within Vercel's serverless function limits
-import { getSupabaseClient, getSupabaseAdmin } from './_lib/database.js';
-import bcrypt from 'bcryptjs';
-import jwt from 'jsonwebtoken';
+const { getSupabaseClient, getSupabaseAdmin } = require('./_lib/database.js');
+const bcrypt = require('bcryptjs');
+const jwt = require('jsonwebtoken');
 
 // Simple authentication helper for single API handler
 const authenticate = async (req) => {
@@ -725,7 +725,7 @@ const routes = {
 };
 
 // Main handler
-export default async function handler(req, res) {
+async function handler(req, res) {
   // Set CORS headers for production
   res.setHeader('Access-Control-Allow-Credentials', 'true');
   res.setHeader('Access-Control-Allow-Origin', '*');
@@ -764,3 +764,5 @@ export default async function handler(req, res) {
     });
   }
 }
+
+module.exports = handler;

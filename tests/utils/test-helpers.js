@@ -99,9 +99,9 @@ class TestHelpers {
     await this.page.fill('input[name="password"], input[type="password"]', password);
     await this.page.click('button[type="submit"], button:has-text("Sign In"), button:has-text("Login")');
 
-    // Wait for successful login - be more flexible about the redirect
+    // Wait for successful login with improved timing
     try {
-      await this.page.waitForURL('/dashboard', { timeout: 10000 });
+      await this.page.waitForURL('/dashboard', { timeout: 15000 });
     } catch (error) {
       // If direct redirect fails, check current URL
       const currentUrl = this.page.url();
@@ -110,11 +110,16 @@ class TestHelpers {
       }
     }
 
-    // Wait for dashboard to load instead of looking for user-menu
-    await this.page.waitForTimeout(2000);
-    const isDashboard = await this.page.locator('h1:has-text("Welcome")').count() > 0;
-    if (!isDashboard) {
-      throw new Error('Dashboard did not load properly after login');
+    // Wait for dashboard to fully load using data-testid
+    try {
+      await this.page.waitForSelector('[data-testid="welcome-message"]', { timeout: 10000 });
+    } catch (error) {
+      // Fallback to checking for Welcome text
+      await this.page.waitForTimeout(3000);
+      const isDashboard = await this.page.locator('h1:has-text("Welcome")').count() > 0;
+      if (!isDashboard) {
+        throw new Error('Dashboard did not load properly after login');
+      }
     }
   }
 

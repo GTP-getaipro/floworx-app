@@ -76,7 +76,9 @@ const routes = {
   // Auth endpoints
   'POST /auth/register': async (req, res) => {
     try {
-      const { firstName, lastName, companyName, email, password } = req.body;
+      console.log('Registration request received:', { body: req.body });
+
+      const { firstName, lastName, businessName, companyName, email, password, agreeToTerms, marketingConsent } = req.body;
 
       if (!email || !password || !firstName || !lastName) {
         return res.status(400).json({
@@ -100,12 +102,23 @@ const routes = {
         });
       }
 
+      console.log('Checking environment variables:', {
+        hasSupabaseUrl: !!process.env.SUPABASE_URL,
+        hasSupabaseServiceKey: !!process.env.SUPABASE_SERVICE_ROLE_KEY,
+        hasJwtSecret: !!process.env.JWT_SECRET
+      });
+
       const supabase = getSupabaseAdmin();
-      const { data: existingUser } = await supabase
+      const { data: existingUser, error: checkError } = await supabase
         .from('users')
         .select('id')
         .eq('email', email.toLowerCase())
         .single();
+
+      if (checkError && checkError.code !== 'PGRST116') {
+        console.error('Database check error:', checkError);
+        throw new Error(`Database error: ${checkError.message}`);
+      }
 
       if (existingUser) {
         return res.status(409).json({
@@ -122,7 +135,7 @@ const routes = {
           password_hash: passwordHash,
           first_name: firstName,
           last_name: lastName,
-          company_name: companyName || null,
+          company_name: businessName || companyName || null,
           created_at: new Date().toISOString()
         }])
         .select()

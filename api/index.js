@@ -74,6 +74,57 @@ const routes = {
   },
 
   // Auth endpoints
+  'POST /auth/forgot-password': async (req, res) => {
+    try {
+      console.log('Password reset request received:', { body: req.body });
+
+      const { email } = req.body;
+
+      if (!email) {
+        return res.status(400).json({
+          error: 'Missing email',
+          message: 'Email address is required for password reset'
+        });
+      }
+
+      const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+      if (!emailRegex.test(email)) {
+        return res.status(400).json({
+          error: 'Invalid email',
+          message: 'Please provide a valid email address'
+        });
+      }
+
+      console.log('Initiating password reset for:', email);
+
+      const supabase = getSupabaseClient();
+      const { data, error } = await supabase.auth.resetPasswordForEmail(email, {
+        redirectTo: `${process.env.FRONTEND_URL || 'https://app.floworx-iq.com'}/reset-password`
+      });
+
+      if (error) {
+        console.error('Password reset error:', error);
+        return res.status(400).json({
+          error: 'Password reset failed',
+          message: error.message || 'Unable to send password reset email'
+        });
+      }
+
+      console.log('Password reset email sent successfully');
+
+      res.status(200).json({
+        message: 'Password reset email sent successfully',
+        email: email
+      });
+    } catch (error) {
+      console.error('Password reset error:', error);
+      res.status(500).json({
+        error: 'Password reset failed',
+        message: 'Something went wrong. Please try again.'
+      });
+    }
+  },
+
   'POST /auth/register': async (req, res) => {
     try {
       console.log('Registration request received:', { body: req.body });

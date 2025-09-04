@@ -1,0 +1,31 @@
+{
+  "timestamp": "2025-09-04T05:26:04.059Z",
+  "baseURL": "https://app.floworx-iq.com",
+  "testUser": {
+    "email": "test.776138ae63330552@example.com"
+  },
+  "results": {
+    "passed": 1,
+    "failed": 2,
+    "issues": [
+      "Registration failed: 500 - Request failed with status code 500",
+      "Password reset failed: 404 - Request failed with status code 404"
+    ],
+    "details": [
+      {
+        "test": "Health Endpoint",
+        "status": "PASSED",
+        "details": {
+          "status": "healthy",
+          "timestamp": "2025-09-04T05:26:04.399Z",
+          "database": {
+            "connected": false,
+            "provider": "Supabase"
+          },
+          "environment": "production",
+          "version": "1.0.0"
+        }
+      }
+    ]
+  }
+}

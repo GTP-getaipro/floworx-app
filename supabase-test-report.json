@@ -1,0 +1,60 @@
+{
+  "timestamp": "2025-09-04T05:34:17.538Z",
+  "baseURL": "https://app.floworx-iq.com",
+  "summary": {
+    "totalIssues": 3,
+    "critical": 3,
+    "high": 0
+  },
+  "issues": [
+    {
+      "category": "DATABASE_CONNECTION",
+      "severity": "CRITICAL",
+      "issue": "Supabase database connection failed",
+      "details": "Connection test failed",
+      "possibleCauses": [
+        "Invalid SUPABASE_URL environment variable",
+        "Invalid SUPABASE_ANON_KEY environment variable",
+        "Invalid SUPABASE_SERVICE_ROLE_KEY environment variable",
+        "Supabase project is paused or deleted",
+        "Network connectivity issues",
+        "Row Level Security blocking connection test"
+      ]
+    },
+    {
+      "category": "SUPABASE_AUTH",
+      "severity": "CRITICAL",
+      "issue": "Supabase Auth registration failing",
+      "details": {
+        "error": "Registration failed",
+        "message": "Something went wrong during registration. Please try again."
+      },
+      "possibleCauses": [
+        "Supabase Auth not properly configured",
+        "Users table does not exist or has wrong schema",
+        "Row Level Security policies blocking inserts",
+        "Service role key lacks necessary permissions",
+        "JWT secret mismatch between app and Supabase"
+      ]
+    },
+    {
+      "category": "API_ROUTING",
+      "severity": "CRITICAL",
+      "issue": "Password reset endpoint not found",
+      "details": "POST /api/auth/forgot-password returns 404",
+      "impact": "Users cannot reset their passwords"
+    }
+  ],
+  "recommendations": [
+    {
+      "priority": "HIGH",
+      "action": "Implement password reset endpoint",
+      "details": [
+        "Create /api/auth/forgot-password endpoint",
+        "Integrate with Supabase Auth password reset",
+        "Configure email templates in Supabase",
+        "Set up proper redirect URLs"
+      ]
+    }
+  ]
+}

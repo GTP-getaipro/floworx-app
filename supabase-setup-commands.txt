@@ -1,0 +1,22 @@
+# Step 1: Check current Vercel environment variables
+vercel env ls
+
+# Step 2: Pull current environment variables to check values
+vercel env pull .env.vercel
+
+# Step 3: If Supabase variables are incorrect, update them:
+# Replace YOUR_SUPABASE_URL with your actual Supabase project URL
+vercel env add SUPABASE_URL
+# When prompted, enter: https://YOUR_PROJECT_REF.supabase.co
+
+# Replace YOUR_ANON_KEY with your actual anon key from Supabase dashboard
+vercel env add SUPABASE_ANON_KEY
+
+# Replace YOUR_SERVICE_KEY with your service role key from Supabase dashboard
+vercel env add SUPABASE_SERVICE_ROLE_KEY
+
+# Step 4: Redeploy to apply new environment variables
+vercel --prod
+
+# Step 5: Test the connection
+node test-production-functionality.js

@@ -383,18 +383,20 @@ const routes = {
       }
 
       try {
-        const { data: oauthConnections } = await supabase
-          .from('oauth_connections')
-          .select('provider, connected_at, status')
-          .eq('user_id', user.id);
+        const { data: oauthTokens } = await supabase
+          .from('oauth_tokens')
+          .select('provider, created_at, expires_at, access_token')
+          .eq('user_id', user.id)
+          .not('access_token', 'is', null);
 
-        oauthServices = oauthConnections ? oauthConnections.map(conn => ({
-          service: conn.provider,
-          connected_at: conn.connected_at,
-          status: conn.status
+        oauthServices = oauthTokens ? oauthTokens.map(token => ({
+          service: token.provider,
+          connected_at: token.created_at,
+          expires_at: token.expires_at,
+          status: 'active'
         })) : [];
       } catch (oauthError) {
-        console.log('OAuth connections table not available:', oauthError.message);
+        console.log('OAuth tokens table not available:', oauthError.message);
         // Continue without oauth data
       }
 
@@ -595,26 +597,27 @@ const routes = {
         });
       }
 
-      // Try to get oauth connections, but handle gracefully if table doesn't exist
-      const connections = {};
+      // Try to get oauth tokens, but handle gracefully if table doesn't exist
+      const connections = { google: { connected: false } };
       try {
-        const { data: oauthConnections } = await supabase
-          .from('oauth_connections')
-          .select('provider, connected_at, status, last_sync')
-          .eq('user_id', userDetails.id);
+        const { data: oauthTokens } = await supabase
+          .from('oauth_tokens')
+          .select('provider, created_at, expires_at, access_token')
+          .eq('user_id', userDetails.id)
+          .not('access_token', 'is', null);
 
-        if (oauthConnections) {
-          oauthConnections.forEach(conn => {
-            connections[conn.provider] = {
-              connected: conn.status === 'active',
-              connectedAt: conn.connected_at,
-              lastSync: conn.last_sync,
-              status: conn.status
+        if (oauthTokens) {
+          oauthTokens.forEach(token => {
+            connections[token.provider] = {
+              connected: true,
+              connected_at: token.created_at,
+              expires_at: token.expires_at,
+              status: 'active'
             };
           });
         }
       } catch (oauthError) {
-        console.log('OAuth connections table not available:', oauthError.message);
+        console.log('OAuth tokens table not available:', oauthError.message);
         // Continue without oauth data
       }
 

@@ -378,6 +378,15 @@ const routes = {
     }
   },
 
+  // Test endpoint
+  'GET /test': async (req, res) => {
+    res.status(200).json({
+      message: 'Test endpoint working',
+      timestamp: new Date().toISOString(),
+      routes: Object.keys(routes).length
+    });
+  },
+
   // Password requirements endpoint
   'GET /auth/password-requirements': async (req, res) => {
     res.status(200).json({
@@ -876,6 +885,7 @@ async function handler(req, res) {
   const route = `${req.method} ${path}`;
 
   console.log(`API Request: ${route}`);
+  console.log('Available routes:', Object.keys(routes));
 
   // Find matching route
   const handler = routes[route];

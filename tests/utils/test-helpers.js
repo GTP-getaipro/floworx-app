@@ -99,9 +99,23 @@ class TestHelpers {
     await this.page.fill('input[name="password"], input[type="password"]', password);
     await this.page.click('button[type="submit"], button:has-text("Sign In"), button:has-text("Login")');
 
-    // Wait for successful login
-    await this.page.waitForURL('/dashboard', { timeout: 10000 });
-    await expect(this.page.locator('[data-testid="user-menu"]')).toBeVisible();
+    // Wait for successful login - be more flexible about the redirect
+    try {
+      await this.page.waitForURL('/dashboard', { timeout: 10000 });
+    } catch (error) {
+      // If direct redirect fails, check current URL
+      const currentUrl = this.page.url();
+      if (!currentUrl.includes('/dashboard')) {
+        throw new Error(`Login failed - expected dashboard but got: ${currentUrl}`);
+      }
+    }
+
+    // Wait for dashboard to load instead of looking for user-menu
+    await this.page.waitForTimeout(2000);
+    const isDashboard = await this.page.locator('h1:has-text("Welcome")').count() > 0;
+    if (!isDashboard) {
+      throw new Error('Dashboard did not load properly after login');
+    }
   }
 
   async registerUser(userData = {}) {

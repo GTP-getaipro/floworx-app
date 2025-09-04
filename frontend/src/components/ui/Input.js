@@ -1,6 +1,6 @@
 import React from 'react';
 
-const Input = ({ label, error, helperText, required = false, className = '', id, ...props }) => {
+const Input = ({ label, error, helperText, required = false, className = '', id, name, ...props }) => {
   const inputId = id || `input-${Math.random().toString(36).substr(2, 9)}`;
 
   const inputClasses = `
@@ -28,10 +28,19 @@ const Input = ({ label, error, helperText, required = false, className = '', id,
         </label>
       )}
 
-      <input id={inputId} className={inputClasses} {...props} />
+      <input
+        id={inputId}
+        name={name}
+        data-testid={props['data-testid'] || (name ? `${name}-input` : undefined)}
+        className={inputClasses}
+        {...props}
+      />
 
       {error && (
-        <p className='text-sm text-danger flex items-start gap-1 break-words'>
+        <p
+          data-testid={name ? `${name}-error` : 'input-error'}
+          className='text-sm text-danger flex items-start gap-1 break-words'
+        >
           <svg className='w-4 h-4 flex-shrink-0 mt-0.5' fill='currentColor' viewBox='0 0 20 20'>
             <path
               fillRule='evenodd'

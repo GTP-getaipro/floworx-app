@@ -1,0 +1,81 @@
+# Page snapshot
+
+```yaml
+- generic [ref=e3]:
+  - banner [ref=e4]:
+    - heading "FloWorx" [level=1] [ref=e5]
+    - paragraph [ref=e6]: Email AI Built by Hot Tub Pros—For Hot Tub Pros
+  - main [ref=e7]:
+    - generic [ref=e8]:
+      - generic [ref=e9]:
+        - heading "Create Your Floworx Account" [level=2] [ref=e10]
+        - paragraph [ref=e11]: Start automating your workflow today
+      - generic [ref=e12]:
+        - generic [ref=e14]:
+          - generic [ref=e15]:
+            - img [ref=e17]
+            - generic [ref=e19]:
+              - paragraph [ref=e20]: Personal Info
+              - paragraph [ref=e21]: Name and company
+          - generic [ref=e23]:
+            - generic [ref=e25]: "2"
+            - generic [ref=e26]:
+              - paragraph [ref=e27]: Account Details
+              - paragraph [ref=e28]: Email and password
+          - generic [ref=e30]:
+            - generic [ref=e32]: "3"
+            - generic [ref=e33]:
+              - paragraph [ref=e34]: Verification
+              - paragraph [ref=e35]: Complete setup
+        - generic [ref=e37]:
+          - img [ref=e39]
+          - generic [ref=e42]: An account with this email already exists
+        - generic [ref=e43]:
+          - generic [ref=e44]:
+            - generic [ref=e45]:
+              - generic [ref=e46]:
+                - generic [ref=e47]:
+                  - text: First Name
+                  - generic [ref=e48]: "*"
+                - textbox "First Name*" [ref=e49]: John
+              - img [ref=e51]
+            - generic [ref=e53]:
+              - generic [ref=e54]:
+                - generic [ref=e55]:
+                  - text: Last Name
+                  - generic [ref=e56]: "*"
+                - textbox "Last Name*" [ref=e57]: Doe
+              - img [ref=e59]
+          - generic [ref=e62]:
+            - generic [ref=e63]: Company Name
+            - textbox "Company Name" [ref=e64]
+          - generic [ref=e65]:
+            - generic [ref=e66]:
+              - generic [ref=e67]:
+                - text: Email Address
+                - generic [ref=e68]: "*"
+              - textbox "Email Address*" [ref=e69]: duplicate.1757009934412@example.com
+            - img [ref=e71]
+          - generic [ref=e73]:
+            - generic [ref=e74]:
+              - generic [ref=e75]:
+                - text: Password
+                - generic [ref=e76]: "*"
+              - textbox "Password*" [ref=e77]: SecurePassword123!
+              - paragraph [ref=e78]: Password must be at least 8 characters with uppercase, lowercase, number, and special character (@$!%*?&)
+            - img [ref=e80]
+          - generic [ref=e82]:
+            - generic [ref=e83]:
+              - generic [ref=e84]:
+                - text: Confirm Password
+                - generic [ref=e85]: "*"
+              - textbox "Confirm Password*" [ref=e86]: SecurePassword123!
+            - img [ref=e88]
+          - button "Create Account" [ref=e91] [cursor=pointer]
+        - paragraph [ref=e93]:
+          - text: Already have an account?
+          - link "Sign in here" [ref=e94] [cursor=pointer]:
+            - /url: /login
+  - contentinfo [ref=e95]:
+    - paragraph [ref=e96]: © 2024 FloWorx. Email AI for Hot Tub Professionals.
+```

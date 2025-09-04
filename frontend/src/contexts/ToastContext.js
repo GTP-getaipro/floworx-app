@@ -87,7 +87,9 @@ export const ToastProvider = ({ children }) => {
               zIndex: 1000 - index,
             }}
           >
-            <div className={`
+            <div
+              data-testid={`toast-${toast.variant}`}
+              className={`
               p-4 rounded-lg shadow-lg border-l-4 backdrop-blur-sm
               ${toast.variant === 'success' ? 'bg-green-50 border-green-400 text-green-800' : ''}
               ${toast.variant === 'error' ? 'bg-red-50 border-red-400 text-red-800' : ''}

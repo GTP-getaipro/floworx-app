@@ -93,6 +93,7 @@ const Login = () => {
               disabled={isSubmitting}
               maxLength={255}
               autoComplete='email'
+              data-testid='email-input'
             />
             <Input
               label='Password'
@@ -111,6 +112,7 @@ const Login = () => {
               spellCheck={false}
               autoCapitalize='none'
               autoCorrect='off'
+              data-testid='password-input'
             />
             <Button
               type='submit'
@@ -118,6 +120,7 @@ const Login = () => {
               size='lg'
               loading={isSubmitting}
               className='w-full'
+              data-testid='login-button'
             >
               Sign In
             </Button>

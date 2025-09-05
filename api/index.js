@@ -603,21 +603,33 @@ const routes = {
         console.log('Business configs table not accessible, using defaults:', e.message);
       }
 
-      // Determine next step based on progress
+      // Determine next step based on progress - ensure industry and service connection are mandatory
       let nextStep = 'welcome';
       const completedSteps = onboardingProgress ? onboardingProgress.completed_steps : [];
 
       if (!googleConnected) {
         nextStep = 'google-connection';
-      } else if (!userData.company_name && !completedSteps.includes('business-type')) {
+      } else if (!businessConfig || !completedSteps.includes('business-type')) {
         nextStep = 'business-type';
-      } else if (!businessConfig && !completedSteps.includes('business-categories')) {
+      } else if (!completedSteps.includes('business-categories')) {
         nextStep = 'business-categories';
+      } else if (!completedSteps.includes('label-mapping')) {
+        nextStep = 'label-mapping';
+      } else if (!completedSteps.includes('team-setup')) {
+        nextStep = 'team-setup';
       } else if (!onboardingProgress || !onboardingProgress.completed) {
         nextStep = 'workflow-deployment';
       } else {
         nextStep = 'completed';
       }
+
+      // Only mark onboarding as completed if ALL requirements are met
+      const isOnboardingCompleted = googleConnected &&
+                                   businessConfig &&
+                                   completedSteps.includes('business-type') &&
+                                   completedSteps.includes('business-categories') &&
+                                   onboardingProgress &&
+                                   onboardingProgress.completed;
 
       res.status(200).json({
         success: true,
@@ -627,14 +639,14 @@ const routes = {
           firstName: userData.first_name,
           companyName: userData.company_name,
           emailVerified: userData.email_verified || false,
-          onboardingCompleted: userData.onboarding_completed || false
+          onboardingCompleted: isOnboardingCompleted
         },
         googleConnected,
         completedSteps: completedSteps || [],
         stepData: onboardingProgress ? onboardingProgress.step_data : {},
         nextStep,
         businessConfig: businessConfig ? businessConfig.config : null,
-        onboardingCompleted: onboardingProgress ? onboardingProgress.completed : false
+        onboardingCompleted: isOnboardingCompleted
       });
 
     } catch (error) {

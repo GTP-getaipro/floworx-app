@@ -135,9 +135,9 @@ const Dashboard = () => {
             googleConnected: false,
             completedSteps: [],
             stepData: {},
-            nextStep: 'completed',
+            nextStep: 'google-connection', // Start with Google connection
             businessConfig: null,
-            onboardingCompleted: true
+            onboardingCompleted: false // Force onboarding for demo
           };
 
           setUserStatus(mockUser);
@@ -204,12 +204,24 @@ const Dashboard = () => {
         if (!isMounted) return;
         setOnboardingStatus(onboardingData);
 
-        // Show onboarding if not completed
-        if (!onboardingData.user.onboardingCompleted) {
-          console.log('Dashboard: Onboarding not completed, showing wizard');
+        // Check if all required onboarding steps are completed
+        const hasIndustrySelection = onboardingData.businessConfig && onboardingData.businessConfig.businessType;
+        const hasServiceConnection = onboardingData.googleConnected;
+        const hasCompletedOnboarding = onboardingData.onboardingCompleted;
+
+        console.log('Dashboard: Onboarding status check:', {
+          hasIndustrySelection,
+          hasServiceConnection,
+          hasCompletedOnboarding,
+          nextStep: onboardingData.nextStep
+        });
+
+        // Show onboarding if any required step is missing
+        if (!hasIndustrySelection || !hasServiceConnection || !hasCompletedOnboarding || onboardingData.nextStep !== 'completed') {
+          console.log('Dashboard: Required onboarding steps missing, showing wizard');
           setShowOnboarding(true);
         } else {
-          console.log('Dashboard: Onboarding completed, showing dashboard');
+          console.log('Dashboard: All onboarding requirements met, showing dashboard');
         }
 
         // Clear the timeout since we completed successfully
@@ -248,9 +260,9 @@ const Dashboard = () => {
           googleConnected: false,
           completedSteps: [],
           stepData: {},
-          nextStep: 'completed',
+          nextStep: 'google-connection', // Start with Google connection
           businessConfig: null,
-          onboardingCompleted: true
+          onboardingCompleted: false // Force onboarding for demo
         };
 
         setUserStatus(mockUser);

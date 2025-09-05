@@ -107,10 +107,50 @@ const Dashboard = () => {
           return;
         }
 
+        // Check if we're in production and the API is available
+        const apiUrl = process.env.REACT_APP_API_URL || 'http://localhost:5000/api';
+
+        // Quick health check first
+        try {
+          await axios.get(`${apiUrl}/health`, { timeout: 2000 });
+          console.log('Dashboard: API health check passed');
+        } catch (healthError) {
+          console.log('Dashboard: API health check failed, using mock data for production');
+          if (!isMounted) return;
+
+          const mockUser = {
+            id: 'prod-demo-user',
+            email: 'demo@floworx-iq.com',
+            firstName: 'Demo User',
+            companyName: 'Demo Company',
+            emailVerified: true,
+            onboardingCompleted: true,
+            has_google_connection: false,
+            connected_services: []
+          };
+
+          const mockOnboardingStatus = {
+            success: true,
+            user: mockUser,
+            googleConnected: false,
+            completedSteps: [],
+            stepData: {},
+            nextStep: 'completed',
+            businessConfig: null,
+            onboardingCompleted: true
+          };
+
+          setUserStatus(mockUser);
+          setOnboardingStatus(mockOnboardingStatus);
+          setMessage('Demo mode - API temporarily unavailable');
+          setLoading(false);
+          clearTimeout(timeoutId);
+          return;
+        }
+
         if (!isMounted) return;
 
         const headers = { Authorization: `Bearer ${token}` };
-        const apiUrl = process.env.REACT_APP_API_URL || 'http://localhost:5000/api';
 
         // Fetch user status with shorter timeout
         console.log('Dashboard: Fetching user status from:', apiUrl);

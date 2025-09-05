@@ -199,7 +199,7 @@ class N8nWorkflowGenerator {
    * Generate personalized system message for AI classifier
    */
   generatePersonalizedSystemMessage(businessData, customManagers, customSuppliers, phoneSystem) {
-    const baseMessage = `You are an expert email processing and routing system for "${businessData.company_name}".
+    let baseMessage = `You are an expert email processing and routing system for "${businessData.company_name}".
 
 Your SOLE task is to analyze the provided email and return a single, structured JSON object containing a summary, precise classifications, and extracted entities. Follow all rules precisely.
 
@@ -208,7 +208,7 @@ Your SOLE task is to analyze the provided email and return a single, structured 
 - Phone: ${businessData.business_phone}
 - Service Area: ${businessData.service_area_radius} miles
 - Services: ${businessData.primary_services ? businessData.primary_services.join(', ') : 'Hot tub services'}
-- Response Time Goal: ${businessData.response_time_goal || 'Within 24 hours'}
+- Response Time Goal: ${this.formatResponseTime(businessData.response_time_goal) || 'Within 24 hours'}
 - Business Hours: ${businessData.business_hours || 'Mon-Fri 8AM-6PM'}
 - Phone System: ${phoneSystem}
 ${businessData.emergency_phone ? `- Emergency Phone: ${businessData.emergency_phone}` : ''}
@@ -247,6 +247,22 @@ If the sender's email address contains your business domain, always set: "ai_can
 [Rest of classification rules follow the standard hot tub business template...]`;
 
     return baseMessage;
+  }
+
+  /**
+   * Format response time for display
+   * @param {string} responseTime - Response time code
+   * @returns {string} Formatted response time
+   */
+  formatResponseTime(responseTime) {
+    const timeMap = {
+      '1_hour': 'Within 1 hour',
+      '4_hours': 'Within 4 hours',
+      '24_hours': 'Within 24 hours',
+      '48_hours': 'Within 48 hours'
+    };
+
+    return timeMap[responseTime] || responseTime;
   }
 
   /**

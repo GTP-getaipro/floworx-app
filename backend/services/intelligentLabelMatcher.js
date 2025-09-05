@@ -326,6 +326,11 @@ class IntelligentLabelMatcher {
    */
   async analyzeLabelsForAutomation(gmailLabels) {
     try {
+      // Handle null or undefined input
+      if (!gmailLabels || !Array.isArray(gmailLabels)) {
+        throw new Error('Gmail labels must be a valid array');
+      }
+
       const matches = [];
       const unmatchedLabels = [];
       const missingStandardLabels = [];
@@ -464,12 +469,13 @@ class IntelligentLabelMatcher {
   }
 
   /**
-   * Calculate automation readiness score specifically for hot tub businesses
+   * Calculate automation readiness score
    * @param {Array} matches - Matched labels
    * @param {number} totalLabels - Total number of labels
+   * @param {number} missingLabels - Number of missing critical labels
    * @returns {number} Readiness score 0-1
    */
-  calculateHotTubAutomationReadiness(matches, totalLabels) {
+  calculateAutomationReadiness(matches, totalLabels, missingLabels = 0) {
     if (matches.length === 0) return 0;
 
     // Base score from match ratio
@@ -480,33 +486,36 @@ class IntelligentLabelMatcher {
     const highConfidenceCount = matches.filter(m => m.confidence >= 0.8).length;
     score += (highConfidenceCount / matches.length) * 0.3;
 
-    // Critical categories for hot tub businesses
-    const criticalCategories = ['service_request', 'new_customer', 'complaint'];
-    const criticalCovered = matches.filter(m => criticalCategories.includes(m.n8nCategory)).length;
-    score += (criticalCovered / criticalCategories.length) * 0.4;
+    // Penalty for missing critical labels
+    const criticalLabels = 5; // Expected critical labels
+    const missingPenalty = (missingLabels / criticalLabels) * 0.2;
+    score -= missingPenalty;
 
-    return Math.min(score, 1.0);
+    // Bonus for AI-enabled responses
+    const aiEnabledCount = matches.filter(m => m.aiCanReply).length;
+    if (matches.length > 0) {
+      score += (aiEnabledCount / matches.length) * 0.2;
+    }
+
+    return Math.max(Math.min(score, 1.0), 0);
   }
 
   /**
-   * Get critical categories covered for hot tub business
-   * @param {Array} matches - Matched labels
-   * @returns {Object} Critical categories coverage
+   * Check if label is a system label that should be ignored
+   * @param {Object} label - Gmail label object
+   * @returns {boolean} True if system label
    */
-  getCriticalCategoriesCovered(matches) {
-    const criticalCategories = {
-      service_request: false,
-      new_customer: false,
-      complaint: false
-    };
+  isSystemLabel(label) {
+    const systemLabels = [
+      'INBOX', 'SENT', 'DRAFT', 'SPAM', 'TRASH', 'STARRED', 'IMPORTANT',
+      'CATEGORY_PERSONAL', 'CATEGORY_SOCIAL', 'CATEGORY_PROMOTIONS',
+      'CATEGORY_UPDATES', 'CATEGORY_FORUMS', 'UNREAD'
+    ];
 
-    matches.forEach(match => {
-      if (criticalCategories.hasOwnProperty(match.n8nCategory)) {
-        criticalCategories[match.n8nCategory] = true;
-      }
-    });
-
-    return criticalCategories;
+    return systemLabels.includes(label.id) ||
+           label.id.startsWith('CATEGORY_') ||
+           label.id.startsWith('CHAT') ||
+           label.type === 'system';
   }
 
   /**
@@ -540,14 +549,24 @@ class IntelligentLabelMatcher {
    * @returns {boolean} True if system label
    */
   isSystemLabel(label) {
+    // Handle invalid label objects
+    if (!label || typeof label !== 'object') {
+      return false;
+    }
+
     const systemLabels = [
       'INBOX', 'SENT', 'DRAFT', 'SPAM', 'TRASH', 'STARRED', 'IMPORTANT',
-      'CATEGORY_PERSONAL', 'CATEGORY_SOCIAL', 'CATEGORY_PROMOTIONS', 
+      'CATEGORY_PERSONAL', 'CATEGORY_SOCIAL', 'CATEGORY_PROMOTIONS',
       'CATEGORY_UPDATES', 'CATEGORY_FORUMS', 'UNREAD'
     ];
 
-    return systemLabels.includes(label.id) || 
-           label.id.startsWith('CATEGORY_') || 
+    // Check if label has an id property
+    if (!label.id) {
+      return false;
+    }
+
+    return systemLabels.includes(label.id) ||
+           label.id.startsWith('CATEGORY_') ||
            label.id.startsWith('CHAT') ||
            label.type === 'system';
   }
@@ -566,7 +585,8 @@ class IntelligentLabelMatcher {
         required: true,
         placeholder: 'e.g., Sunshine Hot Tub Services',
         validation: { minLength: 2, maxLength: 100 },
-        description: 'This will be used in automated email responses'
+        description: 'This will be used in automated email responses',
+        tooltip: 'Your company name will appear in all automated email responses and signatures. Make sure it matches your business branding exactly.'
       },
       {
         id: 'business_phone',
@@ -575,7 +595,8 @@ class IntelligentLabelMatcher {
         required: true,
         placeholder: '+1 (555) 123-4567',
         validation: { pattern: /^\+?[\d\s\-\(\)]+$/ },
-        description: 'Primary contact number for customers'
+        description: 'Primary contact number for customers',
+        tooltip: 'This is your main business phone number that customers will see in automated responses. Include area code and use standard formatting.'
       },
       {
         id: 'emergency_phone',
@@ -584,7 +605,8 @@ class IntelligentLabelMatcher {
         required: false,
         placeholder: '+1 (555) 999-9999',
         validation: { pattern: /^\+?[\d\s\-\(\)]+$/ },
-        description: 'For urgent hot tub issues (optional)'
+        description: 'For urgent hot tub issues (optional)',
+        tooltip: 'A separate number for emergency hot tub issues (broken heaters, leaks, etc.). This will be included in urgent email responses. Leave blank if you use the same number.'
       },
       {
         id: 'business_address',
@@ -593,7 +615,8 @@ class IntelligentLabelMatcher {
         required: true,
         placeholder: '123 Main St, City, State 12345',
         validation: { minLength: 10, maxLength: 200 },
-        description: 'Used for service area calculations'
+        description: 'Used for service area calculations',
+        tooltip: 'Your business address helps calculate service areas and appears in email signatures. Use your full street address including city, state, and ZIP code.'
       }
     ];
 
@@ -605,7 +628,8 @@ class IntelligentLabelMatcher {
         required: true,
         placeholder: '25',
         validation: { min: 1, max: 100 },
-        description: 'How far do you travel for service calls?'
+        description: 'How far do you travel for service calls?',
+        tooltip: 'The maximum distance you travel for service calls. This helps filter customer inquiries and set expectations. Most hot tub businesses serve 15-50 miles from their location.'
       },
       {
         id: 'primary_services',
@@ -623,7 +647,8 @@ class IntelligentLabelMatcher {
           { value: 'electrical', label: 'Electrical Work' },
           { value: 'plumbing', label: 'Plumbing & Leak Repair' }
         ],
-        description: 'Select all services you provide'
+        description: 'Select all services you provide',
+        tooltip: 'Choose all services your business offers. This helps the AI provide accurate responses to customer inquiries and route emails to the right team members.'
       },
       {
         id: 'business_hours',
@@ -632,7 +657,8 @@ class IntelligentLabelMatcher {
         required: true,
         placeholder: 'Mon-Fri 8AM-6PM, Sat 9AM-4PM',
         validation: { minLength: 5, maxLength: 100 },
-        description: 'When customers can expect responses'
+        description: 'When customers can expect responses',
+        tooltip: 'Your regular business hours when customers can expect email responses and phone calls. This will be included in automated responses to set proper expectations.'
       },
       {
         id: 'response_time_goal',
@@ -645,7 +671,8 @@ class IntelligentLabelMatcher {
           { value: '24_hours', label: 'Within 24 hours' },
           { value: '48_hours', label: 'Within 48 hours' }
         ],
-        description: 'How quickly do you aim to respond to emails?'
+        description: 'How quickly do you aim to respond to emails?',
+        tooltip: 'Your target response time for customer emails. The AI will include this in automated responses. Choose a realistic timeframe you can consistently meet.'
       },
       {
         id: 'team_size',
@@ -658,7 +685,8 @@ class IntelligentLabelMatcher {
           { value: '4-10', label: '4-10 employees' },
           { value: '10+', label: '10+ employees' }
         ],
-        description: 'Size of your service team'
+        description: 'Size of your service team',
+        tooltip: 'The size of your service team helps determine email routing complexity and response capabilities. This affects how the automation handles workload distribution.'
       },
       {
         id: 'use_company_signature',
@@ -669,7 +697,8 @@ class IntelligentLabelMatcher {
           { value: 'yes', label: 'Yes - Add signature to all automated responses' },
           { value: 'no', label: 'No - Send emails without signature' }
         ],
-        description: 'Professional signature helps build trust with customers'
+        description: 'Professional signature helps build trust with customers',
+        tooltip: 'Adding a professional signature to automated emails builds trust and provides customers with your contact information. Recommended for all businesses.'
       },
       {
         id: 'company_signature',
@@ -684,6 +713,7 @@ Emergency: (555) 999-9999
 www.hottubparadise.com`,
         validation: { maxLength: 500 },
         description: 'This signature will be added to all automated email responses',
+        tooltip: 'Create a professional signature that includes your company name, contact information, and website. Keep it concise but informative.',
         conditional: {
           field: 'use_company_signature',
           value: 'yes'

@@ -1,53 +1,53 @@
 class N8nWorkflowGenerator {
   constructor() {
-    // Internal template structure - not exposed as external file
-    this.baseTemplate = this.getSecureBaseTemplate();
+    // Simple approach: Use your existing n8n template and replace business-specific values
+    this.templateCache = new Map();
   }
 
   /**
-   * Get the secure base template structure (internal only)
-   * @returns {Object} Base n8n workflow template
+   * Get your existing n8n workflow template with placeholders
+   * This is based on your working hot tub template structure
    */
-  getSecureBaseTemplate() {
-    return {
-      name: "Hot Tub Business Email Automation",
+  getWorkingTemplate() {
+    // Cache the template for performance
+    if (this.templateCache.has('base')) {
+      return this.templateCache.get('base');
+    }
+
+    const template = {
+      name: "{{COMPANY_NAME}} - Email Automation Workflow",
       nodes: [
+        // Gmail Trigger - Your existing structure
         {
           parameters: {
             pollTimes: {
-              item: [
-                {
-                  mode: "custom",
-                  cronExpression: "=0 */2 * * * *"
-                }
-              ]
+              item: [{ mode: "custom", cronExpression: "=0 */2 * * * *" }]
             },
             simple: false,
             filters: {
-              q: "in:inbox -(from:(*@business.com))"
+              q: "in:inbox -(from:({{BUSINESS_DOMAINS}}))"
             },
-            options: {
-              downloadAttachments: true
-            }
+            options: { downloadAttachments: true }
           },
           type: "n8n-nodes-base.gmailTrigger",
           typeVersion: 1.2,
           position: [-5904, 3296],
           id: "gmail-trigger-main",
-          name: "Gmail Trigger",
+          name: "Gmail Trigger1",
           credentials: {
             gmailOAuth2: {
-              id: "user_gmail_oauth",
-              name: "Business Gmail"
+              id: "{{GMAIL_CREDENTIAL_ID}}",
+              name: "{{COMPANY_NAME}} Gmail"
             }
           }
         },
+        // AI Classifier - Your existing structure with dynamic system message
         {
           parameters: {
             promptType: "define",
-            text: "=Subject: {{ $json.subject }}\nFrom:{{ $json.from }}\nTo: {{ $json.to }}\nDate: {{ $now }}\nThread ID: {{ $json.threadId }}\nMessage ID: {{ $json.id }}\n\nEmail Body:\n{{ $json.body }}",
+            text: "=Subject: {{ $json.subject }}\\nFrom:{{ $json.from }}\\nTo: {{ $json.to }}\\nDate: {{ $now }}\\nThread ID: {{ $json.threadId }}\\nMessage ID: {{ $json.id }}\\n\\nEmail Body:\\n{{ $json.body }}",
             options: {
-              systemMessage: "You are an expert email processing system for hot tub businesses. Analyze emails and return structured JSON classification."
+              systemMessage: "{{AI_SYSTEM_MESSAGE}}"
             }
           },
           id: "ai-classifier-main",
@@ -55,43 +55,55 @@ class N8nWorkflowGenerator {
           type: "@n8n/n8n-nodes-langchain.chatOpenAi",
           position: [-4800, 3296],
           typeVersion: 1.3
+        }
+      ],
+      connections: {},
+      active: false,
+      settings: {},
+      versionId: "1.0.0"
+    };
+
+    this.templateCache.set('base', template);
+    return template;
+  }
+
+  /**
+   * Minimal fallback template structure
+   */
+  getMinimalTemplate() {
+    return {
+      name: "{{COMPANY_NAME}} - Email Automation",
+      nodes: [
+        {
+          parameters: {
+            pollTimes: { item: [{ mode: "custom", cronExpression: "=0 */2 * * * *" }] },
+            simple: false,
+            filters: { q: "in:inbox -(from:({{BUSINESS_DOMAINS}}))" },
+            options: { downloadAttachments: true }
+          },
+          type: "n8n-nodes-base.gmailTrigger",
+          typeVersion: 1.2,
+          position: [-5904, 3296],
+          id: "gmail-trigger-main",
+          name: "Gmail Trigger1",
+          credentials: { gmailOAuth2: { id: "{{GMAIL_CREDENTIAL_ID}}", name: "{{COMPANY_NAME}} Gmail" } }
         },
         {
           parameters: {
-            rules: {
-              values: []
-            },
-            options: {}
+            promptType: "define",
+            text: "=Subject: {{ $json.subject }}\\nFrom:{{ $json.from }}\\nTo: {{ $json.to }}\\nDate: {{ $now }}\\nThread ID: {{ $json.threadId }}\\nMessage ID: {{ $json.id }}\\n\\nEmail Body:\\n{{ $json.body }}",
+            options: { systemMessage: "{{AI_SYSTEM_MESSAGE}}" }
           },
-          type: "n8n-nodes-base.switch",
-          typeVersion: 3.2,
-          position: [-3856, 2880],
-          id: "main-switch",
-          name: "Category Switch"
+          id: "ai-classifier-main",
+          name: "AI Master Classifier",
+          type: "@n8n/n8n-nodes-langchain.chatOpenAi",
+          position: [-4800, 3296],
+          typeVersion: 1.3
         }
       ],
       connections: {
-        "Gmail Trigger": {
-          main: [
-            [
-              {
-                node: "AI Master Classifier",
-                type: "main",
-                index: 0
-              }
-            ]
-          ]
-        },
-        "AI Master Classifier": {
-          main: [
-            [
-              {
-                node: "Category Switch",
-                type: "main",
-                index: 0
-              }
-            ]
-          ]
+        "Gmail Trigger1": {
+          main: [[{ node: "AI Master Classifier", type: "main", index: 0 }]]
         }
       },
       active: false,
@@ -111,22 +123,39 @@ class N8nWorkflowGenerator {
    */
   async generatePersonalizedWorkflow(businessData, labelMappings, customManagers = [], customSuppliers = [], phoneSystem = 'RingCentral') {
     try {
-      // Use the secure internal template
-      const baseWorkflow = JSON.parse(JSON.stringify(this.baseTemplate));
+      // Start with your proven workflow template
+      const baseTemplate = this.getWorkingTemplate();
 
-      // Create personalized workflow
-      const personalizedWorkflow = {
-        ...baseWorkflow,
-        name: `${businessData.company_name} - Email Automation Workflow`,
-        meta: {
-          instanceId: businessData.user_id,
-          companyName: businessData.company_name,
-          generatedAt: new Date().toISOString(),
-          businessType: 'hot-tub-spa',
-          phoneSystem: phoneSystem,
-          customManagers: customManagers.slice(0, 5),
-          customSuppliers: customSuppliers.slice(0, 10)
-        }
+      // Create the personalized workflow by replacing business-specific values
+      const personalizedWorkflow = JSON.parse(JSON.stringify(baseTemplate));
+
+      // Step 1: Replace basic business information
+      this.replaceBusinessInfo(personalizedWorkflow, businessData, phoneSystem);
+
+      // Step 2: Add dynamic switch node with all categories
+      this.addCategorySwitchNode(personalizedWorkflow, labelMappings);
+
+      // Step 3: Add standard label nodes (Urgent, Sales, Support, etc.)
+      this.addStandardLabelNodes(personalizedWorkflow, businessData);
+
+      // Step 4: Add custom manager nodes
+      this.addCustomManagerNodes(personalizedWorkflow, customManagers, businessData);
+
+      // Step 5: Add custom supplier nodes
+      this.addCustomSupplierNodes(personalizedWorkflow, customSuppliers, businessData);
+
+      // Step 6: Connect all nodes properly
+      this.connectWorkflowNodes(personalizedWorkflow, customManagers, customSuppliers);
+
+      // Add metadata
+      personalizedWorkflow.meta = {
+        instanceId: businessData.user_id,
+        companyName: businessData.company_name,
+        generatedAt: new Date().toISOString(),
+        businessType: businessData.industry || 'hot-tub-spa',
+        phoneSystem: phoneSystem,
+        customManagers: customManagers.slice(0, 5),
+        customSuppliers: customSuppliers.slice(0, 10)
       };
 
       // Update Gmail credentials placeholder
@@ -164,23 +193,7 @@ class N8nWorkflowGenerator {
         gmailTriggerNode.parameters.filters.q = `in:inbox -(from:(${businessDomains.join(' OR ')}))`;
       }
 
-      // Add standard label nodes for hot tub business
-      const standardNodes = this.generateStandardLabelNodes(businessData);
-      personalizedWorkflow.nodes.push(...standardNodes);
-
-      // Add custom manager nodes
-      const managerNodes = this.generateCustomManagerNodes(customManagers, businessData);
-      personalizedWorkflow.nodes.push(...managerNodes);
-
-      // Add custom supplier nodes
-      const supplierNodes = this.generateCustomSupplierNodes(customSuppliers, businessData);
-      personalizedWorkflow.nodes.push(...supplierNodes);
-
-      // Update switch node with all categories
-      const switchNode = personalizedWorkflow.nodes.find(node => node.name === 'Category Switch');
-      if (switchNode) {
-        this.updateSwitchNodeWithAllCategories(switchNode, customManagers, customSuppliers);
-      }
+      // The new methods already handle all node creation, so we don't need the old ones
 
       // Update label IDs with actual Gmail label IDs if available
       if (labelMappings && labelMappings.length > 0) {
@@ -196,18 +209,268 @@ class N8nWorkflowGenerator {
   }
 
   /**
+   * Replace business information in the workflow template
+   * This is where we swap hardcoded values with actual business data
+   */
+  replaceBusinessInfo(workflow, businessData, phoneSystem) {
+    // Replace workflow name
+    workflow.name = `${businessData.company_name} - Email Automation Workflow`;
+
+    // Find and update Gmail nodes with business-specific credentials
+    workflow.nodes.forEach(node => {
+      if (node.type === 'n8n-nodes-base.gmailTrigger' || node.type === 'n8n-nodes-base.gmail') {
+        // Update credential ID
+        if (node.credentials && node.credentials.gmailOAuth2) {
+          node.credentials.gmailOAuth2.id = `user_${businessData.user_id}_gmail`;
+          node.credentials.gmailOAuth2.name = `${businessData.company_name} Gmail`;
+        }
+
+        // Update Gmail filter to exclude business domains
+        if (node.parameters && node.parameters.filters) {
+          const businessDomains = this.extractBusinessDomains(businessData);
+          node.parameters.filters.q = `in:inbox -(from:(${businessDomains.join(' OR ')}))`;
+        }
+      }
+
+      // Update AI classifier with personalized system message
+      if (node.type === '@n8n/n8n-nodes-langchain.chatOpenAi') {
+        node.parameters.options.systemMessage = this.generatePersonalizedSystemMessage(
+          businessData, [], [], phoneSystem
+        );
+      }
+    });
+  }
+
+  /**
+   * Add the main category switch node - this is the heart of your workflow
+   */
+  addCategorySwitchNode(workflow, labelMappings) {
+    const switchNode = {
+      parameters: {
+        rules: {
+          values: [
+            // Urgent category
+            {
+              conditions: {
+                options: { caseSensitive: true, leftValue: "", typeValidation: "strict", version: 2 },
+                conditions: [{
+                  leftValue: "={{ $json.parsed_output.primary_category }}",
+                  rightValue: "Urgent",
+                  operator: { type: "string", operation: "equals" }
+                }],
+                combinator: "and"
+              },
+              renameOutput: true,
+              outputKey: "Urgent"
+            },
+            // Sales category
+            {
+              conditions: {
+                options: { caseSensitive: true, leftValue: "", typeValidation: "strict", version: 2 },
+                conditions: [{
+                  leftValue: "={{ $json.parsed_output.primary_category }}",
+                  rightValue: "Sales",
+                  operator: { type: "string", operation: "equals" }
+                }],
+                combinator: "and"
+              },
+              renameOutput: true,
+              outputKey: "Sales"
+            },
+            // Support category
+            {
+              conditions: {
+                options: { caseSensitive: true, leftValue: "", typeValidation: "strict", version: 2 },
+                conditions: [{
+                  leftValue: "={{ $json.parsed_output.primary_category }}",
+                  rightValue: "Support",
+                  operator: { type: "string", operation: "equals" }
+                }],
+                combinator: "and"
+              },
+              renameOutput: true,
+              outputKey: "Support"
+            }
+          ]
+        },
+        options: {}
+      },
+      type: "n8n-nodes-base.switch",
+      typeVersion: 3.2,
+      position: [-3856, 2880],
+      id: "main-switch",
+      name: "Category Switch"
+    };
+
+    workflow.nodes.push(switchNode);
+  }
+
+  /**
+   * Add standard label nodes (Urgent, Sales, Support, Banking, etc.)
+   * These are the core categories that work for any service business
+   */
+  addStandardLabelNodes(workflow, businessData) {
+    const standardLabels = [
+      { name: 'Urgent', labelId: 'Label_Urgent', position: [-1552, 500] },
+      { name: 'Sales', labelId: 'Label_Sales', position: [-1552, 692] },
+      { name: 'Support', labelId: 'Label_Support', position: [-1552, 884] },
+      { name: 'Banking', labelId: 'Label_Banking', position: [-1552, 1076] },
+      { name: 'Manager', labelId: 'Label_Manager', position: [-1552, 1268] },
+      { name: 'Suppliers', labelId: 'Label_Suppliers', position: [-1552, 1460] },
+      { name: 'FormSub', labelId: 'Label_FormSub', position: [-1552, 1652] },
+      { name: 'Phone', labelId: 'Label_Phone', position: [-1552, 1844] },
+      { name: 'Misc', labelId: 'Label_Misc', position: [-1552, 2036] }
+    ];
+
+    standardLabels.forEach(label => {
+      const labelNode = {
+        parameters: {
+          operation: "addLabels",
+          messageId: "={{ $json.parsed_output.id }}",
+          labelIds: [label.labelId]
+        },
+        type: "n8n-nodes-base.gmail",
+        typeVersion: 2.1,
+        position: label.position,
+        id: `label-${label.name.toLowerCase()}`,
+        name: label.name,
+        credentials: {
+          gmailOAuth2: {
+            id: `user_${businessData.user_id}_gmail`,
+            name: `${businessData.company_name} Gmail`
+          }
+        }
+      };
+
+      workflow.nodes.push(labelNode);
+    });
+  }
+
+  /**
+   * Add custom manager nodes - this is where your template becomes dynamic
+   */
+  addCustomManagerNodes(workflow, customManagers, businessData) {
+    const limitedManagers = customManagers.slice(0, 5); // Max 5 managers
+
+    limitedManagers.forEach((manager, index) => {
+      const managerNode = {
+        parameters: {
+          operation: "addLabels",
+          messageId: "={{ $json.parsed_output.id }}",
+          labelIds: [`Label_Manager_${manager.replace(/\s+/g, '')}`]
+        },
+        type: "n8n-nodes-base.gmail",
+        typeVersion: 2.1,
+        position: [-1040, 2896 + (index * 192)],
+        id: `manager-${index}`,
+        name: manager,
+        credentials: {
+          gmailOAuth2: {
+            id: `user_${businessData.user_id}_gmail`,
+            name: `${businessData.company_name} Gmail`
+          }
+        }
+      };
+
+      workflow.nodes.push(managerNode);
+    });
+  }
+
+  /**
+   * Add custom supplier nodes - dynamic supplier handling
+   */
+  addCustomSupplierNodes(workflow, customSuppliers, businessData) {
+    const limitedSuppliers = customSuppliers.slice(0, 10); // Max 10 suppliers
+
+    limitedSuppliers.forEach((supplier, index) => {
+      const supplierNode = {
+        parameters: {
+          operation: "addLabels",
+          messageId: "={{ $json.parsed_output.id }}",
+          labelIds: [`Label_Supplier_${supplier.replace(/\s+/g, '').replace(/[^a-zA-Z0-9]/g, '')}`]
+        },
+        type: "n8n-nodes-base.gmail",
+        typeVersion: 2.1,
+        position: [-528, 2896 + (index * 192)],
+        id: `supplier-${index}`,
+        name: supplier.length > 20 ? supplier.substring(0, 20) + '...' : supplier,
+        credentials: {
+          gmailOAuth2: {
+            id: `user_${businessData.user_id}_gmail`,
+            name: `${businessData.company_name} Gmail`
+          }
+        }
+      };
+
+      workflow.nodes.push(supplierNode);
+    });
+  }
+
+  /**
+   * Connect all workflow nodes - this creates the email routing logic
+   */
+  connectWorkflowNodes(workflow, customManagers, customSuppliers) {
+    // Initialize connections object
+    workflow.connections = {
+      "Gmail Trigger1": {
+        main: [[{ node: "AI Master Classifier", type: "main", index: 0 }]]
+      },
+      "AI Master Classifier": {
+        main: [[{ node: "Category Switch", type: "main", index: 0 }]]
+      },
+      "Category Switch": {
+        main: [
+          // Standard category outputs
+          [{ node: "Urgent", type: "main", index: 0 }],
+          [{ node: "Sales", type: "main", index: 0 }],
+          [{ node: "Support", type: "main", index: 0 }],
+          [{ node: "Banking", type: "main", index: 0 }],
+          [{ node: "Manager", type: "main", index: 0 }],
+          [{ node: "Suppliers", type: "main", index: 0 }],
+          [{ node: "FormSub", type: "main", index: 0 }],
+          [{ node: "Phone", type: "main", index: 0 }],
+          [{ node: "Misc", type: "main", index: 0 }]
+        ]
+      }
+    };
+
+    // Add connections for custom managers
+    if (customManagers.length > 0) {
+      workflow.connections["Manager"] = {
+        main: customManagers.slice(0, 5).map((manager, index) => [
+          { node: manager, type: "main", index: 0 }
+        ])
+      };
+    }
+
+    // Add connections for custom suppliers
+    if (customSuppliers.length > 0) {
+      workflow.connections["Suppliers"] = {
+        main: customSuppliers.slice(0, 10).map((supplier, index) => [
+          { node: supplier.length > 20 ? supplier.substring(0, 20) + '...' : supplier, type: "main", index: 0 }
+        ])
+      };
+    }
+  }
+
+  /**
    * Generate personalized system message for AI classifier
+   * This is the key to making your template work for any business
    */
   generatePersonalizedSystemMessage(businessData, customManagers, customSuppliers, phoneSystem) {
-    let baseMessage = `You are an expert email processing and routing system for "${businessData.company_name}".
+    // Get industry-specific context
+    const industryType = businessData.industry || 'service-business';
+    const businessType = this.getBusinessTypeDescription(industryType);
+
+    let baseMessage = `You are an expert email processing and routing system for "${businessData.company_name}", a ${businessType}.
 
 Your SOLE task is to analyze the provided email and return a single, structured JSON object containing a summary, precise classifications, and extracted entities. Follow all rules precisely.
 
 ### Business Information:
 - Company: ${businessData.company_name}
 - Phone: ${businessData.business_phone}
-- Service Area: ${businessData.service_area_radius} miles
-- Services: ${businessData.primary_services ? businessData.primary_services.join(', ') : 'Hot tub services'}
+- Service Area: ${businessData.service_area_radius || 'Local area'} ${businessData.service_area_radius ? 'miles' : ''}
+- Services: ${businessData.primary_services ? businessData.primary_services.join(', ') : this.getDefaultServices(industryType)}
 - Response Time Goal: ${this.formatResponseTime(businessData.response_time_goal) || 'Within 24 hours'}
 - Business Hours: ${businessData.business_hours || 'Mon-Fri 8AM-6PM'}
 - Phone System: ${phoneSystem}
@@ -247,6 +510,36 @@ If the sender's email address contains your business domain, always set: "ai_can
 [Rest of classification rules follow the standard hot tub business template...]`;
 
     return baseMessage;
+  }
+
+  /**
+   * Get business type description based on industry
+   */
+  getBusinessTypeDescription(industryType) {
+    const descriptions = {
+      'hot-tub-spa': 'hot tub and spa service business',
+      'hvac': 'HVAC service business',
+      'plumbing': 'plumbing service business',
+      'landscaping': 'landscaping service business',
+      'service-business': 'service business'
+    };
+
+    return descriptions[industryType] || 'service business';
+  }
+
+  /**
+   * Get default services for industry type
+   */
+  getDefaultServices(industryType) {
+    const defaultServices = {
+      'hot-tub-spa': 'Hot tub installation, repair, maintenance, water care',
+      'hvac': 'Heating, cooling, HVAC installation and repair',
+      'plumbing': 'Plumbing repair, installation, drain cleaning',
+      'landscaping': 'Lawn care, landscaping, tree service, irrigation',
+      'service-business': 'Professional services'
+    };
+
+    return defaultServices[industryType] || 'Professional services';
   }
 
   /**

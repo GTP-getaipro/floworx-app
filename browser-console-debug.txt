@@ -1,0 +1,70 @@
+// COPY AND PASTE THIS ENTIRE SCRIPT INTO YOUR BROWSER CONSOLE
+// While you're on the dashboard page that's stuck loading
+
+console.log('🔍 FLOWORX DASHBOARD DEBUG');
+console.log('URL:', window.location.href);
+
+// Check token
+const token = localStorage.getItem('floworx_token');
+console.log('Token exists:', !!token);
+
+if (!token) {
+    console.log('❌ NO TOKEN - User needs to log in!');
+    console.log('💡 Redirect to login page');
+    console.log('💡 Run this to go to login: window.location.href = "/login"');
+} else {
+    console.log('✅ Token found, testing API calls...');
+    
+    // Test API calls
+    async function quickTest() {
+        try {
+            const headers = { Authorization: `Bearer ${token}` };
+            
+            console.log('🔍 Testing auth verify...');
+            const authRes = await fetch('/api/auth/verify', { headers });
+            const authData = await authRes.json();
+            console.log('Auth verify result:', authRes.status, authData);
+            
+            if (authRes.status === 401) {
+                console.log('❌ AUTH FAILED - Token is invalid/expired');
+                console.log('💡 Run this to clear token and login: localStorage.removeItem("floworx_token"); window.location.href = "/login"');
+                return;
+            }
+            
+            console.log('🔍 Testing user status...');
+            const userRes = await fetch('/api/user/status', { headers });
+            const userData = await userRes.json();
+            console.log('User status result:', userRes.status, userData);
+            
+            console.log('🔍 Testing onboarding status...');
+            const onboardingRes = await fetch('/api/onboarding/status', { headers });
+            const onboardingData = await onboardingRes.json();
+            console.log('Onboarding status result:', onboardingRes.status, onboardingData);
+            
+            // Check if all APIs are working
+            if (authRes.ok && userRes.ok && onboardingRes.ok) {
+                console.log('✅ All APIs working! Issue might be in React component.');
+                console.log('💡 Try refreshing the page: window.location.reload()');
+            } else {
+                console.log('❌ Some APIs failed. Check the responses above.');
+            }
+            
+        } catch (error) {
+            console.log('❌ Network error:', error);
+            console.log('💡 Check if the backend is running');
+        }
+    }
+    
+    quickTest();
+}
+
+// Also check for React errors
+setTimeout(() => {
+    const errors = document.querySelectorAll('[class*="error"]');
+    if (errors.length > 0) {
+        console.log('🚨 Found error elements on page:', errors);
+    }
+    
+    const loading = document.querySelectorAll('[class*="loading"], [class*="spinner"]');
+    console.log('🔄 Loading elements still visible:', loading.length);
+}, 2000);

@@ -17,16 +17,18 @@ test.describe('Business Logic Functional Tests (Hybrid Local-Cloud)', () => {
 
   test.describe('Complete 5-Step User Onboarding Flow', () => {
     test('should complete full onboarding journey with data persistence', async ({ page }) => {
-      const testUser = await helpers.createTestUser({
+      console.log('🚀 Testing complete 5-step onboarding flow');
+
+      // Step 1: Register and Login (using frontend registration)
+      const testUser = await helpers.registerUser({
+        firstName: 'E2E-Test',
+        lastName: 'Onboarding',
         email: `e2e-test.onboarding.${Date.now()}@playwright-test.local`,
-        first_name: 'E2E-Test',
-        last_name: 'Onboarding'
+        password: 'TestPassword123!'
       });
 
-      console.log('🚀 Testing complete 5-step onboarding flow');
-      
-      // Step 1: Welcome & Login
-      await helpers.loginUser(testUser.email, 'TestPassword123!');
+      // Login with the registered user
+      await helpers.loginUser(testUser.email, testUser.password);
       await expect(page.locator('[data-testid="welcome-step"]')).toBeVisible();
       
       // Step 2: Business Type Selection
@@ -103,12 +105,16 @@ test.describe('Business Logic Functional Tests (Hybrid Local-Cloud)', () => {
     });
 
     test('should handle onboarding interruption and resume', async ({ page }) => {
-      const testUser = await helpers.createTestUser({
-        email: `e2e-test.resume.${Date.now()}@playwright-test.local`
+      // Register and login user
+      const testUser = await helpers.registerUser({
+        firstName: 'E2E-Test',
+        lastName: 'Resume',
+        email: `e2e-test.resume.${Date.now()}@playwright-test.local`,
+        password: 'TestPassword123!'
       });
 
       // Start onboarding
-      await helpers.loginUser(testUser.email, 'TestPassword123!');
+      await helpers.loginUser(testUser.email, testUser.password);
       
       // Complete first two steps
       await page.click('[data-testid="next-step-button"]');
@@ -129,8 +135,13 @@ test.describe('Business Logic Functional Tests (Hybrid Local-Cloud)', () => {
 
   test.describe('Email Categorization System', () => {
     test('should validate manual email categorization with persistence', async ({ page }) => {
-      const testUser = await helpers.createTestUser();
-      await helpers.loginUser(testUser.email, 'TestPassword123!');
+      const testUser = await helpers.registerUser({
+        firstName: 'E2E-Test',
+        lastName: 'Email',
+        email: `e2e-test.${Date.now()}@playwright-test.local`,
+        password: 'TestPassword123!'
+      });
+      await helpers.loginUser(testUser.email, testUser.password);
       
       // Create test emails
       const testEmails = [
@@ -173,10 +184,15 @@ test.describe('Business Logic Functional Tests (Hybrid Local-Cloud)', () => {
     });
 
     test('should validate automated Gmail label mapping', async ({ page }) => {
-      const testUser = await helpers.createTestUser();
+      const testUser = await helpers.registerUser({
+        firstName: 'E2E-Test',
+        lastName: 'Gmail',
+        email: `e2e-test.${Date.now()}@playwright-test.local`,
+        password: 'TestPassword123!'
+      });
       await helpers.setupGmailLabelMapping(testUser.id, [
-        { gmail_label: 'Service Requests', floworx_category: 'service_request' },
-        { gmail_label: 'Urgent', floworx_category: 'urgent_issue' }
+        { gmail_label_id: 'Label_123', gmail_label_name: 'Service Requests', floworx_category: 'service_request' },
+        { gmail_label_id: 'Label_456', gmail_label_name: 'Urgent', floworx_category: 'urgent_issue' }
       ]);
       
       await helpers.loginUser(testUser.email, 'TestPassword123!');

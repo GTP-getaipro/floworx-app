@@ -1,0 +1,234 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dashboard Test - Floworx</title>
+    <style>
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+            background: #f8fafc;
+        }
+        .header {
+            background: white;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+            margin-bottom: 20px;
+        }
+        .test-section {
+            background: white;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+            margin-bottom: 20px;
+        }
+        .test-result {
+            padding: 10px;
+            margin: 5px 0;
+            border-radius: 4px;
+            font-family: monospace;
+        }
+        .success { background: #d4edda; color: #155724; }
+        .error { background: #f8d7da; color: #721c24; }
+        .warning { background: #fff3cd; color: #856404; }
+        .info { background: #d1ecf1; color: #0c5460; }
+        button {
+            background: #007bff;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 4px;
+            cursor: pointer;
+            margin: 5px;
+        }
+        button:hover { background: #0056b3; }
+        .dashboard-link {
+            display: inline-block;
+            background: #28a745;
+            color: white;
+            text-decoration: none;
+            padding: 15px 30px;
+            border-radius: 8px;
+            font-weight: bold;
+            margin: 10px 0;
+        }
+        .dashboard-link:hover { background: #218838; }
+        #testResults { min-height: 200px; }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <h1>🧪 Dashboard Testing Tool</h1>
+        <p>Test the Floworx dashboard at <strong>http://localhost:3000/dashboard</strong></p>
+        <a href="http://localhost:3000/dashboard" target="_blank" class="dashboard-link">
+            🚀 Open Dashboard in New Tab
+        </a>
+    </div>
+
+    <div class="test-section">
+        <h2>🔧 Test Controls</h2>
+        <button onclick="runDashboardTest()">Run Dashboard Test</button>
+        <button onclick="testOnboardingElements()">Test Onboarding Elements</button>
+        <button onclick="clearResults()">Clear Results</button>
+        <button onclick="openDashboard()">Open Dashboard</button>
+    </div>
+
+    <div class="test-section">
+        <h2>📊 Test Results</h2>
+        <div id="testResults">
+            <div class="info">Click "Run Dashboard Test" to start testing...</div>
+        </div>
+    </div>
+
+    <div class="test-section">
+        <h2>📋 Manual Testing Checklist</h2>
+        <div id="manualChecklist">
+            <h3>Dashboard Elements to Verify:</h3>
+            <ul>
+                <li>✅ Dashboard loads without getting stuck</li>
+                <li>✅ Dashboard title shows "Dashboard"</li>
+                <li>✅ Welcome message shows user email</li>
+                <li>✅ Refresh button is present and clickable</li>
+                <li>✅ Four metrics cards are displayed</li>
+                <li>✅ Activity feed section is present</li>
+                <li>✅ Google connection status is shown</li>
+                <li>✅ Sign out button works</li>
+            </ul>
+            
+            <h3>Expected Behavior:</h3>
+            <ul>
+                <li>🔄 Loading should complete within 8 seconds</li>
+                <li>📊 Mock data should display if API fails</li>
+                <li>⚠️ Error messages should be user-friendly</li>
+                <li>🔄 Refresh button should update data</li>
+            </ul>
+        </div>
+    </div>
+
+    <script>
+        function addResult(message, type = 'info') {
+            const results = document.getElementById('testResults');
+            const div = document.createElement('div');
+            div.className = `test-result ${type}`;
+            div.textContent = message;
+            results.appendChild(div);
+            results.scrollTop = results.scrollHeight;
+        }
+
+        function clearResults() {
+            document.getElementById('testResults').innerHTML = 
+                '<div class="info">Results cleared. Ready for new test...</div>';
+        }
+
+        function openDashboard() {
+            window.open('http://localhost:3000/dashboard', '_blank');
+            addResult('🚀 Opened dashboard in new tab', 'info');
+        }
+
+        function runDashboardTest() {
+            clearResults();
+            addResult('🧪 Starting Dashboard Test...', 'info');
+            
+            // Test if localhost:3000 is accessible
+            fetch('http://localhost:3000')
+                .then(response => {
+                    if (response.ok) {
+                        addResult('✅ Frontend server is running on localhost:3000', 'success');
+                        testDashboardElements();
+                    } else {
+                        addResult('❌ Frontend server responded with error', 'error');
+                    }
+                })
+                .catch(error => {
+                    addResult('❌ Cannot connect to localhost:3000 - Is the dev server running?', 'error');
+                    addResult('💡 Run: cd frontend && npm start', 'warning');
+                });
+        }
+
+        function testDashboardElements() {
+            addResult('🔍 Testing dashboard elements...', 'info');
+            
+            // Open dashboard in iframe for testing
+            const iframe = document.createElement('iframe');
+            iframe.src = 'http://localhost:3000/dashboard';
+            iframe.style.display = 'none';
+            document.body.appendChild(iframe);
+            
+            iframe.onload = function() {
+                setTimeout(() => {
+                    try {
+                        const doc = iframe.contentDocument || iframe.contentWindow.document;
+                        
+                        // Test dashboard elements
+                        const tests = [
+                            { id: 'dashboard-container', name: 'Dashboard Container' },
+                            { id: 'dashboard-title', name: 'Dashboard Title' },
+                            { id: 'welcome-message', name: 'Welcome Message' },
+                            { id: 'refresh-dashboard-button', name: 'Refresh Button' },
+                            { id: 'emails-processed-card', name: 'Emails Card' },
+                            { id: 'workflows-active-card', name: 'Workflows Card' },
+                            { id: 'activity-feed', name: 'Activity Feed' }
+                        ];
+                        
+                        let passed = 0;
+                        tests.forEach(test => {
+                            const element = doc.querySelector(`[data-testid="${test.id}"]`);
+                            if (element) {
+                                addResult(`✅ ${test.name}: Found`, 'success');
+                                passed++;
+                            } else {
+                                addResult(`❌ ${test.name}: Missing`, 'error');
+                            }
+                        });
+                        
+                        addResult(`📊 Test Results: ${passed}/${tests.length} elements found`, 
+                                 passed === tests.length ? 'success' : 'warning');
+                        
+                        if (passed === tests.length) {
+                            addResult('🎉 ALL TESTS PASSED! Dashboard is working correctly.', 'success');
+                        }
+                        
+                    } catch (error) {
+                        addResult('⚠️ Cannot access iframe content (CORS). Please test manually.', 'warning');
+                        addResult('💡 Open dashboard in new tab and check browser console', 'info');
+                    }
+                    
+                    document.body.removeChild(iframe);
+                }, 3000);
+            };
+            
+            iframe.onerror = function() {
+                addResult('❌ Failed to load dashboard', 'error');
+                document.body.removeChild(iframe);
+            };
+        }
+
+        function testOnboardingElements() {
+            addResult('🧪 Testing Onboarding Elements...', 'info');
+            addResult('📋 Expected onboarding data-testids:', 'info');
+            
+            const onboardingIds = [
+                'progress-bar', 'progress-text', 'continue-button', 'back-button',
+                'welcome-title', 'business-type-hot-tub-spa', 'review-business-type',
+                'review-gmail-status', 'complete-onboarding-button'
+            ];
+            
+            onboardingIds.forEach(id => {
+                addResult(`   - ${id}`, 'info');
+            });
+            
+            addResult('💡 Navigate to onboarding to test these elements', 'warning');
+        }
+
+        // Auto-run test on page load
+        window.onload = function() {
+            addResult('🚀 Dashboard Testing Tool Loaded', 'success');
+            addResult('💡 Click "Run Dashboard Test" to start automated testing', 'info');
+        };
+    </script>
+</body>
+</html>

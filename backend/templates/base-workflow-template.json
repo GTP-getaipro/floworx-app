@@ -1,0 +1,238 @@
+{
+  "name": "{{COMPANY_NAME}} - Email Automation Workflow",
+  "nodes": [
+    {
+      "parameters": {
+        "pollTimes": {
+          "item": [
+            {
+              "mode": "custom",
+              "cronExpression": "=0 */2 * * * *"
+            }
+          ]
+        },
+        "simple": false,
+        "filters": {
+          "q": "in:inbox -(from:({{BUSINESS_DOMAINS}}))"
+        },
+        "options": {
+          "downloadAttachments": true
+        }
+      },
+      "type": "n8n-nodes-base.gmailTrigger",
+      "typeVersion": 1.2,
+      "position": [-5904, 3296],
+      "id": "gmail-trigger-main",
+      "name": "Gmail Trigger1",
+      "credentials": {
+        "gmailOAuth2": {
+          "id": "{{GMAIL_CREDENTIAL_ID}}",
+          "name": "{{COMPANY_NAME}} Gmail"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "promptType": "define",
+        "text": "=Subject: {{ $json.subject }}\\nFrom:{{ $json.from }}\\nTo: {{ $json.to }}\\nDate: {{ $now }}\\nThread ID: {{ $json.threadId }}\\nMessage ID: {{ $json.id }}\\n\\nEmail Body:\\n{{ $json.body }}",
+        "options": {
+          "systemMessage": "{{AI_SYSTEM_MESSAGE}}"
+        }
+      },
+      "id": "ai-classifier-main",
+      "name": "AI Master Classifier",
+      "type": "@n8n/n8n-nodes-langchain.chatOpenAi",
+      "position": [-4800, 3296],
+      "typeVersion": 1.3
+    },
+    {
+      "parameters": {
+        "rules": {
+          "values": [
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 2
+                },
+                "conditions": [
+                  {
+                    "leftValue": "={{ $json.parsed_output.primary_category }}",
+                    "rightValue": "Urgent",
+                    "operator": {
+                      "type": "string",
+                      "operation": "equals"
+                    }
+                  }
+                ],
+                "combinator": "and"
+              },
+              "renameOutput": true,
+              "outputKey": "Urgent"
+            },
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 2
+                },
+                "conditions": [
+                  {
+                    "leftValue": "={{ $json.parsed_output.primary_category }}",
+                    "rightValue": "Sales",
+                    "operator": {
+                      "type": "string",
+                      "operation": "equals"
+                    }
+                  }
+                ],
+                "combinator": "and"
+              },
+              "renameOutput": true,
+              "outputKey": "Sales"
+            },
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 2
+                },
+                "conditions": [
+                  {
+                    "leftValue": "={{ $json.parsed_output.primary_category }}",
+                    "rightValue": "Support",
+                    "operator": {
+                      "type": "string",
+                      "operation": "equals"
+                    }
+                  }
+                ],
+                "combinator": "and"
+              },
+              "renameOutput": true,
+              "outputKey": "Support"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.switch",
+      "typeVersion": 3.2,
+      "position": [-3856, 2880],
+      "id": "main-switch",
+      "name": "Switch1"
+    },
+    {
+      "parameters": {
+        "operation": "addLabels",
+        "messageId": "={{ $json.parsed_output.id }}",
+        "labelIds": ["Label_Urgent"]
+      },
+      "type": "n8n-nodes-base.gmail",
+      "typeVersion": 2.1,
+      "position": [-1552, 500],
+      "id": "urgent-label",
+      "name": "Urgent",
+      "credentials": {
+        "gmailOAuth2": {
+          "id": "{{GMAIL_CREDENTIAL_ID}}",
+          "name": "{{COMPANY_NAME}} Gmail"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "addLabels",
+        "messageId": "={{ $json.parsed_output.id }}",
+        "labelIds": ["Label_Sales"]
+      },
+      "type": "n8n-nodes-base.gmail",
+      "typeVersion": 2.1,
+      "position": [-1552, 692],
+      "id": "sales-label",
+      "name": "Sales",
+      "credentials": {
+        "gmailOAuth2": {
+          "id": "{{GMAIL_CREDENTIAL_ID}}",
+          "name": "{{COMPANY_NAME}} Gmail"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "addLabels",
+        "messageId": "={{ $json.parsed_output.id }}",
+        "labelIds": ["Label_Support"]
+      },
+      "type": "n8n-nodes-base.gmail",
+      "typeVersion": 2.1,
+      "position": [-1552, 884],
+      "id": "support-label",
+      "name": "Support",
+      "credentials": {
+        "gmailOAuth2": {
+          "id": "{{GMAIL_CREDENTIAL_ID}}",
+          "name": "{{COMPANY_NAME}} Gmail"
+        }
+      }
+    }
+  ],
+  "connections": {
+    "Gmail Trigger1": {
+      "main": [
+        [
+          {
+            "node": "AI Master Classifier",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "AI Master Classifier": {
+      "main": [
+        [
+          {
+            "node": "Switch1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Switch1": {
+      "main": [
+        [
+          {
+            "node": "Urgent",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Sales",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Support",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": false,
+  "settings": {},
+  "versionId": "1.0.0"
+}

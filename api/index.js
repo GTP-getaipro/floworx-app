@@ -2,6 +2,7 @@
 const { getSupabaseClient, getSupabaseAdmin } = require('./_lib/database.js');
 const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
+const axios = require('axios');
 
 // Simple authentication helper for single API handler
 const authenticate = async (req) => {
@@ -34,6 +35,23 @@ const authenticate = async (req) => {
     } else {
       throw new Error('Authentication failed');
     }
+  }
+};
+
+// Helper function to fetch Gmail labels
+const fetchGmailLabels = async (accessToken) => {
+  try {
+    const response = await axios.get('https://gmail.googleapis.com/gmail/v1/users/me/labels', {
+      headers: {
+        'Authorization': `Bearer ${accessToken}`,
+        'Content-Type': 'application/json'
+      }
+    });
+
+    return response.data.labels || [];
+  } catch (error) {
+    console.error('Error fetching Gmail labels:', error);
+    throw new Error('Failed to fetch Gmail labels');
   }
 };
 
@@ -1756,6 +1774,173 @@ const routes = {
       res.status(500).json({
         error: 'OAuth initiation failed',
         message: 'Unable to start OAuth flow. Please try again.'
+      });
+    }
+  },
+
+  // Post-OAuth intelligent Gmail analysis and business form generation
+  'POST /oauth/analyze-gmail': async (req, res) => {
+    try {
+      const user = await authenticate(req);
+      if (!user) {
+        return res.status(401).json({ success: false, message: 'Authentication required' });
+      }
+
+      const supabase = getSupabaseAdmin();
+
+      // Get user's OAuth credentials
+      const { data: credentials } = await supabase
+        .from('oauth_credentials')
+        .select('access_token, refresh_token')
+        .eq('user_id', user.id)
+        .eq('provider', 'google')
+        .single();
+
+      if (!credentials || !credentials.access_token) {
+        return res.status(400).json({
+          success: false,
+          message: 'Google OAuth connection required'
+        });
+      }
+
+      // Fetch Gmail labels using the access token
+      const gmailLabels = await fetchGmailLabels(credentials.access_token);
+
+      // Analyze labels for automation potential
+      const IntelligentLabelMatcher = require('../backend/services/intelligentLabelMatcher');
+      const matcher = new IntelligentLabelMatcher();
+
+      const analysis = await matcher.analyzeLabelsForAutomation(gmailLabels);
+
+      // Generate business data form
+      const businessForm = matcher.generateBusinessDataForm(analysis);
+
+      // Determine next steps
+      const recommendations = {
+        skipLabelMapping: !analysis.hasUsableLabels || analysis.automationScore < 0.3,
+        proceedToBusinessForm: true,
+        automationReadiness: analysis.automationScore,
+        message: analysis.hasUsableLabels
+          ? `Found ${analysis.recommendedMappings.length} Gmail labels that can be mapped to your hot tub business automation.`
+          : 'No existing Gmail labels found that match hot tub business categories. We\'ll create the standard labels for you.'
+      };
+
+      res.json({
+        success: true,
+        analysis,
+        businessForm,
+        recommendations
+      });
+
+    } catch (error) {
+      console.error('Error analyzing Gmail labels:', error);
+      res.status(500).json({
+        success: false,
+        message: 'Failed to analyze Gmail labels',
+        error: error.message
+      });
+    }
+  },
+
+  // Submit business data and generate n8n workflow
+  'POST /onboarding/business-data': async (req, res) => {
+    try {
+      const user = await authenticate(req);
+      if (!user) {
+        return res.status(401).json({ success: false, message: 'Authentication required' });
+      }
+
+      const {
+        company_name,
+        business_phone,
+        emergency_phone,
+        business_address,
+        service_area_radius,
+        primary_services,
+        business_hours,
+        response_time_goal,
+        team_size,
+        custom_managers = [],
+        custom_suppliers = [],
+        phone_system = 'RingCentral'
+      } = req.body;
+
+      // Validate required fields
+      if (!company_name || !business_phone || !business_address || !service_area_radius) {
+        return res.status(400).json({
+          success: false,
+          message: 'Missing required business information'
+        });
+      }
+
+      const supabase = getSupabaseAdmin();
+
+      // Save business data
+      const businessData = {
+        user_id: user.id,
+        company_name,
+        business_phone,
+        emergency_phone,
+        business_address,
+        service_area_radius: parseInt(service_area_radius),
+        primary_services: Array.isArray(primary_services) ? primary_services : [primary_services],
+        business_hours,
+        response_time_goal,
+        team_size,
+        phone_system,
+        created_at: new Date().toISOString(),
+        updated_at: new Date().toISOString()
+      };
+
+      // Update user profile with company name
+      await supabase
+        .from('users')
+        .update({
+          company_name,
+          onboarding_completed: true,
+          updated_at: new Date().toISOString()
+        })
+        .eq('id', user.id);
+
+      // Save business configuration
+      const { data: savedBusiness, error: businessError } = await supabase
+        .from('business_configurations')
+        .upsert(businessData)
+        .select()
+        .single();
+
+      if (businessError) {
+        console.error('Error saving business data:', businessError);
+        return res.status(500).json({
+          success: false,
+          message: 'Failed to save business data'
+        });
+      }
+
+      // Mark onboarding as completed
+      await supabase
+        .from('onboarding_progress')
+        .upsert({
+          user_id: user.id,
+          completed_steps: ['business-type', 'business-categories', 'business-data'],
+          step_data: { businessData },
+          completed: true,
+          completed_at: new Date().toISOString()
+        });
+
+      res.json({
+        success: true,
+        message: 'Business data saved successfully',
+        businessData: savedBusiness,
+        nextStep: 'dashboard'
+      });
+
+    } catch (error) {
+      console.error('Error processing business data:', error);
+      res.status(500).json({
+        success: false,
+        message: 'Failed to process business data',
+        error: error.message
       });
     }
   },

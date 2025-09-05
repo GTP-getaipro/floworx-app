@@ -521,59 +521,86 @@ const routes = {
 
       const supabase = getSupabaseAdmin();
 
-      // Get user's basic info
-      const { data: userData, error: userError } = await supabase
+      // Set a timeout for database operations
+      const dbTimeout = new Promise((_, reject) => {
+        setTimeout(() => reject(new Error('Database operation timeout')), 8000);
+      });
+
+      // Get user's basic info with timeout
+      console.log('Fetching user data...');
+      const userDataPromise = supabase
         .from('users')
         .select('email, email_verified, onboarding_completed, first_name, company_name')
         .eq('id', user.id)
         .single();
 
+      const { data: userData, error: userError } = await Promise.race([userDataPromise, dbTimeout]);
+
       if (userError) {
+        console.error('User data error:', userError);
         throw userError;
       }
+      console.log('User data fetched successfully');
 
-      // Check if Google is connected
-      const { data: credentials, error: credError } = await supabase
+      // Check if Google is connected with timeout
+      console.log('Checking Google connection...');
+      const credentialsPromise = supabase
         .from('credentials')
         .select('id, service_name, created_at')
         .eq('user_id', user.id)
         .eq('service_name', 'google');
 
-      const googleConnected = credentials && credentials.length > 0;
+      const { data: credentials, error: credError } = await Promise.race([credentialsPromise, dbTimeout]);
 
-      // Get onboarding progress (if table exists)
+      // Don't throw error for credentials - just assume not connected if query fails
+      const googleConnected = credentials && credentials.length > 0;
+      console.log('Google connected:', googleConnected);
+
+      // Get onboarding progress (if table exists) with timeout
+      console.log('Fetching onboarding progress...');
       let onboardingProgress = null;
       try {
-        const { data: progress, error: progressError } = await supabase
+        const progressPromise = supabase
           .from('onboarding_progress')
           .select('current_step, completed_steps, step_data, google_connected, completed')
           .eq('user_id', user.id)
           .single();
 
+        const { data: progress, error: progressError } = await Promise.race([progressPromise, dbTimeout]);
+
         if (!progressError) {
           onboardingProgress = progress;
+          console.log('Onboarding progress found');
+        } else {
+          console.log('No onboarding progress found');
         }
       } catch (e) {
-        // Table might not exist, that's okay
-        console.log('Onboarding progress table not found, using defaults');
+        // Table might not exist or timeout, that's okay
+        console.log('Onboarding progress table not accessible, using defaults:', e.message);
       }
 
-      // Get business config (if table exists)
+      // Get business config (if table exists) with timeout
+      console.log('Fetching business config...');
       let businessConfig = null;
       try {
-        const { data: config, error: configError } = await supabase
+        const configPromise = supabase
           .from('business_configs')
           .select('config, version, created_at, updated_at')
           .eq('user_id', user.id)
           .eq('is_active', true)
           .single();
 
+        const { data: config, error: configError } = await Promise.race([configPromise, dbTimeout]);
+
         if (!configError) {
           businessConfig = config;
+          console.log('Business config found');
+        } else {
+          console.log('No business config found');
         }
       } catch (e) {
-        // Table might not exist, that's okay
-        console.log('Business configs table not found, using defaults');
+        // Table might not exist or timeout, that's okay
+        console.log('Business configs table not accessible, using defaults:', e.message);
       }
 
       // Determine next step based on progress

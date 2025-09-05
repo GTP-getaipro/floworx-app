@@ -172,6 +172,7 @@ const BusinessTypeStep = ({ onNext, onBack, stepData, onStepDataChange }) => {
                   : 'hover:border-brand-primary-200'
               }`}
               onClick={() => handleBusinessTypeSelect(businessType)}
+              data-testid={`business-type-${businessType.slug}`}
             >
               <div className='flex items-start space-x-4'>
                 <div className='flex-shrink-0'>
@@ -247,7 +248,7 @@ const BusinessTypeStep = ({ onNext, onBack, stepData, onStepDataChange }) => {
       </div>
 
       <div className='flex justify-between items-center mt-8 pt-6 border-t border-surface-border'>
-        <Button type='button' onClick={onBack} variant='secondary' disabled={isSubmitting}>
+        <Button type='button' onClick={onBack} variant='secondary' disabled={isSubmitting} data-testid="back-button">
           Back
         </Button>
 
@@ -257,6 +258,7 @@ const BusinessTypeStep = ({ onNext, onBack, stepData, onStepDataChange }) => {
           variant='primary'
           disabled={!selectedBusinessType || isSubmitting}
           loading={isSubmitting}
+          data-testid="continue-button"
         >
           Continue
         </Button>

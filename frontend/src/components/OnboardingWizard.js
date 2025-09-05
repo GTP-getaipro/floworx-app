@@ -349,6 +349,8 @@ const OnboardingWizard = ({ onComplete }) => {
                 variant='primary'
                 showLabel
                 className='mb-4'
+                data-testid="progress-bar"
+                aria-valuenow={Math.round(((currentStep + 1) / steps.length) * 100)}
               />
               <div className='flex justify-between text-sm text-ink-sub'>
                 {steps.map((step, index) => (
@@ -393,7 +395,7 @@ const OnboardingWizard = ({ onComplete }) => {
         <div className='bg-surface border-t border-surface-border'>
           <div className='max-w-4xl mx-auto px-6 py-4'>
             <div className='flex justify-between items-center text-sm'>
-              <div className='text-ink-sub'>
+              <div className='text-ink-sub' data-testid="progress-text">
                 Step {currentStep + 1} of {steps.length}
               </div>
               <div className='text-ink-sub'>

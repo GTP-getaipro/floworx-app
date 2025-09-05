@@ -81,7 +81,7 @@ const WelcomeStep = ({ data, onComplete }) => {
           </svg>
         </div>
 
-        <h3>Welcome to Floworx Intelligence!</h3>
+        <h3 data-testid="welcome-title">Welcome to Floworx Intelligence!</h3>
         <p className='welcome-description'>
           Transform your business email management with AI-powered automation. Let's connect your
           Google Workspace account to get started with intelligent email categorization and
@@ -140,6 +140,7 @@ const WelcomeStep = ({ data, onComplete }) => {
           onClick={handleGoogleConnect}
           disabled={connecting}
           className='primary-button google-connect-button'
+          data-testid="continue-button"
         >
           {connecting ? (
             <>

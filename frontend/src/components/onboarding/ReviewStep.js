@@ -48,8 +48,17 @@ const ReviewStep = ({ data, onComplete, onBack, canGoBack }) => {
       <div className='review-sections'>
         <div className='review-section'>
           <div className='section-header'>
+            <h4>🔗 Gmail Connection</h4>
+            <span className='section-count' data-testid="review-gmail-status">
+              {data.googleConnected ? 'Connected' : 'Not Connected'}
+            </span>
+          </div>
+        </div>
+
+        <div className='review-section'>
+          <div className='section-header'>
             <h4>📧 Email Categories</h4>
-            <span className='section-count'>{businessCategories.length} categories</span>
+            <span className='section-count' data-testid="review-business-type">{businessCategories.length} categories</span>
           </div>
           <div className='section-content'>
             {businessCategories.map((category, index) => (
@@ -64,7 +73,7 @@ const ReviewStep = ({ data, onComplete, onBack, canGoBack }) => {
         <div className='review-section'>
           <div className='section-header'>
             <h4>🏷️ Gmail Label Mappings</h4>
-            <span className='section-count'>{labelMappings.length} mappings</span>
+            <span className='section-count' data-testid="review-label-mappings">{labelMappings.length} mappings</span>
           </div>
           <div className='section-content'>
             {labelMappings.length === 0 ? (
@@ -86,7 +95,7 @@ const ReviewStep = ({ data, onComplete, onBack, canGoBack }) => {
         <div className='review-section'>
           <div className='section-header'>
             <h4>👥 Team Notifications</h4>
-            <span className='section-count'>{teamMembers.length} members</span>
+            <span className='section-count' data-testid="review-notifications">{teamMembers.length} members</span>
           </div>
           <div className='section-content'>
             {teamMembers.length === 0 ? (
@@ -184,6 +193,7 @@ const ReviewStep = ({ data, onComplete, onBack, canGoBack }) => {
           onClick={handleActivate}
           disabled={deploying}
           className='primary-button activation-button'
+          data-testid="complete-onboarding-button"
         >
           {deploying ? (
             <>

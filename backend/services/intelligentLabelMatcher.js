@@ -659,6 +659,35 @@ class IntelligentLabelMatcher {
           { value: '10+', label: '10+ employees' }
         ],
         description: 'Size of your service team'
+      },
+      {
+        id: 'use_company_signature',
+        label: 'Add Company Signature to All Emails?',
+        type: 'radio',
+        required: true,
+        options: [
+          { value: 'yes', label: 'Yes - Add signature to all automated responses' },
+          { value: 'no', label: 'No - Send emails without signature' }
+        ],
+        description: 'Professional signature helps build trust with customers'
+      },
+      {
+        id: 'company_signature',
+        label: 'Company Email Signature',
+        type: 'textarea',
+        required: false,
+        placeholder: `Best regards,
+The Hot Tub Team
+Hot Tub Paradise Ltd.
+Phone: (555) 123-4567
+Emergency: (555) 999-9999
+www.hottubparadise.com`,
+        validation: { maxLength: 500 },
+        description: 'This signature will be added to all automated email responses',
+        conditional: {
+          field: 'use_company_signature',
+          value: 'yes'
+        }
       }
     ];
 

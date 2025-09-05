@@ -222,6 +222,14 @@ const routes = {
       }
 
       const passwordHash = await bcrypt.hash(password, 12);
+
+      // Generate email verification token
+      const verificationToken = jwt.sign(
+        { email: email.toLowerCase(), type: 'email_verification' },
+        process.env.JWT_SECRET,
+        { expiresIn: '24h' }
+      );
+
       const { data: newUser, error: insertError } = await supabase
         .from('users')
         .insert([{
@@ -230,6 +238,8 @@ const routes = {
           first_name: firstName,
           last_name: lastName,
           company_name: businessName || companyName || null,
+          email_verified: false,
+          verification_token: verificationToken,
           created_at: new Date().toISOString()
         }])
         .select()
@@ -237,30 +247,135 @@ const routes = {
 
       if (insertError) throw insertError;
 
-      const token = jwt.sign(
-        { userId: newUser.id, email: newUser.email },
-        process.env.JWT_SECRET,
-        { expiresIn: '24h' }
-      );
+      // Send verification email (in production, you'd use a real email service)
+      const verificationUrl = `${process.env.FRONTEND_URL || 'https://app.floworx-iq.com'}/verify-email?token=${verificationToken}`;
+
+      // TODO: Send actual verification email using your email service
+      console.log(`Email verification URL for ${email}: ${verificationUrl}`);
 
       res.status(201).json({
-        message: 'User registered successfully',
+        message: 'User registered successfully. Please check your email to verify your account.',
         user: {
           id: newUser.id,
           email: newUser.email,
           firstName: newUser.first_name,
           lastName: newUser.last_name,
           companyName: newUser.company_name,
+          emailVerified: false,
           createdAt: newUser.created_at
         },
-        token,
-        expiresIn: '24h'
+        requiresEmailVerification: true,
+        verificationEmailSent: true
       });
     } catch (error) {
       console.error('Registration error:', error);
       res.status(500).json({
         error: 'Registration failed',
         message: 'Something went wrong during registration. Please try again.'
+      });
+    }
+  },
+
+  // Email verification endpoint
+  'POST /auth/verify-email': async (req, res) => {
+    try {
+      const { token } = req.body;
+
+      if (!token) {
+        return res.status(400).json({
+          success: false,
+          message: 'Verification token is required'
+        });
+      }
+
+      // Verify the token
+      const decoded = jwt.verify(token, process.env.JWT_SECRET);
+
+      if (decoded.type !== 'email_verification') {
+        return res.status(400).json({
+          success: false,
+          message: 'Invalid verification token'
+        });
+      }
+
+      const supabase = getSupabaseAdmin();
+
+      // Find user with this verification token
+      const { data: user, error: findError } = await supabase
+        .from('users')
+        .select('*')
+        .eq('email', decoded.email)
+        .eq('verification_token', token)
+        .single();
+
+      if (findError || !user) {
+        return res.status(400).json({
+          success: false,
+          message: 'Invalid or expired verification token'
+        });
+      }
+
+      if (user.email_verified) {
+        return res.status(200).json({
+          success: true,
+          message: 'Email already verified'
+        });
+      }
+
+      // Mark email as verified
+      const { error: updateError } = await supabase
+        .from('users')
+        .update({
+          email_verified: true,
+          verification_token: null,
+          updated_at: new Date().toISOString()
+        })
+        .eq('id', user.id);
+
+      if (updateError) {
+        console.error('Error verifying email:', updateError);
+        return res.status(500).json({
+          success: false,
+          message: 'Failed to verify email'
+        });
+      }
+
+      // Generate login token
+      const loginToken = jwt.sign(
+        { userId: user.id, email: user.email },
+        process.env.JWT_SECRET,
+        { expiresIn: '24h' }
+      );
+
+      res.json({
+        success: true,
+        message: 'Email verified successfully',
+        user: {
+          id: user.id,
+          email: user.email,
+          firstName: user.first_name,
+          lastName: user.last_name,
+          companyName: user.company_name,
+          emailVerified: true
+        },
+        token: loginToken,
+        expiresIn: '24h'
+      });
+
+    } catch (error) {
+      console.error('Email verification error:', error);
+
+      if (error.name === 'TokenExpiredError') {
+        return res.status(400).json({
+          success: false,
+          message: 'Verification token has expired. Please request a new verification email.'
+        });
+      }
+
+      res.status(500).json({
+        success: false,
+        message: 'Failed to verify email',
+        error: error.message
       });
     }
   },
@@ -1862,7 +1977,9 @@ const routes = {
         team_size,
         custom_managers = [],
         custom_suppliers = [],
-        phone_system = 'RingCentral'
+        phone_system = 'RingCentral',
+        use_company_signature = 'no',
+        company_signature = ''
       } = req.body;
 
       // Validate required fields
@@ -1888,6 +2005,10 @@ const routes = {
         response_time_goal,
         team_size,
         phone_system,
+        custom_managers: custom_managers.slice(0, 5), // Max 5 managers
+        custom_suppliers: custom_suppliers.slice(0, 10), // Max 10 suppliers
+        use_company_signature: use_company_signature === 'yes',
+        company_signature: use_company_signature === 'yes' ? company_signature : null,
         created_at: new Date().toISOString(),
         updated_at: new Date().toISOString()
       };
@@ -1940,6 +2061,133 @@ const routes = {
       res.status(500).json({
         success: false,
         message: 'Failed to process business data',
+        error: error.message
+      });
+    }
+  },
+
+  // Get current business configuration for dashboard
+  'GET /dashboard/business-config': async (req, res) => {
+    try {
+      const user = await authenticate(req);
+      if (!user) {
+        return res.status(401).json({ success: false, message: 'Authentication required' });
+      }
+
+      const supabase = getSupabaseAdmin();
+
+      const { data: businessConfig, error } = await supabase
+        .from('business_configurations')
+        .select('*')
+        .eq('user_id', user.id)
+        .single();
+
+      if (error && error.code !== 'PGRST116') {
+        console.error('Error fetching business config:', error);
+        return res.status(500).json({
+          success: false,
+          message: 'Failed to fetch business configuration'
+        });
+      }
+
+      res.json({
+        success: true,
+        businessConfig: businessConfig || null
+      });
+
+    } catch (error) {
+      console.error('Error fetching business config:', error);
+      res.status(500).json({
+        success: false,
+        message: 'Failed to fetch business configuration',
+        error: error.message
+      });
+    }
+  },
+
+  // Update business configuration from dashboard
+  'PUT /dashboard/business-config': async (req, res) => {
+    try {
+      const user = await authenticate(req);
+      if (!user) {
+        return res.status(401).json({ success: false, message: 'Authentication required' });
+      }
+
+      const {
+        company_name,
+        business_phone,
+        emergency_phone,
+        business_address,
+        service_area_radius,
+        primary_services,
+        business_hours,
+        response_time_goal,
+        team_size,
+        custom_managers = [],
+        custom_suppliers = [],
+        phone_system,
+        use_company_signature,
+        company_signature
+      } = req.body;
+
+      const supabase = getSupabaseAdmin();
+
+      // Update business configuration
+      const updatedData = {
+        user_id: user.id,
+        company_name,
+        business_phone,
+        emergency_phone,
+        business_address,
+        service_area_radius: parseInt(service_area_radius),
+        primary_services: Array.isArray(primary_services) ? primary_services : [primary_services],
+        business_hours,
+        response_time_goal,
+        team_size,
+        phone_system,
+        custom_managers: custom_managers.slice(0, 5),
+        custom_suppliers: custom_suppliers.slice(0, 10),
+        use_company_signature: use_company_signature === 'yes' || use_company_signature === true,
+        company_signature: (use_company_signature === 'yes' || use_company_signature === true) ? company_signature : null,
+        updated_at: new Date().toISOString()
+      };
+
+      const { data: savedConfig, error: updateError } = await supabase
+        .from('business_configurations')
+        .upsert(updatedData)
+        .select()
+        .single();
+
+      if (updateError) {
+        console.error('Error updating business config:', updateError);
+        return res.status(500).json({
+          success: false,
+          message: 'Failed to update business configuration'
+        });
+      }
+
+      // Update user profile with company name if changed
+      if (company_name) {
+        await supabase
+          .from('users')
+          .update({
+            company_name,
+            updated_at: new Date().toISOString()
+          })
+          .eq('id', user.id);
+      }
+
+      res.json({
+        success: true,
+        message: 'Business configuration updated successfully',
+        businessConfig: savedConfig
+      });
+
+    } catch (error) {
+      console.error('Error updating business config:', error);
+      res.status(500).json({
+        success: false,
+        message: 'Failed to update business configuration',
         error: error.message
       });
     }

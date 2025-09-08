@@ -245,6 +245,24 @@ app.use('/api/analytics', analyticsRoutes);
 app.use('/api/performance', performanceRoutes);
 app.use('/api/scheduler', schedulerRoutes);
 
+// Serve static files from React build (production only)
+if (process.env.NODE_ENV === 'production') {
+  const path = require('path');
+
+  // Serve static files from the React build directory
+  app.use(express.static(path.join(__dirname, '../frontend/build')));
+
+  // Handle React Router - send all non-API requests to index.html
+  app.get('*', (req, res) => {
+    // Skip API routes
+    if (req.path.startsWith('/api/')) {
+      return res.status(404).json({ error: 'API endpoint not found' });
+    }
+
+    res.sendFile(path.join(__dirname, '../frontend/build', 'index.html'));
+  });
+}
+
 // Use centralized error handlers
 app.use(notFoundHandler);
 app.use(errorHandler);

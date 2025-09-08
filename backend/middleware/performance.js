@@ -116,8 +116,18 @@ const responseTimeHeader = (req, res, next) => {
   const originalEnd = res.end;
   res.end = function (...args) {
     const responseTime = Date.now() - startTime;
-    res.set('X-Response-Time', `${responseTime}ms`);
-    originalEnd.apply(res, args);
+
+    // Only set header if headers haven't been sent yet
+    if (!res.headersSent) {
+      try {
+        res.set('X-Response-Time', `${responseTime}ms`);
+      } catch (error) {
+        // Silently ignore header setting errors to prevent crashes
+        console.warn('Failed to set response time header:', error.message);
+      }
+    }
+
+    return originalEnd.apply(res, args);
   };
 
   next();
@@ -264,19 +274,30 @@ const cachePerformanceTracker = async (req, res, next) => {
     return await originalCacheSet.call(this, key, value, ttl);
   };
 
+  // Override res.end to add cache headers before response is sent
+  const originalEnd = res.end;
+  res.end = function (...args) {
+    // Add cache performance headers in development BEFORE sending response
+    if (process.env.NODE_ENV === 'development' && cacheOperations > 0 && !res.headersSent) {
+      try {
+        const hitRate = cacheHits / (cacheHits + cacheMisses) || 0;
+        res.set({
+          'X-Cache-Operations': cacheOperations.toString(),
+          'X-Cache-Hit-Rate': (hitRate * 100).toFixed(1) + '%'
+        });
+      } catch (error) {
+        // Silently ignore header setting errors to prevent crashes
+        console.warn('Failed to set cache performance headers:', error.message);
+      }
+    }
+
+    return originalEnd.apply(res, args);
+  };
+
   // Restore original methods after request
   res.on('finish', () => {
     cacheService.get = originalCacheGet;
     cacheService.set = originalCacheSet;
-
-    // Add cache performance headers in development
-    if (process.env.NODE_ENV === 'development' && cacheOperations > 0) {
-      const hitRate = cacheHits / (cacheHits + cacheMisses) || 0;
-      res.set({
-        'X-Cache-Operations': cacheOperations.toString(),
-        'X-Cache-Hit-Rate': (hitRate * 100).toFixed(1) + '%'
-      });
-    }
   });
 
   next();

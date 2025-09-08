@@ -61,6 +61,21 @@ USER floworx
 # Expose port
 EXPOSE 5000
 
+
+# Copy other necessary files
+COPY shared/ ./shared/
+COPY database/ ./database/
+
+# ---- ADD THESE TWO LINES ----
+# Copy the startup script and make it executable
+COPY start.sh /app/start.sh
+RUN chmod +x /app/start.sh
+
+# Set ownership to non-root user
+RUN chown -R floworx:nodejs /app
+USER floworx
+
+
 # Health check with better error handling
 HEALTHCHECK --interval=30s --timeout=10s --start-period=30s --retries=3 \
   CMD node -e "require('http').get('http://localhost:5000/api/health', (res) => { process.exit(res.statusCode === 200 ? 0 : 1) }).on('error', () => process.exit(1))"

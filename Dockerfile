@@ -35,6 +35,10 @@ COPY package*.json ./
 # Install root dependencies
 RUN npm ci --only=production && npm cache clean --force
 
+# Copy backend package files and install backend dependencies
+COPY backend/package*.json ./backend/
+RUN cd backend && npm ci --only=production && npm cache clean --force
+
 # Copy backend source code
 COPY backend/ ./backend/
 

@@ -37,7 +37,11 @@ RUN npm ci --only=production && npm cache clean --force
 
 # Copy backend package files and install backend dependencies
 COPY backend/package*.json ./backend/
-RUN cd backend && npm ci --only=production && npm cache clean --force
+RUN cd backend && \
+    # Remove prepare script temporarily to avoid husky issues
+    npm pkg delete scripts.prepare && \
+    npm ci --omit=dev && \
+    npm cache clean --force
 
 # Copy backend source code
 COPY backend/ ./backend/

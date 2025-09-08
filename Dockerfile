@@ -52,27 +52,7 @@ COPY --from=frontend-builder /app/frontend/build ./frontend/build
 COPY shared/ ./shared/
 COPY database/ ./database/
 
-# Create startup script for Supabase connection handling
-RUN echo '#!/bin/sh\n\
-echo "🚀 Starting Floworx application..."\n\
-echo "🔍 Checking environment variables..."\n\
-\n\
-# Check for required Supabase variables\n\
-if [ -z "$SUPABASE_URL" ] || [ -z "$SUPABASE_ANON_KEY" ]; then\n\
-  echo "⚠️  Warning: SUPABASE_URL or SUPABASE_ANON_KEY not set"\n\
-  echo "   Application will use PostgreSQL connection if available"\n\
-fi\n\
-\n\
-# Check for database connection variables\n\
-if [ -z "$DB_HOST" ] && [ -z "$SUPABASE_URL" ]; then\n\
-  echo "❌ Error: No database configuration found"\n\
-  echo "   Please set either DB_HOST or SUPABASE_URL"\n\
-  exit 1\n\
-fi\n\
-\n\
-echo "✅ Environment check complete"\n\
-echo "⏳ Starting Node.js server..."\n\
-exec "$@"' > /app/start.sh && chmod +x /app/start.sh
+# Add environment validation directly in the CMD
 
 # Set ownership to non-root user
 RUN chown -R floworx:nodejs /app
@@ -88,5 +68,5 @@ HEALTHCHECK --interval=30s --timeout=10s --start-period=30s --retries=3 \
 # Use dumb-init to handle signals properly
 ENTRYPOINT ["dumb-init", "--"]
 
-# Start the application with startup script and memory optimization
-CMD ["/app/start.sh", "node", "--max-old-space-size=512", "--unhandled-rejections=strict", "backend/server.js"]
+# Start the application with memory optimization and better error handling
+CMD ["node", "--max-old-space-size=512", "--unhandled-rejections=strict", "backend/server.js"]

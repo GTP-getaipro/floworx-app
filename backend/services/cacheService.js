@@ -41,6 +41,8 @@ class CacheService {
     // Skip Redis initialization if not configured or in development
     if (!process.env.REDIS_HOST || process.env.NODE_ENV === 'development') {
       console.log('⚠️ Redis disabled - using memory cache only');
+      console.log(`   REDIS_HOST: ${process.env.REDIS_HOST || 'not set'}`);
+      console.log(`   NODE_ENV: ${process.env.NODE_ENV || 'not set'}`);
       this.isRedisConnected = false;
       return;
     }
@@ -63,6 +65,7 @@ class CacheService {
         enableReadyCheck: false
       };
 
+      console.log(`🔗 Attempting Redis connection to: ${redisConfig.host}:${redisConfig.port}`);
       this.redis = new Redis(redisConfig);
 
       this.redis.on('connect', () => {

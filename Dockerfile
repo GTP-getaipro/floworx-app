@@ -7,14 +7,14 @@ WORKDIR /app/frontend
 # Copy frontend package files
 COPY frontend/package*.json ./
 
-# Install frontend dependencies
-RUN npm ci --only=production
+# Install ALL dependencies (including dev deps needed for build)
+RUN npm ci
 
 # Copy frontend source code
 COPY frontend/ ./
 
-# Build the React application
-RUN npm run build
+# Build the React application with memory optimization
+RUN NODE_OPTIONS="--max-old-space-size=2048" npm run build
 
 # Production stage
 FROM node:20-alpine AS production
@@ -52,6 +52,28 @@ COPY --from=frontend-builder /app/frontend/build ./frontend/build
 COPY shared/ ./shared/
 COPY database/ ./database/
 
+# Create startup script for Supabase connection handling
+RUN echo '#!/bin/sh\n\
+echo "🚀 Starting Floworx application..."\n\
+echo "🔍 Checking environment variables..."\n\
+\n\
+# Check for required Supabase variables\n\
+if [ -z "$SUPABASE_URL" ] || [ -z "$SUPABASE_ANON_KEY" ]; then\n\
+  echo "⚠️  Warning: SUPABASE_URL or SUPABASE_ANON_KEY not set"\n\
+  echo "   Application will use PostgreSQL connection if available"\n\
+fi\n\
+\n\
+# Check for database connection variables\n\
+if [ -z "$DB_HOST" ] && [ -z "$SUPABASE_URL" ]; then\n\
+  echo "❌ Error: No database configuration found"\n\
+  echo "   Please set either DB_HOST or SUPABASE_URL"\n\
+  exit 1\n\
+fi\n\
+\n\
+echo "✅ Environment check complete"\n\
+echo "⏳ Starting Node.js server..."\n\
+exec "$@"' > /app/start.sh && chmod +x /app/start.sh
+
 # Set ownership to non-root user
 RUN chown -R floworx:nodejs /app
 USER floworx
@@ -59,12 +81,12 @@ USER floworx
 # Expose port
 EXPOSE 5000
 
-# Health check
-HEALTHCHECK --interval=30s --timeout=3s --start-period=5s --retries=3 \
-  CMD node -e "require('http').get('http://localhost:5000/health', (res) => { process.exit(res.statusCode === 200 ? 0 : 1) })"
+# Health check with better error handling
+HEALTHCHECK --interval=30s --timeout=10s --start-period=30s --retries=3 \
+  CMD node -e "require('http').get('http://localhost:5000/api/health', (res) => { process.exit(res.statusCode === 200 ? 0 : 1) }).on('error', () => process.exit(1))"
 
 # Use dumb-init to handle signals properly
 ENTRYPOINT ["dumb-init", "--"]
 
-# Start the application
-CMD ["node", "backend/server.js"]
+# Start the application with startup script and memory optimization
+CMD ["/app/start.sh", "node", "--max-old-space-size=512", "--unhandled-rejections=strict", "backend/server.js"]

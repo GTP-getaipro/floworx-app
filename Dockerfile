@@ -1,5 +1,5 @@
 ﻿# Multi-stage build for Floworx SaaS application
-FROM node:18-alpine AS frontend-builder
+FROM node:20-alpine AS frontend-builder
 
 # Set working directory for frontend build
 WORKDIR /app/frontend
@@ -17,7 +17,7 @@ COPY frontend/ ./
 RUN npm run build
 
 # Production stage
-FROM node:18-alpine AS production
+FROM node:20-alpine AS production
 
 # Install dumb-init for proper signal handling
 RUN apk add --no-cache dumb-init
@@ -38,7 +38,6 @@ RUN npm ci --only=production && npm cache clean --force
 # Copy backend package files and install backend dependencies
 COPY backend/package*.json ./backend/
 RUN cd backend && \
-    # Remove prepare script temporarily to avoid husky issues
     npm pkg delete scripts.prepare && \
     npm ci --omit=dev && \
     npm cache clean --force

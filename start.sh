@@ -19,5 +19,5 @@ fi
 
 echo "✅ All required environment variables are set. Starting server..."
 
-# Execute the command passed to this script (the "node backend/server.js" part)
-exec "$@"
+# Execute the node process. Use exec to replace the shell process with the node process.
+exec node --max-old-space-size=512 --unhandled-rejections=strict backend/server.js

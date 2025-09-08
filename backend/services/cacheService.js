@@ -16,7 +16,10 @@ class CacheService {
     this.memoryCache = new NodeCache({
       stdTTL: 300, // 5 minutes default TTL
       checkperiod: 60, // Check for expired keys every minute
-      useClones: false // Better performance, but be careful with object mutations
+      useClones: false, // Better performance, but be careful with object mutations
+      maxKeys: 1000, // Limit to 1000 keys to prevent memory leak
+      deleteOnExpire: true, // Automatically delete expired keys
+      enableLegacyCallbacks: false // Better performance
     });
     this.isRedisConnected = false;
     this.stats = {
@@ -28,6 +31,7 @@ class CacheService {
     };
 
     this.initializeRedis();
+    this.startMemoryMonitoring();
   }
 
   /**
@@ -392,6 +396,32 @@ class CacheService {
     }
 
     return health;
+  }
+
+  /**
+   * Start memory monitoring and cleanup for in-memory cache
+   */
+  startMemoryMonitoring() {
+    // Monitor memory usage every 30 seconds
+    setInterval(() => {
+      const memUsage = process.memoryUsage();
+      const memUsageMB = Math.round(memUsage.heapUsed / 1024 / 1024);
+
+      // If memory usage is high and Redis is not connected, aggressively clean cache
+      if (memUsageMB > 40 && !this.isRedisConnected) {
+        const keyCount = this.memoryCache.keys().length;
+
+        if (keyCount > 500) {
+          // Clear 50% of cache entries to free memory
+          const keys = this.memoryCache.keys();
+          const keysToDelete = keys.slice(0, Math.floor(keys.length / 2));
+
+          keysToDelete.forEach(key => this.memoryCache.del(key));
+
+          console.warn(`🧹 Memory cleanup: Removed ${keysToDelete.length} cache entries. Memory: ${memUsageMB}MB, Remaining keys: ${this.memoryCache.keys().length}`);
+        }
+      }
+    }, 30000); // Every 30 seconds
   }
 
   /**

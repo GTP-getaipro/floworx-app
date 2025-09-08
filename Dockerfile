@@ -15,6 +15,12 @@ RUN NODE_OPTIONS="--max-old-space-size=2048" npm run build
 FROM node:20-alpine AS production
 WORKDIR /app
 
+# Cache busting - force rebuild with timestamp
+ARG CACHEBUST=1
+ARG BUILD_DATE
+RUN echo "Build timestamp: $(date)" > /tmp/buildtime && \
+    echo "Build date arg: ${BUILD_DATE}" >> /tmp/buildtime
+
 # Install dependencies needed as root
 RUN apk add --no-cache dumb-init
 

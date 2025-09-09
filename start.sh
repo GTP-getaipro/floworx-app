@@ -1,64 +1,26 @@
-# ---- Frontend build stage ----
-FROM node:20-alpine AS frontend-builder
-WORKDIR /app/frontend
+#!/bin/sh
 
-COPY frontend/package*.json ./
-# Install ALL dependencies for build (dev included)
-RUN npm ci
+# This script ensures essential environment variables are set
+# before starting the Node.js application.
 
-COPY frontend/ ./
-# Build the React application with memory optimization
-RUN NODE_OPTIONS="--max-old-space-size=2048" npm run build
+# --- Environment Variable Validation ---
+# Exit if any of these critical variables are not set.
+# The ':-' syntax provides a default error message.
+: "${DATABASE_URL:?DATABASE_URL must be set}"
+: "${REDIS_HOST:?REDIS_HOST must be set}"
+: "${REDIS_PORT:?REDIS_PORT must be set}"
+: "${REDIS_USER:?REDIS_USER must be set}"
+: "${REDIS_PASSWORD:?REDIS_PASSWORD must be set}"
+: "${JWT_SECRET:?JWT_SECRET must be set}"
+: "${NODE_ENV:?NODE_ENV must be set}"
 
+# Check that NODE_ENV is specifically 'production'
+if [ "$NODE_ENV" != "production" ]; then
+  echo "Error: NODE_ENV must be set to 'production'."
+  exit 1
+fi
 
-# ---- Production stage ----
-FROM node:20-alpine AS production
-WORKDIR /app
+echo "✅ All required environment variables are set. Starting server..."
 
-# Cache busting - force rebuild with timestamp (needed to force Coolify to rebuild sometimes)
-ARG CACHEBUST=1
-ARG BUILD_DATE
-RUN echo "Build timestamp: $(date)" > /tmp/buildtime && \
-    echo "Build date arg: ${BUILD_DATE}" >> /tmp/buildtime
-
-# Install dependencies needed as root
-RUN apk add --no-cache dumb-init
-
-# Create non-root user (create BEFORE copying app files, as root)
-RUN addgroup -g 1001 -S nodejs && \
-    adduser -S floworx -u 1001
-
-# Copy all application files as root first (before changing ownership)
-COPY package*.json ./
-COPY backend/package*.json ./backend/
-COPY --from=frontend-builder /app/frontend/build ./frontend/build
-COPY backend/ ./backend/
-COPY shared/ ./shared/
-COPY database/ ./database/
-COPY start.sh /app/start.sh # Copy startup script
-
-# Install all dependencies as root (npm ci does not care about user, but some global bins might)
-RUN npm ci --only=production && npm cache clean --force
-RUN cd backend && \
-    npm pkg delete scripts.prepare && \
-    npm ci --omit=dev && \
-    npm cache clean --force
-
-# Set correct permissions and ownership for all files (as root)
-RUN chmod +x /app/start.sh # Make startup script executable
-RUN chown -R floworx:nodejs /app # Give ownership to non-root user
-
-# ---- Switch to non-root user for security ----
-USER floworx
-
-EXPOSE 5000
-
-# Health check with better error handling
-HEALTHCHECK --interval=30s --timeout=10s --start-period=30s --retries=3 \
-  CMD node -e "require('http').get('http://localhost:5000/api/health', (res) => { process.exit(res.statusCode === 200 ? 0 : 1) }).on('error', () => process.exit(1))"
-
-# Use dumb-init to handle signals properly
-ENTRYPOINT ["dumb-init", "--"]
-
-# Start the application using the startup script
-CMD ["/app/start.sh"]
+# Execute the node process. Use exec to replace the shell process with the node process.
+exec node --max-old-space-size=512 --unhandled-rejections=strict backend/server.js

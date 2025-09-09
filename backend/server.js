@@ -37,6 +37,7 @@ const workflowRoutes = require('./routes/workflows');
 const analyticsRoutes = require('./routes/analytics');
 const performanceRoutes = require('./routes/performance');
 const { router: schedulerRoutes, scheduler } = require('./scheduler/n8nScheduler');
+const testKeydbRoutes = require('./routes/test-keydb'); // TEMPORARY - DELETE AFTER TESTING
 const { errorHandler, notFoundHandler } = require('./middleware/errorHandler');
 
 const app = express();
@@ -244,6 +245,7 @@ app.use('/api/workflows', workflowRoutes);
 app.use('/api/analytics', analyticsRoutes);
 app.use('/api/performance', performanceRoutes);
 app.use('/api/scheduler', schedulerRoutes);
+app.use('/api', testKeydbRoutes); // TEMPORARY - DELETE AFTER TESTING
 
 // Serve static files from React build (production only)
 if (process.env.NODE_ENV === 'production') {

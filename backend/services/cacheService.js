@@ -35,11 +35,11 @@ class CacheService {
   }
 
   /**
-   * Initialize Redis connection with fallback to memory cache
+   * Initialize Redis connection with enhanced retry logic
    */
   async initializeRedis() {
-    // Skip Redis initialization if not configured or in development
-    if (!process.env.REDIS_HOST || process.env.NODE_ENV === 'development') {
+    // Skip Redis initialization if not configured
+    if (!process.env.REDIS_HOST) {
       console.log('⚠️ Redis disabled - using memory cache only');
       console.log(`   REDIS_HOST: ${process.env.REDIS_HOST || 'not set'}`);
       console.log(`   NODE_ENV: ${process.env.NODE_ENV || 'not set'}`);
@@ -48,47 +48,93 @@ class CacheService {
     }
 
     try {
-      const redisConfig = {
-        host: process.env.REDIS_HOST,
-        port: process.env.REDIS_PORT || 6379,
-        password: process.env.REDIS_PASSWORD || undefined,
-        db: process.env.REDIS_DB || 0,
-        retryDelayOnFailover: 100,
-        maxRetriesPerRequest: 1,
-        lazyConnect: true,
-        keepAlive: 30000,
-        connectTimeout: 10000,
-        commandTimeout: 5000,
-        // Prevent excessive reconnection attempts
-        enableOfflineQueue: false,
-        retryDelayOnClusterDown: 300,
-        enableReadyCheck: false
-      };
+      // Try multiple possible Redis hostnames
+      const possibleHosts = [
+        process.env.REDIS_HOST,
+        'redis-database',
+        'redis-database-bgkgcogwgcksc0sccw48c8s0',
+        'redis-db',
+        '127.0.0.1'
+      ].filter(Boolean);
 
-      console.log(`🔗 Attempting Redis connection to: ${redisConfig.host}:${redisConfig.port}`);
-      this.redis = new Redis(redisConfig);
+      let connected = false;
+      let lastError = null;
 
-      this.redis.on('connect', () => {
-        console.log('✅ Redis connected successfully');
-        this.isRedisConnected = true;
-      });
+      for (const host of possibleHosts) {
+        try {
+          console.log(`🔗 Trying Redis connection to: ${host}:${process.env.REDIS_PORT || 6379}`);
 
-      this.redis.on('error', error => {
-        console.warn('⚠️ Redis connection error, falling back to memory cache:', error.message);
-        this.isRedisConnected = false;
-        this.stats.errors++;
-      });
+          const redisConfig = {
+            host: host,
+            port: process.env.REDIS_PORT || 6379,
+            password: process.env.REDIS_PASSWORD || undefined,
+            db: process.env.REDIS_DB || 0,
+            retryDelayOnFailover: 100,
+            maxRetriesPerRequest: 2,
+            lazyConnect: true,
+            keepAlive: 30000,
+            connectTimeout: 5000,
+            commandTimeout: 3000,
+            enableOfflineQueue: false,
+            retryDelayOnClusterDown: 300,
+            enableReadyCheck: false,
+            // Enhanced retry strategy
+            retryStrategy: (times) => {
+              if (times > 3) return null; // Stop retrying after 3 attempts
+              return Math.min(times * 200, 1000);
+            }
+          };
 
-      this.redis.on('close', () => {
-        console.warn('⚠️ Redis connection closed, using memory cache');
-        this.isRedisConnected = false;
-      });
+          this.redis = new Redis(redisConfig);
 
-      // Test connection
-      await this.redis.ping();
+          // Set up event handlers
+          this.redis.on('connect', () => {
+            console.log(`✅ Redis connected successfully to ${host}`);
+            this.isRedisConnected = true;
+          });
+
+          this.redis.on('error', error => {
+            console.warn(`⚠️ Redis error on ${host}:`, error.message);
+            this.isRedisConnected = false;
+            this.stats.errors++;
+          });
+
+          this.redis.on('close', () => {
+            console.warn(`⚠️ Redis connection closed on ${host}`);
+            this.isRedisConnected = false;
+          });
+
+          // Test connection with timeout
+          await Promise.race([
+            this.redis.ping(),
+            new Promise((_, reject) =>
+              setTimeout(() => reject(new Error('Connection timeout')), 3000)
+            )
+          ]);
+
+          console.log(`✅ Redis ping successful on ${host}`);
+          connected = true;
+          break;
+
+        } catch (error) {
+          lastError = error;
+          console.warn(`❌ Redis connection failed on ${host}:`, error.message);
+          if (this.redis) {
+            this.redis.disconnect();
+            this.redis = null;
+          }
+          continue;
+        }
+      }
+
+      if (!connected) {
+        throw lastError || new Error('All Redis connection attempts failed');
+      }
+
     } catch (error) {
-      console.warn('⚠️ Redis initialization failed, using memory cache only:', error.message);
+      console.warn('⚠️ Redis initialization failed completely, using memory cache only:', error.message);
       this.isRedisConnected = false;
+      this.redis = null;
     }
   }
 

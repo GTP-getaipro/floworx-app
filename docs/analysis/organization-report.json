@@ -1,0 +1,654 @@
+{
+  "timestamp": "2025-09-09T01:56:48.650Z",
+  "summary": {
+    "totalFilesMoved": 138,
+    "errorsEncountered": 21,
+    "directoriesCreated": 8
+  },
+  "movedFiles": [
+    {
+      "from": "browser-debug-dashboard.js",
+      "to": "archive\\debug-files\\browser-debug-dashboard.js"
+    },
+    {
+      "from": "debug-api-endpoints.js",
+      "to": "archive\\debug-files\\debug-api-endpoints.js"
+    },
+    {
+      "from": "debug-backend-response.js",
+      "to": "archive\\debug-files\\debug-backend-response.js"
+    },
+    {
+      "from": "debug-confirm-password-testid.js",
+      "to": "archive\\debug-files\\debug-confirm-password-testid.js"
+    },
+    {
+      "from": "debug-dashboard-issues.js",
+      "to": "archive\\debug-files\\debug-dashboard-issues.js"
+    },
+    {
+      "from": "debug-dashboard-loading.js",
+      "to": "archive\\debug-files\\debug-dashboard-loading.js"
+    },
+    {
+      "from": "debug-dashboard-redirect.js",
+      "to": "archive\\debug-files\\debug-dashboard-redirect.js"
+    },
+    {
+      "from": "debug-endpoints.js",
+      "to": "archive\\debug-files\\debug-endpoints.js"
+    },
+    {
+      "from": "debug-enhanced-features.js",
+      "to": "archive\\debug-files\\debug-enhanced-features.js"
+    },
+    {
+      "from": "debug-error-display.js",
+      "to": "archive\\debug-files\\debug-error-display.js"
+    },
+    {
+      "from": "debug-form-submission-detailed.js",
+      "to": "archive\\debug-files\\debug-form-submission-detailed.js"
+    },
+    {
+      "from": "debug-login-test.js",
+      "to": "archive\\debug-files\\debug-login-test.js"
+    },
+    {
+      "from": "debug-network-errors.js",
+      "to": "archive\\debug-files\\debug-network-errors.js"
+    },
+    {
+      "from": "debug-password-input.js",
+      "to": "archive\\debug-files\\debug-password-input.js"
+    },
+    {
+      "from": "debug-persistence.js",
+      "to": "archive\\debug-files\\debug-persistence.js"
+    },
+    {
+      "from": "debug-routes.js",
+      "to": "archive\\debug-files\\debug-routes.js"
+    },
+    {
+      "from": "debug-toast-messages.js",
+      "to": "archive\\debug-files\\debug-toast-messages.js"
+    },
+    {
+      "from": "debug-toast-testid.js",
+      "to": "archive\\debug-files\\debug-toast-testid.js"
+    },
+    {
+      "from": "debug-toasts.js",
+      "to": "archive\\debug-files\\debug-toasts.js"
+    },
+    {
+      "from": "debug-user-status-report.json",
+      "to": "archive\\debug-files\\debug-user-status-report.json"
+    },
+    {
+      "from": "debug-user-status.js",
+      "to": "archive\\debug-files\\debug-user-status.js"
+    },
+    {
+      "from": "debug-validation-messages.js",
+      "to": "archive\\debug-files\\debug-validation-messages.js"
+    },
+    {
+      "from": "debug-validation.js",
+      "to": "archive\\debug-files\\debug-validation.js"
+    },
+    {
+      "from": "debug-after-login.png",
+      "to": "archive\\debug-files\\debug-after-login.png"
+    },
+    {
+      "from": "debug-before-login.png",
+      "to": "archive\\debug-files\\debug-before-login.png"
+    },
+    {
+      "from": "debug-login-page.png",
+      "to": "archive\\debug-files\\debug-login-page.png"
+    },
+    {
+      "from": "debug-token-issue.html",
+      "to": "archive\\debug-files\\debug-token-issue.html"
+    },
+    {
+      "from": "browser-cors-test.html",
+      "to": "archive\\debug-files\\browser-cors-test.html"
+    },
+    {
+      "from": "browser-validation-test.html",
+      "to": "archive\\debug-files\\browser-validation-test.html"
+    },
+    {
+      "from": "check-browser-storage.html",
+      "to": "archive\\debug-files\\check-browser-storage.html"
+    },
+    {
+      "from": "check-available-routes.js",
+      "to": "archive\\debug-files\\check-available-routes.js"
+    },
+    {
+      "from": "check-dashboard-preview.js",
+      "to": "archive\\debug-files\\check-dashboard-preview.js"
+    },
+    {
+      "from": "check-user-account.js",
+      "to": "archive\\debug-files\\check-user-account.js"
+    },
+    {
+      "from": "check-user-password.js",
+      "to": "archive\\debug-files\\check-user-password.js"
+    },
+    {
+      "from": "check-frontend-env.html",
+      "to": "archive\\debug-files\\check-frontend-env.html"
+    },
+    {
+      "from": "comprehensive-test-report.json",
+      "to": "archive\\test-files\\comprehensive-test-report.json"
+    },
+    {
+      "from": "comprehensive-test-suite.js",
+      "to": "archive\\test-files\\comprehensive-test-suite.js"
+    },
+    {
+      "from": "master-test-runner.js",
+      "to": "archive\\test-files\\master-test-runner.js"
+    },
+    {
+      "from": "production-test-report.json",
+      "to": "archive\\test-files\\production-test-report.json"
+    },
+    {
+      "from": "supabase-test-report.json",
+      "to": "archive\\test-files\\supabase-test-report.json"
+    },
+    {
+      "from": "test-all-new-endpoints.js",
+      "to": "archive\\test-files\\test-all-new-endpoints.js"
+    },
+    {
+      "from": "test-api-direct.js",
+      "to": "archive\\test-files\\test-api-direct.js"
+    },
+    {
+      "from": "test-api-endpoint.js",
+      "to": "archive\\test-files\\test-api-endpoint.js"
+    },
+    {
+      "from": "test-api-endpoints.js",
+      "to": "archive\\test-files\\test-api-endpoints.js"
+    },
+    {
+      "from": "test-api.json",
+      "to": "archive\\test-files\\test-api.json"
+    },
+    {
+      "from": "test-auth-flow.js",
+      "to": "archive\\test-files\\test-auth-flow.js"
+    },
+    {
+      "from": "test-authenticated-endpoints.js",
+      "to": "archive\\test-files\\test-authenticated-endpoints.js"
+    },
+    {
+      "from": "test-communication-fixes.js",
+      "to": "archive\\test-files\\test-communication-fixes.js"
+    },
+    {
+      "from": "test-complete-registration-flow.js",
+      "to": "archive\\test-files\\test-complete-registration-flow.js"
+    },
+    {
+      "from": "test-correct-endpoint.js",
+      "to": "archive\\test-files\\test-correct-endpoint.js"
+    },
+    {
+      "from": "test-cors-headers.js",
+      "to": "archive\\test-files\\test-cors-headers.js"
+    },
+    {
+      "from": "test-cross-browser.js",
+      "to": "archive\\test-files\\test-cross-browser.js"
+    },
+    {
+      "from": "test-current-user.js",
+      "to": "archive\\test-files\\test-current-user.js"
+    },
+    {
+      "from": "test-dashboard-fix.js",
+      "to": "archive\\test-files\\test-dashboard-fix.js"
+    },
+    {
+      "from": "test-dashboard-fixed.js",
+      "to": "archive\\test-files\\test-dashboard-fixed.js"
+    },
+    {
+      "from": "test-dashboard-fixes.js",
+      "to": "archive\\test-files\\test-dashboard-fixes.js"
+    },
+    {
+      "from": "test-dashboard-improvements.js",
+      "to": "archive\\test-files\\test-dashboard-improvements.js"
+    },
+    {
+      "from": "test-dashboard-production-fix.js",
+      "to": "archive\\test-files\\test-dashboard-production-fix.js"
+    },
+    {
+      "from": "test-dashboard-production.js",
+      "to": "archive\\test-files\\test-dashboard-production.js"
+    },
+    {
+      "from": "test-database-password-validation.js",
+      "to": "archive\\test-files\\test-database-password-validation.js"
+    },
+    {
+      "from": "test-db-connection.js",
+      "to": "archive\\test-files\\test-db-connection.js"
+    },
+    {
+      "from": "test-deployment-urls.js",
+      "to": "archive\\test-files\\test-deployment-urls.js"
+    },
+    {
+      "from": "test-deployment.js",
+      "to": "archive\\test-files\\test-deployment.js"
+    },
+    {
+      "from": "test-edge-cases-stress.js",
+      "to": "archive\\test-files\\test-edge-cases-stress.js"
+    },
+    {
+      "from": "test-enhanced-features.js",
+      "to": "archive\\test-files\\test-enhanced-features.js"
+    },
+    {
+      "from": "test-forgot-password-api.js",
+      "to": "archive\\test-files\\test-forgot-password-api.js"
+    },
+    {
+      "from": "test-form-submission-simple.js",
+      "to": "archive\\test-files\\test-form-submission-simple.js"
+    },
+    {
+      "from": "test-localhost-dashboard.js",
+      "to": "archive\\test-files\\test-localhost-dashboard.js"
+    },
+    {
+      "from": "test-login-direct.js",
+      "to": "archive\\test-files\\test-login-direct.js"
+    },
+    {
+      "from": "test-login-endpoint.js",
+      "to": "archive\\test-files\\test-login-endpoint.js"
+    },
+    {
+      "from": "test-login-flow.js",
+      "to": "archive\\test-files\\test-login-flow.js"
+    },
+    {
+      "from": "test-login-form-improvements.js",
+      "to": "archive\\test-files\\test-login-form-improvements.js"
+    },
+    {
+      "from": "test-login-window-sizing.js",
+      "to": "archive\\test-files\\test-login-window-sizing.js"
+    },
+    {
+      "from": "test-missing-endpoints.js",
+      "to": "archive\\test-files\\test-missing-endpoints.js"
+    },
+    {
+      "from": "test-new-endpoints.js",
+      "to": "archive\\test-files\\test-new-endpoints.js"
+    },
+    {
+      "from": "test-new-route.js",
+      "to": "archive\\test-files\\test-new-route.js"
+    },
+    {
+      "from": "test-oauth-production.js",
+      "to": "archive\\test-files\\test-oauth-production.js"
+    },
+    {
+      "from": "test-onboarding-endpoint.js",
+      "to": "archive\\test-files\\test-onboarding-endpoint.js"
+    },
+    {
+      "from": "test-onboarding-flow-restructure.js",
+      "to": "archive\\test-files\\test-onboarding-flow-restructure.js"
+    },
+    {
+      "from": "test-password-validation-fix.js",
+      "to": "archive\\test-files\\test-password-validation-fix.js"
+    },
+    {
+      "from": "test-performance-accessibility.js",
+      "to": "archive\\test-files\\test-performance-accessibility.js"
+    },
+    {
+      "from": "test-production-deployment.js",
+      "to": "archive\\test-files\\test-production-deployment.js"
+    },
+    {
+      "from": "test-production-enhanced-features.js",
+      "to": "archive\\test-files\\test-production-enhanced-features.js"
+    },
+    {
+      "from": "test-production-fixes.js",
+      "to": "archive\\test-files\\test-production-fixes.js"
+    },
+    {
+      "from": "test-production-functionality.js",
+      "to": "archive\\test-files\\test-production-functionality.js"
+    },
+    {
+      "from": "test-profile.js",
+      "to": "archive\\test-files\\test-profile.js"
+    },
+    {
+      "from": "test-react-loading.js",
+      "to": "archive\\test-files\\test-react-loading.js"
+    },
+    {
+      "from": "test-real-supabase-connection.js",
+      "to": "archive\\test-files\\test-real-supabase-connection.js"
+    },
+    {
+      "from": "test-redis-connection.js",
+      "to": "archive\\test-files\\test-redis-connection.js"
+    },
+    {
+      "from": "test-registration-api.js",
+      "to": "archive\\test-files\\test-registration-api.js"
+    },
+    {
+      "from": "test-registration-flow.js",
+      "to": "archive\\test-files\\test-registration-flow.js"
+    },
+    {
+      "from": "test-remaining-features.js",
+      "to": "archive\\test-files\\test-remaining-features.js"
+    },
+    {
+      "from": "test-simple.js",
+      "to": "archive\\test-files\\test-simple.js"
+    },
+    {
+      "from": "test-specific-endpoints.js",
+      "to": "archive\\test-files\\test-specific-endpoints.js"
+    },
+    {
+      "from": "test-suite-comprehensive.js",
+      "to": "archive\\test-files\\test-suite-comprehensive.js"
+    },
+    {
+      "from": "test-supabase-connection.js",
+      "to": "archive\\test-files\\test-supabase-connection.js"
+    },
+    {
+      "from": "test-supabase-credentials.js",
+      "to": "archive\\test-files\\test-supabase-credentials.js"
+    },
+    {
+      "from": "test-toast-triggering.js",
+      "to": "archive\\test-files\\test-toast-triggering.js"
+    },
+    {
+      "from": "test-user-journeys.js",
+      "to": "archive\\test-files\\test-user-journeys.js"
+    },
+    {
+      "from": "test-user-status-endpoint.js",
+      "to": "archive\\test-files\\test-user-status-endpoint.js"
+    },
+    {
+      "from": "run-comprehensive-coverage.js",
+      "to": "archive\\test-files\\run-comprehensive-coverage.js"
+    },
+    {
+      "from": "run-comprehensive-tests.js",
+      "to": "archive\\test-files\\run-comprehensive-tests.js"
+    },
+    {
+      "from": "comprehensive-coverage-report.md",
+      "to": "archive\\test-files\\comprehensive-coverage-report.md"
+    },
+    {
+      "from": "final-enhanced-test.js",
+      "to": "archive\\test-files\\final-enhanced-test.js"
+    },
+    {
+      "from": "final-verification-test.js",
+      "to": "archive\\test-files\\final-verification-test.js"
+    },
+    {
+      "from": "run-all-tests.js",
+      "to": "archive\\test-files\\run-all-tests.js"
+    },
+    {
+      "from": "run-e2e-tests.js",
+      "to": "archive\\test-files\\run-e2e-tests.js"
+    },
+    {
+      "from": "run-playwright-tests.js",
+      "to": "archive\\test-files\\run-playwright-tests.js"
+    },
+    {
+      "from": "validate-database-schema.js",
+      "to": "archive\\test-files\\validate-database-schema.js"
+    },
+    {
+      "from": "verify-critical-bugs.js",
+      "to": "archive\\test-files\\verify-critical-bugs.js"
+    },
+    {
+      "from": "verify-dashboard-branch-deployment.js",
+      "to": "archive\\test-files\\verify-dashboard-branch-deployment.js"
+    },
+    {
+      "from": "package-e2e.json",
+      "to": "archive\\temp-configs\\package-e2e.json"
+    },
+    {
+      "from": "package-test.json",
+      "to": "archive\\temp-configs\\package-test.json"
+    },
+    {
+      "from": "vercel-environment-variables-ACTUAL.txt",
+      "to": "archive\\temp-configs\\vercel-environment-variables-ACTUAL.txt"
+    },
+    {
+      "from": "oauth-redirect-uris.txt",
+      "to": "archive\\temp-configs\\oauth-redirect-uris.txt"
+    },
+    {
+      "from": "production-oauth-config-custom-domain.txt",
+      "to": "archive\\temp-configs\\production-oauth-config-custom-domain.txt"
+    },
+    {
+      "from": "FINAL_DEPLOYMENT_STATUS.md",
+      "to": "docs\\deployment\\FINAL_DEPLOYMENT_STATUS.md"
+    },
+    {
+      "from": "PRODUCTION_DEPLOYMENT_CHECKLIST.md",
+      "to": "docs\\deployment\\PRODUCTION_DEPLOYMENT_CHECKLIST.md"
+    },
+    {
+      "from": "PRODUCTION_DEPLOYMENT_GUIDE.md",
+      "to": "docs\\deployment\\PRODUCTION_DEPLOYMENT_GUIDE.md"
+    },
+    {
+      "from": "PRODUCTION_DEPLOYMENT_STATUS.md",
+      "to": "docs\\deployment\\PRODUCTION_DEPLOYMENT_STATUS.md"
+    },
+    {
+      "from": "PRODUCTION_DEPLOYMENT_SUCCESS.md",
+      "to": "docs\\deployment\\PRODUCTION_DEPLOYMENT_SUCCESS.md"
+    },
+    {
+      "from": "BUSINESS_TYPE_IMPLEMENTATION_GUIDE.md",
+      "to": "docs\\deployment\\BUSINESS_TYPE_IMPLEMENTATION_GUIDE.md"
+    },
+    {
+      "from": "CREDENTIAL_RECOVERY_GUIDE.md",
+      "to": "docs\\deployment\\CREDENTIAL_RECOVERY_GUIDE.md"
+    },
+    {
+      "from": "CRITICAL_FIXES_GUIDE.md",
+      "to": "docs\\deployment\\CRITICAL_FIXES_GUIDE.md"
+    },
+    {
+      "from": "CUSTOM_DOMAIN_MIGRATION_GUIDE.md",
+      "to": "docs\\deployment\\CUSTOM_DOMAIN_MIGRATION_GUIDE.md"
+    },
+    {
+      "from": "DEPLOYMENT_GUIDE.md",
+      "to": "docs\\deployment\\DEPLOYMENT_GUIDE.md"
+    },
+    {
+      "from": "E2E_TESTING_GUIDE.md",
+      "to": "docs\\deployment\\E2E_TESTING_GUIDE.md"
+    },
+    {
+      "from": "ENVIRONMENT_SETUP_GUIDE.md",
+      "to": "docs\\deployment\\ENVIRONMENT_SETUP_GUIDE.md"
+    },
+    {
+      "from": "FLOWORX_INTEGRATION_GUIDE.md",
+      "to": "docs\\deployment\\FLOWORX_INTEGRATION_GUIDE.md"
+    },
+    {
+      "from": "SETUP_GUIDE.md",
+      "to": "docs\\deployment\\SETUP_GUIDE.md"
+    },
+    {
+      "from": "DEPLOYMENT_CHECKLIST.md",
+      "to": "docs\\deployment\\DEPLOYMENT_CHECKLIST.md"
+    },
+    {
+      "from": "API_TEST_RESULTS_SUMMARY.md",
+      "to": "docs\\testing\\API_TEST_RESULTS_SUMMARY.md"
+    },
+    {
+      "from": "CYPRESS_TEST_RESULTS_SUMMARY.md",
+      "to": "docs\\testing\\CYPRESS_TEST_RESULTS_SUMMARY.md"
+    },
+    {
+      "from": "FORGOT_PASSWORD_TEST_RESULTS.md",
+      "to": "docs\\testing\\FORGOT_PASSWORD_TEST_RESULTS.md"
+    },
+    {
+      "from": "PRODUCTION_TEST_REPORT.md",
+      "to": "docs\\testing\\PRODUCTION_TEST_REPORT.md"
+    },
+    {
+      "from": "RLS_SECURITY_COMPLIANCE_REPORT.md",
+      "to": "docs\\security\\RLS_SECURITY_COMPLIANCE_REPORT.md"
+    },
+    {
+      "from": "ACCOUNT_RECOVERY_DEPLOYMENT.md",
+      "to": "docs\\security\\ACCOUNT_RECOVERY_DEPLOYMENT.md"
+    },
+    {
+      "from": "ACCOUNT_RECOVERY_SYSTEM.md",
+      "to": "docs\\security\\ACCOUNT_RECOVERY_SYSTEM.md"
+    }
+  ],
+  "errors": [
+    {
+      "file": "browser-debug-dashboard.js",
+      "error": "ENOENT: no such file or directory, rename 'C:\\FloworxInvite\\browser-debug-dashboard.js' -> 'C:\\FloworxInvite\\archive\\debug-files\\browser-debug-dashboard.js'"
+    },
+    {
+      "file": "check-browser-storage.html",
+      "error": "ENOENT: no such file or directory, rename 'C:\\FloworxInvite\\check-browser-storage.html' -> 'C:\\FloworxInvite\\archive\\debug-files\\check-browser-storage.html'"
+    },
+    {
+      "file": "comprehensive-test-report.json",
+      "error": "ENOENT: no such file or directory, rename 'C:\\FloworxInvite\\comprehensive-test-report.json' -> 'C:\\FloworxInvite\\archive\\test-files\\comprehensive-test-report.json'"
+    },
+    {
+      "file": "production-test-report.json",
+      "error": "ENOENT: no such file or directory, rename 'C:\\FloworxInvite\\production-test-report.json' -> 'C:\\FloworxInvite\\archive\\test-files\\production-test-report.json'"
+    },
+    {
+      "file": "supabase-test-report.json",
+      "error": "ENOENT: no such file or directory, rename 'C:\\FloworxInvite\\supabase-test-report.json' -> 'C:\\FloworxInvite\\archive\\test-files\\supabase-test-report.json'"
+    },
+    {
+      "file": "test-api.json",
+      "error": "ENOENT: no such file or directory, rename 'C:\\FloworxInvite\\test-api.json' -> 'C:\\FloworxInvite\\archive\\test-files\\test-api.json'"
+    },
+    {
+      "file": "comprehensive-test-report.json",
+      "error": "ENOENT: no such file or directory, rename 'C:\\FloworxInvite\\comprehensive-test-report.json' -> 'C:\\FloworxInvite\\archive\\test-files\\comprehensive-test-report.json'"
+    },
+    {
+      "file": "comprehensive-test-suite.js",
+      "error": "ENOENT: no such file or directory, rename 'C:\\FloworxInvite\\comprehensive-test-suite.js' -> 'C:\\FloworxInvite\\archive\\test-files\\comprehensive-test-suite.js'"
+    },
+    {
+      "file": "comprehensive-test-report.json",
+      "error": "ENOENT: no such file or directory, rename 'C:\\FloworxInvite\\comprehensive-test-report.json' -> 'C:\\FloworxInvite\\archive\\test-files\\comprehensive-test-report.json'"
+    },
+    {
+      "file": "master-test-runner.js",
+      "error": "ENOENT: no such file or directory, rename 'C:\\FloworxInvite\\master-test-runner.js' -> 'C:\\FloworxInvite\\archive\\test-files\\master-test-runner.js'"
+    },
+    {
+      "file": "run-comprehensive-coverage.js",
+      "error": "ENOENT: no such file or directory, rename 'C:\\FloworxInvite\\run-comprehensive-coverage.js' -> 'C:\\FloworxInvite\\archive\\test-files\\run-comprehensive-coverage.js'"
+    },
+    {
+      "file": "run-comprehensive-tests.js",
+      "error": "ENOENT: no such file or directory, rename 'C:\\FloworxInvite\\run-comprehensive-tests.js' -> 'C:\\FloworxInvite\\archive\\test-files\\run-comprehensive-tests.js'"
+    },
+    {
+      "file": "PRODUCTION_DEPLOYMENT_GUIDE.md",
+      "error": "ENOENT: no such file or directory, rename 'C:\\FloworxInvite\\PRODUCTION_DEPLOYMENT_GUIDE.md' -> 'C:\\FloworxInvite\\docs\\deployment\\PRODUCTION_DEPLOYMENT_GUIDE.md'"
+    },
+    {
+      "file": "PRODUCTION_DEPLOYMENT_CHECKLIST.md",
+      "error": "ENOENT: no such file or directory, rename 'C:\\FloworxInvite\\PRODUCTION_DEPLOYMENT_CHECKLIST.md' -> 'C:\\FloworxInvite\\docs\\deployment\\PRODUCTION_DEPLOYMENT_CHECKLIST.md'"
+    },
+    {
+      "file": "FINAL_DEPLOYMENT_STATUS.md",
+      "error": "ENOENT: no such file or directory, rename 'C:\\FloworxInvite\\FINAL_DEPLOYMENT_STATUS.md' -> 'C:\\FloworxInvite\\docs\\deployment\\FINAL_DEPLOYMENT_STATUS.md'"
+    },
+    {
+      "file": "PRODUCTION_DEPLOYMENT_STATUS.md",
+      "error": "ENOENT: no such file or directory, rename 'C:\\FloworxInvite\\PRODUCTION_DEPLOYMENT_STATUS.md' -> 'C:\\FloworxInvite\\docs\\deployment\\PRODUCTION_DEPLOYMENT_STATUS.md'"
+    },
+    {
+      "file": "E2E_TESTING_GUIDE.md",
+      "error": "ENOENT: no such file or directory, rename 'C:\\FloworxInvite\\E2E_TESTING_GUIDE.md' -> 'C:\\FloworxInvite\\docs\\testing\\E2E_TESTING_GUIDE.md'"
+    },
+    {
+      "file": "CYPRESS_TEST_RESULTS_SUMMARY.md",
+      "error": "ENOENT: no such file or directory, rename 'C:\\FloworxInvite\\CYPRESS_TEST_RESULTS_SUMMARY.md' -> 'C:\\FloworxInvite\\docs\\testing\\CYPRESS_TEST_RESULTS_SUMMARY.md'"
+    },
+    {
+      "file": "E2E_TESTING_GUIDE.md",
+      "error": "ENOENT: no such file or directory, rename 'C:\\FloworxInvite\\E2E_TESTING_GUIDE.md' -> 'C:\\FloworxInvite\\docs\\testing\\E2E_TESTING_GUIDE.md'"
+    },
+    {
+      "file": "CREDENTIAL_RECOVERY_GUIDE.md",
+      "error": "ENOENT: no such file or directory, rename 'C:\\FloworxInvite\\CREDENTIAL_RECOVERY_GUIDE.md' -> 'C:\\FloworxInvite\\docs\\security\\CREDENTIAL_RECOVERY_GUIDE.md'"
+    },
+    {
+      "file": "RLS_SECURITY_COMPLIANCE_REPORT.md",
+      "error": "ENOENT: no such file or directory, rename 'C:\\FloworxInvite\\RLS_SECURITY_COMPLIANCE_REPORT.md' -> 'C:\\FloworxInvite\\docs\\security\\RLS_SECURITY_COMPLIANCE_REPORT.md'"
+    }
+  ],
+  "recommendations": [
+    "Review moved files in archive/ directories",
+    "Update any hardcoded file paths in scripts",
+    "Consider adding the archive/ directory to .gitignore",
+    "Update documentation to reflect new file structure"
+  ]
+}

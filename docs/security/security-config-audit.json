@@ -1,0 +1,414 @@
+{
+  "timestamp": "2025-09-09T01:56:57.897Z",
+  "summary": {
+    "totalFindings": 54,
+    "highSeverity": 47,
+    "mediumSeverity": 7,
+    "lowSeverity": 0
+  },
+  "findings": [
+    {
+      "type": "SENSITIVE_FILE_IN_ROOT",
+      "severity": "HIGH",
+      "file": "vercel-environment-variables.txt",
+      "description": "Sensitive configuration file in root directory",
+      "timestamp": "2025-09-09T01:56:57.825Z"
+    },
+    {
+      "type": "WEAK_DEFAULT_PASSWORD",
+      "severity": "MEDIUM",
+      "file": "C:\\FloworxInvite\\backend\\.env.example",
+      "description": "Line 6: Weak default password",
+      "timestamp": "2025-09-09T01:56:57.826Z"
+    },
+    {
+      "type": "MISSING_JWT_SECRET",
+      "severity": "HIGH",
+      "file": "C:\\FloworxInvite\\backend\\.env.example",
+      "description": "Line 14: JWT secret not configured",
+      "timestamp": "2025-09-09T01:56:57.826Z"
+    },
+    {
+      "type": "WEAK_DEFAULT_PASSWORD",
+      "severity": "MEDIUM",
+      "file": "C:\\FloworxInvite\\backend\\.env.example",
+      "description": "Line 31: Weak default password",
+      "timestamp": "2025-09-09T01:56:57.826Z"
+    },
+    {
+      "type": "WEAK_DEFAULT_PASSWORD",
+      "severity": "MEDIUM",
+      "file": "C:\\FloworxInvite\\vercel-environment-variables.txt",
+      "description": "Line 9: Weak default password",
+      "timestamp": "2025-09-09T01:56:57.826Z"
+    },
+    {
+      "type": "MISSING_JWT_SECRET",
+      "severity": "HIGH",
+      "file": "C:\\FloworxInvite\\vercel-environment-variables.txt",
+      "description": "Line 15: JWT secret not configured",
+      "timestamp": "2025-09-09T01:56:57.827Z"
+    },
+    {
+      "type": "WEAK_DEFAULT_PASSWORD",
+      "severity": "MEDIUM",
+      "file": "C:\\FloworxInvite\\vercel-environment-variables.txt",
+      "description": "Line 32: Weak default password",
+      "timestamp": "2025-09-09T01:56:57.827Z"
+    },
+    {
+      "type": "WORLD_READABLE_FILE",
+      "severity": "MEDIUM",
+      "file": "start.sh",
+      "description": "File is world-readable",
+      "timestamp": "2025-09-09T01:56:57.827Z"
+    },
+    {
+      "type": "WORLD_READABLE_FILE",
+      "severity": "MEDIUM",
+      "file": "setup.js",
+      "description": "File is world-readable",
+      "timestamp": "2025-09-09T01:56:57.827Z"
+    },
+    {
+      "type": "WORLD_READABLE_FILE",
+      "severity": "MEDIUM",
+      "file": "backend/.env.example",
+      "description": "File is world-readable",
+      "timestamp": "2025-09-09T01:56:57.827Z"
+    },
+    {
+      "type": "POTENTIAL_HARDCODED_SECRET",
+      "severity": "HIGH",
+      "file": "C:\\FloworxInvite\\archive\\test-files\\comprehensive-test-suite.js",
+      "description": "Line 145: Potential hardcoded secret",
+      "timestamp": "2025-09-09T01:56:57.847Z"
+    },
+    {
+      "type": "POTENTIAL_HARDCODED_SECRET",
+      "severity": "HIGH",
+      "file": "C:\\FloworxInvite\\archive\\test-files\\comprehensive-test-suite.js",
+      "description": "Line 155: Potential hardcoded secret",
+      "timestamp": "2025-09-09T01:56:57.847Z"
+    },
+    {
+      "type": "POTENTIAL_HARDCODED_SECRET",
+      "severity": "HIGH",
+      "file": "C:\\FloworxInvite\\archive\\test-files\\test-all-new-endpoints.js",
+      "description": "Line 116: Potential hardcoded secret",
+      "timestamp": "2025-09-09T01:56:57.848Z"
+    },
+    {
+      "type": "POTENTIAL_HARDCODED_SECRET",
+      "severity": "HIGH",
+      "file": "C:\\FloworxInvite\\archive\\test-files\\test-deployment.js",
+      "description": "Line 91: Potential hardcoded secret",
+      "timestamp": "2025-09-09T01:56:57.850Z"
+    },
+    {
+      "type": "POTENTIAL_HARDCODED_SECRET",
+      "severity": "HIGH",
+      "file": "C:\\FloworxInvite\\archive\\test-files\\test-login-endpoint.js",
+      "description": "Line 58: Potential hardcoded secret",
+      "timestamp": "2025-09-09T01:56:57.850Z"
+    },
+    {
+      "type": "POTENTIAL_HARDCODED_SECRET",
+      "severity": "HIGH",
+      "file": "C:\\FloworxInvite\\archive\\test-files\\test-missing-endpoints.js",
+      "description": "Line 94: Potential hardcoded secret",
+      "timestamp": "2025-09-09T01:56:57.851Z"
+    },
+    {
+      "type": "POTENTIAL_HARDCODED_SECRET",
+      "severity": "HIGH",
+      "file": "C:\\FloworxInvite\\archive\\test-files\\test-missing-endpoints.js",
+      "description": "Line 101: Potential hardcoded secret",
+      "timestamp": "2025-09-09T01:56:57.851Z"
+    },
+    {
+      "type": "POTENTIAL_HARDCODED_SECRET",
+      "severity": "HIGH",
+      "file": "C:\\FloworxInvite\\archive\\test-files\\test-production-fixes.js",
+      "description": "Line 49: Potential hardcoded secret",
+      "timestamp": "2025-09-09T01:56:57.851Z"
+    },
+    {
+      "type": "POTENTIAL_HARDCODED_SECRET",
+      "severity": "HIGH",
+      "file": "C:\\FloworxInvite\\archive\\test-files\\test-registration-api.js",
+      "description": "Line 55: Potential hardcoded secret",
+      "timestamp": "2025-09-09T01:56:57.852Z"
+    },
+    {
+      "type": "POTENTIAL_HARDCODED_SECRET",
+      "severity": "HIGH",
+      "file": "C:\\FloworxInvite\\backend\\tests\\api-endpoints.test.js",
+      "description": "Line 69: Potential hardcoded secret",
+      "timestamp": "2025-09-09T01:56:57.863Z"
+    },
+    {
+      "type": "POTENTIAL_HARDCODED_SECRET",
+      "severity": "HIGH",
+      "file": "C:\\FloworxInvite\\backend\\tests\\api-endpoints.test.js",
+      "description": "Line 107: Potential hardcoded secret",
+      "timestamp": "2025-09-09T01:56:57.863Z"
+    },
+    {
+      "type": "POTENTIAL_HARDCODED_SECRET",
+      "severity": "HIGH",
+      "file": "C:\\FloworxInvite\\backend\\tests\\integration\\monitoring-api.test.js",
+      "description": "Line 484: Potential hardcoded secret",
+      "timestamp": "2025-09-09T01:56:57.864Z"
+    },
+    {
+      "type": "POTENTIAL_HARDCODED_SECRET",
+      "severity": "HIGH",
+      "file": "C:\\FloworxInvite\\backend\\tests\\middleware\\validation.test.js",
+      "description": "Line 114: Potential hardcoded secret",
+      "timestamp": "2025-09-09T01:56:57.865Z"
+    },
+    {
+      "type": "POTENTIAL_HARDCODED_SECRET",
+      "severity": "HIGH",
+      "file": "C:\\FloworxInvite\\backend\\tests\\middleware\\validation.test.js",
+      "description": "Line 116: Potential hardcoded secret",
+      "timestamp": "2025-09-09T01:56:57.865Z"
+    },
+    {
+      "type": "POTENTIAL_HARDCODED_SECRET",
+      "severity": "HIGH",
+      "file": "C:\\FloworxInvite\\backend\\tests\\security\\security.test.js",
+      "description": "Line 27: Potential hardcoded secret",
+      "timestamp": "2025-09-09T01:56:57.866Z"
+    },
+    {
+      "type": "POTENTIAL_HARDCODED_SECRET",
+      "severity": "HIGH",
+      "file": "C:\\FloworxInvite\\backend\\tests\\security\\security.test.js",
+      "description": "Line 48: Potential hardcoded secret",
+      "timestamp": "2025-09-09T01:56:57.867Z"
+    },
+    {
+      "type": "POTENTIAL_HARDCODED_SECRET",
+      "severity": "HIGH",
+      "file": "C:\\FloworxInvite\\backend\\tests\\security\\security.test.js",
+      "description": "Line 100: Potential hardcoded secret",
+      "timestamp": "2025-09-09T01:56:57.867Z"
+    },
+    {
+      "type": "POTENTIAL_HARDCODED_SECRET",
+      "severity": "HIGH",
+      "file": "C:\\FloworxInvite\\backend\\tests\\security\\security.test.js",
+      "description": "Line 118: Potential hardcoded secret",
+      "timestamp": "2025-09-09T01:56:57.867Z"
+    },
+    {
+      "type": "POTENTIAL_HARDCODED_SECRET",
+      "severity": "HIGH",
+      "file": "C:\\FloworxInvite\\backend\\tests\\security\\security.test.js",
+      "description": "Line 239: Potential hardcoded secret",
+      "timestamp": "2025-09-09T01:56:57.867Z"
+    },
+    {
+      "type": "POTENTIAL_HARDCODED_SECRET",
+      "severity": "HIGH",
+      "file": "C:\\FloworxInvite\\backend\\tests\\security\\security.test.js",
+      "description": "Line 264: Potential hardcoded secret",
+      "timestamp": "2025-09-09T01:56:57.867Z"
+    },
+    {
+      "type": "POTENTIAL_HARDCODED_SECRET",
+      "severity": "HIGH",
+      "file": "C:\\FloworxInvite\\backend\\tests\\unit\\services\\errorTrackingService.test.js",
+      "description": "Line 262: Potential hardcoded secret",
+      "timestamp": "2025-09-09T01:56:57.867Z"
+    },
+    {
+      "type": "POTENTIAL_HARDCODED_SECRET",
+      "severity": "HIGH",
+      "file": "C:\\FloworxInvite\\cypress\\e2e\\floworx-basic-tests.cy.js",
+      "description": "Line 74: Potential hardcoded secret",
+      "timestamp": "2025-09-09T01:56:57.868Z"
+    },
+    {
+      "type": "POTENTIAL_HARDCODED_SECRET",
+      "severity": "HIGH",
+      "file": "C:\\FloworxInvite\\scripts\\quick-validation-test.js",
+      "description": "Line 97: Potential hardcoded secret",
+      "timestamp": "2025-09-09T01:56:57.879Z"
+    },
+    {
+      "type": "POTENTIAL_HARDCODED_SECRET",
+      "severity": "HIGH",
+      "file": "C:\\FloworxInvite\\tests\\api\\auth.test.js",
+      "description": "Line 174: Potential hardcoded secret",
+      "timestamp": "2025-09-09T01:56:57.883Z"
+    },
+    {
+      "type": "POTENTIAL_HARDCODED_SECRET",
+      "severity": "HIGH",
+      "file": "C:\\FloworxInvite\\tests\\api\\auth.test.js",
+      "description": "Line 185: Potential hardcoded secret",
+      "timestamp": "2025-09-09T01:56:57.884Z"
+    },
+    {
+      "type": "POTENTIAL_HARDCODED_SECRET",
+      "severity": "HIGH",
+      "file": "C:\\FloworxInvite\\tests\\api\\auth.test.js",
+      "description": "Line 283: Potential hardcoded secret",
+      "timestamp": "2025-09-09T01:56:57.884Z"
+    },
+    {
+      "type": "POTENTIAL_HARDCODED_SECRET",
+      "severity": "HIGH",
+      "file": "C:\\FloworxInvite\\tests\\comprehensive-coverage.spec.js",
+      "description": "Line 54: Potential hardcoded secret",
+      "timestamp": "2025-09-09T01:56:57.885Z"
+    },
+    {
+      "type": "POTENTIAL_HARDCODED_SECRET",
+      "severity": "HIGH",
+      "file": "C:\\FloworxInvite\\tests\\e2e\\suites\\api-integration.test.js",
+      "description": "Line 305: Potential hardcoded secret",
+      "timestamp": "2025-09-09T01:56:57.889Z"
+    },
+    {
+      "type": "POTENTIAL_HARDCODED_SECRET",
+      "severity": "HIGH",
+      "file": "C:\\FloworxInvite\\tests\\e2e\\suites\\authentication.test.js",
+      "description": "Line 138: Potential hardcoded secret",
+      "timestamp": "2025-09-09T01:56:57.890Z"
+    },
+    {
+      "type": "POTENTIAL_HARDCODED_SECRET",
+      "severity": "HIGH",
+      "file": "C:\\FloworxInvite\\tests\\e2e\\suites\\authentication.test.js",
+      "description": "Line 164: Potential hardcoded secret",
+      "timestamp": "2025-09-09T01:56:57.890Z"
+    },
+    {
+      "type": "POTENTIAL_HARDCODED_SECRET",
+      "severity": "HIGH",
+      "file": "C:\\FloworxInvite\\tests\\e2e\\suites\\authentication.test.js",
+      "description": "Line 173: Potential hardcoded secret",
+      "timestamp": "2025-09-09T01:56:57.890Z"
+    },
+    {
+      "type": "POTENTIAL_HARDCODED_SECRET",
+      "severity": "HIGH",
+      "file": "C:\\FloworxInvite\\tests\\e2e\\suites\\authentication.test.js",
+      "description": "Line 198: Potential hardcoded secret",
+      "timestamp": "2025-09-09T01:56:57.890Z"
+    },
+    {
+      "type": "POTENTIAL_HARDCODED_SECRET",
+      "severity": "HIGH",
+      "file": "C:\\FloworxInvite\\tests\\final-comprehensive-validation.spec.js",
+      "description": "Line 55: Potential hardcoded secret",
+      "timestamp": "2025-09-09T01:56:57.891Z"
+    },
+    {
+      "type": "POTENTIAL_HARDCODED_SECRET",
+      "severity": "HIGH",
+      "file": "C:\\FloworxInvite\\tests\\final-comprehensive-validation.spec.js",
+      "description": "Line 156: Potential hardcoded secret",
+      "timestamp": "2025-09-09T01:56:57.892Z"
+    },
+    {
+      "type": "POTENTIAL_HARDCODED_SECRET",
+      "severity": "HIGH",
+      "file": "C:\\FloworxInvite\\tests\\final-comprehensive-validation.spec.js",
+      "description": "Line 184: Potential hardcoded secret",
+      "timestamp": "2025-09-09T01:56:57.892Z"
+    },
+    {
+      "type": "POTENTIAL_HARDCODED_SECRET",
+      "severity": "HIGH",
+      "file": "C:\\FloworxInvite\\tests\\focused-api-tests.spec.js",
+      "description": "Line 58: Potential hardcoded secret",
+      "timestamp": "2025-09-09T01:56:57.892Z"
+    },
+    {
+      "type": "POTENTIAL_HARDCODED_SECRET",
+      "severity": "HIGH",
+      "file": "C:\\FloworxInvite\\tests\\focused-api-tests.spec.js",
+      "description": "Line 146: Potential hardcoded secret",
+      "timestamp": "2025-09-09T01:56:57.892Z"
+    },
+    {
+      "type": "POTENTIAL_HARDCODED_SECRET",
+      "severity": "HIGH",
+      "file": "C:\\FloworxInvite\\tests\\performance\\performance.test.js",
+      "description": "Line 43: Potential hardcoded secret",
+      "timestamp": "2025-09-09T01:56:57.894Z"
+    },
+    {
+      "type": "POTENTIAL_HARDCODED_SECRET",
+      "severity": "HIGH",
+      "file": "C:\\FloworxInvite\\tests\\performance\\performance.test.js",
+      "description": "Line 117: Potential hardcoded secret",
+      "timestamp": "2025-09-09T01:56:57.894Z"
+    },
+    {
+      "type": "POTENTIAL_HARDCODED_SECRET",
+      "severity": "HIGH",
+      "file": "C:\\FloworxInvite\\tests\\security\\security-scan.js",
+      "description": "Line 242: Potential hardcoded secret",
+      "timestamp": "2025-09-09T01:56:57.895Z"
+    },
+    {
+      "type": "POTENTIAL_HARDCODED_SECRET",
+      "severity": "HIGH",
+      "file": "C:\\FloworxInvite\\tests\\security\\security-scan.js",
+      "description": "Line 247: Potential hardcoded secret",
+      "timestamp": "2025-09-09T01:56:57.895Z"
+    },
+    {
+      "type": "POTENTIAL_HARDCODED_SECRET",
+      "severity": "HIGH",
+      "file": "C:\\FloworxInvite\\tests\\security\\security-scan.js",
+      "description": "Line 449: Potential hardcoded secret",
+      "timestamp": "2025-09-09T01:56:57.895Z"
+    },
+    {
+      "type": "POTENTIAL_HARDCODED_SECRET",
+      "severity": "HIGH",
+      "file": "C:\\FloworxInvite\\tests\\security-coverage.spec.js",
+      "description": "Line 96: Potential hardcoded secret",
+      "timestamp": "2025-09-09T01:56:57.895Z"
+    },
+    {
+      "type": "POTENTIAL_HARDCODED_SECRET",
+      "severity": "HIGH",
+      "file": "C:\\FloworxInvite\\tests\\security-coverage.spec.js",
+      "description": "Line 98: Potential hardcoded secret",
+      "timestamp": "2025-09-09T01:56:57.895Z"
+    }
+  ],
+  "recommendedFixes": [
+    {
+      "description": "Move vercel-environment-variables.txt to secure location or add to .gitignore",
+      "timestamp": "2025-09-09T01:56:57.825Z"
+    },
+    {
+      "description": "Restrict permissions for start.sh",
+      "timestamp": "2025-09-09T01:56:57.827Z"
+    },
+    {
+      "description": "Restrict permissions for setup.js",
+      "timestamp": "2025-09-09T01:56:57.827Z"
+    },
+    {
+      "description": "Restrict permissions for backend/.env.example",
+      "timestamp": "2025-09-09T01:56:57.828Z"
+    }
+  ],
+  "nextSteps": [
+    "Review all HIGH severity findings immediately",
+    "Move sensitive files out of root directory",
+    "Update environment configurations with secure defaults",
+    "Implement proper file permissions",
+    "Run regular security audits"
+  ]
+}

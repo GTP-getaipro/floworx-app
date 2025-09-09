@@ -7,9 +7,15 @@
 # Exit if any of these critical variables are not set.
 # The ':-' syntax provides a default error message.
 : "${DATABASE_URL:?DATABASE_URL must be set}"
-: "${REDIS_HOST:?REDIS_HOST must be set}"
 : "${JWT_SECRET:?JWT_SECRET must be set}"
 : "${NODE_ENV:?NODE_ENV must be set to 'production'}"
+
+# KeyDB/Redis is optional - app will use memory cache if not available
+if [ -n "$REDIS_HOST" ]; then
+  echo "✅ KeyDB/Redis configured: $REDIS_HOST:${REDIS_PORT:-6379}"
+else
+  echo "⚠️ KeyDB/Redis not configured - using memory cache only"
+fi
 
 # Check that NODE_ENV is specifically 'production'
 if [ "$NODE_ENV" != "production" ]; then

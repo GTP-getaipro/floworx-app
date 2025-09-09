@@ -1,6 +1,7 @@
 /**
- * Redis Cache Service for FloWorx SaaS
- * High-performance caching layer with automatic invalidation and compression
+ * KeyDB Cache Service for FloWorx SaaS
+ * High-performance caching layer with KeyDB (Redis-compatible) and in-memory fallback
+ * KeyDB is faster and more efficient than Redis while being 100% compatible
  */
 
 const Redis = require('ioredis');
@@ -8,16 +9,17 @@ const NodeCache = require('node-cache');
 const { performance } = require('perf_hooks');
 
 /**
- * Multi-tier caching service with Redis and in-memory fallback
+ * Multi-tier caching service with KeyDB (Redis-compatible) and in-memory fallback
+ * KeyDB provides better performance and lower memory usage than Redis
  */
 class CacheService {
   constructor() {
     this.redis = null;
     this.memoryCache = new NodeCache({
-      stdTTL: 300, // 5 minutes default TTL
-      checkperiod: 60, // Check for expired keys every minute
-      useClones: false, // Better performance, but be careful with object mutations
-      maxKeys: 1000, // Limit to 1000 keys to prevent memory leak
+      stdTTL: process.env.CACHE_TTL || 120, // 2 minutes default TTL (optimized for KeyDB)
+      checkperiod: 30, // Check for expired keys every 30 seconds
+      useClones: false, // Better performance
+      maxKeys: process.env.CACHE_MAX_KEYS || 200, // Reduced for memory efficiency
       deleteOnExpire: true, // Automatically delete expired keys
       enableLegacyCallbacks: false // Better performance
     });
@@ -30,17 +32,22 @@ class CacheService {
       errors: 0
     };
 
-    this.initializeRedis();
+    console.log('🗄️ Initializing KeyDB cache service...');
+    console.log(`   Max Keys: ${this.memoryCache.options.maxKeys}`);
+    console.log(`   Default TTL: ${this.memoryCache.options.stdTTL}s`);
+
+    this.initializeKeyDB();
     this.startMemoryMonitoring();
   }
 
   /**
-   * Initialize Redis connection with enhanced retry logic
+   * Initialize KeyDB connection with enhanced retry logic
+   * KeyDB is 100% Redis-compatible but faster and more efficient
    */
-  async initializeRedis() {
-    // Skip Redis initialization if not configured
+  async initializeKeyDB() {
+    // Skip KeyDB initialization if not configured
     if (!process.env.REDIS_HOST) {
-      console.log('⚠️ Redis disabled - using memory cache only');
+      console.log('⚠️ KeyDB disabled - using memory cache only');
       console.log(`   REDIS_HOST: ${process.env.REDIS_HOST || 'not set'}`);
       console.log(`   NODE_ENV: ${process.env.NODE_ENV || 'not set'}`);
       this.isRedisConnected = false;
@@ -48,12 +55,13 @@ class CacheService {
     }
 
     try {
-      // Try multiple possible Redis hostnames
+      // Try multiple possible KeyDB hostnames
       const possibleHosts = [
         process.env.REDIS_HOST,
-        'redis-database',
+        'keydb-service',
+        'floworx-keydb',
+        'cautious-chinchilla-psogogcssw4coscowc8o8w0w',
         'redis-database-bgkgcogwgcksc0sccw48c8s0',
-        'redis-db',
         '127.0.0.1'
       ].filter(Boolean);
 
@@ -62,9 +70,9 @@ class CacheService {
 
       for (const host of possibleHosts) {
         try {
-          console.log(`🔗 Trying Redis connection to: ${host}:${process.env.REDIS_PORT || 6379}`);
+          console.log(`🔗 Trying KeyDB connection to: ${host}:${process.env.REDIS_PORT || 6379}`);
 
-          const redisConfig = {
+          const keydbConfig = {
             host: host,
             port: process.env.REDIS_PORT || 6379,
             password: process.env.REDIS_PASSWORD || undefined,
@@ -78,29 +86,29 @@ class CacheService {
             enableOfflineQueue: false,
             retryDelayOnClusterDown: 300,
             enableReadyCheck: false,
-            // Enhanced retry strategy
+            // Enhanced retry strategy for KeyDB
             retryStrategy: (times) => {
               if (times > 3) return null; // Stop retrying after 3 attempts
               return Math.min(times * 200, 1000);
             }
           };
 
-          this.redis = new Redis(redisConfig);
+          this.redis = new Redis(keydbConfig);
 
           // Set up event handlers
           this.redis.on('connect', () => {
-            console.log(`✅ Redis connected successfully to ${host}`);
+            console.log(`✅ KeyDB connected successfully to ${host}`);
             this.isRedisConnected = true;
           });
 
           this.redis.on('error', error => {
-            console.warn(`⚠️ Redis error on ${host}:`, error.message);
+            console.warn(`⚠️ KeyDB error on ${host}:`, error.message);
             this.isRedisConnected = false;
             this.stats.errors++;
           });
 
           this.redis.on('close', () => {
-            console.warn(`⚠️ Redis connection closed on ${host}`);
+            console.warn(`⚠️ KeyDB connection closed on ${host}`);
             this.isRedisConnected = false;
           });
 
@@ -112,13 +120,13 @@ class CacheService {
             )
           ]);
 
-          console.log(`✅ Redis ping successful on ${host}`);
+          console.log(`✅ KeyDB ping successful on ${host}`);
           connected = true;
           break;
 
         } catch (error) {
           lastError = error;
-          console.warn(`❌ Redis connection failed on ${host}:`, error.message);
+          console.warn(`❌ KeyDB connection failed on ${host}:`, error.message);
           if (this.redis) {
             this.redis.disconnect();
             this.redis = null;
@@ -128,11 +136,11 @@ class CacheService {
       }
 
       if (!connected) {
-        throw lastError || new Error('All Redis connection attempts failed');
+        throw lastError || new Error('All KeyDB connection attempts failed');
       }
 
     } catch (error) {
-      console.warn('⚠️ Redis initialization failed completely, using memory cache only:', error.message);
+      console.warn('⚠️ KeyDB initialization failed completely, using memory cache only:', error.message);
       this.isRedisConnected = false;
       this.redis = null;
     }

@@ -165,8 +165,8 @@ function main() {
   if (updateCacheSettings()) optimizations++;
   if (createEnvironmentOverrides()) optimizations++;
 
-  console.log(\`\n🎉 Memory optimization complete!\`);
-  console.log(\`Applied \${optimizations} optimizations:\`);
+  console.log(`\n🎉 Memory optimization complete!`);
+  console.log(`Applied ${optimizations} optimizations:`);
   console.log('  ✅ Node.js memory limits reduced');
   console.log('  ✅ Memory monitoring enabled');
   console.log('  ✅ Docker memory limits optimized');

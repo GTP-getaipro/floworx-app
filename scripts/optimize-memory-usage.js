@@ -1,202 +1,190 @@
 #!/usr/bin/env node
 
 /**
- * Memory Usage Optimization Script
- * Reduces memory footprint for production deployment
+ * Memory Optimization Script for Coolify Deployment
+ * Helps reduce memory usage and prevent OOM errors
  */
 
+const { execSync } = require('child_process');
 const fs = require('fs');
 const path = require('path');
 
-class MemoryOptimizer {
-  constructor() {
-    this.optimizations = [];
+console.log('🧠 FloWorx Memory Optimization Script');
+console.log('=====================================');
+
+function optimizeNodeOptions() {
+  console.log('\n🔧 Optimizing Node.js memory settings...');
+
+  const startScript = path.join(__dirname, '..', 'start.sh');
+
+  if (!fs.existsSync(startScript)) {
+    console.log('❌ start.sh not found');
+    return false;
   }
 
-  /**
-   * Apply all memory optimizations
-   */
-  optimize() {
-    console.log('🧠 Starting Memory Optimization...');
-    console.log('==================================');
+  let content = fs.readFileSync(startScript, 'utf8');
 
-    // Optimize cache service memory settings
-    this.optimizeCacheService();
-    
-    // Optimize server memory monitoring
-    this.optimizeServerMonitoring();
-    
-    // Create memory-optimized environment variables
-    this.createOptimizedEnvVars();
-    
-    // Generate optimization report
-    this.generateReport();
-    
-    console.log(`\n✅ Memory optimization completed!`);
-    console.log(`🔧 Applied ${this.optimizations.length} optimizations`);
-    
-    return Promise.resolve();
+  // Update memory limit to be more conservative
+  if (content.includes('--max-old-space-size=512')) {
+    content = content.replace('--max-old-space-size=512', '--max-old-space-size=256');
+    console.log('✅ Reduced Node.js heap size to 256MB');
   }
 
-  /**
-   * Optimize cache service memory usage
-   */
-  optimizeCacheService() {
-    console.log('\n🗄️ Optimizing cache service...');
-    
-    const cacheServicePath = path.join(__dirname, '..', 'backend', 'services', 'cacheService.js');
-    
-    if (!fs.existsSync(cacheServicePath)) {
-      console.log('   ⚠️ Cache service not found, skipping');
-      return;
-    }
-
-    try {
-      let content = fs.readFileSync(cacheServicePath, 'utf8');
-      
-      // Reduce memory cache limits
-      const optimizations = [
-        {
-          from: 'maxKeys: 1000',
-          to: 'maxKeys: 200',
-          description: 'Reduce max cache keys from 1000 to 200'
-        },
-        {
-          from: 'stdTTL: 300',
-          to: 'stdTTL: 120',
-          description: 'Reduce cache TTL from 5min to 2min'
-        },
-        {
-          from: 'checkperiod: 60',
-          to: 'checkperiod: 30',
-          description: 'Increase cleanup frequency'
-        }
-      ];
-
-      let modified = false;
-      optimizations.forEach(opt => {
-        if (content.includes(opt.from)) {
-          content = content.replace(opt.from, opt.to);
-          console.log(`   ✅ ${opt.description}`);
-          this.optimizations.push(opt.description);
-          modified = true;
-        }
-      });
-
-      if (modified) {
-        fs.writeFileSync(cacheServicePath, content);
-        console.log('   💾 Cache service optimized');
-      } else {
-        console.log('   ℹ️ Cache service already optimized');
-      }
-
-    } catch (error) {
-      console.log(`   ❌ Failed to optimize cache service: ${error.message}`);
-    }
+  // Add garbage collection hints
+  if (!content.includes('--optimize-for-size')) {
+    content = content.replace('exec node', 'exec node --optimize-for-size --max-old-space-size=256');
+    console.log('✅ Added memory optimization flags');
   }
 
-  /**
-   * Optimize server memory monitoring
-   */
-  optimizeServerMonitoring() {
-    console.log('\n📊 Optimizing server monitoring...');
-    
-    const serverPath = path.join(__dirname, '..', 'backend', 'server.js');
-    
-    if (!fs.existsSync(serverPath)) {
-      console.log('   ⚠️ Server file not found, skipping');
-      return;
-    }
+  fs.writeFileSync(startScript, content);
+  console.log('✅ Updated start.sh with memory optimizations');
 
-    console.log('   ℹ️ Server monitoring already optimized for KeyDB');
-    this.optimizations.push('Server monitoring optimized for KeyDB');
+  return true;
+}
+
+function createMemoryMonitoringScript() {
+  console.log('\n📊 Creating memory monitoring script...');
+
+  const monitorScript = `#!/usr/bin/env node
+
+/**
+ * Memory Monitor for Coolify Deployment
+ * Monitors and reports memory usage
+ */
+
+setInterval(() => {
+  const memUsage = process.memoryUsage();
+  const memUsageMB = Math.round(memUsage.heapUsed / 1024 / 1024);
+  const memLimitMB = Math.round(memUsage.heapTotal / 1024 / 1024);
+  const memPercent = Math.round((memUsageMB / memLimitMB) * 100);
+
+  if (memPercent > 80) {
+    console.warn(\`🚨 HIGH MEMORY USAGE: \${memUsageMB}MB/\${memLimitMB}MB (\${memPercent}%)\`);
+  } else if (memPercent > 60) {
+    console.log(\`⚠️ Moderate memory usage: \${memUsageMB}MB/\${memLimitMB}MB (\${memPercent}%)\`);
   }
 
-  /**
-   * Create memory-optimized environment variables
-   */
-  createOptimizedEnvVars() {
-    console.log('\n⚙️ Creating optimized environment variables...');
-    
-    const optimizedEnvContent = `# =============================================================================
-# MEMORY-OPTIMIZED ENVIRONMENT VARIABLES FOR COOLIFY
-# Use these settings to reduce memory usage in production
-# =============================================================================
+  // Force garbage collection if available
+  if (global.gc) {
+    global.gc();
+  }
+}, 30000); // Check every 30 seconds
 
-# Node.js Memory Optimization
-NODE_OPTIONS=--max-old-space-size=400 --optimize-for-size
-MAX_REQUEST_SIZE=5mb
-COMPRESSION_LEVEL=3
+console.log('🧠 Memory monitor started');
+`;
 
-# Cache Optimization
-CACHE_MAX_KEYS=200
-CACHE_TTL=120
-CACHE_CHECK_PERIOD=30
+  const monitorPath = path.join(__dirname, '..', 'scripts', 'memory-monitor.js');
+  fs.writeFileSync(monitorPath, monitorScript);
+  console.log('✅ Created memory monitoring script');
 
-# Monitoring Optimization
-MEMORY_MONITORING_INTERVAL=30000
-DISABLE_VERBOSE_LOGGING=true
+  return monitorPath;
+}
+
+function updateDockerfileMemory() {
+  console.log('\n🐳 Optimizing Dockerfile memory settings...');
+
+  const dockerfile = path.join(__dirname, '..', 'Dockerfile');
+
+  if (!fs.existsSync(dockerfile)) {
+    console.log('❌ Dockerfile not found');
+    return false;
+  }
+
+  let content = fs.readFileSync(dockerfile, 'utf8');
+
+  // Update memory limits in Dockerfile
+  if (content.includes('memory: 512M')) {
+    content = content.replace('memory: 512M', 'memory: 256M');
+    content = content.replace('memory: 256M', 'memory: 128M');
+    console.log('✅ Reduced Docker memory limits');
+  }
+
+  fs.writeFileSync(dockerfile, content);
+  console.log('✅ Updated Dockerfile with memory optimizations');
+
+  return true;
+}
+
+function updateCacheSettings() {
+  console.log('\n🗄️ Optimizing cache settings...');
+
+  const cacheService = path.join(__dirname, '..', 'backend', 'services', 'cacheService.js');
+
+  if (!fs.existsSync(cacheService)) {
+    console.log('❌ Cache service not found');
+    return false;
+  }
+
+  let content = fs.readFileSync(cacheService, 'utf8');
+
+  // Reduce cache sizes
+  content = content.replace(
+    'maxKeys: process.env.CACHE_MAX_KEYS || 100',
+    'maxKeys: process.env.CACHE_MAX_KEYS || 50'
+  );
+
+  content = content.replace(
+    'stdTTL: process.env.CACHE_TTL || 60',
+    'stdTTL: process.env.CACHE_TTL || 30'
+  );
+
+  fs.writeFileSync(cacheService, content);
+  console.log('✅ Reduced cache size and TTL for memory efficiency');
+
+  return true;
+}
+
+function createEnvironmentOverrides() {
+  console.log('\n🌍 Creating memory-focused environment overrides...');
+
+  const envContent = `# Memory Optimization Overrides
+NODE_OPTIONS=--optimize-for-size --max-old-space-size=256
+CACHE_MAX_KEYS=50
+CACHE_TTL=30
 LOG_LEVEL=warn
+COMPRESSION_LEVEL=9
+MAX_REQUEST_SIZE=5mb
+RATE_LIMIT_MAX_REQUESTS=50
+`;
 
-# Performance Optimization
-KEEP_ALIVE_TIMEOUT=5000
-HEADERS_TIMEOUT=10000
-REQUEST_TIMEOUT=15000
+  const envPath = path.join(__dirname, '..', 'memory-optimizations.env');
+  fs.writeFileSync(envPath, envContent);
+  console.log('✅ Created memory optimization environment file');
 
-# KeyDB Optimization
-KEYDB_THREADS=2
-KEYDB_MAXMEMORY=200mb
-KEYDB_MAXMEMORY_POLICY=allkeys-lru`;
-
-    const envPath = path.join(__dirname, '..', 'memory-optimized-env.txt');
-    fs.writeFileSync(envPath, optimizedEnvContent);
-    
-    console.log('   ✅ Created memory-optimized environment variables');
-    console.log(`   📄 Saved to: ${envPath}`);
-    
-    this.optimizations.push('Created memory-optimized environment variables');
-  }
-
-  /**
-   * Generate optimization report
-   */
-  generateReport() {
-    const report = {
-      timestamp: new Date().toISOString(),
-      optimizations: this.optimizations,
-      recommendations: [
-        'Increase Coolify memory limit to 256MB or 512MB',
-        'Apply the memory-optimized environment variables',
-        'Monitor memory usage after deployment',
-        'Use KeyDB instead of Redis for better performance',
-        'Enable Node.js garbage collection optimization'
-      ],
-      immediateActions: [
-        '1. Go to Coolify → Resource Limits → Increase memory to 256MB',
-        '2. Add NODE_OPTIONS=--max-old-space-size=400 to environment variables',
-        '3. Set LOG_LEVEL=warn to reduce logging overhead',
-        '4. Deploy KeyDB service with multi-threading enabled',
-        '5. Restart the application and monitor memory usage'
-      ]
-    };
-
-    const reportPath = path.join(__dirname, '..', 'docs', 'analysis', 'memory-optimization-report.json');
-    
-    // Ensure directory exists
-    const reportDir = path.dirname(reportPath);
-    if (!fs.existsSync(reportDir)) {
-      fs.mkdirSync(reportDir, { recursive: true });
-    }
-    
-    fs.writeFileSync(reportPath, JSON.stringify(report, null, 2));
-    console.log(`\n📊 Optimization report saved: ${reportPath}`);
-  }
+  return envPath;
 }
 
-// Run optimization if called directly
+function main() {
+  console.log('Starting memory optimization process...\n');
+
+  let optimizations = 0;
+
+  if (optimizeNodeOptions()) optimizations++;
+  if (createMemoryMonitoringScript()) optimizations++;
+  if (updateDockerfileMemory()) optimizations++;
+  if (updateCacheSettings()) optimizations++;
+  if (createEnvironmentOverrides()) optimizations++;
+
+  console.log(\`\n🎉 Memory optimization complete!\`);
+  console.log(\`Applied \${optimizations} optimizations:\`);
+  console.log('  ✅ Node.js memory limits reduced');
+  console.log('  ✅ Memory monitoring enabled');
+  console.log('  ✅ Docker memory limits optimized');
+  console.log('  ✅ Cache settings optimized');
+  console.log('  ✅ Environment overrides created');
+
+  console.log(\n📋 Next Steps:\`);
+  console.log('1. Commit and push these changes');
+  console.log('2. Redeploy in Coolify');
+  console.log('3. Monitor memory usage in Coolify logs');
+  console.log('4. If issues persist, consider scaling up the instance');
+
+  console.log(\n🔍 To monitor memory in production:\`);
+  console.log('  node scripts/memory-monitor.js');
+}
+
 if (require.main === module) {
-  const optimizer = new MemoryOptimizer();
-  optimizer.optimize().catch(console.error);
+  main();
 }
 
-module.exports = MemoryOptimizer;
+module.exports = { main, optimizeNodeOptions, createMemoryMonitoringScript, updateDockerfileMemory, updateCacheSettings, createEnvironmentOverrides };

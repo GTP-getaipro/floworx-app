@@ -21,7 +21,7 @@ async function testConnection(host, port, password) {
   try {
     const redis = new Redis({
       host: host,
-      port: parseInt(port) || 6379,
+      port: parseInt(port, 10) || 6379,
       password: password || undefined,
       connectTimeout: 5000,
       commandTimeout: 3000,

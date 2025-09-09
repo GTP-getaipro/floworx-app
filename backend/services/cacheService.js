@@ -1,5 +1,5 @@
 /**
- * KeyDB Cache Service for FloWorx SaaS
+ * KeyDB Cache Service for FloWorx SaaS - FIXED VERSION
  * High-performance caching layer with KeyDB (Redis-compatible) and in-memory fallback
  * KeyDB is faster and more efficient than Redis while being 100% compatible
  */
@@ -16,10 +16,10 @@ class CacheService {
   constructor() {
     this.redis = null;
     this.memoryCache = new NodeCache({
-      stdTTL: process.env.CACHE_TTL || 120, // 2 minutes default TTL (optimized for KeyDB)
-      checkperiod: 30, // Check for expired keys every 30 seconds
+      stdTTL: process.env.CACHE_TTL || 60, // Reduced to 1 minute for better memory management
+      checkperiod: 15, // Check for expired keys every 15 seconds
       useClones: false, // Better performance
-      maxKeys: process.env.CACHE_MAX_KEYS || 200, // Reduced for memory efficiency
+      maxKeys: process.env.CACHE_MAX_KEYS || 100, // Reduced for memory efficiency
       deleteOnExpire: true, // Automatically delete expired keys
       enableLegacyCallbacks: false // Better performance
     });
@@ -83,12 +83,12 @@ class CacheService {
             keepAlive: 30000,
             connectTimeout: 5000,
             commandTimeout: 3000,
-            enableOfflineQueue: false,
+            enableOfflineQueue: true, // FIXED: Enable offline queue to prevent write errors
             retryDelayOnClusterDown: 300,
             enableReadyCheck: false,
             // Enhanced retry strategy for KeyDB
             retryStrategy: (times) => {
-              if (times > 3) return null; // Stop retrying after 3 attempts
+              if (times > 3) {return null;} // Stop retrying after 3 attempts
               return Math.min(times * 200, 1000);
             }
           };
@@ -296,10 +296,8 @@ class CacheService {
         return regex.test(key);
       });
 
-      matchingKeys.forEach(key => {
-        this.memoryCache.del(key);
-        deletedCount++;
-      });
+      matchingKeys.forEach(key => this.memoryCache.del(key));
+      deletedCount += matchingKeys.length;
 
       this.stats.deletes += deletedCount;
       return deletedCount;
@@ -459,26 +457,39 @@ class CacheService {
    * Start memory monitoring and cleanup for in-memory cache
    */
   startMemoryMonitoring() {
-    // Monitor memory usage every 30 seconds
+    // Monitor memory usage every 15 seconds (more frequent)
     setInterval(() => {
       const memUsage = process.memoryUsage();
       const memUsageMB = Math.round(memUsage.heapUsed / 1024 / 1024);
+      const memLimitMB = Math.round(memUsage.heapTotal / 1024 / 1024);
 
-      // If memory usage is high and Redis is not connected, aggressively clean cache
-      if (memUsageMB > 40 && !this.isRedisConnected) {
+      // More aggressive memory management
+      if (memUsageMB > 30 || (memUsageMB / memLimitMB) > 0.6) {
         const keyCount = this.memoryCache.keys().length;
 
-        if (keyCount > 500) {
-          // Clear 50% of cache entries to free memory
+        if (keyCount > 50) {
+          // Clear 70% of cache entries to free memory
           const keys = this.memoryCache.keys();
-          const keysToDelete = keys.slice(0, Math.floor(keys.length / 2));
+          const keysToDelete = keys.slice(0, Math.floor(keys.length * 0.7));
+
+          keysToDelete.forEach(key => this.memoryCache.del(key));
+
+          console.warn(`🧹 Aggressive memory cleanup: Removed ${keysToDelete.length} cache entries. Memory: ${memUsageMB}MB/${memLimitMB}MB, Remaining keys: ${this.memoryCache.keys().length}`);
+        }
+      } else if (memUsageMB > 20 && !this.isRedisConnected) {
+        // Less aggressive cleanup when Redis is not connected
+        const keyCount = this.memoryCache.keys().length;
+
+        if (keyCount > 25) {
+          const keys = this.memoryCache.keys();
+          const keysToDelete = keys.slice(0, Math.floor(keys.length * 0.5));
 
           keysToDelete.forEach(key => this.memoryCache.del(key));
 
           console.warn(`🧹 Memory cleanup: Removed ${keysToDelete.length} cache entries. Memory: ${memUsageMB}MB, Remaining keys: ${this.memoryCache.keys().length}`);
         }
       }
-    }, 30000); // Every 30 seconds
+    }, 15000); // Every 15 seconds
   }
 
   /**

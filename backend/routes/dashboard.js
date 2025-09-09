@@ -49,7 +49,7 @@ router.get('/', authenticateToken, async (req, res) => {
     }
 
     // Get connection status
-    let connections = { google: { connected: false } };
+    const connections = { google: { connected: false } };
     try {
       const oauthQuery = `
         SELECT provider, created_at

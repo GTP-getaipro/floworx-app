@@ -627,7 +627,7 @@ If the sender's email address contains your business domain, always set: "ai_can
    */
   generateCustomManagerNodes(customManagers, businessData) {
     const nodes = [];
-    let yPosition = 2896; // Starting position from template
+    const yPosition = 2896; // Starting position from template
 
     customManagers.forEach((managerName, index) => {
       const nodeId = `custom-manager-${index + 1}`;
@@ -662,7 +662,7 @@ If the sender's email address contains your business domain, always set: "ai_can
    */
   generateCustomSupplierNodes(customSuppliers, businessData) {
     const nodes = [];
-    let yPosition = 4048; // Starting position from template
+    const yPosition = 4048; // Starting position from template
 
     customSuppliers.forEach((supplierName, index) => {
       const nodeId = `custom-supplier-${index + 1}`;

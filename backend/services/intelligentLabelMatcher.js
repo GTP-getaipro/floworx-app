@@ -350,7 +350,7 @@ class IntelligentLabelMatcher {
         // Check against each standard label pattern
         for (const [standardKey, standardLabel] of Object.entries(this.standardLabels)) {
           const pattern = this.labelPatterns[standardKey];
-          if (!pattern) continue;
+          if (!pattern) {continue;}
 
           const confidence = this.calculateMatchConfidence(label.name, pattern);
 
@@ -476,7 +476,7 @@ class IntelligentLabelMatcher {
    * @returns {number} Readiness score 0-1
    */
   calculateAutomationReadiness(matches, totalLabels, missingLabels = 0) {
-    if (matches.length === 0) return 0;
+    if (matches.length === 0) {return 0;}
 
     // Base score from match ratio
     const matchRatio = matches.length / Math.max(totalLabels, 1);
@@ -525,7 +525,7 @@ class IntelligentLabelMatcher {
    * @returns {number} Readiness score 0-1
    */
   calculateAutomationReadiness(matches, totalLabels) {
-    if (matches.length === 0) return 0;
+    if (matches.length === 0) {return 0;}
 
     // Base score from match ratio
     const matchRatio = matches.length / Math.max(totalLabels, 1);

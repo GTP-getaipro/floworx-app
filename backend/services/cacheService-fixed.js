@@ -88,7 +88,7 @@ class CacheService {
             enableReadyCheck: false,
             // Enhanced retry strategy for KeyDB
             retryStrategy: (times) => {
-              if (times > 3) return null; // Stop retrying after 3 attempts
+              if (times > 3) {return null;} // Stop retrying after 3 attempts
               return Math.min(times * 200, 1000);
             }
           };

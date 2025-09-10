@@ -1,0 +1,328 @@
+/**
+ * Comprehensive Health Check Endpoints
+ * Provides detailed system health monitoring for production
+ */
+
+const express = require('express');
+const { query } = require('../database/unified-connection');
+const Redis = require('ioredis');
+
+const router = express.Router();
+
+// Basic health check
+router.get('/', async (req, res) => {
+  try {
+    const healthStatus = {
+      status: 'ok',
+      timestamp: new Date().toISOString(),
+      uptime: process.uptime(),
+      environment: process.env.NODE_ENV || 'development',
+      version: process.env.APP_VERSION || '1.0.0'
+    };
+
+    res.status(200).json(healthStatus);
+  } catch (error) {
+    res.status(500).json({
+      status: 'error',
+      message: 'Health check failed',
+      error: error.message
+    });
+  }
+});
+
+// Database health check
+router.get('/database', async (req, res) => {
+  try {
+    const startTime = Date.now();
+    
+    // Test database connection with a simple query
+    const result = await query('SELECT 1 as health_check, NOW() as current_time');
+    
+    const responseTime = Date.now() - startTime;
+    
+    res.status(200).json({
+      status: 'healthy',
+      service: 'database',
+      responseTime: `${responseTime}ms`,
+      connection: 'active',
+      timestamp: result.rows[0].current_time,
+      details: {
+        type: 'PostgreSQL',
+        pool: 'active',
+        query_test: 'passed'
+      }
+    });
+  } catch (error) {
+    res.status(503).json({
+      status: 'unhealthy',
+      service: 'database',
+      error: error.message,
+      details: {
+        type: 'PostgreSQL',
+        connection: 'failed'
+      }
+    });
+  }
+});
+
+// Redis/KeyDB health check
+router.get('/cache', async (req, res) => {
+  let redis = null;
+  
+  try {
+    const startTime = Date.now();
+    
+    // Try to connect to Redis/KeyDB
+    const redisConfig = process.env.REDIS_URL || {
+      host: process.env.REDIS_HOST || 'localhost',
+      port: parseInt(process.env.REDIS_PORT) || 6379,
+      password: process.env.REDIS_PASSWORD,
+      connectTimeout: 5000,
+      commandTimeout: 3000,
+      lazyConnect: true,
+      maxRetriesPerRequest: 1
+    };
+    
+    redis = new Redis(redisConfig);
+    await redis.connect();
+    
+    // Test basic operations
+    const testKey = `health_check_${Date.now()}`;
+    await redis.set(testKey, 'test_value', 'EX', 10);
+    const testValue = await redis.get(testKey);
+    await redis.del(testKey);
+    
+    const responseTime = Date.now() - startTime;
+    
+    await redis.disconnect();
+    
+    res.status(200).json({
+      status: 'healthy',
+      service: 'cache',
+      responseTime: `${responseTime}ms`,
+      connection: 'active',
+      details: {
+        type: 'Redis/KeyDB',
+        operations: 'set/get/del successful',
+        test_result: testValue === 'test_value' ? 'passed' : 'failed'
+      }
+    });
+  } catch (error) {
+    if (redis) {
+      try {
+        await redis.disconnect();
+      } catch (_e) {
+        // Ignore disconnect errors
+      }
+    }
+    
+    res.status(503).json({
+      status: 'unhealthy',
+      service: 'cache',
+      error: error.message,
+      fallback: 'memory_cache_active',
+      details: {
+        type: 'Redis/KeyDB',
+        connection: 'failed',
+        impact: 'Using memory cache fallback'
+      }
+    });
+  }
+});
+
+// Email service health check
+router.get('/email', async (req, res) => {
+  try {
+    const nodemailer = require('nodemailer');
+    const startTime = Date.now();
+    
+    // Create transporter with current config
+    const transporter = nodemailer.createTransporter({
+      host: process.env.SMTP_HOST || 'smtp.gmail.com',
+      port: parseInt(process.env.SMTP_PORT) || 587,
+      secure: false,
+      auth: {
+        user: process.env.SMTP_USER,
+        pass: process.env.SMTP_PASS
+      }
+    });
+    
+    // Verify SMTP connection
+    await transporter.verify();
+    
+    const responseTime = Date.now() - startTime;
+    
+    res.status(200).json({
+      status: 'healthy',
+      service: 'email',
+      responseTime: `${responseTime}ms`,
+      connection: 'verified',
+      details: {
+        smtp_host: process.env.SMTP_HOST || 'smtp.gmail.com',
+        smtp_port: process.env.SMTP_PORT || '587',
+        from_email: process.env.FROM_EMAIL || process.env.SMTP_USER,
+        auth_configured: !!(process.env.SMTP_USER && process.env.SMTP_PASS)
+      }
+    });
+  } catch (error) {
+    res.status(503).json({
+      status: 'unhealthy',
+      service: 'email',
+      error: error.message,
+      details: {
+        smtp_host: process.env.SMTP_HOST || 'smtp.gmail.com',
+        connection: 'failed'
+      }
+    });
+  }
+});
+
+// OAuth service health check
+router.get('/oauth', async (req, res) => {
+  try {
+    const oauthConfig = {
+      google_client_id: !!process.env.GOOGLE_CLIENT_ID,
+      google_client_secret: !!process.env.GOOGLE_CLIENT_SECRET,
+      google_redirect_uri: process.env.GOOGLE_REDIRECT_URI,
+      frontend_url: process.env.FRONTEND_URL
+    };
+    
+    const isConfigured = oauthConfig.google_client_id && 
+                        oauthConfig.google_client_secret && 
+                        oauthConfig.google_redirect_uri;
+    
+    if (isConfigured) {
+      res.status(200).json({
+        status: 'healthy',
+        service: 'oauth',
+        configuration: 'complete',
+        details: {
+          google_oauth: 'configured',
+          redirect_uri: oauthConfig.google_redirect_uri,
+          frontend_url: oauthConfig.frontend_url
+        }
+      });
+    } else {
+      res.status(503).json({
+        status: 'unhealthy',
+        service: 'oauth',
+        configuration: 'incomplete',
+        missing: [
+          !oauthConfig.google_client_id && 'GOOGLE_CLIENT_ID',
+          !oauthConfig.google_client_secret && 'GOOGLE_CLIENT_SECRET',
+          !oauthConfig.google_redirect_uri && 'GOOGLE_REDIRECT_URI'
+        ].filter(Boolean),
+        details: {
+          google_oauth: 'not_configured'
+        }
+      });
+    }
+  } catch (error) {
+    res.status(500).json({
+      status: 'error',
+      service: 'oauth',
+      error: error.message
+    });
+  }
+});
+
+// Comprehensive system health check
+router.get('/system', async (req, res) => {
+  const checks = [];
+  let overallStatus = 'healthy';
+  
+  try {
+    // Database check
+    try {
+      await query('SELECT 1');
+      checks.push({ service: 'database', status: 'healthy' });
+    } catch (error) {
+      checks.push({ service: 'database', status: 'unhealthy', error: error.message });
+      overallStatus = 'degraded';
+    }
+    
+    // Cache check
+    let redis = null;
+    try {
+      const redisConfig = process.env.REDIS_URL || {
+        host: process.env.REDIS_HOST || 'localhost',
+        port: parseInt(process.env.REDIS_PORT) || 6379,
+        password: process.env.REDIS_PASSWORD,
+        connectTimeout: 2000,
+        commandTimeout: 1000,
+        lazyConnect: true,
+        maxRetriesPerRequest: 1
+      };
+      
+      redis = new Redis(redisConfig);
+      await redis.connect();
+      await redis.ping();
+      await redis.disconnect();
+      
+      checks.push({ service: 'cache', status: 'healthy' });
+    } catch (error) {
+      if (redis) {
+        try { await redis.disconnect(); } catch (_e) {}
+      }
+      checks.push({ service: 'cache', status: 'degraded', error: error.message, fallback: 'memory_cache' });
+      if (overallStatus === 'healthy') overallStatus = 'degraded';
+    }
+    
+    // Email check
+    try {
+      const nodemailer = require('nodemailer');
+      const transporter = nodemailer.createTransporter({
+        host: process.env.SMTP_HOST || 'smtp.gmail.com',
+        port: parseInt(process.env.SMTP_PORT) || 587,
+        secure: false,
+        auth: {
+          user: process.env.SMTP_USER,
+          pass: process.env.SMTP_PASS
+        }
+      });
+      
+      await transporter.verify();
+      checks.push({ service: 'email', status: 'healthy' });
+    } catch (error) {
+      checks.push({ service: 'email', status: 'unhealthy', error: error.message });
+      if (overallStatus === 'healthy') overallStatus = 'degraded';
+    }
+    
+    // OAuth check
+    const oauthConfigured = !!(process.env.GOOGLE_CLIENT_ID && 
+                              process.env.GOOGLE_CLIENT_SECRET && 
+                              process.env.GOOGLE_REDIRECT_URI);
+    
+    checks.push({ 
+      service: 'oauth', 
+      status: oauthConfigured ? 'healthy' : 'not_configured',
+      configured: oauthConfigured
+    });
+    
+    const statusCode = overallStatus === 'healthy' ? 200 : 
+                      overallStatus === 'degraded' ? 206 : 503;
+    
+    res.status(statusCode).json({
+      status: overallStatus,
+      timestamp: new Date().toISOString(),
+      uptime: process.uptime(),
+      environment: process.env.NODE_ENV || 'development',
+      checks: checks,
+      summary: {
+        total: checks.length,
+        healthy: checks.filter(c => c.status === 'healthy').length,
+        degraded: checks.filter(c => c.status === 'degraded').length,
+        unhealthy: checks.filter(c => c.status === 'unhealthy').length
+      }
+    });
+    
+  } catch (error) {
+    res.status(500).json({
+      status: 'error',
+      error: error.message,
+      checks: checks
+    });
+  }
+});
+
+module.exports = router;

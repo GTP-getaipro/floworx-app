@@ -61,7 +61,7 @@ class CacheService {
         console.log('🔗 Using REDIS_URL for KeyDB connection');
 
         // Use REDIS_URL directly
-        let redisUrl = process.env.REDIS_URL;
+        const redisUrl = process.env.REDIS_URL;
 
         const keydbConfig = {
           connectTimeout: 5000,
@@ -73,7 +73,9 @@ class CacheService {
           enableOfflineQueue: true,
           enableReadyCheck: false,
           retryStrategy: (times) => {
-            if (times > 3) return null;
+            if (times > 3) {
+              return null;
+            }
             return Math.min(times * 200, 1000);
           }
         };

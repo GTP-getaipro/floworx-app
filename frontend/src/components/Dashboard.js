@@ -49,12 +49,10 @@ const Dashboard = () => {
 
   // Fetch user status and onboarding status on component mount
   useEffect(() => {
-    console.log('Dashboard: Main useEffect triggered', { loading });
     let isMounted = true; // Prevent state updates if component unmounts
 
     const fetchUserStatus = async () => {
       if (!isMounted || !loading) {
-        console.log('Dashboard: Skipping fetch', { isMounted, loading });
         return; // Prevent multiple simultaneous requests
       }
 
@@ -70,13 +68,10 @@ const Dashboard = () => {
         }, 5000); // Reduced to 5 second timeout
 
         const token = localStorage.getItem('floworx_token');
-        console.log('Dashboard: Token found:', token ? 'Yes' : 'No');
-        console.log('Dashboard: API URL:', process.env.REACT_APP_API_URL);
 
         // If no token, create a mock user for development
         if (!token) {
           if (!isMounted) return;
-          console.log('Dashboard: No authentication token found, using mock user');
           const mockUser = {
             id: 'dev-user-123',
             email: 'developer@floworx.dev',
@@ -113,9 +108,7 @@ const Dashboard = () => {
         // Quick health check first
         try {
           await axios.get(`${apiUrl}/health`, { timeout: 2000 });
-          console.log('Dashboard: API health check passed');
         } catch (healthError) {
-          console.log('Dashboard: API health check failed, using mock data for production');
           if (!isMounted) return;
 
           const mockUser = {
@@ -153,7 +146,6 @@ const Dashboard = () => {
         const headers = { Authorization: `Bearer ${token}` };
 
         // Fetch user status with shorter timeout
-        console.log('Dashboard: Fetching user status from:', apiUrl);
         const userResponse = await axios.get(`${apiUrl}/user/status`, {
           headers,
           timeout: 4000 // Reduced to 4 second timeout for user status
@@ -161,10 +153,8 @@ const Dashboard = () => {
 
         if (!isMounted) return;
         setUserStatus(userResponse.data);
-        console.log('Dashboard: User status loaded successfully');
 
         // Fetch onboarding status with timeout and improved fallback
-        console.log('Dashboard: Fetching onboarding status...');
         let onboardingData = null;
 
         try {
@@ -176,9 +166,7 @@ const Dashboard = () => {
             }
           );
           onboardingData = onboardingResponse.data;
-          console.log('Dashboard: Onboarding status loaded successfully');
         } catch (onboardingError) {
-          console.log('Dashboard: Onboarding status endpoint failed, using fallback:', onboardingError.message);
 
           // Improved fallback: Create onboarding status from user status
           onboardingData = {
@@ -198,7 +186,6 @@ const Dashboard = () => {
             businessConfig: null,
             onboardingCompleted: userResponse.data.onboardingCompleted !== false // Default to true for development
           };
-          console.log('Dashboard: Using fallback onboarding status');
         }
 
         if (!isMounted) return;
@@ -209,19 +196,9 @@ const Dashboard = () => {
         const hasServiceConnection = onboardingData.googleConnected;
         const hasCompletedOnboarding = onboardingData.onboardingCompleted;
 
-        console.log('Dashboard: Onboarding status check:', {
-          hasIndustrySelection,
-          hasServiceConnection,
-          hasCompletedOnboarding,
-          nextStep: onboardingData.nextStep
-        });
-
         // Show onboarding if any required step is missing
         if (!hasIndustrySelection || !hasServiceConnection || !hasCompletedOnboarding || onboardingData.nextStep !== 'completed') {
-          console.log('Dashboard: Required onboarding steps missing, showing wizard');
           setShowOnboarding(true);
-        } else {
-          console.log('Dashboard: All onboarding requirements met, showing dashboard');
         }
 
         // Clear the timeout since we completed successfully
@@ -235,14 +212,11 @@ const Dashboard = () => {
       } catch (error) {
         if (!isMounted) return;
 
-        console.log('Dashboard: Error fetching status (using development mode):', error.message);
-
         if (timeoutId) {
           clearTimeout(timeoutId);
         }
 
         // In development mode, create a mock user instead of showing errors
-        console.log('Dashboard: Backend not available, creating mock user for development');
         const mockUser = {
           id: 'dev-user-123',
           email: 'developer@floworx.dev',
@@ -281,7 +255,6 @@ const Dashboard = () => {
         }
       } finally {
         setLoading(false);
-        console.log('Dashboard: Loading completed');
       }
     };
 
@@ -296,11 +269,8 @@ const Dashboard = () => {
   // Fetch dashboard metrics data
   const fetchDashboardData = useCallback(async () => {
     if (refreshing) {
-      console.log('Dashboard: Already refreshing dashboard data, skipping...');
       return;
     }
-
-    console.log('Dashboard: Fetching dashboard data...', { userStatus: Boolean(userStatus), showOnboarding, refreshing });
 
     // Always set mock data first for immediate display
     const mockData = {
@@ -319,20 +289,16 @@ const Dashboard = () => {
     // Set mock data immediately
     setDashboardData(mockData);
     setActivityFeed(mockActivity);
-    console.log('Dashboard: Mock data loaded');
 
     // Try to fetch real data from backend (optional)
     try {
       const token = localStorage.getItem('floworx_token');
       if (!token) {
-        console.log('Dashboard: No token found, using mock data only');
         return;
       }
 
       const headers = { Authorization: `Bearer ${token}` };
       const apiUrl = process.env.REACT_APP_API_URL || 'http://localhost:5000/api';
-
-      console.log('Dashboard: Attempting to fetch from:', apiUrl);
 
       // Try to fetch dashboard metrics (with short timeout)
       const response = await axios.get(`${apiUrl}/dashboard/metrics`, {
@@ -341,7 +307,6 @@ const Dashboard = () => {
       });
 
       if (response.data) {
-        console.log('Dashboard: Real data received, updating...');
         setDashboardData({
           emailsProcessed: response.data.emailsProcessed || mockData.emailsProcessed,
           workflowsActive: response.data.workflowsActive || mockData.workflowsActive,
@@ -357,11 +322,9 @@ const Dashboard = () => {
       });
 
       if (activityResponse.data && activityResponse.data.activities) {
-        console.log('Dashboard: Real activity data received');
         setActivityFeed(activityResponse.data.activities);
       }
     } catch (error) {
-      console.log('Dashboard: Backend not available, using mock data:', error.message);
       // Mock data is already set, so we don't need to do anything
       // This is normal in development when backend isn't running
     }

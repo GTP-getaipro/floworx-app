@@ -365,8 +365,11 @@ class ContainerMemoryMonitor extends EventEmitter {
     const change = last - first;
     
     let trend = 'stable';
-    if (change > 5) trend = 'increasing';
-    else if (change < -5) trend = 'decreasing';
+    if (change > 5) {
+      trend = 'increasing';
+    } else if (change < -5) {
+      trend = 'decreasing';
+    }
     
     return { trend, change: Math.round(change * 10) / 10 };
   }

@@ -35,14 +35,12 @@ const ProtectedButton = ({
 
     // Prevent rapid clicks
     if (now - lastClickTime.current < debounceMs) {
-      console.log('🛡️ Rapid click prevented');
       e.preventDefault();
       return;
     }
 
     // Prevent multiple clicks while processing
     if (isProcessing) {
-      console.log('🛡️ Click prevented - already processing');
       e.preventDefault();
       return;
     }

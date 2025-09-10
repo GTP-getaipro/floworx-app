@@ -59,7 +59,6 @@ const useFormValidation = (initialValues, validationRules, options = {}) => {
           const error = rule(value, allValues);
           if (error) {
             errorMessage = error;
-            console.log(`🔍 Validation error for ${name}:`, errorMessage);
             break;
           }
         } catch (error) {
@@ -114,13 +113,10 @@ const useFormValidation = (initialValues, validationRules, options = {}) => {
       const name = eventOrName?.target?.name ?? eventOrName;
       const value = values[name];
 
-      console.log(`🔍 handleBlur called for ${name} with value:`, value);
-
       setTouched(prev => ({ ...prev, [name]: true }));
 
       if (validateOnBlur || hasSubmitted.current) {
         const error = validateField(name, value);
-        console.log(`🔍 Setting error for ${name}:`, error);
         setErrors(prev => ({ ...prev, [name]: error }));
       }
     },

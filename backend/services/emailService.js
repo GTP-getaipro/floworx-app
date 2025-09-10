@@ -195,14 +195,14 @@ class EmailService {
   async storeVerificationToken(userId, token) {
     const expiresAt = new Date(Date.now() + 24 * 60 * 60 * 1000); // 24 hours
 
-    const query = `
+    const queryText = `
       INSERT INTO email_verification_tokens (user_id, token, expires_at)
       VALUES ($1, $2, $3)
-      ON CONFLICT (user_id) 
+      ON CONFLICT (user_id)
       DO UPDATE SET token = EXCLUDED.token, expires_at = EXCLUDED.expires_at, created_at = CURRENT_TIMESTAMP
     `;
 
-    await pool.query(query, [userId, token, expiresAt]);
+    await query(queryText, [userId, token, expiresAt]);
   }
 
   /**
@@ -211,14 +211,14 @@ class EmailService {
    * @returns {Object} Verification result
    */
   async verifyEmailToken(token) {
-    const query = `
+    const queryText = `
       SELECT evt.user_id, u.email, u.first_name
       FROM email_verification_tokens evt
       JOIN users u ON evt.user_id = u.id
       WHERE evt.token = $1 AND evt.expires_at > CURRENT_TIMESTAMP
     `;
 
-    const result = await pool.query(query, [token]);
+    const result = await query(queryText, [token]);
 
     if (result.rows.length === 0) {
       return { valid: false, message: 'Invalid or expired verification token' };
@@ -227,10 +227,10 @@ class EmailService {
     const { user_id, email, first_name } = result.rows[0];
 
     // Mark email as verified
-    await pool.query('UPDATE users SET email_verified = true, updated_at = CURRENT_TIMESTAMP WHERE id = $1', [user_id]);
+    await query('UPDATE users SET email_verified = true, updated_at = CURRENT_TIMESTAMP WHERE id = $1', [user_id]);
 
     // Delete used token
-    await pool.query('DELETE FROM email_verification_tokens WHERE token = $1', [token]);
+    await query('DELETE FROM email_verification_tokens WHERE token = $1', [token]);
 
     // Send welcome email
     await this.sendWelcomeEmail(email, first_name);

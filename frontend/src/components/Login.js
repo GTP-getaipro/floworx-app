@@ -39,11 +39,7 @@ const Login = () => {
 
   const submitLogin = async formValues => {
     try {
-      console.log('🚀 Starting login with email:', formValues.email);
-
       const result = await login(formValues.email, formValues.password);
-
-      console.log('📊 Login result:', result);
 
       if (result.success) {
         showSuccess('Login successful! Redirecting to dashboard...');

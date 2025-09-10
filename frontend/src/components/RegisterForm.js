@@ -181,7 +181,7 @@ const RegisterForm = () => {
         marketingConsent: false,
       });
 
-      console.log('📊 Registration result:', result);
+
 
       if (result.success) {
         const successResult = {

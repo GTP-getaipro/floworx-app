@@ -313,10 +313,16 @@ router.get('/system', async (req, res) => {
       checks.push({ service: 'cache', status: 'healthy' });
     } catch (error) {
       if (redis) {
-        try { await redis.disconnect(); } catch (_e) {}
+        try {
+          await redis.disconnect();
+        } catch (_e) {
+          // Ignore disconnect errors during cleanup
+        }
       }
       checks.push({ service: 'cache', status: 'degraded', error: error.message, fallback: 'memory_cache' });
-      if (overallStatus === 'healthy') overallStatus = 'degraded';
+      if (overallStatus === 'healthy') {
+        overallStatus = 'degraded';
+      }
     }
     
     // Email check
@@ -336,7 +342,9 @@ router.get('/system', async (req, res) => {
       checks.push({ service: 'email', status: 'healthy' });
     } catch (error) {
       checks.push({ service: 'email', status: 'unhealthy', error: error.message });
-      if (overallStatus === 'healthy') overallStatus = 'degraded';
+      if (overallStatus === 'healthy') {
+        overallStatus = 'degraded';
+      }
     }
     
     // OAuth check

@@ -27,7 +27,7 @@ describe('EmailService', () => {
     };
 
     // Mock nodemailer
-    nodemailer.createTransporter = jest.fn().mockReturnValue(mockTransporter);
+    nodemailer.createTransport = jest.fn().mockReturnValue(mockTransporter);
 
     // Mock crypto
     crypto.randomBytes = jest.fn().mockReturnValue({
@@ -241,7 +241,7 @@ describe('EmailService', () => {
 
       const _service = new EmailService();
 
-      expect(nodemailer.createTransporter).toHaveBeenCalledWith({
+      expect(nodemailer.createTransport).toHaveBeenCalledWith({
         host: 'smtp.gmail.com',
         port: 587,
         secure: false,
@@ -258,7 +258,7 @@ describe('EmailService', () => {
 
       const _service = new EmailService();
 
-      expect(nodemailer.createTransporter).toHaveBeenCalledWith(
+      expect(nodemailer.createTransport).toHaveBeenCalledWith(
         expect.objectContaining({
           host: 'smtp.gmail.com',
           port: 587
@@ -278,7 +278,7 @@ describe('EmailService', () => {
 
   describe('Error Handling', () => {
     test('should handle transporter creation errors', () => {
-      nodemailer.createTransporter.mockImplementation(() => {
+      nodemailer.createTransport.mockImplementation(() => {
         throw new Error('Transporter creation failed');
       });
 

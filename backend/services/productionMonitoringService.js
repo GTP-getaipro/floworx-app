@@ -439,7 +439,7 @@ class ProductionMonitoringService extends EventEmitter {
       const nodemailer = require('nodemailer');
       const config = this.alertChannels.get('email').config;
 
-      const transporter = nodemailer.createTransporter({
+      const transporter = nodemailer.createTransport({
         host: config.smtpHost,
         port: config.smtpPort,
         secure: config.smtpPort === 465,

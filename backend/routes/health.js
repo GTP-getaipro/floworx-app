@@ -143,7 +143,7 @@ router.get('/email', async (req, res) => {
     const startTime = Date.now();
     
     // Create transporter with current config
-    const transporter = nodemailer.createTransporter({
+    const transporter = nodemailer.createTransport({
       host: process.env.SMTP_HOST || 'smtp.gmail.com',
       port: parseInt(process.env.SMTP_PORT) || 587,
       secure: false,
@@ -322,7 +322,7 @@ router.get('/system', async (req, res) => {
     // Email check
     try {
       const nodemailer = require('nodemailer');
-      const transporter = nodemailer.createTransporter({
+      const transporter = nodemailer.createTransport({
         host: process.env.SMTP_HOST || 'smtp.gmail.com',
         port: parseInt(process.env.SMTP_PORT) || 587,
         secure: false,

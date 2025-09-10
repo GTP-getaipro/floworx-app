@@ -174,7 +174,7 @@ class AlertChannelsSetup {
     }
 
     try {
-      const transporter = nodemailer.createTransporter({
+      const transporter = nodemailer.createTransport({
         host: this.config.SMTP_HOST,
         port: parseInt(this.config.SMTP_PORT) || 587,
         secure: this.config.SMTP_PORT === '465',

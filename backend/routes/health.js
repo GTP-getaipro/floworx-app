@@ -6,8 +6,14 @@
 const express = require('express');
 const { query } = require('../database/unified-connection');
 const Redis = require('ioredis');
+const ContainerMemoryMonitor = require('../utils/ContainerMemoryMonitor');
 
 const router = express.Router();
+
+// Create memory monitor for health checks
+const healthMemoryMonitor = new ContainerMemoryMonitor({
+  enableLogging: false // Health checks shouldn't spam logs
+});
 
 // Basic health check
 router.get('/', async (req, res) => {
@@ -173,6 +179,51 @@ router.get('/email', async (req, res) => {
         smtp_host: process.env.SMTP_HOST || 'smtp.gmail.com',
         connection: 'failed'
       }
+    });
+  }
+});
+
+// Memory health check with container awareness
+router.get('/memory', async (req, res) => {
+  try {
+    const stats = healthMemoryMonitor.getMemoryStats();
+    const summary = healthMemoryMonitor.getMemorySummary();
+    const trend = healthMemoryMonitor.getMemoryTrend(5); // 5 minute trend
+
+    const statusCode = summary.status === 'healthy' ? 200 :
+                      summary.status === 'warning' ? 206 : 503;
+
+    res.status(statusCode).json({
+      status: summary.status,
+      service: 'memory',
+      usage: summary.usage,
+      trend: trend,
+      details: {
+        environment: {
+          container: stats.container.isContainer,
+          cgroup_version: stats.container.cgroupVersion,
+          node_version: process.version
+        },
+        memory_breakdown: {
+          process_rss: `${stats.process.rssMB}MB`,
+          heap_used: `${stats.heap.usedHeapSizeMB}MB`,
+          heap_limit: `${stats.heap.heapSizeLimitMB}MB`,
+          container_limit: stats.container.limitMB ? `${stats.container.limitMB}MB` : 'unlimited',
+          system_total: `${stats.system.totalMB}MB`
+        },
+        thresholds: {
+          warning: `${healthMemoryMonitor.options.warningThreshold}%`,
+          critical: `${healthMemoryMonitor.options.criticalThreshold}%`,
+          emergency: `${healthMemoryMonitor.options.emergencyThreshold}%`
+        },
+        recommendations: summary.recommendations
+      }
+    });
+  } catch (error) {
+    res.status(500).json({
+      status: 'error',
+      service: 'memory',
+      error: error.message
     });
   }
 });

@@ -163,27 +163,37 @@ const responseTimeHeader = (req, res, next) => {
 };
 
 /**
- * Memory usage monitoring middleware
+ * Container-aware memory usage monitoring middleware
  */
+const ContainerMemoryMonitor = require('../utils/ContainerMemoryMonitor');
+
+// Create a shared memory monitor instance
+const sharedMemoryMonitor = new ContainerMemoryMonitor({
+  warningThreshold: 70,
+  criticalThreshold: 85,
+  emergencyThreshold: 95,
+  monitorInterval: 60000, // 1 minute for middleware
+  enableLogging: true
+});
+
 const memoryMonitor = (req, res, next) => {
-  const memUsage = process.memoryUsage();
+  const stats = sharedMemoryMonitor.getMemoryStats();
+  const relevantUsage = stats.relevantUsage;
 
-  // Log memory warnings
-  const heapUsedMB = memUsage.heapUsed / 1024 / 1024;
-  const heapTotalMB = memUsage.heapTotal / 1024 / 1024;
-  const memoryUsagePercent = (heapUsedMB / heapTotalMB) * 100;
-
-  if (memoryUsagePercent > 80) {
-    console.warn(
-      `⚠️ High memory usage: ${memoryUsagePercent.toFixed(1)}% (${heapUsedMB.toFixed(1)}MB/${heapTotalMB.toFixed(1)}MB)`
-    );
+  // Log warnings based on container-aware memory usage
+  if (relevantUsage.percent > 80) {
+    console.warn(`⚠️ High memory usage: ${relevantUsage.description}`);
   }
 
-  // Add memory info to response headers in development
+  // Add comprehensive memory info to response headers in development
   if (process.env.NODE_ENV === 'development') {
     res.set({
-      'X-Memory-Usage': `${heapUsedMB.toFixed(1)}MB`,
-      'X-Memory-Total': `${heapTotalMB.toFixed(1)}MB`
+      'X-Memory-Type': relevantUsage.type,
+      'X-Memory-Usage': `${relevantUsage.used}MB`,
+      'X-Memory-Limit': `${relevantUsage.limit}MB`,
+      'X-Memory-Percent': `${relevantUsage.percent}%`,
+      'X-Container': stats.container.isContainer ? 'true' : 'false',
+      'X-Cgroup-Version': stats.container.cgroupVersion || 'none'
     });
   }
 

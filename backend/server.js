@@ -68,20 +68,41 @@ app.use(smartCompression); // Response compression
 app.use(cacheHeaders); // Cache control headers
 app.use(...performanceMiddlewareStack); // Performance monitoring
 
-// Memory monitoring for auto-scaling decisions
-app.use((req, res, next) => {
-  const memoryUsage = process.memoryUsage();
-  const used = Math.round(memoryUsage.heapUsed / 1024 / 1024);
-  const total = Math.round(memoryUsage.heapTotal / 1024 / 1024);
+// Container-aware memory monitoring for auto-scaling decisions
+const ContainerMemoryMonitor = require('./utils/ContainerMemoryMonitor');
 
-  if (used > total * 0.9) {
-    console.error(`⚠️ High memory usage: ${used}MB/${total}MB`);
-    // In production, you might want to trigger auto-scaling
-    if (process.env.NODE_ENV === 'production') {
-      // Notify monitoring service
-      console.error('🚨 Memory threshold exceeded - consider scaling');
-    }
+// Initialize global memory monitor
+const globalMemoryMonitor = new ContainerMemoryMonitor({
+  warningThreshold: 70,
+  criticalThreshold: 85,
+  emergencyThreshold: 95,
+  monitorInterval: 30000, // 30 seconds
+  enableLogging: true
+});
+
+// Set up memory monitoring events
+globalMemoryMonitor.on('critical', ({ stats, relevantUsage }) => {
+  console.error(`🚨 CRITICAL: Memory usage at ${relevantUsage.description}`);
+  if (process.env.NODE_ENV === 'production') {
+    console.error('🚨 Memory threshold exceeded - consider scaling');
+    // TODO: Integrate with auto-scaling service
   }
+});
+
+globalMemoryMonitor.on('emergency', ({ stats, relevantUsage }) => {
+  console.error(`🚨 EMERGENCY: Critical memory usage at ${relevantUsage.description}`);
+  console.error('🚨 IMMEDIATE ACTION REQUIRED - System may become unstable');
+
+  // Force garbage collection in emergency
+  const gcResult = globalMemoryMonitor.forceGC();
+  if (gcResult) {
+    console.log('✅ Emergency garbage collection triggered');
+  }
+});
+
+app.use((req, res, next) => {
+  // The global monitor handles the heavy lifting
+  // This middleware just adds request-level context if needed
   next();
 });
 

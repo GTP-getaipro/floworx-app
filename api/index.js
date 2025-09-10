@@ -2284,10 +2284,10 @@ async function handler(req, res) {
   const origin = req.headers.origin;
   const allowedOrigins = [
     'https://app.floworx-iq.com',
-    'https://floworx-6j5nmgden-floworxdevelopers-projects.vercel.app',
-    'https://floworx-8ox3gcayt-floworxdevelopers-projects.vercel.app',
-    'http://localhost:3000',
-    'http://localhost:5001'
+    ...(process.env.NODE_ENV === 'development' ? [
+      'http://localhost:3000',
+      'http://localhost:5001'
+    ] : [])
   ];
 
   // Allow any Vercel deployment URL for this project

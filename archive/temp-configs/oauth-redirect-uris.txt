@@ -5,11 +5,11 @@
 http://localhost:3000/api/oauth/google/callback
 http://localhost:5001/api/oauth/google/callback
 
-## Production URI (ADD THIS NEW ONE)
-https://floworx-k7mqfh12i-floworxdevelopers-projects.vercel.app/api/oauth/google/callback
-
-## Future Custom Domain URI (add when you set up custom domain)
+## Production URI (CURRENT ACTIVE PRODUCTION URL)
 https://app.floworx-iq.com/api/oauth/google/callback
+
+## Legacy Vercel URI (keep for backup/fallback)
+https://floworx-k7mqfh12i-floworxdevelopers-projects.vercel.app/api/oauth/google/callback
 
 # Instructions:
 # 1. In Google Cloud Console, go to the OAuth client page you have open

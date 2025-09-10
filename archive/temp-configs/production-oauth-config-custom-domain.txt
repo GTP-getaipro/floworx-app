@@ -1,7 +1,7 @@
-# PRODUCTION OAUTH CONFIGURATION - CUSTOM DOMAIN
-# Use these settings for your Google Cloud Console OAuth configuration
+# PRODUCTION OAUTH CONFIGURATION - ACTIVE PRODUCTION SETUP
+# Current production configuration for Google Cloud Console OAuth
 
-## PRIMARY PRODUCTION DOMAIN (USE THIS)
+## PRIMARY PRODUCTION DOMAIN (CURRENTLY ACTIVE)
 https://app.floworx-iq.com/api/oauth/google/callback
 
 ## BACKUP/FALLBACK DOMAINS (Keep these for redundancy)

@@ -94,12 +94,12 @@ app.use(
       }
 
       const allowedOrigins = [
-        process.env.FRONTEND_URL || 'http://localhost:3000',
-        'https://floworx-app.vercel.app',
+        process.env.FRONTEND_URL || 'https://app.floworx-iq.com',
         'https://app.floworx-iq.com',
-        'http://localhost:3000',
-        'http://localhost:3001',
-        'https://floworx-7hw0k2qc5-floworxdevelopers-projects.vercel.app'
+        ...(process.env.NODE_ENV === 'development' ? [
+          'http://localhost:3000',
+          'http://localhost:3001'
+        ] : [])
       ];
 
       if (allowedOrigins.includes(origin)) {

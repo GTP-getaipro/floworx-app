@@ -6,14 +6,14 @@
 const helmet = require('helmet');
 const rateLimit = require('express-rate-limit');
 const slowDown = require('express-slow-down');
-const { body, validationResult } = require('express-validator');
+const { validationResult } = require('express-validator');
 const { ValidationError } = require('../utils/errors');
 
 /**
  * Enhanced Helmet configuration for production security
  */
 const helmetConfig = {
-  // Content Security Policy
+  // Content Security Policy - Enhanced
   contentSecurityPolicy: {
     directives: {
       defaultSrc: ["'self'"],
@@ -38,6 +38,7 @@ const helmetConfig = {
       connectSrc: [
         "'self'",
         'https://api.floworx-iq.com',
+        'https://app.floworx-iq.com', // Production domain
         'https://accounts.google.com',
         'https://oauth2.googleapis.com'
       ],
@@ -47,7 +48,12 @@ const helmetConfig = {
       objectSrc: ["'none'"],
       mediaSrc: ["'self'"],
       manifestSrc: ["'self'"],
-      workerSrc: ["'self'"]
+      workerSrc: ["'self'"],
+      baseUri: ["'self'"],
+      formAction: ["'self'"],
+      frameAncestors: ["'self'"],
+      scriptSrcAttr: ["'none'"],
+      upgradeInsecureRequests: []
     },
     reportOnly: process.env.NODE_ENV === 'development'
   },
@@ -82,9 +88,9 @@ const helmetConfig = {
     accelerometer: []
   },
 
-  // HTTP Strict Transport Security
+  // HTTP Strict Transport Security - Enhanced
   hsts: {
-    maxAge: 31536000, // 1 year
+    maxAge: 63072000, // 2 years (recommended for production)
     includeSubDomains: true,
     preload: true
   },
@@ -272,7 +278,7 @@ const sanitizeInput = (req, res, next) => {
   const sanitizeObject = obj => {
     if (obj && typeof obj === 'object') {
       for (const key in obj) {
-        if (obj.hasOwnProperty(key)) {
+        if (Object.prototype.hasOwnProperty.call(obj, key)) {
           if (typeof obj[key] === 'object') {
             sanitizeObject(obj[key]);
           } else {
@@ -327,14 +333,37 @@ const handleValidationErrors = (req, res, next) => {
   next();
 };
 
+/**
+ * Additional security headers middleware
+ * Adds extra security headers not covered by Helmet
+ */
+const additionalSecurityHeaders = (req, res, next) => {
+  // Ensure HSTS is set (in case proxy doesn't forward it)
+  if (process.env.NODE_ENV === 'production') {
+    res.setHeader('Strict-Transport-Security', 'max-age=63072000; includeSubDomains; preload');
+  }
+
+  // Additional security headers
+  res.setHeader('X-Robots-Tag', 'noindex, nofollow'); // Prevent search engine indexing of API
+  res.setHeader('Server', 'FloWorx'); // Hide server information
+
+  // Security timing headers (if request timing is available)
+  if (req.startTime) {
+    res.setHeader('X-Response-Time', `${Date.now() - req.startTime}ms`);
+  }
+
+  next();
+};
+
 module.exports = {
   helmet: helmet(helmetConfig),
+  additionalSecurityHeaders,
   rateLimits: rateLimitConfigs,
   slowDown: slowDownConfigs,
   sanitizeInput,
   sanitizeRequest,
   sanitizeResponse,
-  securityHeaders,
+  // securityHeaders: helmet(helmetConfig), // Duplicate - using helmet export instead
   handleValidationErrors,
 
   // Convenience exports

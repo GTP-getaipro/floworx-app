@@ -7,9 +7,10 @@ const morgan = require('morgan');
 // Enhanced security imports
 const {
   helmet,
+  additionalSecurityHeaders,
   apiRateLimit,
   authRateLimit,
-  registrationRateLimit,
+  // registrationRateLimit, // Not used in this file
   passwordResetRateLimit,
   oauthRateLimit,
   authSlowDown,
@@ -55,7 +56,8 @@ app.use((req, res, next) => {
 
 // Enhanced security middleware stack
 app.use(helmet); // Comprehensive security headers
-app.use(securityHeaders); // Additional custom security headers
+app.use(additionalSecurityHeaders); // Additional custom security headers
+// app.use(securityHeaders); // Duplicate - helmet already applied above
 app.use(sanitizeInput); // Input sanitization
 app.use(sanitizeRequest); // Enhanced request sanitization
 app.use(sanitizeResponse); // Response sanitization

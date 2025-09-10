@@ -1,24 +1,38 @@
-import React from 'react';
+import React, { Suspense } from 'react';
 import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom';
 
-import Dashboard from './components/Dashboard';
-import DatabaseTest from './components/DatabaseTest';
-import EmailVerification from './components/EmailVerification';
+// Critical components loaded immediately
 import ErrorBoundary from './components/ErrorBoundary';
-import ForgotPassword from './components/ForgotPassword';
 import Login from './components/Login';
 import ProtectedRoute from './components/ProtectedRoute';
-import AccountRecoveryDashboard from './components/recovery/AccountRecoveryDashboard';
-import NotFoundPage from './components/NotFoundPage';
-import Register from './components/Register';
-import ResetPassword from './components/ResetPassword';
-import UserManagement from './components/UserManagement';
-import Settings from './components/Settings';
 import { Logo } from './components/ui';
 import { AuthProvider } from './contexts/AuthContext';
 import { ErrorProvider } from './contexts/ErrorContext';
 import { ToastProvider } from './contexts/ToastContext';
+
+// Lazy-loaded components for better performance
+const Dashboard = React.lazy(() => import('./components/Dashboard'));
+const DatabaseTest = React.lazy(() => import('./components/DatabaseTest'));
+const EmailVerification = React.lazy(() => import('./components/EmailVerification'));
+const ForgotPassword = React.lazy(() => import('./components/ForgotPassword'));
+const AccountRecoveryDashboard = React.lazy(() => import('./components/recovery/AccountRecoveryDashboard'));
+const NotFoundPage = React.lazy(() => import('./components/NotFoundPage'));
+const Register = React.lazy(() => import('./components/Register'));
+const ResetPassword = React.lazy(() => import('./components/ResetPassword'));
+const UserManagement = React.lazy(() => import('./components/UserManagement'));
+const Settings = React.lazy(() => import('./components/Settings'));
+
 import './App.css';
+
+// Loading component for Suspense fallback
+const LoadingSpinner = () => (
+  <div className="min-h-screen flex items-center justify-center bg-surface">
+    <div className="text-center">
+      <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-brand-primary mx-auto mb-4"></div>
+      <p className="text-ink-sub">Loading...</p>
+    </div>
+  </div>
+);
 
 function App() {
   return (
@@ -44,26 +58,27 @@ function App() {
                 </header>
 
                 <main className='App-main'>
-                  <Routes>
-                    {/* Public routes with error boundaries */}
-                    <Route
-                      path='/login'
-                      element={
-                        <ErrorBoundary key='login'>
-                          <Login />
-                        </ErrorBoundary>
-                      }
-                    />
-                    <Route
-                      path='/register'
-                      element={
-                        <ErrorBoundary key='register'>
-                          <Register />
-                        </ErrorBoundary>
-                      }
-                    />
-                    <Route
-                      path='/verify-email'
+                  <Suspense fallback={<LoadingSpinner />}>
+                    <Routes>
+                      {/* Public routes with error boundaries */}
+                      <Route
+                        path='/login'
+                        element={
+                          <ErrorBoundary key='login'>
+                            <Login />
+                          </ErrorBoundary>
+                        }
+                      />
+                      <Route
+                        path='/register'
+                        element={
+                          <ErrorBoundary key='register'>
+                            <Register />
+                          </ErrorBoundary>
+                        }
+                      />
+                      <Route
+                        path='/verify-email'
                       element={
                         <ErrorBoundary key='verify-email'>
                           <EmailVerification />
@@ -146,6 +161,7 @@ function App() {
                       }
                     />
                   </Routes>
+                  </Suspense>
                 </main>
 
                 <footer className='App-footer'>

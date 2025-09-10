@@ -19,16 +19,22 @@ const performanceTracker = (req, res, next) => {
  * Response compression middleware with smart compression
  */
 const smartCompression = compression({
-  // Only compress responses larger than 1KB
-  threshold: 1024,
+  // Only compress responses larger than 512 bytes (reduced for better performance)
+  threshold: 512,
 
-  // Compression level (1-9, 6 is default balance of speed/compression)
-  level: 6,
+  // Higher compression level for better performance (7 is good balance)
+  level: 7,
 
   // Custom filter for what to compress
   filter: (req, res) => {
     // Don't compress if client doesn't support it
     if (req.headers['x-no-compression']) {
+      return false;
+    }
+
+    // Skip compression for very small responses
+    const contentLength = res.getHeader('content-length');
+    if (contentLength && parseInt(contentLength) < 512) {
       return false;
     }
 
@@ -49,37 +55,60 @@ const smartCompression = compression({
 
     // Use default compression filter for everything else
     return compression.filter(req, res);
-  }
+  },
+
+  // Optimized settings for better performance
+  chunkSize: 8 * 1024, // 8KB chunks for faster streaming
+  memLevel: 9, // Higher memory usage for better compression
+  windowBits: 15 // Standard window size
 });
 
 /**
- * Cache headers middleware for static content
+ * Enhanced cache headers middleware for optimal performance
  */
 const cacheHeaders = (req, res, next) => {
   // Set cache headers based on content type and route
   const path = req.path.toLowerCase();
 
   if (path.includes('/api/')) {
-    // API responses - short cache for dynamic content
-    if (path.includes('/business-types') || path.includes('/static')) {
-      // Static reference data - longer cache
+    // API responses - optimized caching strategy
+    if (path.includes('/business-types') || path.includes('/static') || path.includes('/health')) {
+      // Static reference data and health checks - longer cache
       res.set({
-        'Cache-Control': 'public, max-age=3600', // 1 hour
-        ETag: `"${Date.now()}"` // Simple ETag
+        'Cache-Control': 'public, max-age=1800, s-maxage=3600', // 30min client, 1hr CDN
+        ETag: `"${Date.now()}"`,
+        'Last-Modified': new Date().toUTCString()
+      });
+    } else if (path.includes('/auth/') || path.includes('/user/')) {
+      // Auth and user data - no cache for security
+      res.set({
+        'Cache-Control': 'private, no-cache, no-store, must-revalidate',
+        'Pragma': 'no-cache',
+        'Expires': '0'
       });
     } else {
-      // Dynamic API data - short cache
+      // Dynamic API data - short cache with validation
       res.set({
-        'Cache-Control': 'private, max-age=60', // 1 minute
-        Vary: 'Authorization'
+        'Cache-Control': 'private, max-age=300, must-revalidate', // 5 minutes
+        'Vary': 'Authorization, Accept-Encoding'
       });
     }
   } else {
-    // Static assets - long cache
-    res.set({
-      'Cache-Control': 'public, max-age=86400', // 24 hours
-      ETag: `"${Date.now()}"`
-    });
+    // Static assets - aggressive caching with versioning
+    if (path.includes('.js') || path.includes('.css')) {
+      // JavaScript and CSS - long cache with immutable
+      res.set({
+        'Cache-Control': 'public, max-age=31536000, immutable', // 1 year
+        'ETag': `"${Date.now()}"`,
+        'Last-Modified': new Date().toUTCString()
+      });
+    } else {
+      // Other static assets - moderate cache
+      res.set({
+        'Cache-Control': 'public, max-age=86400', // 24 hours
+        'ETag': `"${Date.now()}"`
+      });
+    }
   }
 
   next();
@@ -247,7 +276,7 @@ const slowEndpointDetector = (req, res, next) => {
 /**
  * Cache performance middleware
  */
-const cachePerformanceTracker = async (req, res, next) => {
+const cachePerformanceTracker = (req, res, next) => {
   // Track cache performance for this request
   const originalCacheGet = cacheService.get;
   const originalCacheSet = cacheService.set;
@@ -271,7 +300,7 @@ const cachePerformanceTracker = async (req, res, next) => {
   // Wrap cache set method
   cacheService.set = async function (key, value, ttl) {
     cacheOperations++;
-    return await originalCacheSet.call(this, key, value, ttl);
+    return originalCacheSet.call(this, key, value, ttl);
   };
 
   // Override res.end to add cache headers before response is sent
@@ -304,11 +333,45 @@ const cachePerformanceTracker = async (req, res, next) => {
 };
 
 /**
+ * Frontend asset optimization middleware
+ */
+const frontendAssetOptimizer = (req, res, next) => {
+  const path = req.path.toLowerCase();
+
+  // Optimize frontend asset delivery
+  if (path.includes('/static/') || path.endsWith('.js') || path.endsWith('.css') || path.endsWith('.html')) {
+    // Enable HTTP/2 Server Push hints for critical resources
+    if (path.endsWith('.html')) {
+      res.set('Link', [
+        '</static/css/main.css>; rel=preload; as=style',
+        '</static/js/main.js>; rel=preload; as=script'
+      ].join(', '));
+    }
+
+    // Add performance hints
+    res.set({
+      'X-Content-Type-Options': 'nosniff',
+      'X-Frame-Options': 'DENY',
+      'Referrer-Policy': 'strict-origin-when-cross-origin'
+    });
+
+    // Enable Brotli compression preference
+    const acceptEncoding = req.headers['accept-encoding'] || '';
+    if (acceptEncoding.includes('br')) {
+      res.set('Vary', 'Accept-Encoding');
+    }
+  }
+
+  next();
+};
+
+/**
  * Performance middleware stack
  */
 const performanceMiddlewareStack = [
   responseTimeHeader,
   performanceTracker,
+  frontendAssetOptimizer,
   memoryMonitor,
   dbPoolMonitor,
   requestSizeLimiter,
@@ -328,5 +391,6 @@ module.exports = {
   optimizationHints,
   slowEndpointDetector,
   cachePerformanceTracker,
+  frontendAssetOptimizer,
   performanceMiddlewareStack
 };

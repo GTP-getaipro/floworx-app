@@ -60,6 +60,9 @@ class CacheService {
       if (process.env.REDIS_URL) {
         console.log('🔗 Using REDIS_URL for KeyDB connection');
 
+        // Use REDIS_URL directly
+        let redisUrl = process.env.REDIS_URL;
+
         const keydbConfig = {
           connectTimeout: 5000,
           commandTimeout: 3000,
@@ -75,7 +78,7 @@ class CacheService {
           }
         };
 
-        this.redis = new Redis(process.env.REDIS_URL, keydbConfig);
+        this.redis = new Redis(redisUrl, keydbConfig);
 
         // Set up event handlers
         this.redis.on('connect', () => {
@@ -110,12 +113,18 @@ class CacheService {
       // Fallback to host-based connection
       const possibleHosts = [
         process.env.REDIS_HOST,
-        'sgkgk4s80s0wosscs4800g0k', // Actual Coolify hostname
-        'keydb-database-sgkgk4s80s0wosscs4800g0k', // Full service name
+        'sckck444cs4c88g0ws8kw0ss', // Correct Coolify hostname
+        'keydb-database-sckck444cs4c88g0ws8kw0ss', // Full service name
         'keydb-service',
         'floworx-keydb',
+        'redis-db', // Docker compose fallback
         '127.0.0.1'
       ].filter(Boolean);
+
+      console.log('🔍 KeyDB connection debug info:');
+      console.log(`   REDIS_HOST env var: ${process.env.REDIS_HOST || 'not set'}`);
+      console.log(`   REDIS_URL env var: ${process.env.REDIS_URL ? 'SET (hidden)' : 'not set'}`);
+      console.log(`   Trying hosts: ${possibleHosts.join(', ')}`);
 
       let connected = false;
       let lastError = null;
@@ -200,7 +209,7 @@ class CacheService {
   /**
    * Get value from cache with automatic tier fallback
    */
-  async get(key, options = {}) {
+  async get(key, _options = {}) {
     const startTime = performance.now();
 
     try {
@@ -487,7 +496,7 @@ class CacheService {
         await this.redis.ping();
         health.redis.status = 'connected';
         health.redis.latency = performance.now() - start;
-      } catch (error) {
+      } catch (_error) {
         health.redis.status = 'error';
       }
     }

@@ -11,7 +11,7 @@ async function testKeyDBConnectivity() {
   console.log('🔍 Testing KeyDB/Redis Connectivity...');
   console.log('=' .repeat(50));
 
-  const redisUrl = process.env.REDIS_URL || 'redis://:p2oydZsAltTxy9tGVtVVF0LcPo1PzCNBPv3w0rEcuSwlzT9t9eHbRju195A7G8ui@sgkgk4s80s0wosscs4800g0k:6379/0';
+  const redisUrl = process.env.REDIS_URL || 'redis://:p2oydZsAltTxy9tGVtVVF0LcPo1PzCNBPv3w0rEcuSwlzT9t9eHbRju195A7G8ui@sckck444cs4c88g0ws8kw0ss:6379/0';
   
   let redis;
   

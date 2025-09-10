@@ -239,7 +239,7 @@ describe('EmailService', () => {
       process.env.SMTP_USER = 'test@floworx.com';
       process.env.SMTP_PASS = 'app-password';
 
-      const service = new EmailService();
+      const _service = new EmailService();
 
       expect(nodemailer.createTransporter).toHaveBeenCalledWith({
         host: 'smtp.gmail.com',
@@ -256,7 +256,7 @@ describe('EmailService', () => {
       delete process.env.SMTP_HOST;
       delete process.env.SMTP_PORT;
 
-      const service = new EmailService();
+      const _service = new EmailService();
 
       expect(nodemailer.createTransporter).toHaveBeenCalledWith(
         expect.objectContaining({

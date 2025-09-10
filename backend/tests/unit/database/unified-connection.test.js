@@ -13,6 +13,7 @@ jest.mock('../../../utils/encryption');
 describe('DatabaseManager', () => {
   let mockPool;
   let mockClient;
+  let dbManager;
 
   beforeEach(() => {
     // Reset all mocks
@@ -41,6 +42,9 @@ describe('DatabaseManager', () => {
     // Override the database manager's pool
     databaseManager.pool = mockPool;
     databaseManager.isInitialized = false;
+
+    // Set dbManager reference
+    dbManager = databaseManager;
   });
 
   afterEach(() => {
@@ -201,7 +205,7 @@ describe('DatabaseManager', () => {
         .mockResolvedValueOnce({ rows: [], rowCount: 0 }); // ROLLBACK
 
       await expect(
-        dbManager.transaction(async (client) => {
+        dbManager.transaction((_client) => {
           throw transactionError;
         })
       ).rejects.toThrow('Transaction failed');
@@ -232,7 +236,7 @@ describe('DatabaseManager', () => {
     });
 
     test('should track query performance', async () => {
-      const startTime = Date.now();
+      const _startTime = Date.now();
       mockPool.query.mockImplementation(() => {
         return new Promise(resolve => {
           setTimeout(() => resolve({ rows: [], rowCount: 0 }), 10);
@@ -276,7 +280,7 @@ describe('DatabaseManager', () => {
   describe('Configuration', () => {
     test('should use production configuration in production', () => {
       process.env.NODE_ENV = 'production';
-      const prodDbManager = new DatabaseManager();
+      const prodDbManager = databaseManager;
 
       expect(prodDbManager.connectionConfig.max).toBe(1);
       expect(prodDbManager.connectionConfig.ssl).toEqual({
@@ -286,7 +290,7 @@ describe('DatabaseManager', () => {
 
     test('should use development configuration in development', () => {
       process.env.NODE_ENV = 'development';
-      const devDbManager = new DatabaseManager();
+      const devDbManager = databaseManager;
 
       expect(devDbManager.connectionConfig.max).toBe(10);
       expect(devDbManager.connectionConfig.ssl).toBe(false);
@@ -296,7 +300,7 @@ describe('DatabaseManager', () => {
       const originalEnv = process.env;
       process.env = {};
 
-      const dbManager = new DatabaseManager();
+      const dbManager = databaseManager;
 
       expect(dbManager.connectionConfig.port).toBe(5432);
       expect(dbManager.connectionConfig.host).toBeUndefined();

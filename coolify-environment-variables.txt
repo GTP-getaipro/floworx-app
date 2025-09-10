@@ -14,10 +14,10 @@ DATABASE_URL=postgresql://postgres.your_project_ref:your_password@aws-0-us-east-
 # REDIS CONFIGURATION (Coolify KeyDB Service)
 # =============================================================================
 # Use the complete Redis URL from Coolify (RECOMMENDED):
-REDIS_URL=redis://:p2oydZsAltTxy9tGVtVVF0LcPo1PzCNBPv3w0rEcuSwlzT9t9eHbRju195A7G8ui@sgkgk4s80s0wosscs4800g0k:6379/0
+REDIS_URL=redis://:p2oydZsAltTxy9tGVtVVF0LcPo1PzCNBPv3w0rEcuSwlzT9t9eHbRju195A7G8ui@sckck444cs4c88g0ws8kw0ss:6379/0
 
 # OR use individual components:
-REDIS_HOST=sgkgk4s80s0wosscs4800g0k
+REDIS_HOST=sckck444cs4c88g0ws8kw0ss
 REDIS_PORT=6379
 REDIS_PASSWORD=p2oydZsAltTxy9tGVtVVF0LcPo1PzCNBPv3w0rEcuSwlzT9t9eHbRju195A7G8ui
 

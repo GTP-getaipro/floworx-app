@@ -66,6 +66,7 @@ const ProtectedButton = ({
         await onClick(e);
       }
     } catch (error) {
+      // Log error for debugging
       console.error('Button click error:', error);
     } finally {
       // Clear processing state after debounce period

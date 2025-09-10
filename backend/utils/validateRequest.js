@@ -4,6 +4,7 @@
  */
 
 const Joi = require('joi');
+
 const { ValidationError } = require('./errors');
 
 /**

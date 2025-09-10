@@ -1,10 +1,13 @@
-const express = require('express');
 const cors = require('cors');
+const express = require('express');
 require('dotenv').config();
 
 const morgan = require('morgan');
 
 // Enhanced security imports
+const { initialize: initializeDatabase } = require('./database/unified-connection');
+const { errorHandler, notFoundHandler } = require('./middleware/errorHandler');
+const { performanceMiddlewareStack, smartCompression, cacheHeaders } = require('./middleware/performance');
 const {
   helmet,
   additionalSecurityHeaders,
@@ -22,25 +25,22 @@ const {
 } = require('./middleware/security');
 
 // Performance middleware imports
-const { performanceMiddlewareStack, smartCompression, cacheHeaders } = require('./middleware/performance');
 
-const { initialize: initializeDatabase } = require('./database/unified-connection');
+const accountRecoveryRoutes = require('./routes/accountRecovery');
+const analyticsRoutes = require('./routes/analytics');
 const authRoutes = require('./routes/auth');
-const userRoutes = require('./routes/user');
+const businessTypesRoutes = require('./routes/businessTypes');
 const dashboardRoutes = require('./routes/dashboard');
+const healthRoutes = require('./routes/health'); // TEMPORARY - DELETE AFTER TESTING
 const { router: oauthRoutes } = require('./routes/oauth');
 const onboardingRoutes = require('./routes/onboarding');
-const recoveryRoutes = require('./routes/recovery');
-const accountRecoveryRoutes = require('./routes/accountRecovery');
 const passwordResetRoutes = require('./routes/passwordReset');
-const businessTypesRoutes = require('./routes/businessTypes');
-const workflowRoutes = require('./routes/workflows');
-const analyticsRoutes = require('./routes/analytics');
 const performanceRoutes = require('./routes/performance');
+const recoveryRoutes = require('./routes/recovery');
 const { router: schedulerRoutes, scheduler } = require('./scheduler/n8nScheduler');
 const testKeydbRoutes = require('./routes/test-keydb');
-const healthRoutes = require('./routes/health'); // TEMPORARY - DELETE AFTER TESTING
-const { errorHandler, notFoundHandler } = require('./middleware/errorHandler');
+const userRoutes = require('./routes/user');
+const workflowRoutes = require('./routes/workflows');
 
 const app = express();
 const PORT = process.env.PORT || 5000;

@@ -3,8 +3,8 @@
  * Tests query tracking, performance monitoring, and alerting
  */
 
-const realTimeMonitoringService = require('../../../services/realTimeMonitoringService');
 const { query } = require('../../../database/unified-connection');
+const realTimeMonitoringService = require('../../../services/realTimeMonitoringService');
 
 // Mock dependencies
 jest.mock('../../../database/unified-connection');

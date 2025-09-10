@@ -1,6 +1,6 @@
+const EventEmitter = require('events');
 const os = require('os');
 const { performance } = require('perf_hooks');
-const EventEmitter = require('events');
 
 class PerformanceMonitor extends EventEmitter {
   constructor(options = {}) {

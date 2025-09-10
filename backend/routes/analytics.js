@@ -1,9 +1,10 @@
 const express = require('express');
+
 const { authenticateToken } = require('../middleware/auth');
 const analyticsService = require('../services/analyticsService');
-const cacheService = require('../services/cacheService');
-const { paginationMiddleware } = require('../utils/pagination');
-const performanceService = require('../services/performanceService');
+const _cacheService = require('../services/cacheService');
+const _performanceService = require('../services/performanceService');
+const { _paginationMiddleware } = require('../utils/pagination');
 
 const router = express.Router();
 

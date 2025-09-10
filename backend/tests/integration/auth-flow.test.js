@@ -3,10 +3,11 @@
  * Tests complete user registration, login, and authentication workflows
  */
 
+const bcrypt = require('bcrypt');
 const request = require('supertest');
+
 const app = require('../../app');
 const { query } = require('../../database/unified-connection');
-const bcrypt = require('bcrypt');
 
 describe('Authentication Flow Integration Tests', () => {
   let testUser;

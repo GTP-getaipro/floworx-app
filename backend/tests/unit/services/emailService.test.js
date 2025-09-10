@@ -3,9 +3,11 @@
  * Tests email sending, template rendering, and token management
  */
 
-const EmailService = require('../../../services/emailService');
-const nodemailer = require('nodemailer');
 const crypto = require('crypto');
+
+const nodemailer = require('nodemailer');
+
+const EmailService = require('../../../services/emailService');
 
 // Mock dependencies
 jest.mock('nodemailer');

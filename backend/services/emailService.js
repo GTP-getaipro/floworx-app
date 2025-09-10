@@ -1,5 +1,7 @@
-const nodemailer = require('nodemailer');
 const crypto = require('crypto');
+
+const nodemailer = require('nodemailer');
+
 const { query } = require('../database/unified-connection');
 require('dotenv').config();
 

@@ -184,7 +184,7 @@ class AnalyticsService {
 
       const startedResult = await pool.query(startedQuery, [this.eventTypes.ONBOARDING_STARTED, startDate, endDate]);
 
-      const totalStarted = parseInt(startedResult.rows[0]?.started || 0);
+      const totalStarted = parseInt(startedResult.rows[0]?.started || 0, 10);
 
       // Build funnel data
       const funnel = this.buildFunnelData(stepResult.rows, dropOffResult.rows, totalStarted);
@@ -251,9 +251,9 @@ class AnalyticsService {
       return {
         success: true,
         conversion: {
-          started: parseInt(stats.started),
-          completed: parseInt(stats.completed),
-          converted: parseInt(stats.converted),
+          started: parseInt(stats.started, 10),
+          completed: parseInt(stats.completed, 10),
+          converted: parseInt(stats.converted, 10),
           completionRate: parseFloat(stats.completion_rate).toFixed(2),
           conversionRate: parseFloat(stats.conversion_rate).toFixed(2),
           overallConversionRate: parseFloat(stats.overall_conversion_rate).toFixed(2)
@@ -351,15 +351,15 @@ class AnalyticsService {
             minutes: parseFloat(timeStats.median_completion_time_seconds || 0) / 60,
             formatted: this.formatDuration(timeStats.median_completion_time_seconds * 1000)
           },
-          completedUsers: parseInt(timeStats.completed_users || 0),
+          completedUsers: parseInt(timeStats.completed_users || 0, 10),
           commonFailurePoints: failureResult.rows.map(row => ({
             step: row.step,
-            count: parseInt(row.failure_count),
+            count: parseInt(row.failure_count, 10),
             percentage: parseFloat(row.failure_percentage).toFixed(2)
           })),
           topUserAgents: deviceResult.rows.map(row => ({
             userAgent: this.parseUserAgent(row.user_agent),
-            count: parseInt(row.count)
+            count: parseInt(row.count, 10)
           }))
         },
         dateRange: { startDate, endDate }
@@ -405,16 +405,16 @@ class AnalyticsService {
         success: true,
         realTime: {
           last24Hours: {
-            started: parseInt(metrics.started_24h),
-            completed: parseInt(metrics.completed_24h),
-            failed: parseInt(metrics.failed_24h),
+            started: parseInt(metrics.started_24h, 10),
+            completed: parseInt(metrics.completed_24h, 10),
+            failed: parseInt(metrics.failed_24h, 10),
             completionRate:
               metrics.started_24h > 0 ? ((metrics.completed_24h / metrics.started_24h) * 100).toFixed(2) : 0
           },
           lastHour: {
-            started: parseInt(metrics.started_1h),
-            completed: parseInt(metrics.completed_1h),
-            failed: parseInt(metrics.failed_1h),
+            started: parseInt(metrics.started_1h, 10),
+            completed: parseInt(metrics.completed_1h, 10),
+            failed: parseInt(metrics.failed_1h, 10),
             completionRate: metrics.started_1h > 0 ? ((metrics.completed_1h / metrics.started_1h) * 100).toFixed(2) : 0
           }
         },
@@ -453,8 +453,8 @@ class AnalyticsService {
       const stepStats = stepData.find(s => s.step === step);
       const dropOffs = dropOffData.find(d => d.step === step);
 
-      const completions = parseInt(stepStats?.completions || 0);
-      const dropOffCount = parseInt(dropOffs?.dropoffs || 0);
+      const completions = parseInt(stepStats?.completions || 0, 10);
+      const dropOffCount = parseInt(dropOffs?.dropoffs || 0, 10);
 
       funnel.push({
         step,

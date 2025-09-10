@@ -4,8 +4,9 @@
  */
 
 const { query } = require('../database/unified-connection');
-const cacheService = require('./cacheService');
 const logger = require('../utils/logger');
+
+const cacheService = require('./cacheService');
 
 class QueryOptimizationService {
   constructor() {

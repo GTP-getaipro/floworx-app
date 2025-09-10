@@ -1,4 +1,5 @@
 const { google } = require('googleapis');
+
 const { query } = require('../database/unified-connection');
 const { decrypt } = require('../utils/encryption');
 
@@ -16,7 +17,7 @@ class GmailService {
     try {
       // Get user credentials from database
       const credQuery = 'SELECT access_token, refresh_token FROM credentials WHERE user_id = $1 AND service_name = $2';
-      const credResult = await pool.query(credQuery, [userId, 'google']);
+      const credResult = await query(credQuery, [userId, 'google']);
 
       if (credResult.rows.length === 0) {
         throw new Error('No Google credentials found for user');

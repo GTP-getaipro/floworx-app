@@ -5,9 +5,9 @@
  * Systematically fixes unused imports, declaration order, and missing imports
  */
 
+const { execSync } = require('child_process');
 const fs = require('fs');
 const path = require('path');
-const { execSync } = require('child_process');
 
 // Configuration
 const CONFIG = {

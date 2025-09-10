@@ -518,58 +518,9 @@ class IntelligentLabelMatcher {
            label.type === 'system';
   }
 
-  /**
-   * Calculate automation readiness score
-   * @param {Array} matches - Matched labels
-   * @param {number} totalLabels - Total number of labels
-   * @returns {number} Readiness score 0-1
-   */
-  calculateAutomationReadiness(matches, totalLabels) {
-    if (matches.length === 0) {return 0;}
 
-    // Base score from match ratio
-    const matchRatio = matches.length / Math.max(totalLabels, 1);
-    let score = matchRatio * 0.4;
 
-    // Bonus for high confidence matches
-    const highConfidenceCount = matches.filter(m => m.confidence >= 0.8).length;
-    score += (highConfidenceCount / matches.length) * 0.3;
 
-    // Bonus for category coverage
-    const uniqueCategories = [...new Set(matches.map(m => m.n8nCategory))].length;
-    const expectedCategories = 4; // Minimum categories for good automation
-    score += Math.min(uniqueCategories / expectedCategories, 1) * 0.3;
-
-    return Math.min(score, 1.0);
-  }
-
-  /**
-   * Check if label is a system label that should be ignored
-   * @param {Object} label - Gmail label object
-   * @returns {boolean} True if system label
-   */
-  isSystemLabel(label) {
-    // Handle invalid label objects
-    if (!label || typeof label !== 'object') {
-      return false;
-    }
-
-    const systemLabels = [
-      'INBOX', 'SENT', 'DRAFT', 'SPAM', 'TRASH', 'STARRED', 'IMPORTANT',
-      'CATEGORY_PERSONAL', 'CATEGORY_SOCIAL', 'CATEGORY_PROMOTIONS',
-      'CATEGORY_UPDATES', 'CATEGORY_FORUMS', 'UNREAD'
-    ];
-
-    // Check if label has an id property
-    if (!label.id) {
-      return false;
-    }
-
-    return systemLabels.includes(label.id) ||
-           label.id.startsWith('CATEGORY_') ||
-           label.id.startsWith('CHAT') ||
-           label.type === 'system';
-  }
 
   /**
    * Generate hot tub & spa business data collection form

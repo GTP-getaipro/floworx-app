@@ -5,11 +5,12 @@
  * Comprehensive performance analysis and optimization recommendations
  */
 
+const { execSync } = require('child_process');
 const fs = require('fs');
 const path = require('path');
-const { execSync } = require('child_process');
-const performanceService = require('../services/performanceService');
+
 const cacheService = require('../services/cacheService');
+const performanceService = require('../services/performanceService');
 
 /**
  * Performance audit configuration

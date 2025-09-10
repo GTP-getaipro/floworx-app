@@ -35,15 +35,16 @@ const useFormPersistence = (formKey, initialValues = {}, options = {}) => {
         // Mark that persisted data was found
       }
     } catch (error) {
+      // Log warning for debugging
       console.warn('Failed to load persisted form data:', error);
     } finally {
       setIsLoaded(true);
     }
-  }, [formKey, storage, storageKey]);
+  }, [formKey, storage, storageKey, excludeFields, storageAPI]);
 
   // Debounced save function
   const saveToStorage = useCallback(
-    debounce(dataToSave => {
+    debounce((dataToSave) => {
       try {
         // Filter out excluded fields and empty values
         const filteredData = Object.keys(dataToSave).reduce((acc, key) => {
@@ -58,10 +59,11 @@ const useFormPersistence = (formKey, initialValues = {}, options = {}) => {
           // Form data persisted successfully
         }
       } catch (error) {
+        // Log warning for debugging
         console.warn('Failed to persist form data:', error);
       }
     }, debounceMs),
-    [storageKey, excludeFields, debounceMs]
+    [storageKey, excludeFields, debounceMs, storageAPI]
   );
 
   // Update values and persist
@@ -92,6 +94,7 @@ const useFormPersistence = (formKey, initialValues = {}, options = {}) => {
       setHasPersistedData(false);
       // Persisted form data cleared
     } catch (error) {
+      // Log warning for debugging
       console.warn('Failed to clear persisted data:', error);
     }
   }, [storageKey]);

@@ -1,4 +1,5 @@
 const { validationResult } = require('express-validator');
+
 const errorTrackingService = require('../services/errorTrackingService');
 
 /**

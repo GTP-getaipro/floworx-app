@@ -4,6 +4,7 @@
  */
 
 const errorTrackingService = require('../../../services/errorTrackingService');
+
 const fs = require('fs').promises;
 
 // Mock dependencies

@@ -4,8 +4,8 @@
  */
 
 const { query } = require('../../database/unified-connection');
-const queryOptimizationService = require('../../services/queryOptimizationService');
 const cacheService = require('../../services/cacheService');
+const queryOptimizationService = require('../../services/queryOptimizationService');
 
 describe('Database Performance Tests', () => {
   const testUsers = [];

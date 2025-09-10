@@ -1,5 +1,7 @@
 const jwt = require('jsonwebtoken');
+
 const { query } = require('../database/unified-connection');
+
 const { createError } = require('./errorHandler');
 
 // Cache of recently verified tokens and their user data

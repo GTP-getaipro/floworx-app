@@ -4,6 +4,7 @@
  */
 
 const EventEmitter = require('events');
+
 const logger = require('../utils/logger');
 
 class AdaptiveThresholdService extends EventEmitter {

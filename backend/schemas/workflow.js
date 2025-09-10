@@ -4,7 +4,8 @@
  */
 
 const Joi = require('joi');
-const { uuid, optionalUuid, name, url, paginationQuery } = require('./common');
+
+const { uuid, optionalUuid, _name, _url, paginationQuery } = require('./common');
 
 // Workflow creation schema
 const createWorkflowSchema = Joi.object({

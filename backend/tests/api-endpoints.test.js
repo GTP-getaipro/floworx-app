@@ -1,5 +1,5 @@
-const request = require('supertest');
 const jwt = require('jsonwebtoken');
+const request = require('supertest');
 
 // Mock external dependencies
 jest.mock('axios');
@@ -9,6 +9,7 @@ jest.mock('../../api/_lib/database.js', () => ({
 }));
 
 const axios = require('axios');
+
 const { getSupabaseAdmin } = require('../../api/_lib/database.js');
 
 // Mock the API handler - we'll test the functions directly
@@ -20,6 +21,9 @@ const mockApiHandler = {
   'GET /dashboard/business-config': jest.fn(),
   'PUT /dashboard/business-config': jest.fn()
 };
+
+// Create alias for compatibility
+const apiHandler = mockApiHandler;
 
 describe('API Endpoints', () => {
   let mockSupabase;

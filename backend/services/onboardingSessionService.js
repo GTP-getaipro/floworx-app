@@ -1,6 +1,8 @@
-const { query } = require('../database/unified-connection');
-const transactionService = require('./transactionService');
 const crypto = require('crypto');
+
+const { query } = require('../database/unified-connection');
+
+const transactionService = require('./transactionService');
 
 class OnboardingSessionService {
   constructor() {
@@ -339,15 +341,15 @@ class OnboardingSessionService {
   }
 
   async getExistingSession(userId) {
-    const query = `
+    const queryStr = `
       SELECT session_id, current_step, progress, start_time, last_activity, status
-      FROM onboarding_sessions 
+      FROM onboarding_sessions
       WHERE user_id = $1 AND status = 'active'
-      ORDER BY last_activity DESC 
+      ORDER BY last_activity DESC
       LIMIT 1
     `;
 
-    const result = await pool.query(query, [userId]);
+    const result = await query(queryStr, [userId]);
 
     if (result.rows.length === 0) {
       return null;
@@ -368,12 +370,12 @@ class OnboardingSessionService {
   }
 
   async persistSession(session) {
-    const query = `
+    const queryStr = `
       INSERT INTO onboarding_sessions (
         session_id, user_id, current_step, progress, start_time, last_activity, status
       ) VALUES ($1, $2, $3, $4, $5, $6, $7)
-      ON CONFLICT (user_id) 
-      DO UPDATE SET 
+      ON CONFLICT (user_id)
+      DO UPDATE SET
         session_id = EXCLUDED.session_id,
         current_step = EXCLUDED.current_step,
         progress = EXCLUDED.progress,
@@ -381,7 +383,7 @@ class OnboardingSessionService {
         status = EXCLUDED.status
     `;
 
-    await pool.query(query, [
+    await query(queryStr, [
       session.sessionId,
       session.userId,
       session.currentStep,
@@ -393,13 +395,13 @@ class OnboardingSessionService {
   }
 
   async persistCheckpoint(userId, checkpoint) {
-    const query = `
+    const queryStr = `
       INSERT INTO onboarding_checkpoints (
         user_id, step, data, timestamp, transaction_id, status
       ) VALUES ($1, $2, $3, $4, $5, $6)
     `;
 
-    await pool.query(query, [
+    await query(queryStr, [
       userId,
       checkpoint.step,
       JSON.stringify(checkpoint.data),
@@ -410,13 +412,13 @@ class OnboardingSessionService {
   }
 
   async persistFailure(userId, failure) {
-    const query = `
+    const queryStr = `
       INSERT INTO onboarding_failures (
         user_id, step, error_message, error_stack, timestamp, transaction_id, recovery_attempts
       ) VALUES ($1, $2, $3, $4, $5, $6, $7)
     `;
 
-    await pool.query(query, [
+    await query(queryStr, [
       userId,
       failure.step,
       failure.error,
@@ -428,23 +430,23 @@ class OnboardingSessionService {
   }
 
   async updateSessionProgress(userId, session) {
-    const query = `
-      UPDATE onboarding_sessions 
+    const queryStr = `
+      UPDATE onboarding_sessions
       SET current_step = $1, progress = $2, last_activity = $3
       WHERE user_id = $4
     `;
 
-    await pool.query(query, [session.currentStep, JSON.stringify(session.progress), session.lastActivity, userId]);
+    await query(queryStr, [session.currentStep, JSON.stringify(session.progress), session.lastActivity, userId]);
   }
 
   async archiveSession(userId) {
-    const query = `
-      UPDATE onboarding_sessions 
+    const queryStr = `
+      UPDATE onboarding_sessions
       SET status = 'archived', archived_at = CURRENT_TIMESTAMP
       WHERE user_id = $1
     `;
 
-    await pool.query(query, [userId]);
+    await query(queryStr, [userId]);
   }
 }
 

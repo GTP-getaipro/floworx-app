@@ -3,8 +3,10 @@
  * Tests input validation and security features
  */
 
-const request = require('supertest');
 const express = require('express');
+const request = require('supertest');
+
+const { errorHandler } = require('../../middleware/errorHandler');
 const {
   validateRegistration,
   validateLoginSecure,
@@ -13,7 +15,6 @@ const {
   validateUUID,
   validateBusinessType
 } = require('../../middleware/validation');
-const { errorHandler } = require('../../middleware/errorHandler');
 
 describe('Validation Middleware', () => {
   let app;

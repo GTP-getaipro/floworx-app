@@ -3,7 +3,6 @@ import { useNavigate } from 'react-router-dom';
 
 import { useAuth } from '../contexts/AuthContext';
 import { useToast } from '../contexts/ToastContext';
-import useApiRequest from '../hooks/useApiRequest';
 import useFormValidation, { commonValidationRules } from '../hooks/useFormValidation';
 import useFormPersistence from '../hooks/useFormPersistence';
 import ValidatedInput from './ui/ValidatedInput';
@@ -114,16 +113,6 @@ const RegisterForm = () => {
     }
   }, [persistenceLoaded, persistedValues, setValues]);
 
-  // Enhanced change handler with persistence
-  const handleChange = e => {
-    originalHandleChange(e);
-    handlePersistenceChange(e);
-
-    // Update progress based on form completion
-    const { name, value } = e.target;
-    updateProgress(name, value);
-  };
-
   // Progress tracking
   const updateProgress = (fieldName, fieldValue) => {
     const personalInfoFields = ['firstName', 'lastName', 'companyName'];
@@ -144,6 +133,16 @@ const RegisterForm = () => {
     } else {
       setCurrentStep(0);
     }
+  };
+
+  // Enhanced change handler with persistence
+  const handleChange = e => {
+    originalHandleChange(e);
+    handlePersistenceChange(e);
+
+    // Update progress based on form completion
+    const { name, value } = e.target;
+    updateProgress(name, value);
   };
 
   // Redirect if already authenticated
@@ -228,6 +227,7 @@ const RegisterForm = () => {
 
       throw new Error(result.error || 'Registration failed');
     } catch (error) {
+      // Log error for debugging
       console.error('❌ Registration error:', error);
 
       // Show user-friendly error message
@@ -259,7 +259,7 @@ const RegisterForm = () => {
                   We've sent a verification link to <strong>{email}</strong>
                 </p>
                 <div className='mt-4 p-4 bg-surface-subtle rounded-lg'>
-                  <p className='font-medium text-ink mb-2'>Didn't receive the email?</p>
+                  <p className='font-medium text-ink mb-2'>Didn&apos;t receive the email?</p>
                   <ul className='list-disc list-inside space-y-1 text-sm text-ink-sub'>
                     <li>Check your spam/junk folder</li>
                     <li>Make sure you entered the correct email address</li>

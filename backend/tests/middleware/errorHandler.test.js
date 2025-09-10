@@ -3,8 +3,9 @@
  * Tests centralized error handling and security features
  */
 
-const request = require('supertest');
 const express = require('express');
+const request = require('supertest');
+
 const {
   errorHandler,
   notFoundHandler,

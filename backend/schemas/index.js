@@ -3,12 +3,12 @@
  * Central export point for all validation schemas
  */
 
-const authSchemas = require('./auth');
-const userSchemas = require('./user');
-const onboardingSchemas = require('./onboarding');
 const accountRecoverySchemas = require('./accountRecovery');
-const workflowSchemas = require('./workflow');
+const authSchemas = require('./auth');
 const commonSchemas = require('./common');
+const onboardingSchemas = require('./onboarding');
+const userSchemas = require('./user');
+const workflowSchemas = require('./workflow');
 
 module.exports = {
   // Authentication schemas

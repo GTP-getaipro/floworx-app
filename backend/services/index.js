@@ -1,7 +1,8 @@
+const ErrorMonitor = require('../utils/ErrorMonitor');
+const PerformanceMonitor = require('../utils/PerformanceMonitor');
+
 const CacheService = require('./cacheService');
 const ValidationService = require('./ValidationService');
-const PerformanceMonitor = require('../utils/PerformanceMonitor');
-const ErrorMonitor = require('../utils/ErrorMonitor');
 
 /**
  * Service container class

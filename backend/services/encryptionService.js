@@ -42,9 +42,9 @@ class EncryptionService {
   /**
    * Encrypt data
    * @param {string} plaintext - Data to encrypt
-   * @returns {Promise<string>} Encrypted data as base64 string
+   * @returns {string} Encrypted data as base64 string
    */
-  async encrypt(plaintext) {
+  encrypt(plaintext) {
     try {
       // Generate random salt and IV
       const salt = crypto.randomBytes(this.saltLength);
@@ -78,9 +78,9 @@ class EncryptionService {
   /**
    * Decrypt data
    * @param {string} encryptedData - Encrypted data as base64 string
-   * @returns {Promise<string>} Decrypted plaintext
+   * @returns {string} Decrypted plaintext
    */
-  async decrypt(encryptedData) {
+  decrypt(encryptedData) {
     try {
       // Convert from base64
       const combined = Buffer.from(encryptedData, 'base64');

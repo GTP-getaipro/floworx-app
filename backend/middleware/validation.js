@@ -1,6 +1,8 @@
 const { body, param, query } = require('express-validator');
 const xss = require('xss');
-const { validationRules, mapToExpressValidatorRules } = require('../../shared/utils/validation');
+
+const { validationRules, _mapToExpressValidatorRules } = require('../../shared/utils/validation');
+
 const { handleValidationErrors } = require('./errorHandler');
 
 // XSS protection configuration

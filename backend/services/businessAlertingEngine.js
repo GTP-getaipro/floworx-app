@@ -4,6 +4,7 @@
  */
 
 const EventEmitter = require('events');
+
 const businessAlertingRules = require('../config/business-alerting-rules');
 const logger = require('../utils/logger');
 

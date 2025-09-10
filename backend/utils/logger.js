@@ -1,5 +1,7 @@
-const winston = require('winston');
 const path = require('path');
+
+const winston = require('winston');
+
 const { format } = winston;
 const ContainerMemoryMonitor = require('./ContainerMemoryMonitor');
 

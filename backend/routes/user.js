@@ -1,6 +1,7 @@
 const express = require('express');
-const { authenticateToken } = require('../middleware/auth');
+
 const { query } = require('../database/unified-connection');
+const { authenticateToken } = require('../middleware/auth');
 
 const router = express.Router();
 

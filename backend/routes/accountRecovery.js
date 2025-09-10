@@ -1,9 +1,11 @@
 const express = require('express');
+
 const router = express.Router();
+const rateLimit = require('express-rate-limit');
+
+const { authenticateToken } = require('../middleware/auth');
 const accountRecoveryService = require('../services/accountRecoveryService');
 const passwordResetService = require('../services/passwordResetService');
-const { authenticateToken } = require('../middleware/auth');
-const rateLimit = require('express-rate-limit');
 
 // Rate limiting for recovery requests
 const recoveryRateLimit = rateLimit({

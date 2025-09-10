@@ -3,14 +3,14 @@
  * Tests complete auth flow with error handling and validation
  */
 
-const request = require('supertest');
-const express = require('express');
 const cors = require('cors');
+const express = require('express');
 const helmet = require('helmet');
+const request = require('supertest');
 
 // Import the actual server components
-const authRoutes = require('../../routes/auth');
 const { errorHandler, notFoundHandler } = require('../../middleware/errorHandler');
+const authRoutes = require('../../routes/auth');
 
 describe('Authentication Routes Integration', () => {
   let app;

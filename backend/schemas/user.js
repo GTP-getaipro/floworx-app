@@ -4,7 +4,8 @@
  */
 
 const Joi = require('joi');
-const { email, name, optionalName, phone, uuid, optionalUuid, url, paginationQuery } = require('./common');
+
+const { email, _name, optionalName, phone, uuid, _optionalUuid, url, paginationQuery } = require('./common');
 
 // User profile update schema
 const updateProfileSchema = Joi.object({

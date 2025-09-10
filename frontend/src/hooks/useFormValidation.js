@@ -62,6 +62,7 @@ const useFormValidation = (initialValues, validationRules, options = {}) => {
             break;
           }
         } catch (error) {
+          // Log validation error for debugging
           console.error(`Validation error for field ${name}:`, error);
           errorMessage = 'Validation failed';
           break;
@@ -129,7 +130,7 @@ const useFormValidation = (initialValues, validationRules, options = {}) => {
    * @returns {Promise<boolean>} Whether the form is valid
    */
   const validateForm = useCallback(
-    async (setTouchedFields = true) => {
+    (setTouchedFields = true) => {
       const newErrors = {};
       let isValid = true;
 
@@ -213,6 +214,7 @@ const useFormValidation = (initialValues, validationRules, options = {}) => {
 
         return { success: false, errors };
       } catch (error) {
+        // Log submission error for debugging
         console.error('Form submission error:', error);
         setErrors(prev => ({
           ...prev,

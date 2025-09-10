@@ -3,8 +3,9 @@
  * Tests workflow scheduling, execution, and management
  */
 
-const n8nScheduler = require('../../../services/n8nScheduler');
 const axios = require('axios');
+
+const n8nScheduler = require('../../../services/n8nScheduler');
 
 // Mock dependencies
 jest.mock('axios');

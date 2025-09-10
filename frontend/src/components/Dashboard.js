@@ -62,6 +62,7 @@ const Dashboard = () => {
         // Set a maximum timeout for the entire operation
         timeoutId = setTimeout(() => {
           if (!isMounted) return;
+          // Log timeout warning for debugging
           console.warn('Dashboard loading timeout - forcing completion');
           setLoading(false);
           setError('Loading took too long. Please refresh the page.');
@@ -328,7 +329,7 @@ const Dashboard = () => {
       // Mock data is already set, so we don't need to do anything
       // This is normal in development when backend isn't running
     }
-  }, [refreshing, userStatus, showOnboarding]);
+  }, [refreshing, userStatus]);
 
   // Handle dashboard refresh
   const handleRefreshDashboard = async () => {
@@ -359,6 +360,7 @@ const Dashboard = () => {
   };
 
   const handleDisconnectGoogle = async () => {
+    // TODO: Replace with proper modal confirmation
     // eslint-disable-next-line no-alert
     if (
       !window.confirm(

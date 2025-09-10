@@ -4,10 +4,11 @@
  */
 
 const express = require('express');
+
 const router = express.Router();
-const realTimeMonitoringService = require('../services/realTimeMonitoringService');
 const { authenticateToken } = require('../middleware/auth');
 const { asyncHandler } = require('../middleware/errorHandler');
+const realTimeMonitoringService = require('../services/realTimeMonitoringService');
 
 // Middleware to check admin access
 const requireAdmin = (req, res, next) => {
@@ -69,7 +70,7 @@ router.get('/alerts', authenticateToken, requireAdmin, asyncHandler(async (req, 
   // Sort by timestamp (newest first) and limit
   alerts = alerts
     .sort((a, b) => b.timestamp - a.timestamp)
-    .slice(0, parseInt(limit));
+    .slice(0, parseInt(limit, 10));
   
   res.json({
     success: true,
@@ -99,8 +100,8 @@ router.get('/queries', authenticateToken, requireAdmin, asyncHandler(async (req,
   });
   
   // Limit results
-  queries = queries.slice(0, parseInt(limit));
-  
+  queries = queries.slice(0, parseInt(limit, 10));
+
   res.json({
     success: true,
     data: {
@@ -108,7 +109,7 @@ router.get('/queries', authenticateToken, requireAdmin, asyncHandler(async (req,
       total: metrics.queries.length,
       sortBy,
       order,
-      limit: parseInt(limit)
+      limit: parseInt(limit, 10)
     }
   });
 }));
@@ -137,9 +138,9 @@ router.post('/thresholds', authenticateToken, requireAdmin, asyncHandler(async (
   const { slowQuery, criticalQuery, highConnectionCount, errorRate } = req.body;
   
   const newThresholds = {};
-  if (slowQuery !== undefined) {newThresholds.slowQuery = parseInt(slowQuery);}
-  if (criticalQuery !== undefined) {newThresholds.criticalQuery = parseInt(criticalQuery);}
-  if (highConnectionCount !== undefined) {newThresholds.highConnectionCount = parseInt(highConnectionCount);}
+  if (slowQuery !== undefined) {newThresholds.slowQuery = parseInt(slowQuery, 10);}
+  if (criticalQuery !== undefined) {newThresholds.criticalQuery = parseInt(criticalQuery, 10);}
+  if (highConnectionCount !== undefined) {newThresholds.highConnectionCount = parseInt(highConnectionCount, 10);}
   if (errorRate !== undefined) {newThresholds.errorRate = parseFloat(errorRate);}
   
   realTimeMonitoringService.updateThresholds(newThresholds);

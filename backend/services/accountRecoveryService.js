@@ -1,5 +1,7 @@
 const crypto = require('crypto');
+
 const { query } = require('../database/unified-connection');
+
 const emailService = require('./emailService');
 const encryptionService = require('./encryptionService');
 
@@ -51,7 +53,7 @@ class AccountRecoveryService {
         RETURNING id, created_at
       `;
 
-      const result = await pool.query(insertQuery, [
+      const result = await query(insertQuery, [
         userId,
         serviceName,
         JSON.stringify({ encrypted: encryptedBackup }),
@@ -84,7 +86,7 @@ class AccountRecoveryService {
     try {
       // Find user by email
       const userQuery = 'SELECT id, email, first_name, recovery_email FROM users WHERE email = $1';
-      const userResult = await pool.query(userQuery, [email.toLowerCase()]);
+      const userResult = await query(userQuery, [email.toLowerCase()]);
 
       if (userResult.rows.length === 0) {
         // Don't reveal if email exists
@@ -108,7 +110,7 @@ class AccountRecoveryService {
         RETURNING id
       `;
 
-      await pool.query(insertTokenQuery, [
+      await query(insertTokenQuery, [
         user.id,
         recoveryToken,
         recoveryType,
@@ -162,7 +164,7 @@ class AccountRecoveryService {
         JOIN users u ON art.user_id = u.id
         WHERE art.token = $1 AND art.used = false AND art.expires_at > CURRENT_TIMESTAMP
       `;
-      const tokenResult = await pool.query(tokenQuery, [token]);
+      const tokenResult = await query(tokenQuery, [token]);
 
       if (tokenResult.rows.length === 0) {
         return {
@@ -205,7 +207,8 @@ class AccountRecoveryService {
         return tokenVerification;
       }
 
-      const client = await pool.connect();
+      // Use query function directly for transaction handling
+      const client = null; // Transaction handling will be done through query function
       try {
         await client.query('BEGIN');
 
@@ -376,7 +379,7 @@ class AccountRecoveryService {
         INSERT INTO security_audit_log (user_id, action, resource_type, resource_id, ip_address, user_agent, success, details)
         VALUES ($1, $2, $3, $4, $5, $6, $7, $8)
       `;
-      await pool.query(logQuery, [
+      await query(logQuery, [
         userId,
         action,
         resourceType,

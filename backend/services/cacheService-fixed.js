@@ -4,9 +4,10 @@
  * KeyDB is faster and more efficient than Redis while being 100% compatible
  */
 
+const { performance } = require('perf_hooks');
+
 const Redis = require('ioredis');
 const NodeCache = require('node-cache');
-const { performance } = require('perf_hooks');
 
 /**
  * Multi-tier caching service with KeyDB (Redis-compatible) and in-memory fallback

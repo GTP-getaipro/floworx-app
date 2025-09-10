@@ -1,11 +1,13 @@
+const crypto = require('crypto');
+
+const bcrypt = require('bcryptjs');
 const express = require('express');
 const { body, validationResult } = require('express-validator');
-const crypto = require('crypto');
-const bcrypt = require('bcryptjs');
+
 const { query } = require('../database/unified-connection');
-const emailService = require('../services/emailService');
 const { passwordResetRateLimit, authRateLimit } = require('../middleware/rateLimiter');
 const { validationMiddleware } = require('../middleware/validation');
+const emailService = require('../services/emailService');
 
 const router = express.Router();
 

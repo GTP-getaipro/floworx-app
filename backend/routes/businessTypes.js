@@ -1,7 +1,8 @@
 const express = require('express');
+const { body, validationResult } = require('express-validator');
+
 const { query } = require('../database/unified-connection');
 const { authenticateToken } = require('../middleware/auth');
-const { body, validationResult } = require('express-validator');
 
 const router = express.Router();
 
@@ -255,13 +256,13 @@ router.get('/:businessTypeId/template', authenticateToken, async (req, res) => {
 
     // For now, return a basic template structure
     // This can be expanded when workflow templates are implemented
-    const query = `
+    const queryStr = `
       SELECT id, name, slug, default_categories
       FROM business_types
       WHERE id = $1 AND is_active = true
     `;
 
-    const result = await query(query, [parseInt(businessTypeId)]);
+    const result = await query(queryStr, [parseInt(businessTypeId, 10)]);
 
     if (result.rows.length === 0) {
       return res.status(404).json({

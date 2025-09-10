@@ -1,4 +1,5 @@
 const { Pool } = require('pg');
+
 const { encrypt, decrypt } = require('../utils/encryption');
 require('dotenv').config();
 
@@ -107,8 +108,8 @@ class DatabaseManager {
       return result;
     } catch (queryError) {
       const duration = Date.now() - start;
-      success = false;
-      error = queryError;
+      _success = false;
+      _error = queryError;
 
       // Track failed query
       this.trackQueryPerformance(text, params, duration, false, queryError);

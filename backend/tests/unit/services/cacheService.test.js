@@ -33,6 +33,7 @@ const mockNodeCache = {
 // Setup mocks
 const Redis = require('ioredis');
 const NodeCache = require('node-cache');
+
 Redis.mockImplementation(() => mockRedis);
 NodeCache.mockImplementation(() => mockNodeCache);
 

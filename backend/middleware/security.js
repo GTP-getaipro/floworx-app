@@ -3,10 +3,11 @@
  * Comprehensive security hardening including Helmet, rate limiting, and input sanitization
  */
 
-const helmet = require('helmet');
 const rateLimit = require('express-rate-limit');
 const slowDown = require('express-slow-down');
 const { validationResult } = require('express-validator');
+const helmet = require('helmet');
+
 const { ValidationError } = require('../utils/errors');
 
 /**
@@ -300,7 +301,7 @@ const sanitizeInput = (req, res, next) => {
 /**
  * Security headers middleware
  */
-const securityHeaders = (req, res, next) => {
+const _securityHeaders = (req, res, next) => {
   // Additional custom security headers
   res.setHeader('X-Content-Type-Options', 'nosniff');
   res.setHeader('X-Frame-Options', 'DENY');

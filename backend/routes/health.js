@@ -4,8 +4,9 @@
  */
 
 const express = require('express');
-const { query } = require('../database/unified-connection');
 const Redis = require('ioredis');
+
+const { query } = require('../database/unified-connection');
 const ContainerMemoryMonitor = require('../utils/ContainerMemoryMonitor');
 
 const router = express.Router();
@@ -16,7 +17,7 @@ const healthMemoryMonitor = new ContainerMemoryMonitor({
 });
 
 // Basic health check
-router.get('/', async (req, res) => {
+router.get('/', (req, res) => {
   try {
     const healthStatus = {
       status: 'ok',
@@ -81,7 +82,7 @@ router.get('/cache', async (req, res) => {
     // Try to connect to Redis/KeyDB
     const redisConfig = process.env.REDIS_URL || {
       host: process.env.REDIS_HOST || 'localhost',
-      port: parseInt(process.env.REDIS_PORT) || 6379,
+      port: parseInt(process.env.REDIS_PORT, 10) || 6379,
       password: process.env.REDIS_PASSWORD,
       connectTimeout: 5000,
       commandTimeout: 3000,
@@ -145,7 +146,7 @@ router.get('/email', async (req, res) => {
     // Create transporter with current config
     const transporter = nodemailer.createTransport({
       host: process.env.SMTP_HOST || 'smtp.gmail.com',
-      port: parseInt(process.env.SMTP_PORT) || 587,
+      port: parseInt(process.env.SMTP_PORT, 10) || 587,
       secure: false,
       auth: {
         user: process.env.SMTP_USER,
@@ -167,7 +168,7 @@ router.get('/email', async (req, res) => {
         smtp_host: process.env.SMTP_HOST || 'smtp.gmail.com',
         smtp_port: process.env.SMTP_PORT || '587',
         from_email: process.env.FROM_EMAIL || process.env.SMTP_USER,
-        auth_configured: !!(process.env.SMTP_USER && process.env.SMTP_PASS)
+        auth_configured: Boolean(process.env.SMTP_USER && process.env.SMTP_PASS)
       }
     });
   } catch (error) {
@@ -184,7 +185,7 @@ router.get('/email', async (req, res) => {
 });
 
 // Memory health check with container awareness
-router.get('/memory', async (req, res) => {
+router.get('/memory', (req, res) => {
   try {
     const stats = healthMemoryMonitor.getMemoryStats();
     const summary = healthMemoryMonitor.getMemorySummary();
@@ -229,11 +230,11 @@ router.get('/memory', async (req, res) => {
 });
 
 // OAuth service health check
-router.get('/oauth', async (req, res) => {
+router.get('/oauth', (req, res) => {
   try {
     const oauthConfig = {
-      google_client_id: !!process.env.GOOGLE_CLIENT_ID,
-      google_client_secret: !!process.env.GOOGLE_CLIENT_SECRET,
+      google_client_id: Boolean(process.env.GOOGLE_CLIENT_ID),
+      google_client_secret: Boolean(process.env.GOOGLE_CLIENT_SECRET),
       google_redirect_uri: process.env.GOOGLE_REDIRECT_URI,
       frontend_url: process.env.FRONTEND_URL
     };
@@ -297,7 +298,7 @@ router.get('/system', async (req, res) => {
     try {
       const redisConfig = process.env.REDIS_URL || {
         host: process.env.REDIS_HOST || 'localhost',
-        port: parseInt(process.env.REDIS_PORT) || 6379,
+        port: parseInt(process.env.REDIS_PORT, 10) || 6379,
         password: process.env.REDIS_PASSWORD,
         connectTimeout: 2000,
         commandTimeout: 1000,
@@ -330,7 +331,7 @@ router.get('/system', async (req, res) => {
       const nodemailer = require('nodemailer');
       const transporter = nodemailer.createTransport({
         host: process.env.SMTP_HOST || 'smtp.gmail.com',
-        port: parseInt(process.env.SMTP_PORT) || 587,
+        port: parseInt(process.env.SMTP_PORT, 10) || 587,
         secure: false,
         auth: {
           user: process.env.SMTP_USER,
@@ -348,7 +349,7 @@ router.get('/system', async (req, res) => {
     }
     
     // OAuth check
-    const oauthConfigured = !!(process.env.GOOGLE_CLIENT_ID && 
+    const oauthConfigured = Boolean(process.env.GOOGLE_CLIENT_ID && 
                               process.env.GOOGLE_CLIENT_SECRET && 
                               process.env.GOOGLE_REDIRECT_URI);
     

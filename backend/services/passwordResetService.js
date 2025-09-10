@@ -1,6 +1,9 @@
 const crypto = require('crypto');
+
 const bcrypt = require('bcryptjs');
+
 const { pool } = require('../database/connection');
+
 const emailService = require('./emailService');
 
 class PasswordResetService {
@@ -449,7 +452,7 @@ class PasswordResetService {
           {
             email: user.email,
             failedAttempts,
-            accountLocked: !!lockoutUntil,
+            accountLocked: Boolean(lockoutUntil),
             lockoutUntil
           }
         );
@@ -458,7 +461,7 @@ class PasswordResetService {
 
         return {
           success: true,
-          accountLocked: !!lockoutUntil,
+          accountLocked: Boolean(lockoutUntil),
           failedAttempts,
           lockoutUntil,
           remainingAttempts: Math.max(0, this.maxFailedLogins - failedAttempts)
@@ -596,30 +599,7 @@ class PasswordResetService {
     }
   }
 
-  /**
-   * Log security event
-   * @private
-   */
-  async logSecurityEvent(client, userId, action, resourceType, resourceId, ipAddress, userAgent, success, details) {
-    try {
-      const logQuery = `
-        INSERT INTO security_audit_log (user_id, action, resource_type, resource_id, ip_address, user_agent, success, details)
-        VALUES ($1, $2, $3, $4, $5, $6, $7, $8)
-      `;
-      await client.query(logQuery, [
-        userId,
-        action,
-        resourceType,
-        resourceId,
-        ipAddress,
-        userAgent,
-        success,
-        JSON.stringify(details)
-      ]);
-    } catch (error) {
-      console.error('Failed to log security event:', error);
-    }
-  }
+
 }
 
 module.exports = new PasswordResetService();

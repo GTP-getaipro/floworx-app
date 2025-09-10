@@ -4,8 +4,9 @@
  */
 
 const request = require('supertest');
-const app = require('../../server');
+
 const { query } = require('../../database/unified-connection');
+const app = require('../../server');
 
 describe('Security Tests', () => {
   describe('SQL Injection Prevention', () => {

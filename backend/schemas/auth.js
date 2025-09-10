@@ -4,7 +4,8 @@
  */
 
 const Joi = require('joi');
-const { email, password, name, optionalName, phone, uuid } = require('./common');
+
+const { email, password, name, _optionalName, phone, uuid } = require('./common');
 
 // Registration schema
 const registerSchema = Joi.object({

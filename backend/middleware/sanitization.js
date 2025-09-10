@@ -1,5 +1,6 @@
-const createError = require('./errorHandler').createError;
 const xss = require('xss');
+
+const createError = require('./errorHandler').createError;
 
 /**
  * Sanitize individual value

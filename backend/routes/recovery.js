@@ -1,9 +1,10 @@
 const express = require('express');
+
+const { query, healthCheck } = require('../database/unified-connection');
 const { authenticateToken } = require('../middleware/auth');
+const gmailService = require('../services/gmailService');
 const onboardingSessionService = require('../services/onboardingSessionService');
 const transactionService = require('../services/transactionService');
-const gmailService = require('../services/gmailService');
-const { query, healthCheck } = require('../database/unified-connection');
 
 const router = express.Router();
 

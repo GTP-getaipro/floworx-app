@@ -4,11 +4,13 @@
  */
 
 const EventEmitter = require('events');
-const realTimeMonitoringService = require('./realTimeMonitoringService');
-const errorTrackingService = require('./errorTrackingService');
-const productionConfig = require('../config/production-monitoring');
+
 const businessAlertingRules = require('../config/business-alerting-rules');
+const productionConfig = require('../config/production-monitoring');
 const logger = require('../utils/logger');
+
+const errorTrackingService = require('./errorTrackingService');
+const realTimeMonitoringService = require('./realTimeMonitoringService');
 
 class ProductionMonitoringService extends EventEmitter {
   constructor() {

@@ -6,6 +6,7 @@
 const EventEmitter = require('events');
 const fs = require('fs').promises;
 const path = require('path');
+
 const logger = require('../utils/logger');
 
 class ErrorTrackingService extends EventEmitter {

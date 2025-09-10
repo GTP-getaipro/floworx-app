@@ -4,9 +4,10 @@
  */
 
 const request = require('supertest');
+
 const app = require('../../app');
-const realTimeMonitoringService = require('../../services/realTimeMonitoringService');
 const errorTrackingService = require('../../services/errorTrackingService');
+const realTimeMonitoringService = require('../../services/realTimeMonitoringService');
 
 describe('Monitoring API Integration Tests', () => {
   let adminToken;

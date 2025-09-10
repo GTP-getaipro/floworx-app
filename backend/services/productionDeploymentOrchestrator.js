@@ -4,13 +4,16 @@
  */
 
 const EventEmitter = require('events');
-const productionMonitoringService = require('./productionMonitoringService');
-const businessAlertingEngine = require('./businessAlertingEngine');
-const stakeholderReportingService = require('./stakeholderReportingService');
-const adaptiveThresholdService = require('./adaptiveThresholdService');
-const realTimeMonitoringService = require('./realTimeMonitoringService');
-const errorTrackingService = require('./errorTrackingService');
+
 const logger = require('../utils/logger');
+
+const adaptiveThresholdService = require('./adaptiveThresholdService');
+const businessAlertingEngine = require('./businessAlertingEngine');
+const errorTrackingService = require('./errorTrackingService');
+const productionMonitoringService = require('./productionMonitoringService');
+const realTimeMonitoringService = require('./realTimeMonitoringService');
+const stakeholderReportingService = require('./stakeholderReportingService');
+
 
 class ProductionDeploymentOrchestrator extends EventEmitter {
   constructor() {

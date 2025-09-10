@@ -3,8 +3,9 @@
  * Common helper functions for regression testing
  */
 
-const request = require('supertest');
 const jwt = require('jsonwebtoken');
+const request = require('supertest');
+
 const testDataFactory = require('./testDataFactory');
 
 class TestUtils {

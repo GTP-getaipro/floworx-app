@@ -5,9 +5,9 @@
  * Comprehensive security scanning and vulnerability assessment
  */
 
+const { execSync } = require('child_process');
 const fs = require('fs');
 const path = require('path');
-const { execSync } = require('child_process');
 
 // Security audit configuration
 const SECURITY_CONFIG = {

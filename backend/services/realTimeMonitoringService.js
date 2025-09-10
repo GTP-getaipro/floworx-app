@@ -4,6 +4,7 @@
  */
 
 const EventEmitter = require('events');
+
 const { query } = require('../database/unified-connection');
 const logger = require('../utils/logger');
 

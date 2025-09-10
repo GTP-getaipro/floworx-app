@@ -1,5 +1,5 @@
-import React, { useState, useEffect } from 'react';
-import { useNavigate, useLocation, Link } from 'react-router-dom';
+import React, { useEffect } from 'react';
+import { useNavigate, useLocation } from 'react-router-dom';
 import { useAuth } from '../contexts/AuthContext';
 import { useToast } from '../contexts/ToastContext';
 import useFormValidation from '../hooks/useFormValidation';
@@ -54,6 +54,7 @@ const Login = () => {
       setErrors({ submit: result.error });
       return { success: false };
     } catch (error) {
+      // Log error for debugging
       console.error('❌ Login error:', error);
 
       const errorMessage = 'An unexpected error occurred. Please try again.';
@@ -134,7 +135,7 @@ const Login = () => {
               Forgot your password?
             </UILink>
             <p className='text-ink-sub'>
-              Don't have an account?{' '}
+              Don&apos;t have an account?{' '}
               <UILink to='/register' variant='primary'>
                 Create one here
               </UILink>

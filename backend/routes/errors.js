@@ -4,10 +4,11 @@
  */
 
 const express = require('express');
+
 const router = express.Router();
-const errorTrackingService = require('../services/errorTrackingService');
 const { authenticateToken } = require('../middleware/auth');
 const { asyncHandler } = require('../middleware/errorHandler');
+const errorTrackingService = require('../services/errorTrackingService');
 
 // Middleware to check admin access
 const requireAdmin = (req, res, next) => {
@@ -29,7 +30,7 @@ const requireAdmin = (req, res, next) => {
  * GET /api/errors/stats
  * Get error statistics and overview
  */
-router.get('/stats', authenticateToken, requireAdmin, asyncHandler(async (req, res) => {
+router.get('/stats', authenticateToken, requireAdmin, asyncHandler((req, res) => {
   const stats = errorTrackingService.getStats();
   
   res.json({
@@ -42,7 +43,7 @@ router.get('/stats', authenticateToken, requireAdmin, asyncHandler(async (req, r
  * GET /api/errors/groups
  * Get error groups with pagination and sorting
  */
-router.get('/groups', authenticateToken, requireAdmin, asyncHandler(async (req, res) => {
+router.get('/groups', authenticateToken, requireAdmin, asyncHandler((req, res) => {
   const { 
     limit = 50, 
     sortBy = 'lastSeen',
@@ -59,7 +60,7 @@ router.get('/groups', authenticateToken, requireAdmin, asyncHandler(async (req, 
   if (endDate) {filters.endDate = new Date(endDate).getTime();}
 
   const errorGroups = errorTrackingService.getErrorGroups(
-    parseInt(limit), 
+    parseInt(limit, 10),
     sortBy
   );
 
@@ -79,7 +80,7 @@ router.get('/groups', authenticateToken, requireAdmin, asyncHandler(async (req, 
       total: filteredGroups.length,
       filters,
       sortBy,
-      limit: parseInt(limit)
+      limit: parseInt(limit, 10)
     }
   });
 }));
@@ -88,10 +89,10 @@ router.get('/groups', authenticateToken, requireAdmin, asyncHandler(async (req, 
  * GET /api/errors/recent
  * Get recent individual errors
  */
-router.get('/recent', authenticateToken, requireAdmin, asyncHandler(async (req, res) => {
+router.get('/recent', authenticateToken, requireAdmin, asyncHandler((req, res) => {
   const { limit = 100 } = req.query;
   
-  const recentErrors = errorTrackingService.getRecentErrors(parseInt(limit));
+  const recentErrors = errorTrackingService.getRecentErrors(parseInt(limit, 10));
   
   res.json({
     success: true,
@@ -106,7 +107,7 @@ router.get('/recent', authenticateToken, requireAdmin, asyncHandler(async (req, 
  * GET /api/errors/:errorId
  * Get specific error details
  */
-router.get('/:errorId', authenticateToken, requireAdmin, asyncHandler(async (req, res) => {
+router.get('/:errorId', authenticateToken, requireAdmin, asyncHandler((req, res) => {
   const { errorId } = req.params;
   
   const error = errorTrackingService.getErrorById(errorId);
@@ -132,7 +133,7 @@ router.get('/:errorId', authenticateToken, requireAdmin, asyncHandler(async (req
  * GET /api/errors/search
  * Search errors by query and filters
  */
-router.get('/search', authenticateToken, requireAdmin, asyncHandler(async (req, res) => {
+router.get('/search', authenticateToken, requireAdmin, asyncHandler((req, res) => {
   const { 
     q: query,
     category,
@@ -162,7 +163,7 @@ router.get('/search', authenticateToken, requireAdmin, asyncHandler(async (req, 
   const results = errorTrackingService.searchErrors(query, filters);
   
   // Limit results
-  const limitedResults = results.slice(0, parseInt(limit));
+  const limitedResults = results.slice(0, parseInt(limit, 10));
 
   res.json({
     success: true,
@@ -171,7 +172,7 @@ router.get('/search', authenticateToken, requireAdmin, asyncHandler(async (req, 
       total: results.length,
       query,
       filters,
-      limit: parseInt(limit)
+      limit: parseInt(limit, 10)
     }
   });
 }));
@@ -180,7 +181,7 @@ router.get('/search', authenticateToken, requireAdmin, asyncHandler(async (req, 
  * GET /api/errors/analytics/trends
  * Get error trends and analytics
  */
-router.get('/analytics/trends', authenticateToken, requireAdmin, asyncHandler(async (req, res) => {
+router.get('/analytics/trends', authenticateToken, requireAdmin, asyncHandler((req, res) => {
   const { timeRange = '24h' } = req.query;
   const stats = errorTrackingService.getStats();
   
@@ -221,13 +222,13 @@ router.get('/analytics/trends', authenticateToken, requireAdmin, asyncHandler(as
  * GET /api/errors/analytics/top-endpoints
  * Get endpoints with most errors
  */
-router.get('/analytics/top-endpoints', authenticateToken, requireAdmin, asyncHandler(async (req, res) => {
+router.get('/analytics/top-endpoints', authenticateToken, requireAdmin, asyncHandler((req, res) => {
   const { limit = 10 } = req.query;
   const stats = errorTrackingService.getStats();
   
   const topEndpoints = Object.entries(stats.byEndpoint)
     .sort(([,a], [,b]) => b - a)
-    .slice(0, parseInt(limit))
+    .slice(0, parseInt(limit, 10))
     .map(([endpoint, count]) => ({ endpoint, count }));
 
   res.json({
@@ -243,13 +244,13 @@ router.get('/analytics/top-endpoints', authenticateToken, requireAdmin, asyncHan
  * GET /api/errors/analytics/top-users
  * Get users with most errors
  */
-router.get('/analytics/top-users', authenticateToken, requireAdmin, asyncHandler(async (req, res) => {
+router.get('/analytics/top-users', authenticateToken, requireAdmin, asyncHandler((req, res) => {
   const { limit = 10 } = req.query;
   const stats = errorTrackingService.getStats();
   
   const topUsers = Object.entries(stats.byUser)
     .sort(([,a], [,b]) => b - a)
-    .slice(0, parseInt(limit))
+    .slice(0, parseInt(limit, 10))
     .map(([userId, count]) => ({ userId, count }));
 
   res.json({
@@ -316,7 +317,7 @@ router.post('/track', authenticateToken, asyncHandler(async (req, res) => {
  * DELETE /api/errors/groups/:fingerprint
  * Mark error group as resolved
  */
-router.delete('/groups/:fingerprint', authenticateToken, requireAdmin, asyncHandler(async (req, res) => {
+router.delete('/groups/:fingerprint', authenticateToken, requireAdmin, asyncHandler((req, res) => {
   const { fingerprint } = req.params;
   
   // This would mark the error group as resolved
@@ -331,7 +332,7 @@ router.delete('/groups/:fingerprint', authenticateToken, requireAdmin, asyncHand
  * GET /api/errors/export
  * Export error data
  */
-router.get('/export', authenticateToken, requireAdmin, asyncHandler(async (req, res) => {
+router.get('/export', authenticateToken, requireAdmin, asyncHandler((req, res) => {
   const { 
     format = 'json',
     timeRange = '24h',

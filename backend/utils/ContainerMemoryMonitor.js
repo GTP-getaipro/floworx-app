@@ -4,10 +4,10 @@
  * Replaces v8 heap-only monitoring with comprehensive memory tracking
  */
 
-const fs = require('fs');
-const v8 = require('v8');
-const os = require('os');
 const EventEmitter = require('events');
+const fs = require('fs');
+const os = require('os');
+const v8 = require('v8');
 
 class ContainerMemoryMonitor extends EventEmitter {
   constructor(options = {}) {
@@ -96,7 +96,7 @@ class ContainerMemoryMonitor extends EventEmitter {
       }
       
       return limitBytes;
-    } catch (error) {
+    } catch (_error) {
       return null;
     }
   }
@@ -113,7 +113,7 @@ class ContainerMemoryMonitor extends EventEmitter {
         const usageStr = fs.readFileSync('/sys/fs/cgroup/memory/memory.usage_in_bytes', 'utf8').trim();
         return parseInt(usageStr, 10);
       }
-    } catch (error) {
+    } catch (_error) {
       return null;
     }
     return null;

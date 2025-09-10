@@ -3,8 +3,9 @@
  * Tests PostgreSQL connection management and query operations
  */
 
-const { databaseManager } = require('../../../database/unified-connection');
 const { Pool } = require('pg');
+
+const { databaseManager } = require('../../../database/unified-connection');
 
 // Mock dependencies
 jest.mock('pg');

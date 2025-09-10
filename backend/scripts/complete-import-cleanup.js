@@ -5,9 +5,9 @@
  * Final cleanup of all remaining unused imports and variables
  */
 
+const { execSync } = require('child_process');
 const fs = require('fs');
 const path = require('path');
-const { execSync } = require('child_process');
 
 // Remaining fixes to apply
 const remainingFixes = [

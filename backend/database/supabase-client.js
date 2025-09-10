@@ -1,5 +1,6 @@
-const { Pool } = require('pg');
 const crypto = require('crypto');
+
+const { Pool } = require('pg');
 
 // Supabase Database Connection with Transaction Pooler
 class SupabaseClient {

@@ -4,8 +4,9 @@
  */
 
 const compression = require('compression');
-const performanceService = require('../services/performanceService');
+
 const cacheService = require('../services/cacheService');
+const performanceService = require('../services/performanceService');
 
 /**
  * Request performance tracking middleware

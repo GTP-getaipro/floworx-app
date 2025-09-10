@@ -4,6 +4,7 @@
  */
 
 const Joi = require('joi');
+
 const { email, password, uuid, phone, paginationQuery } = require('./common');
 
 // Password reset request schema

@@ -18,7 +18,7 @@ class RedisConnectionManager {
   /**
    * Initialize Redis connection with retry logic
    */
-  async connect() {
+  connect() {
     const redisConfig = this.getRedisConfig();
     
     console.log('🔴 Attempting Redis connection...');
@@ -160,16 +160,16 @@ class RedisConnectionManager {
    */
   createFallbackClient() {
     return {
-      get: async () => null,
-      set: async () => 'OK',
-      del: async () => 1,
-      exists: async () => 0,
-      expire: async () => 1,
-      ttl: async () => -1,
-      keys: async () => [],
-      flushall: async () => 'OK',
-      ping: async () => 'PONG',
-      quit: async () => 'OK',
+      get: () => Promise.resolve(null),
+      set: () => Promise.resolve('OK'),
+      del: () => Promise.resolve(1),
+      exists: () => Promise.resolve(0),
+      expire: () => Promise.resolve(1),
+      ttl: () => Promise.resolve(-1),
+      keys: () => Promise.resolve([]),
+      flushall: () => Promise.resolve('OK'),
+      ping: () => Promise.resolve('PONG'),
+      quit: () => Promise.resolve('OK'),
       disconnect: () => {},
       on: () => {},
       off: () => {}

@@ -1,4 +1,5 @@
 const express = require('express');
+
 const { query } = require('../database/unified-connection');
 const { authenticateToken } = require('../middleware/auth');
 const gmailService = require('../services/gmailService');
@@ -380,7 +381,7 @@ router.get('/config', authenticateToken, async (req, res) => {
       success: true,
       config: businessConfig.config,
       version: businessConfig.version,
-      hasGoogleCredentials: !!googleCredentials,
+      hasGoogleCredentials: Boolean(googleCredentials),
       updatedAt: businessConfig.updatedAt
     });
   } catch (error) {

@@ -4,7 +4,8 @@
  */
 
 const Joi = require('joi');
-const { uuid, optionalUuid, name, email, phone } = require('./common');
+
+const { uuid, _optionalUuid, _name, _email, _phone } = require('./common');
 
 // Onboarding session creation schema
 const createOnboardingSessionSchema = Joi.object({

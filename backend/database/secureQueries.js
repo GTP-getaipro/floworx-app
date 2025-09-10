@@ -4,10 +4,11 @@
  * Implements query validation, logging, and performance monitoring
  */
 
-const { query, transaction } = require('./unified-connection');
-const { DatabaseError, ValidationError } = require('../utils/errors');
 const cacheService = require('../services/cacheService');
 const performanceService = require('../services/performanceService');
+const { DatabaseError, ValidationError } = require('../utils/errors');
+
+const { query, transaction } = require('./unified-connection');
 
 /**
  * Secure query builder with automatic parameterization
@@ -129,7 +130,7 @@ const UserQueries = {
 
     try {
       const result = await performanceService.trackQuery(queryText, [email.toLowerCase()], async () => {
-        return await query(queryText, [email.toLowerCase()]);
+        return query(queryText, [email.toLowerCase()]);
       });
 
       const user = result.rows[0] || null;
@@ -354,7 +355,7 @@ const AuthQueries = {
    * Use password reset token (secure)
    */
   async usePasswordResetToken(tokenId, newPasswordHash) {
-    return await transaction(async client => {
+    return transaction(async client => {
       // Mark token as used
       await client.query('UPDATE password_reset_tokens SET used = true, used_at = NOW() WHERE id = $1', [tokenId]);
 

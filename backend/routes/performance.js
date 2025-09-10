@@ -4,10 +4,11 @@
  */
 
 const express = require('express');
+
 const { authenticateToken } = require('../middleware/auth');
-const performanceService = require('../services/performanceService');
-const cacheService = require('../services/cacheService');
 const { PerformanceAudit } = require('../scripts/performance-audit');
+const cacheService = require('../services/cacheService');
+const performanceService = require('../services/performanceService');
 const { asyncWrapper } = require('../utils/asyncWrapper');
 
 const router = express.Router();

@@ -1,13 +1,13 @@
-const express = require('express');
 const compression = require('compression');
 const cors = require('cors');
+const express = require('express');
 const morgan = require('morgan');
 
 // Import middleware components
-const security = require('./security');
-const { errorHandler, notFoundHandler } = require('./errorHandler');
-const validation = require('./validation');
 const auth = require('./auth');
+const { errorHandler, notFoundHandler } = require('./errorHandler');
+const security = require('./security');
+const validation = require('./validation');
 
 /**
  * Configure and export all middleware

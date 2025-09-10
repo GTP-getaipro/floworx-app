@@ -1,30 +1,26 @@
-const express = require('express');
 const bcrypt = require('bcryptjs');
+const express = require('express');
 const jwt = require('jsonwebtoken');
+
+const { UserQueries } = require('../database/secureQueries');
+const { query } = require('../database/unified-connection');
 const { authenticateToken } = require('../middleware/auth');
 const { authRateLimit, authSlowDown, accountLockoutLimiter } = require('../middleware/security');
-const { validateRequest } = require('../utils/validateRequest');
+const {
+  registerSchema,
+  loginSchema
+} = require('../schemas/auth');
 const { asyncWrapper } = require('../utils/asyncWrapper');
 const emailService = require('../services/emailService');
 const passwordResetService = require('../services/passwordResetService');
 
 // Import database connection
-const { query } = require('../database/unified-connection');
 
 // Import secure database queries
-const { UserQueries, AuthQueries } = require('../database/secureQueries');
 
 // Import new validation schemas and utilities
-const {
-  registerSchema,
-  loginSchema,
-  passwordResetRequestSchema,
-  passwordResetConfirmSchema,
-  changePasswordSchema,
-  oauthCallbackSchema,
-  refreshTokenSchema
-} = require('../schemas/auth');
-const { AuthenticationError, ConflictError, ValidationError, NotFoundError } = require('../utils/errors');
+const { ConflictError } = require('../utils/errors');
+const { validateRequest } = require('../utils/validateRequest');
 
 const router = express.Router();
 
@@ -36,7 +32,7 @@ router.post(
   '/register',
   validateRequest({ body: registerSchema }),
   asyncWrapper(async (req, res) => {
-    const { email, password, firstName, lastName, businessName, phone, agreeToTerms, marketingConsent } = req.body;
+    const { email, password, firstName, lastName, businessName } = req.body;
 
     // Check if user already exists using secure query
     const existingUser = await UserQueries.findByEmail(email);
@@ -61,9 +57,9 @@ router.post(
     const saltRounds = 12;
     const passwordHash = await bcrypt.hash(password, saltRounds);
 
-    // Set trial period (14 days)
-    const trialStartsAt = new Date();
-    const trialEndsAt = new Date(Date.now() + 14 * 24 * 60 * 60 * 1000);
+    // Set trial period (14 days) - for future use
+    // const trialStartsAt = new Date();
+    // const trialEndsAt = new Date(Date.now() + 14 * 24 * 60 * 60 * 1000);
 
     // Create new user with basic fields only (for compatibility)
     const insertUserQuery = `
@@ -263,7 +259,7 @@ router.get('/user/status', authenticateToken, async (req, res) => {
         connected_at: cred.created_at,
         expires_at: cred.expiry_date
       }));
-    } catch (credError) {
+    } catch (_credError) {
       console.log('Credentials table not found or accessible, continuing without service data');
     }
 
@@ -282,7 +278,7 @@ router.get('/user/status', authenticateToken, async (req, res) => {
         expires_at: oauth.expires_at,
         status: 'active'
       }));
-    } catch (oauthError) {
+    } catch (_oauthError) {
       console.log('OAuth tokens table not found or accessible, continuing without OAuth data');
     }
 
@@ -347,7 +343,7 @@ router.get('/dashboard', authenticateToken, async (req, res) => {
         timestamp: activity.created_at,
         ip_address: activity.ip_address
       }));
-    } catch (actError) {
+    } catch (_actError) {
       console.log('Activities data not available, continuing without recent activities');
     }
 
@@ -367,7 +363,7 @@ router.get('/dashboard', authenticateToken, async (req, res) => {
           connected_at: oauth.created_at
         };
       });
-    } catch (oauthError) {
+    } catch (_oauthError) {
       console.log('OAuth data not available, showing default connection status');
     }
 

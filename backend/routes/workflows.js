@@ -1,9 +1,10 @@
 const express = require('express');
+
+const { query } = require('../database/unified-connection');
 const { authenticateToken } = require('../middleware/auth');
 const n8nService = require('../services/n8nService');
-const transactionService = require('../services/transactionService');
 const onboardingSessionService = require('../services/onboardingSessionService');
-const { query } = require('../database/unified-connection');
+const transactionService = require('../services/transactionService');
 
 const router = express.Router();
 

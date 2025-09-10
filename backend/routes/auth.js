@@ -746,4 +746,73 @@ router.get('/welcome', (req, res) => {
   });
 });
 
+// POST /api/auth/lockout-check
+// Check account lockout status (temporary endpoint for frontend compatibility)
+router.post('/lockout-check', async (req, res) => {
+  try {
+    const { email } = req.body;
+
+    if (!email) {
+      return res.status(400).json({
+        success: false,
+        error: 'Email is required'
+      });
+    }
+
+    // Use the password reset service to check lockout status
+    const passwordResetService = require('../services/passwordResetService');
+    const result = await passwordResetService.checkAccountLockout(email);
+
+    res.json({
+      success: true,
+      ...result
+    });
+  } catch (error) {
+    console.error('Lockout check error:', error);
+    res.status(500).json({
+      success: false,
+      error: 'Failed to check account lockout status'
+    });
+  }
+});
+
+// POST /api/auth/recovery
+// Account recovery endpoint (temporary endpoint for frontend compatibility)
+router.post('/recovery', async (req, res) => {
+  try {
+    const { email, recoveryType } = req.body;
+
+    if (!email) {
+      return res.status(400).json({
+        success: false,
+        error: 'Email is required'
+      });
+    }
+
+    // For now, redirect to the standard password reset flow
+    if (recoveryType === 'password_reset' || !recoveryType) {
+      const ipAddress = req.ip || req.connection.remoteAddress;
+      const userAgent = req.get('User-Agent');
+
+      const passwordResetService = require('../services/passwordResetService');
+      const result = await passwordResetService.initiatePasswordReset(email, ipAddress, userAgent);
+
+      return res.json(result);
+    }
+
+    // For other recovery types, return a placeholder response
+    res.json({
+      success: true,
+      message: 'Recovery request received. If an account with this email exists, you will receive further instructions.',
+      emailSent: false
+    });
+  } catch (error) {
+    console.error('Recovery request error:', error);
+    res.status(500).json({
+      success: false,
+      error: 'Failed to process recovery request'
+    });
+  }
+});
+
 module.exports = router;

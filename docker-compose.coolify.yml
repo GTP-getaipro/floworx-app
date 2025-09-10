@@ -1,104 +1,64 @@
-version: '3.8'
+# ---- Frontend build stage ----
+FROM node:20-alpine AS frontend-builder
+WORKDIR /app/frontend
 
-services:
-  app:
-    build:
-      context: .
-      dockerfile: Dockerfile
-    container_name: floworx-app
-    ports:
-      - "80:5000"
-    environment:
-      # Core Application Settings
-      - NODE_ENV=production
-      - PORT=5000
-      - BUILD_ENV=production
-      - DEPLOYMENT_PLATFORM=coolify
+COPY frontend/package*.json ./
+# Install ALL dependencies for build (dev included)
+RUN npm ci
 
-      # Database Configuration (Coolify managed PostgreSQL)
-      - DATABASE_URL=${DATABASE_URL}
+COPY frontend/ ./
+# Build the React application with memory optimization
+RUN NODE_OPTIONS="--max-old-space-size=2048" npm run build
 
-      # Redis/KeyDB Configuration (Coolify managed)
-      - REDIS_HOST=${REDIS_HOST}
-      - REDIS_PORT=${REDIS_PORT}
-      - REDIS_PASSWORD=${REDIS_PASSWORD}
-      - REDIS_URL=${REDIS_URL}
 
-      # Supabase Configuration
-      - SUPABASE_URL=${SUPABASE_URL}
-      - SUPABASE_ANON_KEY=${SUPABASE_ANON_KEY}
-      - SUPABASE_SERVICE_ROLE_KEY=${SUPABASE_SERVICE_ROLE_KEY}
+# ---- Production stage ----
+FROM node:20-alpine AS production
+WORKDIR /app
 
-      # Security Configuration
-      - JWT_SECRET=${JWT_SECRET}
-      - ENCRYPTION_KEY=${ENCRYPTION_KEY}
+# Cache busting - force rebuild with timestamp (needed to force Coolify to rebuild sometimes)
+ARG CACHEBUST=1
+ARG BUILD_DATE
+RUN echo "Build timestamp: $(date)" > /tmp/buildtime && \
+    echo "Build date arg: ${BUILD_DATE}" >> /tmp/buildtime
 
-      # OAuth Configuration
-      - GOOGLE_CLIENT_ID=${GOOGLE_CLIENT_ID}
-      - GOOGLE_CLIENT_SECRET=${GOOGLE_CLIENT_SECRET}
-      - GOOGLE_REDIRECT_URI=${GOOGLE_REDIRECT_URI}
+# Install dependencies needed as root
+RUN apk add --no-cache dumb-init
 
-      # Email Configuration
-      - SMTP_HOST=${SMTP_HOST}
-      - SMTP_PORT=${SMTP_PORT}
-      - SMTP_USER=${SMTP_USER}
-      - SMTP_PASS=${SMTP_PASS}
-      - FROM_EMAIL=${FROM_EMAIL}
-      - FROM_NAME=${FROM_NAME}
+# Create non-root user (create BEFORE copying app files, as root)
+RUN addgroup -g 1001 -S nodejs && \
+    adduser -S floworx -u 1001
 
-      # Application URLs
-      - FRONTEND_URL=${FRONTEND_URL}
-      - CORS_ORIGIN=${CORS_ORIGIN}
+# Copy all application files as root first (before changing ownership)
+COPY package*.json ./
+COPY backend/package*.json ./backend/
+COPY --from=frontend-builder /app/frontend/build ./frontend/build
+COPY backend/ ./backend/
+COPY shared/ ./shared/
+COPY database/ ./database/
+COPY start.sh /app/start.sh # Copy startup script
 
-      # N8N Integration (optional)
-      - N8N_WEBHOOK_URL=${N8N_WEBHOOK_URL}
-      - N8N_API_KEY=${N8N_API_KEY}
-      - N8N_BASE_URL=${N8N_BASE_URL}
+# Install all dependencies as root (npm ci does not care about user, but some global bins might)
+RUN npm ci --only=production && npm cache clean --force
+RUN cd backend && \
+    npm pkg delete scripts.prepare && \
+    npm ci --omit=dev && \
+    npm cache clean --force
 
-      # Performance Configuration
-      - MAX_REQUEST_SIZE=${MAX_REQUEST_SIZE}
-      - COMPRESSION_LEVEL=${COMPRESSION_LEVEL}
-      - CACHE_TTL=${CACHE_TTL}
-      - RATE_LIMIT_WINDOW_MS=${RATE_LIMIT_WINDOW_MS}
-      - RATE_LIMIT_MAX_REQUESTS=${RATE_LIMIT_MAX_REQUESTS}
+# Set correct permissions and ownership for all files (as root)
+RUN chmod +x /app/start.sh # Make startup script executable
+RUN chown -R floworx:nodejs /app # Give ownership to non-root user
 
-      # Logging
-      - LOG_LEVEL=${LOG_LEVEL}
+# ---- Switch to non-root user for security ----
+USER floworx
 
-    healthcheck:
-      test: ["CMD", "node", "-e", "require('http').get('http://localhost:5001/api/health', (res) => { process.exit(res.statusCode === 200 ? 0 : 1) }).on('error', () => process.exit(1))"]
-      interval: 60s
-      timeout: 15s
-      retries: 5
-      start_period: 60s
+EXPOSE 5000
 
-    restart: unless-stopped
+# Health check with better error handling
+HEALTHCHECK --interval=30s --timeout=10s --start-period=30s --retries=3 \
+  CMD node -e "require('http').get('http://localhost:5000/api/health', (res) => { process.exit(res.statusCode === 200 ? 0 : 1) }).on('error', () => process.exit(1))"
 
-    # Resource limits for Coolify - Increased for better performance
-    deploy:
-      resources:
-        limits:
-          memory: 2G
-          cpus: '1.5'
-        reservations:
-          memory: 1G
-          cpus: '0.75'
+# Use dumb-init to handle signals properly
+ENTRYPOINT ["dumb-init", "--"]
 
-# KeyDB service for caching (if not managed by Coolify)
-  keydb:
-    image: eqalpha/keydb:latest
-    container_name: floworx-keydb
-    ports:
-      - "6379:6379"
-    environment:
-      - KEYDB_PASSWORD=${REDIS_PASSWORD}
-    command: keydb-server --requirepass ${REDIS_PASSWORD}
-    restart: unless-stopped
-    deploy:
-      resources:
-        limits:
-          memory: 256M
-          cpus: '0.5'
-
-# Note: PostgreSQL can be managed by Coolify
-# Remove the keydb service above if using Coolify-managed KeyDB
+# Start the application using the startup script
+CMD ["/app/start.sh"]

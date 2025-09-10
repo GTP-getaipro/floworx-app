@@ -182,7 +182,8 @@ const RegisterForm = () => {
         password: values.password,
         firstName: values.firstName,
         lastName: values.lastName,
-        companyName: values.companyName,
+        businessName: values.companyName,
+        phone: values.phone || '+1234567890', // Default phone if not provided
         agreeToTerms: true,
         marketingConsent: false,
       });

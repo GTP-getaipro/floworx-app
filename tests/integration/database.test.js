@@ -17,7 +17,7 @@ describe('Database Integration Tests - Business Types & Password Reset', () => {
       email: `test-${uuidv4()}@floworx-test.com`,
       password: 'TestPassword123!',
       email_confirm: true
-    });
+    }), 90000;
     
     if (error) throw error;
     testUserId = user.user.id;
@@ -352,7 +352,7 @@ describe('Database Integration Tests - Business Types & Password Reset', () => {
         email: `test-rls-${uuidv4()}@floworx-test.com`,
         password: 'TestPassword123!',
         email_confirm: true
-      });
+      }), 90000;
       
       if (error) throw error;
       anotherUserId = user.user.id;

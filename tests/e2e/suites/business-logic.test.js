@@ -5,9 +5,7 @@
 
 const { TestEnvironment } = require('../setup/test-environment');
 const axios = require('axios');
-const { expect } = require('chai');
-
-describe('Core Business Logic E2E Tests', function() {
+describe('Core Business Logic E2E Tests', () => {
   this.timeout(120000); // 2 minute timeout for complex flows
   
   let testEnv;
@@ -16,7 +14,7 @@ describe('Core Business Logic E2E Tests', function() {
   let authToken;
   let testUserId;
   
-  before(async function() {
+  beforeAll(async () => {
     testEnv = new TestEnvironment();
     await testEnv.setup();
     config = testEnv.getConfig();
@@ -26,7 +24,7 @@ describe('Core Business Logic E2E Tests', function() {
       baseURL: `http://localhost:${config.server.port}/api`,
       timeout: 15000,
       validateStatus: () => true
-    });
+    }), 90000;
     
     // Login to get auth token
     const loginResponse = await apiClient.post('/auth/login', {
@@ -41,27 +39,27 @@ describe('Core Business Logic E2E Tests', function() {
     apiClient.defaults.headers.common['Authorization'] = `Bearer ${authToken}`;
   });
   
-  after(async function() {
+  afterAll(async () => {
     if (testEnv) {
       await testEnv.cleanup();
     }
   });
 
-  describe('Complete Onboarding Flow', function() {
+  describe('Complete Onboarding Flow', () => {
     let onboardingSessionId;
 
-    it('should start onboarding process', async function() {
+    it('should start onboarding process', async () => {
       const response = await apiClient.post('/onboarding/start');
       
-      expect(response.status).to.equal(200);
-      expect(response.data).to.have.property('success', true);
-      expect(response.data.data).to.have.property('sessionId');
-      expect(response.data.data).to.have.property('currentStep', 'business_info');
+      expect(response.status).toBe(200);
+      expect(response.data).toHaveProperty('success', true);
+      expect(response.data.data).toHaveProperty('sessionId');
+      expect(response.data.data).toHaveProperty('currentStep', 'business_info');
       
       onboardingSessionId = response.data.data.sessionId;
     });
 
-    it('should complete business info step', async function() {
+    it('should complete business info step', async () => {
       const businessInfo = {
         businessName: 'E2E Test Hot Tub Services',
         businessType: 'hot_tub',
@@ -82,9 +80,9 @@ describe('Core Business Logic E2E Tests', function() {
         ...businessInfo
       });
       
-      expect(response.status).to.equal(200);
-      expect(response.data).to.have.property('success', true);
-      expect(response.data.data).to.have.property('nextStep', 'gmail_connection');
+      expect(response.status).toBe(200);
+      expect(response.data).toHaveProperty('success', true);
+      expect(response.data.data).toHaveProperty('nextStep', 'gmail_connection');
       
       // Verify business configuration was saved
       const dbClient = testEnv.getDbClient();
@@ -93,11 +91,11 @@ describe('Core Business Logic E2E Tests', function() {
         [testUserId]
       );
       
-      expect(configResult.rows).to.have.length(1);
-      expect(configResult.rows[0].business_name).to.equal(businessInfo.businessName);
+      expect(configResult.rows).toHaveLength(1);
+      expect(configResult.rows[0].business_name).toBe(businessInfo.businessName);
     });
 
-    it('should handle Gmail connection step', async function() {
+    it('should handle Gmail connection step', async () => {
       // Mock Gmail OAuth flow
       const response = await apiClient.post('/onboarding/gmail-connection', {
         sessionId: onboardingSessionId,
@@ -110,11 +108,11 @@ describe('Core Business Logic E2E Tests', function() {
       expect(response.status).to.be.oneOf([200, 400]); // Success or validation error
       
       if (response.status === 200) {
-        expect(response.data.data).to.have.property('nextStep', 'label_mapping');
+        expect(response.data.data).toHaveProperty('nextStep', 'label_mapping');
       }
     });
 
-    it('should complete label mapping step', async function() {
+    it('should complete label mapping step', async () => {
       const labelMappings = {
         mappings: [
           {
@@ -145,12 +143,12 @@ describe('Core Business Logic E2E Tests', function() {
         ...labelMappings
       });
       
-      expect(response.status).to.equal(200);
-      expect(response.data).to.have.property('success', true);
-      expect(response.data.data).to.have.property('nextStep', 'team_notifications');
+      expect(response.status).toBe(200);
+      expect(response.data).toHaveProperty('success', true);
+      expect(response.data.data).toHaveProperty('nextStep', 'team_notifications');
     });
 
-    it('should complete team notifications step', async function() {
+    it('should complete team notifications step', async () => {
       const teamNotifications = {
         notifications: [
           {
@@ -180,12 +178,12 @@ describe('Core Business Logic E2E Tests', function() {
         ...teamNotifications
       });
       
-      expect(response.status).to.equal(200);
-      expect(response.data).to.have.property('success', true);
-      expect(response.data.data).to.have.property('nextStep', 'workflow_preferences');
+      expect(response.status).toBe(200);
+      expect(response.data).toHaveProperty('success', true);
+      expect(response.data.data).toHaveProperty('nextStep', 'workflow_preferences');
     });
 
-    it('should complete workflow preferences step', async function() {
+    it('should complete workflow preferences step', async () => {
       const workflowPreferences = {
         autoStart: true,
         businessHours: {
@@ -215,20 +213,20 @@ describe('Core Business Logic E2E Tests', function() {
         ...workflowPreferences
       });
       
-      expect(response.status).to.equal(200);
-      expect(response.data).to.have.property('success', true);
-      expect(response.data.data).to.have.property('nextStep', 'review');
+      expect(response.status).toBe(200);
+      expect(response.data).toHaveProperty('success', true);
+      expect(response.data.data).toHaveProperty('nextStep', 'review');
     });
 
-    it('should complete onboarding review and finalization', async function() {
+    it('should complete onboarding review and finalization', async () => {
       const response = await apiClient.post('/onboarding/complete', {
         sessionId: onboardingSessionId,
         confirmed: true
       });
       
-      expect(response.status).to.equal(200);
-      expect(response.data).to.have.property('success', true);
-      expect(response.data.data).to.have.property('completed', true);
+      expect(response.status).toBe(200);
+      expect(response.data).toHaveProperty('success', true);
+      expect(response.data.data).toHaveProperty('completed', true);
       
       // Verify onboarding progress was marked complete
       const dbClient = testEnv.getDbClient();
@@ -237,24 +235,24 @@ describe('Core Business Logic E2E Tests', function() {
         [testUserId]
       );
       
-      expect(progressResult.rows).to.have.length(1);
+      expect(progressResult.rows).toHaveLength(1);
       expect(progressResult.rows[0].completed_at).to.not.be.null;
     });
 
-    it('should get onboarding status', async function() {
+    it('should get onboarding status', async () => {
       const response = await apiClient.get('/onboarding/status');
       
-      expect(response.status).to.equal(200);
-      expect(response.data).to.have.property('success', true);
-      expect(response.data.data).to.have.property('completed', true);
-      expect(response.data.data).to.have.property('currentStep', 'completed');
+      expect(response.status).toBe(200);
+      expect(response.data).toHaveProperty('success', true);
+      expect(response.data.data).toHaveProperty('completed', true);
+      expect(response.data.data).toHaveProperty('currentStep', 'completed');
     });
   });
 
-  describe('Workflow Management', function() {
+  describe('Workflow Management', () => {
     let workflowId;
 
-    it('should create a new workflow', async function() {
+    it('should create a new workflow', async () => {
       const workflowData = {
         name: 'Customer Inquiry Auto-Response',
         description: 'Automatically respond to customer inquiries and create follow-up tasks',
@@ -288,36 +286,36 @@ describe('Core Business Logic E2E Tests', function() {
 
       const response = await apiClient.post('/workflows', workflowData);
       
-      expect(response.status).to.equal(201);
-      expect(response.data).to.have.property('success', true);
-      expect(response.data.data).to.have.property('id');
-      expect(response.data.data.name).to.equal(workflowData.name);
+      expect(response.status).toBe(201);
+      expect(response.data).toHaveProperty('success', true);
+      expect(response.data.data).toHaveProperty('id');
+      expect(response.data.data.name).toBe(workflowData.name);
       
       workflowId = response.data.data.id;
     });
 
-    it('should get workflow list', async function() {
+    it('should get workflow list', async () => {
       const response = await apiClient.get('/workflows');
       
-      expect(response.status).to.equal(200);
-      expect(response.data).to.have.property('success', true);
-      expect(response.data.data).to.be.an('array');
-      expect(response.data.data.length).to.be.greaterThan(0);
+      expect(response.status).toBe(200);
+      expect(response.data).toHaveProperty('success', true);
+      expect(Array.isArray(response.data.data) ? "array" : typeof response.data.data).toBe('array');
+      expect(response.data.data.length).toBeGreaterThan(0);
       
       const workflow = response.data.data.find(w => w.id === workflowId);
       expect(workflow).to.exist;
     });
 
-    it('should get specific workflow', async function() {
+    it('should get specific workflow', async () => {
       const response = await apiClient.get(`/workflows/${workflowId}`);
       
-      expect(response.status).to.equal(200);
-      expect(response.data).to.have.property('success', true);
-      expect(response.data.data.id).to.equal(workflowId);
-      expect(response.data.data.name).to.equal('Customer Inquiry Auto-Response');
+      expect(response.status).toBe(200);
+      expect(response.data).toHaveProperty('success', true);
+      expect(response.data.data.id).toBe(workflowId);
+      expect(response.data.data.name).toBe('Customer Inquiry Auto-Response');
     });
 
-    it('should update workflow', async function() {
+    it('should update workflow', async () => {
       const updateData = {
         name: 'Updated Customer Inquiry Workflow',
         description: 'Updated description for the workflow',
@@ -326,13 +324,13 @@ describe('Core Business Logic E2E Tests', function() {
 
       const response = await apiClient.put(`/workflows/${workflowId}`, updateData);
       
-      expect(response.status).to.equal(200);
-      expect(response.data).to.have.property('success', true);
-      expect(response.data.data.name).to.equal(updateData.name);
-      expect(response.data.data.is_active).to.equal(false);
+      expect(response.status).toBe(200);
+      expect(response.data).toHaveProperty('success', true);
+      expect(response.data.data.name).toBe(updateData.name);
+      expect(response.data.data.is_active).toBe(false);
     });
 
-    it('should execute workflow', async function() {
+    it('should execute workflow', async () => {
       const executionData = {
         inputData: {
           emailId: 'test-email-123',
@@ -348,35 +346,35 @@ describe('Core Business Logic E2E Tests', function() {
 
       const response = await apiClient.post(`/workflows/${workflowId}/execute`, executionData);
       
-      expect(response.status).to.equal(200);
-      expect(response.data).to.have.property('success', true);
-      expect(response.data.data).to.have.property('executionId');
-      expect(response.data.data).to.have.property('status', 'pending');
+      expect(response.status).toBe(200);
+      expect(response.data).toHaveProperty('success', true);
+      expect(response.data.data).toHaveProperty('executionId');
+      expect(response.data.data).toHaveProperty('status', 'pending');
     });
 
-    it('should get workflow execution history', async function() {
+    it('should get workflow execution history', async () => {
       const response = await apiClient.get(`/workflows/${workflowId}/executions`);
       
-      expect(response.status).to.equal(200);
-      expect(response.data).to.have.property('success', true);
-      expect(response.data.data).to.be.an('array');
-      expect(response.data.data.length).to.be.greaterThan(0);
+      expect(response.status).toBe(200);
+      expect(response.data).toHaveProperty('success', true);
+      expect(Array.isArray(response.data.data) ? "array" : typeof response.data.data).toBe('array');
+      expect(response.data.data.length).toBeGreaterThan(0);
     });
 
-    it('should delete workflow', async function() {
+    it('should delete workflow', async () => {
       const response = await apiClient.delete(`/workflows/${workflowId}`);
       
-      expect(response.status).to.equal(200);
-      expect(response.data).to.have.property('success', true);
+      expect(response.status).toBe(200);
+      expect(response.data).toHaveProperty('success', true);
       
       // Verify workflow is soft deleted
       const getResponse = await apiClient.get(`/workflows/${workflowId}`);
-      expect(getResponse.status).to.equal(404);
+      expect(getResponse.status).toBe(404);
     });
   });
 
-  describe('Analytics and Reporting', function() {
-    before(async function() {
+  describe('Analytics and Reporting', () => {
+    beforeAll(async () => {
       // Seed some analytics data
       const events = [
         {
@@ -396,9 +394,9 @@ describe('Core Business Logic E2E Tests', function() {
       for (const event of events) {
         await apiClient.post('/analytics/track', event);
       }
-    });
+    }), 90000;
 
-    it('should track analytics events', async function() {
+    it('should track analytics events', async () => {
       const eventData = {
         eventType: 'workflow_executed',
         eventData: {
@@ -415,11 +413,11 @@ describe('Core Business Logic E2E Tests', function() {
 
       const response = await apiClient.post('/analytics/track', eventData);
       
-      expect(response.status).to.equal(200);
-      expect(response.data).to.have.property('success', true);
+      expect(response.status).toBe(200);
+      expect(response.data).toHaveProperty('success', true);
     });
 
-    it('should get analytics dashboard data', async function() {
+    it('should get analytics dashboard data', async () => {
       const response = await apiClient.get('/analytics/dashboard', {
         params: {
           period: 'week',
@@ -427,13 +425,13 @@ describe('Core Business Logic E2E Tests', function() {
         }
       });
       
-      expect(response.status).to.equal(200);
-      expect(response.data).to.have.property('success', true);
-      expect(response.data.data).to.have.property('metrics');
-      expect(response.data.data).to.have.property('period', 'week');
+      expect(response.status).toBe(200);
+      expect(response.data).toHaveProperty('success', true);
+      expect(response.data.data).toHaveProperty('metrics');
+      expect(response.data.data).toHaveProperty('period', 'week');
     });
 
-    it('should get analytics events with filtering', async function() {
+    it('should get analytics events with filtering', async () => {
       const response = await apiClient.get('/analytics/events', {
         params: {
           eventType: 'workflow_executed',
@@ -444,13 +442,13 @@ describe('Core Business Logic E2E Tests', function() {
         }
       });
       
-      expect(response.status).to.equal(200);
-      expect(response.data).to.have.property('success', true);
-      expect(response.data.data).to.be.an('array');
-      expect(response.data.meta).to.have.property('pagination');
+      expect(response.status).toBe(200);
+      expect(response.data).toHaveProperty('success', true);
+      expect(Array.isArray(response.data.data) ? "array" : typeof response.data.data).toBe('array');
+      expect(response.data.meta).toHaveProperty('pagination');
     });
 
-    it('should generate analytics report', async function() {
+    it('should generate analytics report', async () => {
       const response = await apiClient.post('/analytics/report', {
         reportType: 'workflow_performance',
         period: 'month',
@@ -459,23 +457,23 @@ describe('Core Business Logic E2E Tests', function() {
         }
       });
       
-      expect(response.status).to.equal(200);
-      expect(response.data).to.have.property('success', true);
-      expect(response.data.data).to.have.property('reportId');
+      expect(response.status).toBe(200);
+      expect(response.data).toHaveProperty('success', true);
+      expect(response.data.data).toHaveProperty('reportId');
     });
   });
 
-  describe('Business Configuration Management', function() {
-    it('should get current business configuration', async function() {
+  describe('Business Configuration Management', () => {
+    it('should get current business configuration', async () => {
       const response = await apiClient.get('/business-types/configuration');
       
-      expect(response.status).to.equal(200);
-      expect(response.data).to.have.property('success', true);
-      expect(response.data.data).to.have.property('businessType');
-      expect(response.data.data).to.have.property('businessName');
+      expect(response.status).toBe(200);
+      expect(response.data).toHaveProperty('success', true);
+      expect(response.data.data).toHaveProperty('businessType');
+      expect(response.data.data).toHaveProperty('businessName');
     });
 
-    it('should update business configuration', async function() {
+    it('should update business configuration', async () => {
       const updateData = {
         businessName: 'Updated E2E Test Business',
         businessDescription: 'Updated description for E2E testing',
@@ -492,22 +490,22 @@ describe('Core Business Logic E2E Tests', function() {
 
       const response = await apiClient.put('/business-types/configuration', updateData);
       
-      expect(response.status).to.equal(200);
-      expect(response.data).to.have.property('success', true);
-      expect(response.data.data.business_name).to.equal(updateData.businessName);
+      expect(response.status).toBe(200);
+      expect(response.data).toHaveProperty('success', true);
+      expect(response.data.data.business_name).toBe(updateData.businessName);
     });
 
-    it('should get available business types', async function() {
+    it('should get available business types', async () => {
       const response = await apiClient.get('/business-types');
       
-      expect(response.status).to.equal(200);
-      expect(response.data).to.have.property('success', true);
-      expect(response.data.data).to.be.an('array');
-      expect(response.data.data.length).to.be.greaterThan(0);
+      expect(response.status).toBe(200);
+      expect(response.data).toHaveProperty('success', true);
+      expect(Array.isArray(response.data.data) ? "array" : typeof response.data.data).toBe('array');
+      expect(response.data.data.length).toBeGreaterThan(0);
       
       const hotTubType = response.data.data.find(type => type.value === 'hot_tub');
       expect(hotTubType).to.exist;
-      expect(hotTubType).to.have.property('label');
+      expect(hotTubType).toHaveProperty('label');
     });
   });
 });

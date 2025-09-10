@@ -29,7 +29,7 @@ describe('API Integration Tests - Business Types & Password Reset', () => {
         default_categories: [
           { name: 'Test Category', priority: 'medium', description: 'Test category' }
         ]
-      });
+      }), 90000;
 
     if (businessTypeResponse.status === 201) {
       testBusinessTypeId = businessTypeResponse.body.data.id;

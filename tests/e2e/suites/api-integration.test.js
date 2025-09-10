@@ -5,61 +5,58 @@
 
 const { TestEnvironment } = require('../setup/test-environment');
 const axios = require('axios');
-const { expect } = require('chai');
 
-describe('API Integration E2E Tests', function() {
-  this.timeout(90000); // 90 second timeout
-  
+describe('API Integration E2E Tests', () => {
   let testEnv;
   let config;
   let apiClient;
   let authToken;
   let testUserId;
-  
-  before(async function() {
+
+  beforeAll(async () => {
     testEnv = new TestEnvironment();
     await testEnv.setup();
     config = testEnv.getConfig();
-    
+
     // Setup API client
     apiClient = axios.create({
       baseURL: `http://localhost:${config.server.port}/api`,
       timeout: 15000,
       validateStatus: () => true
-    });
-    
+    }), 90000;
+
     // Login to get auth token
     const loginResponse = await apiClient.post('/auth/login', {
       email: config.testData.users.valid.email,
       password: config.testData.users.valid.password
     });
-    
+
     authToken = loginResponse.data.data.token;
     testUserId = loginResponse.data.data.user.id;
-    
+
     // Set default authorization header
     apiClient.defaults.headers.common['Authorization'] = `Bearer ${authToken}`;
-  });
-  
-  after(async function() {
+  }, 90000); // 90 second timeout
+
+  afterAll(async () => {
     if (testEnv) {
       await testEnv.cleanup();
     }
   });
 
-  describe('CRUD Operations - Users', function() {
-    it('should get user profile', async function() {
+  describe('CRUD Operations - Users', () => {
+    it('should get user profile', async () => {
       const response = await apiClient.get('/auth/profile');
-      
-      expect(response.status).to.equal(200);
-      expect(response.data).to.have.property('success', true);
-      expect(response.data.data).to.have.property('user');
-      expect(response.data.data.user).to.have.property('id', testUserId);
-      expect(response.data.data.user).to.have.property('email');
-      expect(response.data.data.user).to.not.have.property('password_hash');
+
+      expect(response.status).toBe(200);
+      expect(response.data).toHaveProperty('success', true);
+      expect(response.data.data).toHaveProperty('user');
+      expect(response.data.data.user).toHaveProperty('id', testUserId);
+      expect(response.data.data.user).toHaveProperty('email');
+      expect(response.data.data.user).not.toHaveProperty('password_hash');
     });
 
-    it('should update user profile', async function() {
+    it('should update user profile', async () => {
       const updateData = {
         firstName: 'Updated',
         lastName: 'Name',
@@ -67,14 +64,14 @@ describe('API Integration E2E Tests', function() {
       };
 
       const response = await apiClient.put('/auth/profile', updateData);
-      
-      expect(response.status).to.equal(200);
-      expect(response.data).to.have.property('success', true);
-      expect(response.data.data.user.first_name).to.equal(updateData.firstName);
-      expect(response.data.data.user.last_name).to.equal(updateData.lastName);
+
+      expect(response.status).toBe(200);
+      expect(response.data).toHaveProperty('success', true);
+      expect(response.data.data.user.first_name).toBe(updateData.firstName);
+      expect(response.data.data.user.last_name).toBe(updateData.lastName);
     });
 
-    it('should validate user profile updates', async function() {
+    it('should validate user profile updates', async () => {
       const invalidData = {
         firstName: '', // Empty name
         email: 'invalid-email', // Invalid email format
@@ -82,17 +79,17 @@ describe('API Integration E2E Tests', function() {
       };
 
       const response = await apiClient.put('/auth/profile', invalidData);
-      
-      expect(response.status).to.equal(400);
-      expect(response.data).to.have.property('success', false);
-      expect(response.data.error).to.have.property('type', 'VALIDATION_ERROR');
+
+      expect(response.status).toBe(400);
+      expect(response.data).toHaveProperty('success', false);
+      expect(response.data.error).toHaveProperty('type', 'VALIDATION_ERROR');
     });
   });
 
-  describe('CRUD Operations - Workflows', function() {
+  describe('CRUD Operations - Workflows', () => {
     let workflowId;
 
-    it('should create workflow with validation', async function() {
+    it('should create workflow with validation', async () => {
       const validWorkflow = {
         name: 'API Test Workflow',
         description: 'Test workflow for API integration testing',
@@ -107,14 +104,14 @@ describe('API Integration E2E Tests', function() {
 
       const response = await apiClient.post('/workflows', validWorkflow);
       
-      expect(response.status).to.equal(201);
-      expect(response.data).to.have.property('success', true);
-      expect(response.data.data).to.have.property('id');
+      expect(response.status).toBe(201);
+      expect(response.data).toHaveProperty('success', true);
+      expect(response.data.data).toHaveProperty('id');
       
       workflowId = response.data.data.id;
     });
 
-    it('should reject invalid workflow creation', async function() {
+    it('should reject invalid workflow creation', async () => {
       const invalidWorkflow = {
         name: '', // Empty name
         triggerType: 'invalid_type', // Invalid trigger type
@@ -123,25 +120,25 @@ describe('API Integration E2E Tests', function() {
 
       const response = await apiClient.post('/workflows', invalidWorkflow);
       
-      expect(response.status).to.equal(400);
-      expect(response.data).to.have.property('success', false);
-      expect(response.data.error).to.have.property('type', 'VALIDATION_ERROR');
+      expect(response.status).toBe(400);
+      expect(response.data).toHaveProperty('success', false);
+      expect(response.data.error).toHaveProperty('type', 'VALIDATION_ERROR');
     });
 
-    it('should get workflows with pagination', async function() {
+    it('should get workflows with pagination', async () => {
       const response = await apiClient.get('/workflows', {
         params: { page: 1, limit: 10, sortBy: 'created_at', sortOrder: 'desc' }
       });
       
-      expect(response.status).to.equal(200);
-      expect(response.data).to.have.property('success', true);
-      expect(response.data.data).to.be.an('array');
-      expect(response.data.meta).to.have.property('pagination');
-      expect(response.data.meta.pagination).to.have.property('currentPage', 1);
-      expect(response.data.meta.pagination).to.have.property('limit', 10);
+      expect(response.status).toBe(200);
+      expect(response.data).toHaveProperty('success', true);
+      expect(Array.isArray(response.data.data) ? "array" : typeof response.data.data).toBe('array');
+      expect(response.data.meta).toHaveProperty('pagination');
+      expect(response.data.meta.pagination).toHaveProperty('currentPage', 1);
+      expect(response.data.meta.pagination).toHaveProperty('limit', 10);
     });
 
-    it('should get workflows with filtering', async function() {
+    it('should get workflows with filtering', async () => {
       const response = await apiClient.get('/workflows', {
         params: { 
           status: 'active',
@@ -150,17 +147,17 @@ describe('API Integration E2E Tests', function() {
         }
       });
       
-      expect(response.status).to.equal(200);
-      expect(response.data).to.have.property('success', true);
-      expect(response.data.data).to.be.an('array');
+      expect(response.status).toBe(200);
+      expect(response.data).toHaveProperty('success', true);
+      expect(Array.isArray(response.data.data) ? "array" : typeof response.data.data).toBe('array');
       
       if (response.data.data.length > 0) {
         const workflow = response.data.data[0];
-        expect(workflow.name).to.include('API Test');
+        expect(workflow.name).toContain('API Test');
       }
     });
 
-    it('should update workflow', async function() {
+    it('should update workflow', async () => {
       const updateData = {
         name: 'Updated API Test Workflow',
         description: 'Updated description',
@@ -169,35 +166,35 @@ describe('API Integration E2E Tests', function() {
 
       const response = await apiClient.put(`/workflows/${workflowId}`, updateData);
       
-      expect(response.status).to.equal(200);
-      expect(response.data).to.have.property('success', true);
-      expect(response.data.data.name).to.equal(updateData.name);
-      expect(response.data.data.is_active).to.equal(false);
+      expect(response.status).toBe(200);
+      expect(response.data).toHaveProperty('success', true);
+      expect(response.data.data.name).toBe(updateData.name);
+      expect(response.data.data.is_active).toBe(false);
     });
 
-    it('should handle workflow not found', async function() {
+    it('should handle workflow not found', async () => {
       const fakeId = '00000000-0000-4000-8000-000000000000';
       const response = await apiClient.get(`/workflows/${fakeId}`);
       
-      expect(response.status).to.equal(404);
-      expect(response.data).to.have.property('success', false);
-      expect(response.data.error).to.have.property('type', 'NOT_FOUND_ERROR');
+      expect(response.status).toBe(404);
+      expect(response.data).toHaveProperty('success', false);
+      expect(response.data.error).toHaveProperty('type', 'NOT_FOUND_ERROR');
     });
 
-    it('should delete workflow (soft delete)', async function() {
+    it('should delete workflow (soft delete)', async () => {
       const response = await apiClient.delete(`/workflows/${workflowId}`);
       
-      expect(response.status).to.equal(200);
-      expect(response.data).to.have.property('success', true);
+      expect(response.status).toBe(200);
+      expect(response.data).toHaveProperty('success', true);
       
       // Verify workflow is no longer accessible
       const getResponse = await apiClient.get(`/workflows/${workflowId}`);
-      expect(getResponse.status).to.equal(404);
+      expect(getResponse.status).toBe(404);
     });
   });
 
-  describe('Error Handling and Validation', function() {
-    it('should handle malformed JSON', async function() {
+  describe('Error Handling and Validation', () => {
+    it('should handle malformed JSON', async () => {
       const response = await axios.post(
         `http://localhost:${config.server.port}/api/workflows`,
         'invalid json',
@@ -210,32 +207,32 @@ describe('API Integration E2E Tests', function() {
         }
       );
       
-      expect(response.status).to.equal(400);
-      expect(response.data).to.have.property('success', false);
+      expect(response.status).toBe(400);
+      expect(response.data).toHaveProperty('success', false);
     });
 
-    it('should handle missing required fields', async function() {
+    it('should handle missing required fields', async () => {
       const response = await apiClient.post('/workflows', {});
       
-      expect(response.status).to.equal(400);
-      expect(response.data).to.have.property('success', false);
-      expect(response.data.error).to.have.property('type', 'VALIDATION_ERROR');
-      expect(response.data.error).to.have.property('details');
+      expect(response.status).toBe(400);
+      expect(response.data).toHaveProperty('success', false);
+      expect(response.data.error).toHaveProperty('type', 'VALIDATION_ERROR');
+      expect(response.data.error).toHaveProperty('details');
     });
 
-    it('should handle invalid field types', async function() {
+    it('should handle invalid field types', async () => {
       const response = await apiClient.post('/workflows', {
         name: 123, // Should be string
         isActive: 'yes', // Should be boolean
         configuration: 'invalid' // Should be object
       });
       
-      expect(response.status).to.equal(400);
-      expect(response.data).to.have.property('success', false);
-      expect(response.data.error).to.have.property('type', 'VALIDATION_ERROR');
+      expect(response.status).toBe(400);
+      expect(response.data).toHaveProperty('success', false);
+      expect(response.data.error).toHaveProperty('type', 'VALIDATION_ERROR');
     });
 
-    it('should handle field length validation', async function() {
+    it('should handle field length validation', async () => {
       const response = await apiClient.post('/workflows', {
         name: 'a'.repeat(300), // Too long
         description: 'b'.repeat(2000), // Too long
@@ -243,12 +240,12 @@ describe('API Integration E2E Tests', function() {
         configuration: { steps: [] }
       });
       
-      expect(response.status).to.equal(400);
-      expect(response.data).to.have.property('success', false);
-      expect(response.data.error).to.have.property('type', 'VALIDATION_ERROR');
+      expect(response.status).toBe(400);
+      expect(response.data).toHaveProperty('success', false);
+      expect(response.data.error).toHaveProperty('type', 'VALIDATION_ERROR');
     });
 
-    it('should provide detailed validation errors', async function() {
+    it('should provide detailed validation errors', async () => {
       const response = await apiClient.post('/auth/register', {
         firstName: '',
         lastName: '',
@@ -258,16 +255,16 @@ describe('API Integration E2E Tests', function() {
         businessType: 'invalid'
       });
       
-      expect(response.status).to.equal(400);
-      expect(response.data).to.have.property('success', false);
-      expect(response.data.error).to.have.property('details');
-      expect(response.data.error.details).to.be.an('array');
-      expect(response.data.error.details.length).to.be.greaterThan(0);
+      expect(response.status).toBe(400);
+      expect(response.data).toHaveProperty('success', false);
+      expect(response.data.error).toHaveProperty('details');
+      expect(Array.isArray(response.data.error.details) ? "array" : typeof response.data.error.details).toBe('array');
+      expect(response.data.error.details.length).toBeGreaterThan(0);
     });
   });
 
-  describe('Security Middleware', function() {
-    it('should require authentication for protected routes', async function() {
+  describe('Security Middleware', () => {
+    it('should require authentication for protected routes', async () => {
       const unauthenticatedClient = axios.create({
         baseURL: `http://localhost:${config.server.port}/api`,
         validateStatus: () => true
@@ -275,21 +272,21 @@ describe('API Integration E2E Tests', function() {
 
       const response = await unauthenticatedClient.get('/workflows');
       
-      expect(response.status).to.equal(401);
-      expect(response.data).to.have.property('success', false);
-      expect(response.data.error).to.have.property('type', 'AUTHENTICATION_ERROR');
+      expect(response.status).toBe(401);
+      expect(response.data).toHaveProperty('success', false);
+      expect(response.data.error).toHaveProperty('type', 'AUTHENTICATION_ERROR');
     });
 
-    it('should reject invalid JWT tokens', async function() {
+    it('should reject invalid JWT tokens', async () => {
       const response = await apiClient.get('/workflows', {
         headers: { Authorization: 'Bearer invalid-token' }
       });
       
-      expect(response.status).to.equal(401);
-      expect(response.data).to.have.property('success', false);
+      expect(response.status).toBe(401);
+      expect(response.data).toHaveProperty('success', false);
     });
 
-    it('should enforce rate limiting', async function() {
+    it('should enforce rate limiting', async () => {
       // Create client without auth to test rate limiting on auth endpoints
       const rateLimitClient = axios.create({
         baseURL: `http://localhost:${config.server.port}/api`,
@@ -311,10 +308,10 @@ describe('API Integration E2E Tests', function() {
       
       // At least one should be rate limited
       const rateLimited = responses.some(r => r.status === 429);
-      expect(rateLimited).to.be.true;
+      expect(rateLimited).toBe(true);
     });
 
-    it('should sanitize input data', async function() {
+    it('should sanitize input data', async () => {
       const maliciousData = {
         name: '<script>alert("xss")</script>',
         description: 'javascript:alert("xss")',
@@ -329,14 +326,14 @@ describe('API Integration E2E Tests', function() {
       if (response.status === 201) {
         // If created, verify data was sanitized
         const workflow = response.data.data;
-        expect(workflow.name).to.not.include('<script>');
-        expect(workflow.description).to.not.include('javascript:');
+        expect(workflow.name).not.toContain('<script>');
+        expect(workflow.description).not.toContain('javascript:');
       }
     });
   });
 
-  describe('Database Transactions and Data Integrity', function() {
-    it('should maintain data consistency in complex operations', async function() {
+  describe('Database Transactions and Data Integrity', () => {
+    it('should maintain data consistency in complex operations', async () => {
       // Test onboarding flow which involves multiple table updates
       const onboardingData = {
         businessName: 'Transaction Test Business',
@@ -352,7 +349,7 @@ describe('API Integration E2E Tests', function() {
         ...onboardingData
       });
       
-      expect(businessResponse.status).to.equal(200);
+      expect(businessResponse.status).toBe(200);
       
       // Verify data was saved consistently
       const dbClient = testEnv.getDbClient();
@@ -361,11 +358,11 @@ describe('API Integration E2E Tests', function() {
         [testUserId]
       );
       
-      expect(configResult.rows).to.have.length(1);
-      expect(configResult.rows[0].business_name).to.equal(onboardingData.businessName);
+      expect(configResult.rows).toHaveLength(1);
+      expect(configResult.rows[0].business_name).toBe(onboardingData.businessName);
     });
 
-    it('should handle concurrent requests safely', async function() {
+    it('should handle concurrent requests safely', async () => {
       // Create multiple workflows concurrently
       const workflowPromises = [];
       for (let i = 0; i < 5; i++) {
@@ -384,17 +381,17 @@ describe('API Integration E2E Tests', function() {
       
       // All should succeed
       responses.forEach(response => {
-        expect(response.status).to.equal(201);
-        expect(response.data).to.have.property('success', true);
+        expect(response.status).toBe(201);
+        expect(response.data).toHaveProperty('success', true);
       });
 
       // Verify all workflows were created with unique IDs
       const workflowIds = responses.map(r => r.data.data.id);
       const uniqueIds = [...new Set(workflowIds)];
-      expect(uniqueIds.length).to.equal(workflowIds.length);
+      expect(uniqueIds.length).toBe(workflowIds.length);
     });
 
-    it('should rollback failed transactions', async function() {
+    it('should rollback failed transactions', async () => {
       // This would require a scenario that causes a transaction failure
       // For now, we'll test that partial updates don't occur
       
@@ -415,13 +412,13 @@ describe('API Integration E2E Tests', function() {
       
       if (response.status !== 201) {
         // If creation failed, count should be the same (no partial insert)
-        expect(afterCount.rows[0].count).to.equal(beforeCount.rows[0].count);
+        expect(afterCount.rows[0].count).toBe(beforeCount.rows[0].count);
       }
     });
   });
 
-  describe('Performance and Load Testing', function() {
-    it('should handle multiple simultaneous requests', async function() {
+  describe('Performance and Load Testing', () => {
+    it('should handle multiple simultaneous requests', async () => {
       const startTime = Date.now();
       
       // Create 20 simultaneous requests
@@ -436,30 +433,30 @@ describe('API Integration E2E Tests', function() {
       
       // All requests should succeed
       responses.forEach(response => {
-        expect(response.status).to.equal(200);
-        expect(response.data).to.have.property('success', true);
+        expect(response.status).toBe(200);
+        expect(response.data).toHaveProperty('success', true);
       });
       
       // Should complete within reasonable time (adjust based on your requirements)
-      expect(totalTime).to.be.lessThan(10000); // 10 seconds
+      expect(totalTime).toBeLessThan(10000); // 10 seconds
       
       console.log(`20 simultaneous requests completed in ${totalTime}ms`);
     });
 
-    it('should handle large data sets efficiently', async function() {
+    it('should handle large data sets efficiently', async () => {
       // Test pagination with large offset
       const response = await apiClient.get('/analytics/events', {
         params: { page: 1, limit: 100 }
       });
       
-      expect(response.status).to.equal(200);
-      expect(response.data).to.have.property('success', true);
+      expect(response.status).toBe(200);
+      expect(response.data).toHaveProperty('success', true);
       
       // Response should be reasonably fast even with large datasets
       // This would be more meaningful with actual large datasets
     });
 
-    it('should maintain performance under load', async function() {
+    it('should maintain performance under load', async () => {
       const iterations = 10;
       const responseTimes = [];
       
@@ -468,7 +465,7 @@ describe('API Integration E2E Tests', function() {
         const response = await apiClient.get('/auth/profile');
         const endTime = Date.now();
         
-        expect(response.status).to.equal(200);
+        expect(response.status).toBe(200);
         responseTimes.push(endTime - startTime);
       }
       
@@ -479,8 +476,8 @@ describe('API Integration E2E Tests', function() {
       console.log(`Max response time: ${maxResponseTime}ms`);
       
       // Performance thresholds (adjust based on requirements)
-      expect(avgResponseTime).to.be.lessThan(500); // 500ms average
-      expect(maxResponseTime).to.be.lessThan(2000); // 2s max
+      expect(avgResponseTime).toBeLessThan(500); // 500ms average
+      expect(maxResponseTime).toBeLessThan(2000); // 2s max
     });
   });
 });

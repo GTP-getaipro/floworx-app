@@ -39,6 +39,30 @@ jest.mock('react-router-dom', () => ({
   useSearchParams: () => [new URLSearchParams(), jest.fn()],
 }));
 
+// Mock AuthContext
+jest.mock('../../frontend/src/contexts/AuthContext', () => ({
+  useAuth: () => ({
+    user: null,
+    token: null,
+    login: jest.fn(),
+    logout: jest.fn(),
+    register: jest.fn(),
+    loading: false,
+    error: null
+  }),
+  AuthProvider: ({ children }) => children
+}));
+
+// Mock ToastContext
+jest.mock('../../frontend/src/contexts/ToastContext', () => ({
+  useToast: () => ({
+    showToast: jest.fn(),
+    hideToast: jest.fn(),
+    toasts: []
+  }),
+  ToastProvider: ({ children }) => children
+}));
+
 // Mock CSS imports
 jest.mock('*.css', () => ({}));
 jest.mock('*.scss', () => ({}));

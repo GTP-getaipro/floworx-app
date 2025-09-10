@@ -18,7 +18,7 @@ describe('Invitation Flow Integration Tests', () => {
     testCompany = await supabaseTest.createTestData('companies', {
       name: 'Test Company',
       user_id: testUser.id
-    });
+    }), 90000;
   });
 
   describe('Create Invitation', () => {
@@ -68,7 +68,7 @@ describe('Invitation Flow Integration Tests', () => {
         email: 'test.invite1@example.com',
         role: 'member',
         status: 'pending'
-      });
+      }), 90000;
       await supabaseTest.createTestData('invitations', {
         company_id: testCompany.id,
         email: 'test.invite2@example.com',
@@ -102,7 +102,7 @@ describe('Invitation Flow Integration Tests', () => {
         email: 'test.accept@example.com',
         role: 'member',
         status: 'pending'
-      });
+      }), 90000;
     });
 
     it('should accept invitation successfully', async () => {
@@ -154,7 +154,7 @@ describe('Invitation Flow Integration Tests', () => {
         email: 'test.cancel@example.com',
         role: 'member',
         status: 'pending'
-      });
+      }), 90000;
     });
 
     it('should cancel invitation successfully', async () => {

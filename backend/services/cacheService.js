@@ -16,10 +16,10 @@ class CacheService {
   constructor() {
     this.redis = null;
     this.memoryCache = new NodeCache({
-      stdTTL: process.env.CACHE_TTL || 60, // Reduced to 1 minute for better memory management
-      checkperiod: 15, // Check for expired keys every 15 seconds
+      stdTTL: process.env.CACHE_TTL || 30, // Reduced to 30 seconds for better memory management
+      checkperiod: 10, // Check for expired keys every 10 seconds
       useClones: false, // Better performance
-      maxKeys: process.env.CACHE_MAX_KEYS || 100, // Reduced for memory efficiency
+      maxKeys: process.env.CACHE_MAX_KEYS || 50, // Further reduced for memory efficiency
       deleteOnExpire: true, // Automatically delete expired keys
       enableLegacyCallbacks: false // Better performance
     });
@@ -46,22 +46,74 @@ class CacheService {
    */
   async initializeKeyDB() {
     // Skip KeyDB initialization if not configured
-    if (!process.env.REDIS_HOST) {
+    if (!process.env.REDIS_HOST && !process.env.REDIS_URL) {
       console.log('⚠️ KeyDB disabled - using memory cache only');
       console.log(`   REDIS_HOST: ${process.env.REDIS_HOST || 'not set'}`);
+      console.log(`   REDIS_URL: ${process.env.REDIS_URL ? 'SET' : 'not set'}`);
       console.log(`   NODE_ENV: ${process.env.NODE_ENV || 'not set'}`);
       this.isRedisConnected = false;
       return;
     }
 
     try {
-      // Try multiple possible KeyDB hostnames
+      // If REDIS_URL is provided, use it directly (Coolify style)
+      if (process.env.REDIS_URL) {
+        console.log('🔗 Using REDIS_URL for KeyDB connection');
+
+        const keydbConfig = {
+          connectTimeout: 5000,
+          commandTimeout: 3000,
+          retryDelayOnFailover: 100,
+          maxRetriesPerRequest: 2,
+          lazyConnect: true,
+          keepAlive: 30000,
+          enableOfflineQueue: true,
+          enableReadyCheck: false,
+          retryStrategy: (times) => {
+            if (times > 3) return null;
+            return Math.min(times * 200, 1000);
+          }
+        };
+
+        this.redis = new Redis(process.env.REDIS_URL, keydbConfig);
+
+        // Set up event handlers
+        this.redis.on('connect', () => {
+          console.log('✅ KeyDB connected successfully via REDIS_URL');
+          this.isRedisConnected = true;
+        });
+
+        this.redis.on('error', error => {
+          console.warn('⚠️ KeyDB error:', error.message);
+          this.isRedisConnected = false;
+          this.stats.errors++;
+        });
+
+        this.redis.on('close', () => {
+          console.warn('⚠️ KeyDB connection closed');
+          this.isRedisConnected = false;
+        });
+
+        // Test connection
+        await Promise.race([
+          this.redis.ping(),
+          new Promise((_, reject) =>
+            setTimeout(() => reject(new Error('Connection timeout')), 5000)
+          )
+        ]);
+
+        console.log('✅ KeyDB connection test successful');
+        this.isRedisConnected = true;
+        return;
+      }
+
+      // Fallback to host-based connection
       const possibleHosts = [
         process.env.REDIS_HOST,
+        'sgkgk4s80s0wosscs4800g0k', // Actual Coolify hostname
+        'keydb-database-sgkgk4s80s0wosscs4800g0k', // Full service name
         'keydb-service',
         'floworx-keydb',
-        'cautious-chinchilla-psogogcssw4coscowc8o8w0w',
-        'redis-database-bgkgcogwgcksc0sccw48c8s0',
         '127.0.0.1'
       ].filter(Boolean);
 
@@ -83,12 +135,11 @@ class CacheService {
             keepAlive: 30000,
             connectTimeout: 5000,
             commandTimeout: 3000,
-            enableOfflineQueue: true, // FIXED: Enable offline queue to prevent write errors
+            enableOfflineQueue: true,
             retryDelayOnClusterDown: 300,
             enableReadyCheck: false,
-            // Enhanced retry strategy for KeyDB
             retryStrategy: (times) => {
-              if (times > 3) {return null;} // Stop retrying after 3 attempts
+              if (times > 3) return null;
               return Math.min(times * 200, 1000);
             }
           };

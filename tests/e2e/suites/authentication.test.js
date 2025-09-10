@@ -5,16 +5,14 @@
 
 const { TestEnvironment } = require('../setup/test-environment');
 const axios = require('axios');
-const { expect } = require('chai');
-
-describe('Authentication Flow E2E Tests', function() {
+describe('Authentication Flow E2E Tests', () => {
   this.timeout(60000); // 60 second timeout for E2E tests
   
   let testEnv;
   let config;
   let apiClient;
   
-  before(async function() {
+  beforeAll(async () => {
     testEnv = new TestEnvironment();
     await testEnv.setup();
     config = testEnv.getConfig();
@@ -24,16 +22,16 @@ describe('Authentication Flow E2E Tests', function() {
       baseURL: `http://localhost:${config.server.port}/api`,
       timeout: 10000,
       validateStatus: () => true // Don't throw on HTTP errors
-    });
+    }), 90000;
   });
   
-  after(async function() {
+  afterAll(async () => {
     if (testEnv) {
       await testEnv.cleanup();
     }
   });
 
-  describe('User Registration', function() {
+  describe('User Registration', () => {
     const testUser = {
       firstName: 'E2E',
       lastName: 'TestUser',
@@ -44,14 +42,14 @@ describe('Authentication Flow E2E Tests', function() {
       acceptTerms: true
     };
 
-    it('should successfully register a new user', async function() {
+    it('should successfully register a new user', async () => {
       const response = await apiClient.post('/auth/register', testUser);
       
-      expect(response.status).to.equal(201);
-      expect(response.data).to.have.property('success', true);
-      expect(response.data.data).to.have.property('user');
-      expect(response.data.data.user).to.have.property('email', testUser.email);
-      expect(response.data.data).to.have.property('token');
+      expect(response.status).toBe(201);
+      expect(response.data).toHaveProperty('success', true);
+      expect(response.data.data).toHaveProperty('user');
+      expect(response.data.data.user).toHaveProperty('email', testUser.email);
+      expect(response.data.data).toHaveProperty('token');
       
       // Verify user was created in database
       const dbClient = testEnv.getDbClient();
@@ -60,39 +58,39 @@ describe('Authentication Flow E2E Tests', function() {
         [testUser.email]
       );
       
-      expect(userResult.rows).to.have.length(1);
-      expect(userResult.rows[0].first_name).to.equal(testUser.firstName);
-      expect(userResult.rows[0].email_verified).to.be.false; // Should require verification
+      expect(userResult.rows).toHaveLength(1);
+      expect(userResult.rows[0].first_name).toBe(testUser.firstName);
+      expect(userResult.rows[0].email_verified).toBe(false); // Should require verification
     });
 
-    it('should reject registration with invalid email', async function() {
+    it('should reject registration with invalid email', async () => {
       const invalidUser = { ...testUser, email: 'invalid-email' };
       const response = await apiClient.post('/auth/register', invalidUser);
       
-      expect(response.status).to.equal(400);
-      expect(response.data).to.have.property('success', false);
-      expect(response.data.error).to.have.property('type', 'VALIDATION_ERROR');
+      expect(response.status).toBe(400);
+      expect(response.data).toHaveProperty('success', false);
+      expect(response.data.error).toHaveProperty('type', 'VALIDATION_ERROR');
     });
 
-    it('should reject registration with weak password', async function() {
+    it('should reject registration with weak password', async () => {
       const weakPasswordUser = { ...testUser, password: '123', email: 'weak@test.com' };
       const response = await apiClient.post('/auth/register', weakPasswordUser);
       
-      expect(response.status).to.equal(400);
-      expect(response.data).to.have.property('success', false);
-      expect(response.data.error.message).to.include('password');
+      expect(response.status).toBe(400);
+      expect(response.data).toHaveProperty('success', false);
+      expect(response.data.error.message).toContain('password');
     });
 
-    it('should reject duplicate email registration', async function() {
+    it('should reject duplicate email registration', async () => {
       // Try to register same user again
       const response = await apiClient.post('/auth/register', testUser);
       
-      expect(response.status).to.equal(409);
-      expect(response.data).to.have.property('success', false);
-      expect(response.data.error).to.have.property('type', 'CONFLICT_ERROR');
+      expect(response.status).toBe(409);
+      expect(response.data).toHaveProperty('success', false);
+      expect(response.data.error).toHaveProperty('type', 'CONFLICT_ERROR');
     });
 
-    it('should reject registration without accepting terms', async function() {
+    it('should reject registration without accepting terms', async () => {
       const noTermsUser = { 
         ...testUser, 
         email: 'noterms@test.com',
@@ -100,49 +98,49 @@ describe('Authentication Flow E2E Tests', function() {
       };
       const response = await apiClient.post('/auth/register', noTermsUser);
       
-      expect(response.status).to.equal(400);
-      expect(response.data).to.have.property('success', false);
+      expect(response.status).toBe(400);
+      expect(response.data).toHaveProperty('success', false);
     });
   });
 
-  describe('User Login', function() {
+  describe('User Login', () => {
     const loginUser = config.testData.users.valid;
 
-    it('should successfully login with valid credentials', async function() {
+    it('should successfully login with valid credentials', async () => {
       const response = await apiClient.post('/auth/login', {
         email: loginUser.email,
         password: loginUser.password
       });
       
-      expect(response.status).to.equal(200);
-      expect(response.data).to.have.property('success', true);
-      expect(response.data.data).to.have.property('user');
-      expect(response.data.data).to.have.property('token');
-      expect(response.data.data.user.email).to.equal(loginUser.email);
+      expect(response.status).toBe(200);
+      expect(response.data).toHaveProperty('success', true);
+      expect(response.data.data).toHaveProperty('user');
+      expect(response.data.data).toHaveProperty('token');
+      expect(response.data.data.user.email).toBe(loginUser.email);
     });
 
-    it('should reject login with invalid email', async function() {
+    it('should reject login with invalid email', async () => {
       const response = await apiClient.post('/auth/login', {
         email: 'nonexistent@test.com',
         password: loginUser.password
       });
       
-      expect(response.status).to.equal(401);
-      expect(response.data).to.have.property('success', false);
-      expect(response.data.error).to.have.property('type', 'AUTHENTICATION_ERROR');
+      expect(response.status).toBe(401);
+      expect(response.data).toHaveProperty('success', false);
+      expect(response.data.error).toHaveProperty('type', 'AUTHENTICATION_ERROR');
     });
 
-    it('should reject login with invalid password', async function() {
+    it('should reject login with invalid password', async () => {
       const response = await apiClient.post('/auth/login', {
         email: loginUser.email,
         password: 'wrongpassword'
       });
       
-      expect(response.status).to.equal(401);
-      expect(response.data).to.have.property('success', false);
+      expect(response.status).toBe(401);
+      expect(response.data).toHaveProperty('success', false);
     });
 
-    it('should implement account lockout after failed attempts', async function() {
+    it('should implement account lockout after failed attempts', async () => {
       const testEmail = 'lockout-test@floworx-test.com';
       const maxAttempts = config.security.MAX_FAILED_LOGIN_ATTEMPTS;
       
@@ -164,7 +162,7 @@ describe('Authentication Flow E2E Tests', function() {
           password: 'wrongpassword'
         });
         
-        expect(response.status).to.equal(401);
+        expect(response.status).toBe(401);
       }
       
       // Next attempt should be locked out
@@ -173,11 +171,11 @@ describe('Authentication Flow E2E Tests', function() {
         password: 'wrongpassword'
       });
       
-      expect(lockedResponse.status).to.equal(429);
-      expect(lockedResponse.data.error).to.have.property('type', 'RATE_LIMIT_ERROR');
+      expect(lockedResponse.status).toBe(429);
+      expect(lockedResponse.data.error).toHaveProperty('type', 'RATE_LIMIT_ERROR');
     });
 
-    it('should implement progressive lockout multiplier', async function() {
+    it('should implement progressive lockout multiplier', async () => {
       const testEmail = 'progressive-test@floworx-test.com';
       const dbClient = testEnv.getDbClient();
       const bcrypt = require('bcryptjs');
@@ -198,23 +196,23 @@ describe('Authentication Flow E2E Tests', function() {
         password: 'wrongpassword'
       });
       
-      expect(response.status).to.equal(401);
+      expect(response.status).toBe(401);
       // Progressive lockout testing would require time-based testing
       // which is covered in integration tests
     });
   });
 
-  describe('Password Reset Flow', function() {
+  describe('Password Reset Flow', () => {
     const resetUser = config.testData.users.valid;
 
-    it('should initiate password reset for valid email', async function() {
+    it('should initiate password reset for valid email', async () => {
       const response = await apiClient.post('/auth/password-reset-request', {
         email: resetUser.email
       });
       
-      expect(response.status).to.equal(200);
-      expect(response.data).to.have.property('success', true);
-      expect(response.data.data).to.have.property('message');
+      expect(response.status).toBe(200);
+      expect(response.data).toHaveProperty('success', true);
+      expect(response.data.data).toHaveProperty('message');
       
       // Verify reset token was created in database
       const dbClient = testEnv.getDbClient();
@@ -227,17 +225,17 @@ describe('Authentication Flow E2E Tests', function() {
       expect(tokenResult.rows[0].expires_at).to.be.a('date');
     });
 
-    it('should reject password reset for invalid email', async function() {
+    it('should reject password reset for invalid email', async () => {
       const response = await apiClient.post('/auth/password-reset-request', {
         email: 'nonexistent@test.com'
       });
       
       // Should still return success for security (don't reveal if email exists)
-      expect(response.status).to.equal(200);
-      expect(response.data).to.have.property('success', true);
+      expect(response.status).toBe(200);
+      expect(response.data).toHaveProperty('success', true);
     });
 
-    it('should complete password reset with valid token', async function() {
+    it('should complete password reset with valid token', async () => {
       // First, create a reset token
       const dbClient = testEnv.getDbClient();
       const crypto = require('crypto');
@@ -264,8 +262,8 @@ describe('Authentication Flow E2E Tests', function() {
         password: newPassword
       });
       
-      expect(response.status).to.equal(200);
-      expect(response.data).to.have.property('success', true);
+      expect(response.status).toBe(200);
+      expect(response.data).toHaveProperty('success', true);
       
       // Verify can login with new password
       const loginResponse = await apiClient.post('/auth/login', {
@@ -273,11 +271,11 @@ describe('Authentication Flow E2E Tests', function() {
         password: newPassword
       });
       
-      expect(loginResponse.status).to.equal(200);
-      expect(loginResponse.data).to.have.property('success', true);
+      expect(loginResponse.status).toBe(200);
+      expect(loginResponse.data).toHaveProperty('success', true);
     });
 
-    it('should reject password reset with expired token', async function() {
+    it('should reject password reset with expired token', async () => {
       const dbClient = testEnv.getDbClient();
       const crypto = require('crypto');
       const expiredToken = crypto.randomBytes(32).toString('hex');
@@ -302,75 +300,75 @@ describe('Authentication Flow E2E Tests', function() {
         password: 'NewPassword123!'
       });
       
-      expect(response.status).to.equal(400);
-      expect(response.data).to.have.property('success', false);
-      expect(response.data.error.message).to.include('expired');
+      expect(response.status).toBe(400);
+      expect(response.data).toHaveProperty('success', false);
+      expect(response.data.error.message).toContain('expired');
     });
   });
 
-  describe('Session Management', function() {
+  describe('Session Management', () => {
     let authToken;
     const sessionUser = config.testData.users.valid;
 
-    before(async function() {
+    beforeAll(async () => {
       // Login to get auth token
       const loginResponse = await apiClient.post('/auth/login', {
         email: sessionUser.email,
         password: sessionUser.password
-      });
+      }), 90000;
       
       authToken = loginResponse.data.data.token;
     });
 
-    it('should access protected route with valid token', async function() {
+    it('should access protected route with valid token', async () => {
       const response = await apiClient.get('/auth/profile', {
         headers: { Authorization: `Bearer ${authToken}` }
       });
       
-      expect(response.status).to.equal(200);
-      expect(response.data).to.have.property('success', true);
-      expect(response.data.data.user.email).to.equal(sessionUser.email);
+      expect(response.status).toBe(200);
+      expect(response.data).toHaveProperty('success', true);
+      expect(response.data.data.user.email).toBe(sessionUser.email);
     });
 
-    it('should reject access with invalid token', async function() {
+    it('should reject access with invalid token', async () => {
       const response = await apiClient.get('/auth/profile', {
         headers: { Authorization: 'Bearer invalid-token' }
       });
       
-      expect(response.status).to.equal(401);
-      expect(response.data).to.have.property('success', false);
+      expect(response.status).toBe(401);
+      expect(response.data).toHaveProperty('success', false);
     });
 
-    it('should reject access without token', async function() {
+    it('should reject access without token', async () => {
       const response = await apiClient.get('/auth/profile');
       
-      expect(response.status).to.equal(401);
-      expect(response.data).to.have.property('success', false);
+      expect(response.status).toBe(401);
+      expect(response.data).toHaveProperty('success', false);
     });
 
-    it('should successfully logout', async function() {
+    it('should successfully logout', async () => {
       const response = await apiClient.post('/auth/logout', {}, {
         headers: { Authorization: `Bearer ${authToken}` }
       });
       
-      expect(response.status).to.equal(200);
-      expect(response.data).to.have.property('success', true);
+      expect(response.status).toBe(200);
+      expect(response.data).toHaveProperty('success', true);
       
       // Verify token is invalidated (if token blacklisting is implemented)
       // This depends on your logout implementation
     });
   });
 
-  describe('OAuth Integration', function() {
-    it('should initiate Google OAuth flow', async function() {
+  describe('OAuth Integration', () => {
+    it('should initiate Google OAuth flow', async () => {
       const response = await apiClient.get('/oauth/google');
       
       // Should redirect to Google OAuth
-      expect(response.status).to.equal(302);
-      expect(response.headers.location).to.include('accounts.google.com');
+      expect(response.status).toBe(302);
+      expect(response.headers.location).toContain('accounts.google.com');
     });
 
-    it('should handle OAuth callback with valid code', async function() {
+    it('should handle OAuth callback with valid code', async () => {
       // This would require mocking Google OAuth response
       // For E2E testing, we'll verify the endpoint exists and handles errors
       

@@ -1,0 +1,620 @@
+{
+  "discovery": {
+    "totalFiles": 351,
+    "testFiles": [
+      {
+        "path": "tests\\api\\auth.test.js",
+        "name": "auth.test.js",
+        "type": "unknown",
+        "framework": "jest"
+      },
+      {
+        "path": "tests\\api\\dashboard.test.js",
+        "name": "dashboard.test.js",
+        "type": "unknown",
+        "framework": "jest"
+      },
+      {
+        "path": "tests\\api\\integration.test.js",
+        "name": "integration.test.js",
+        "type": "unknown",
+        "framework": "jest"
+      },
+      {
+        "path": "tests\\api\\oauth.test.js",
+        "name": "oauth.test.js",
+        "type": "unknown",
+        "framework": "jest"
+      },
+      {
+        "path": "tests\\api\\system.test.js",
+        "name": "system.test.js",
+        "type": "unknown",
+        "framework": "jest"
+      },
+      {
+        "path": "tests\\api\\user.test.js",
+        "name": "user.test.js",
+        "type": "unknown",
+        "framework": "jest"
+      },
+      {
+        "path": "tests\\api-integration.spec.js",
+        "name": "api-integration.spec.js",
+        "type": "unknown",
+        "framework": "playwright"
+      },
+      {
+        "path": "tests\\auth.spec.js",
+        "name": "auth.spec.js",
+        "type": "unknown",
+        "framework": "playwright"
+      },
+      {
+        "path": "tests\\business-logic.spec.js",
+        "name": "business-logic.spec.js",
+        "type": "unknown",
+        "framework": "playwright"
+      },
+      {
+        "path": "tests\\comprehensive-auth-test.spec.js",
+        "name": "comprehensive-auth-test.spec.js",
+        "type": "unknown",
+        "framework": "playwright"
+      },
+      {
+        "path": "tests\\comprehensive-coverage.spec.js",
+        "name": "comprehensive-coverage.spec.js",
+        "type": "unknown",
+        "framework": "playwright"
+      },
+      {
+        "path": "tests\\conversion-analytics.spec.js",
+        "name": "conversion-analytics.spec.js",
+        "type": "unknown",
+        "framework": "playwright"
+      },
+      {
+        "path": "tests\\dashboard-comprehensive.spec.js",
+        "name": "dashboard-comprehensive.spec.js",
+        "type": "unknown",
+        "framework": "playwright"
+      },
+      {
+        "path": "tests\\dashboard-final.spec.js",
+        "name": "dashboard-final.spec.js",
+        "type": "unknown",
+        "framework": "playwright"
+      },
+      {
+        "path": "tests\\dashboard-focused.spec.js",
+        "name": "dashboard-focused.spec.js",
+        "type": "unknown",
+        "framework": "playwright"
+      },
+      {
+        "path": "tests\\dashboard-robust.spec.js",
+        "name": "dashboard-robust.spec.js",
+        "type": "unknown",
+        "framework": "playwright"
+      },
+      {
+        "path": "tests\\dashboard-validation.spec.js",
+        "name": "dashboard-validation.spec.js",
+        "type": "unknown",
+        "framework": "playwright"
+      },
+      {
+        "path": "tests\\dashboard.spec.js",
+        "name": "dashboard.spec.js",
+        "type": "unknown",
+        "framework": "playwright"
+      },
+      {
+        "path": "tests\\database\\migration.test.js",
+        "name": "migration.test.js",
+        "type": "unknown",
+        "framework": "jest"
+      },
+      {
+        "path": "tests\\database-connectivity.test.js",
+        "name": "database-connectivity.test.js",
+        "type": "unknown",
+        "framework": "jest"
+      },
+      {
+        "path": "tests\\debug-login-test.spec.js",
+        "name": "debug-login-test.spec.js",
+        "type": "unknown",
+        "framework": "playwright"
+      },
+      {
+        "path": "tests\\e2e\\critical-flows.spec.js",
+        "name": "critical-flows.spec.js",
+        "type": "unknown",
+        "framework": "playwright"
+      },
+      {
+        "path": "tests\\e2e\\onboarding-flow.spec.js",
+        "name": "onboarding-flow.spec.js",
+        "type": "unknown",
+        "framework": "playwright"
+      },
+      {
+        "path": "tests\\e2e\\suites\\api-integration.test.js",
+        "name": "api-integration.test.js",
+        "type": "unknown",
+        "framework": "jest"
+      },
+      {
+        "path": "tests\\e2e\\suites\\authentication.test.js",
+        "name": "authentication.test.js",
+        "type": "unknown",
+        "framework": "jest"
+      },
+      {
+        "path": "tests\\e2e\\suites\\business-logic.test.js",
+        "name": "business-logic.test.js",
+        "type": "unknown",
+        "framework": "jest"
+      },
+      {
+        "path": "tests\\e2e\\suites\\frontend-integration.test.js",
+        "name": "frontend-integration.test.js",
+        "type": "unknown",
+        "framework": "jest"
+      },
+      {
+        "path": "tests\\e2e\\user-journey.test.js",
+        "name": "user-journey.test.js",
+        "type": "unknown",
+        "framework": "jest"
+      },
+      {
+        "path": "tests\\edge-cases.spec.js",
+        "name": "edge-cases.spec.js",
+        "type": "unknown",
+        "framework": "playwright"
+      },
+      {
+        "path": "tests\\email-content-validation.spec.js",
+        "name": "email-content-validation.spec.js",
+        "type": "unknown",
+        "framework": "playwright"
+      },
+      {
+        "path": "tests\\email-error-handling.spec.js",
+        "name": "email-error-handling.spec.js",
+        "type": "unknown",
+        "framework": "playwright"
+      },
+      {
+        "path": "tests\\email-workflows.spec.js",
+        "name": "email-workflows.spec.js",
+        "type": "unknown",
+        "framework": "playwright"
+      },
+      {
+        "path": "tests\\enhanced-ux-features.spec.js",
+        "name": "enhanced-ux-features.spec.js",
+        "type": "unknown",
+        "framework": "playwright"
+      },
+      {
+        "path": "tests\\error-handling.spec.js",
+        "name": "error-handling.spec.js",
+        "type": "unknown",
+        "framework": "playwright"
+      },
+      {
+        "path": "tests\\final-comprehensive-test.spec.js",
+        "name": "final-comprehensive-test.spec.js",
+        "type": "unknown",
+        "framework": "playwright"
+      },
+      {
+        "path": "tests\\final-comprehensive-validation.spec.js",
+        "name": "final-comprehensive-validation.spec.js",
+        "type": "unknown",
+        "framework": "playwright"
+      },
+      {
+        "path": "tests\\fixed-auth-test.spec.js",
+        "name": "fixed-auth-test.spec.js",
+        "type": "unknown",
+        "framework": "playwright"
+      },
+      {
+        "path": "tests\\focused-api-tests.spec.js",
+        "name": "focused-api-tests.spec.js",
+        "type": "unknown",
+        "framework": "playwright"
+      },
+      {
+        "path": "tests\\frontend\\business-type-logic.test.js",
+        "name": "business-type-logic.test.js",
+        "type": "unknown",
+        "framework": "jest"
+      },
+      {
+        "path": "tests\\frontend\\BusinessTypeStep.test.js",
+        "name": "BusinessTypeStep.test.js",
+        "type": "unknown",
+        "framework": "jest"
+      },
+      {
+        "path": "tests\\frontend\\Login.test.js",
+        "name": "Login.test.js",
+        "type": "unknown",
+        "framework": "jest"
+      },
+      {
+        "path": "tests\\frontend\\PasswordReset.test.js",
+        "name": "PasswordReset.test.js",
+        "type": "unknown",
+        "framework": "jest"
+      },
+      {
+        "path": "tests\\frontend\\Register.test.js",
+        "name": "Register.test.js",
+        "type": "unknown",
+        "framework": "jest"
+      },
+      {
+        "path": "tests\\integration\\api-mock.test.js",
+        "name": "api-mock.test.js",
+        "type": "unknown",
+        "framework": "jest"
+      },
+      {
+        "path": "tests\\integration\\api.test.js",
+        "name": "api.test.js",
+        "type": "unknown",
+        "framework": "jest"
+      },
+      {
+        "path": "tests\\integration\\database-mock.test.js",
+        "name": "database-mock.test.js",
+        "type": "unknown",
+        "framework": "jest"
+      },
+      {
+        "path": "tests\\integration\\database.test.js",
+        "name": "database.test.js",
+        "type": "unknown",
+        "framework": "jest"
+      },
+      {
+        "path": "tests\\integration\\invitation.test.js",
+        "name": "invitation.test.js",
+        "type": "unknown",
+        "framework": "jest"
+      },
+      {
+        "path": "tests\\integration-coverage.spec.js",
+        "name": "integration-coverage.spec.js",
+        "type": "unknown",
+        "framework": "playwright"
+      },
+      {
+        "path": "tests\\local-supabase.test.js",
+        "name": "local-supabase.test.js",
+        "type": "unknown",
+        "framework": "jest"
+      },
+      {
+        "path": "tests\\mobile-responsive.spec.js",
+        "name": "mobile-responsive.spec.js",
+        "type": "unknown",
+        "framework": "playwright"
+      },
+      {
+        "path": "tests\\onboarding.spec.js",
+        "name": "onboarding.spec.js",
+        "type": "unknown",
+        "framework": "playwright"
+      },
+      {
+        "path": "tests\\performance\\performance.test.js",
+        "name": "performance.test.js",
+        "type": "unknown",
+        "framework": "jest"
+      },
+      {
+        "path": "tests\\performance.spec.js",
+        "name": "performance.spec.js",
+        "type": "unknown",
+        "framework": "playwright"
+      },
+      {
+        "path": "tests\\playwright-api-tests.spec.js",
+        "name": "playwright-api-tests.spec.js",
+        "type": "unknown",
+        "framework": "playwright"
+      },
+      {
+        "path": "tests\\production-auth.spec.js",
+        "name": "production-auth.spec.js",
+        "type": "unknown",
+        "framework": "playwright"
+      },
+      {
+        "path": "tests\\production-check.spec.js",
+        "name": "production-check.spec.js",
+        "type": "unknown",
+        "framework": "playwright"
+      },
+      {
+        "path": "tests\\production-monitoring.spec.js",
+        "name": "production-monitoring.spec.js",
+        "type": "unknown",
+        "framework": "playwright"
+      },
+      {
+        "path": "tests\\real-user-simulation.spec.js",
+        "name": "real-user-simulation.spec.js",
+        "type": "unknown",
+        "framework": "playwright"
+      },
+      {
+        "path": "tests\\registration-edge-cases.spec.js",
+        "name": "registration-edge-cases.spec.js",
+        "type": "unknown",
+        "framework": "playwright"
+      },
+      {
+        "path": "tests\\security-coverage.spec.js",
+        "name": "security-coverage.spec.js",
+        "type": "unknown",
+        "framework": "playwright"
+      },
+      {
+        "path": "tests\\simple.test.js",
+        "name": "simple.test.js",
+        "type": "unknown",
+        "framework": "jest"
+      },
+      {
+        "path": "tests\\supabase-config.test.js",
+        "name": "supabase-config.test.js",
+        "type": "unknown",
+        "framework": "jest"
+      },
+      {
+        "path": "tests\\user-experience-analytics.spec.js",
+        "name": "user-experience-analytics.spec.js",
+        "type": "unknown",
+        "framework": "playwright"
+      },
+      {
+        "path": "backend\\tests\\api-endpoints.test.js",
+        "name": "api-endpoints.test.js",
+        "type": "unknown",
+        "framework": "jest"
+      },
+      {
+        "path": "backend\\tests\\basic-functionality.test.js",
+        "name": "basic-functionality.test.js",
+        "type": "unknown",
+        "framework": "jest"
+      },
+      {
+        "path": "backend\\tests\\dynamic-workflow-demo.test.js",
+        "name": "dynamic-workflow-demo.test.js",
+        "type": "unknown",
+        "framework": "jest"
+      },
+      {
+        "path": "backend\\tests\\integration\\auth-flow.test.js",
+        "name": "auth-flow.test.js",
+        "type": "unknown",
+        "framework": "jest"
+      },
+      {
+        "path": "backend\\tests\\integration\\monitoring-api.test.js",
+        "name": "monitoring-api.test.js",
+        "type": "unknown",
+        "framework": "jest"
+      },
+      {
+        "path": "backend\\tests\\intelligent-label-matcher.test.js",
+        "name": "intelligent-label-matcher.test.js",
+        "type": "unknown",
+        "framework": "jest"
+      },
+      {
+        "path": "backend\\tests\\middleware\\errorHandler.test.js",
+        "name": "errorHandler.test.js",
+        "type": "unknown",
+        "framework": "jest"
+      },
+      {
+        "path": "backend\\tests\\middleware\\validation.test.js",
+        "name": "validation.test.js",
+        "type": "unknown",
+        "framework": "jest"
+      },
+      {
+        "path": "backend\\tests\\n8n-workflow-generator.test.js",
+        "name": "n8n-workflow-generator.test.js",
+        "type": "unknown",
+        "framework": "jest"
+      },
+      {
+        "path": "backend\\tests\\performance\\database-performance.test.js",
+        "name": "database-performance.test.js",
+        "type": "unknown",
+        "framework": "jest"
+      },
+      {
+        "path": "backend\\tests\\regression\\auth-regression.test.js",
+        "name": "auth-regression.test.js",
+        "type": "unknown",
+        "framework": "jest"
+      },
+      {
+        "path": "backend\\tests\\regression\\framework-demo.test.js",
+        "name": "framework-demo.test.js",
+        "type": "unknown",
+        "framework": "jest"
+      },
+      {
+        "path": "backend\\tests\\regression\\monitoring-regression.test.js",
+        "name": "monitoring-regression.test.js",
+        "type": "unknown",
+        "framework": "jest"
+      },
+      {
+        "path": "backend\\tests\\routes\\auth.test.js",
+        "name": "auth.test.js",
+        "type": "unknown",
+        "framework": "jest"
+      },
+      {
+        "path": "backend\\tests\\security\\security.test.js",
+        "name": "security.test.js",
+        "type": "unknown",
+        "framework": "jest"
+      },
+      {
+        "path": "backend\\tests\\unit\\services\\errorTrackingService.test.js",
+        "name": "errorTrackingService.test.js",
+        "type": "unknown",
+        "framework": "jest"
+      },
+      {
+        "path": "backend\\tests\\unit\\services\\n8nScheduler.test.js",
+        "name": "n8nScheduler.test.js",
+        "type": "unknown",
+        "framework": "jest"
+      },
+      {
+        "path": "backend\\tests\\unit\\services\\realTimeMonitoringService.test.js",
+        "name": "realTimeMonitoringService.test.js",
+        "type": "unknown",
+        "framework": "jest"
+      },
+      {
+        "path": "backend\\tests\\unit\\services\\SecurityService.test.js",
+        "name": "SecurityService.test.js",
+        "type": "unknown",
+        "framework": "jest"
+      },
+      {
+        "path": "frontend\\src\\components\\Login.test.js",
+        "name": "Login.test.js",
+        "type": "unknown",
+        "framework": "jest"
+      }
+    ],
+    "configFiles": [],
+    "setupFiles": [
+      {
+        "path": "tests\\api\\setup\\jest.setup.js",
+        "name": "jest.setup.js",
+        "type": "setup"
+      },
+      {
+        "path": "tests\\global-setup.js",
+        "name": "global-setup.js",
+        "type": "setup"
+      },
+      {
+        "path": "tests\\setup\\api.setup.js",
+        "name": "api.setup.js",
+        "type": "setup"
+      },
+      {
+        "path": "tests\\setup\\database.setup.js",
+        "name": "database.setup.js",
+        "type": "setup"
+      },
+      {
+        "path": "tests\\setup\\frontend.setup.js",
+        "name": "frontend.setup.js",
+        "type": "setup"
+      },
+      {
+        "path": "tests\\setup\\jest.setup.js",
+        "name": "jest.setup.js",
+        "type": "setup"
+      },
+      {
+        "path": "backend\\tests\\setup.js",
+        "name": "setup.js",
+        "type": "setup"
+      },
+      {
+        "path": "scripts\\setup-alert-channels.js",
+        "name": "setup-alert-channels.js",
+        "type": "setup"
+      },
+      {
+        "path": "scripts\\setup-production-environment.js",
+        "name": "setup-production-environment.js",
+        "type": "setup"
+      },
+      {
+        "path": "scripts\\setup-production-oauth-urls.js",
+        "name": "setup-production-oauth-urls.js",
+        "type": "setup"
+      },
+      {
+        "path": "scripts\\setup-test-db.js",
+        "name": "setup-test-db.js",
+        "type": "setup"
+      }
+    ],
+    "mockFiles": [],
+    "fixtureFiles": []
+  },
+  "execution": {
+    "jest": {
+      "passed": 0,
+      "failed": 1,
+      "skipped": 0,
+      "errors": [
+        {
+          "type": "JEST_EXECUTION",
+          "message": "Command failed: npx jest tests/simple.test.js --verbose\n● Validation Error:\n\n  Module <rootDir>/tests/processors/results.processor.js in the testResultsProcessor option was not found.\n         <rootDir> is: C:\\FloworxInvite\n\n  Configuration Documentation:\n  https://jestjs.io/docs/configuration\n\n",
+          "stack": "Error: Command failed: npx jest tests/simple.test.js --verbose\n● Validation Error:\n\n  Module <rootDir>/tests/processors/results.processor.js in the testResultsProcessor option was not found.\n         <rootDir> is: C:\\FloworxInvite\n\n  Configuration Documentation:\n  https://jestjs.io/docs/configuration\n\n\n    at genericNodeError (node:internal/errors:985:15)\n    at wrappedFn (node:internal/errors:539:14)\n    at ChildProcess.exithandler (node:child_process:417:12)\n    at ChildProcess.emit (node:events:508:28)\n    at maybeClose (node:internal/child_process:1101:16)\n    at ChildProcess._handle.onexit (node:internal/child_process:305:5)"
+        }
+      ]
+    },
+    "playwright": {
+      "passed": 0,
+      "failed": 0,
+      "skipped": 0,
+      "errors": []
+    },
+    "custom": {
+      "passed": 2,
+      "failed": 0,
+      "skipped": 0,
+      "errors": []
+    }
+  },
+  "analysis": {
+    "criticalIssues": [],
+    "recommendations": [],
+    "missingTests": [
+      {
+        "component": "backend/services/cacheService.js",
+        "priority": "HIGH",
+        "reason": "Critical component without test coverage"
+      },
+      {
+        "component": "backend/database/unified-connection.js",
+        "priority": "HIGH",
+        "reason": "Critical component without test coverage"
+      },
+      {
+        "component": "frontend/src/components/RegisterForm.js",
+        "priority": "HIGH",
+        "reason": "Critical component without test coverage"
+      }
+    ],
+    "outdatedTests": []
+  },
+  "startTime": 1757467355556
+}

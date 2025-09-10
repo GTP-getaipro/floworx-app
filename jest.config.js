@@ -109,7 +109,7 @@ module.exports = {
         '<rootDir>/tests/setup/frontend.setup.js',
         '@testing-library/jest-dom'
       ],
-      moduleNameMapping: {
+      moduleNameMapper: {
         '\\.(css|less|scss|sass)$': 'identity-obj-proxy',
         '\\.(jpg|jpeg|png|gif|eot|otf|webp|svg|ttf|woff|woff2|mp4|webm|wav|mp3|m4a|aac|oga)$': '<rootDir>/tests/mocks/fileMock.js'
       }
@@ -165,8 +165,8 @@ module.exports = {
     'jest-watch-typeahead/testname'
   ],
   
-  // Custom matchers
-  testResultsProcessor: '<rootDir>/tests/processors/results.processor.js'
+  // Custom matchers - disabled for now
+  // testResultsProcessor: '<rootDir>/tests/processors/results.processor.js'
 };
 
 // Environment-specific configurations

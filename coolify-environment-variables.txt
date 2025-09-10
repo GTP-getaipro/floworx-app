@@ -11,18 +11,15 @@ JWT_SECRET=your_super_long_random_jwt_secret_key_here_make_it_at_least_64_charac
 DATABASE_URL=postgresql://postgres.your_project_ref:your_password@aws-0-us-east-1.pooler.supabase.com:6543/postgres
 
 # =============================================================================
-# REDIS CONFIGURATION (Multiple fallback options)
+# REDIS CONFIGURATION (Coolify KeyDB Service)
 # =============================================================================
-# Try these Redis host configurations in order:
-REDIS_HOST=redis-database
-# Alternative hosts if the above doesn't work:
-# REDIS_HOST=redis-database-bgkgcogwgcksc0sccw48c8s0
-# REDIS_HOST=redis-db
-# REDIS_HOST=127.0.0.1
+# Use the complete Redis URL from Coolify (RECOMMENDED):
+REDIS_URL=redis://:p2oydZsAltTxy9tGVtVVF0LcPo1PzCNBPv3w0rEcuSwlzT9t9eHbRju195A7G8ui@sgkgk4s80s0wosscs4800g0k:6379/0
 
+# OR use individual components:
+REDIS_HOST=sgkgk4s80s0wosscs4800g0k
 REDIS_PORT=6379
-REDIS_PASSWORD=your_redis_password_if_set
-REDIS_URL=redis://redis-database:6379
+REDIS_PASSWORD=p2oydZsAltTxy9tGVtVVF0LcPo1PzCNBPv3w0rEcuSwlzT9t9eHbRju195A7G8ui
 
 # =============================================================================
 # SUPABASE CONFIGURATION

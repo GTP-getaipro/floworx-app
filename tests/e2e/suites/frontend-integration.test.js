@@ -5,9 +5,7 @@
 
 const { TestEnvironment } = require('../setup/test-environment');
 const puppeteer = require('puppeteer');
-const { expect } = require('chai');
-
-describe('Frontend-Backend Integration E2E Tests', function() {
+describe('Frontend-Backend Integration E2E Tests', () => {
   this.timeout(180000); // 3 minute timeout for browser tests
   
   let testEnv;
@@ -15,7 +13,7 @@ describe('Frontend-Backend Integration E2E Tests', function() {
   let browser;
   let page;
   
-  before(async function() {
+  beforeAll(async () => {
     testEnv = new TestEnvironment();
     await testEnv.setup();
     config = testEnv.getConfig();
@@ -25,7 +23,7 @@ describe('Frontend-Backend Integration E2E Tests', function() {
       headless: process.env.E2E_HEADLESS !== 'false',
       slowMo: process.env.E2E_SLOW_MO ? parseInt(process.env.E2E_SLOW_MO) : 0,
       args: ['--no-sandbox', '--disable-setuid-sandbox']
-    });
+    }), 90000;
     
     page = await browser.newPage();
     
@@ -49,7 +47,7 @@ describe('Frontend-Backend Integration E2E Tests', function() {
     page.requests = requests;
   });
   
-  after(async function() {
+  afterAll(async () => {
     if (browser) {
       await browser.close();
     }
@@ -58,8 +56,8 @@ describe('Frontend-Backend Integration E2E Tests', function() {
     }
   });
 
-  describe('Authentication UI Integration', function() {
-    it('should render login page correctly', async function() {
+  describe('Authentication UI Integration', () => {
+    it('should render login page correctly', async () => {
       await page.goto(`http://localhost:${config.frontend.port}/login`);
       
       // Wait for page to load
@@ -76,10 +74,10 @@ describe('Frontend-Backend Integration E2E Tests', function() {
       
       // Check page title
       const title = await page.title();
-      expect(title).to.include('Login');
+      expect(title).toContain('Login');
     });
 
-    it('should handle login form submission', async function() {
+    it('should handle login form submission', async () => {
       await page.goto(`http://localhost:${config.frontend.port}/login`);
       await page.waitForSelector('[data-testid="login-form"]');
       
@@ -95,7 +93,7 @@ describe('Frontend-Backend Integration E2E Tests', function() {
       
       // Should redirect to dashboard
       const currentUrl = page.url();
-      expect(currentUrl).to.include('/dashboard');
+      expect(currentUrl).toContain('/dashboard');
       
       // Verify API call was made
       const loginRequest = page.requests.find(req => 
@@ -104,7 +102,7 @@ describe('Frontend-Backend Integration E2E Tests', function() {
       expect(loginRequest).to.not.be.undefined;
     });
 
-    it('should display validation errors for invalid login', async function() {
+    it('should display validation errors for invalid login', async () => {
       await page.goto(`http://localhost:${config.frontend.port}/login`);
       await page.waitForSelector('[data-testid="login-form"]');
       
@@ -119,10 +117,10 @@ describe('Frontend-Backend Integration E2E Tests', function() {
       await page.waitForSelector('[data-testid="error-message"]', { timeout: 5000 });
       
       const errorMessage = await page.$eval('[data-testid="error-message"]', el => el.textContent);
-      expect(errorMessage).to.include('Invalid');
+      expect(errorMessage).toContain('Invalid');
     });
 
-    it('should handle registration form with validation', async function() {
+    it('should handle registration form with validation', async () => {
       await page.goto(`http://localhost:${config.frontend.port}/register`);
       await page.waitForSelector('[data-testid="register-form"]');
       
@@ -138,12 +136,12 @@ describe('Frontend-Backend Integration E2E Tests', function() {
       await page.waitForSelector('[data-testid="validation-error"]', { timeout: 5000 });
       
       const validationErrors = await page.$$('[data-testid="validation-error"]');
-      expect(validationErrors.length).to.be.greaterThan(0);
+      expect(validationErrors.length).toBeGreaterThan(0);
     });
   });
 
-  describe('Dashboard Integration', function() {
-    before(async function() {
+  describe('Dashboard Integration', () => {
+    beforeAll(async () => {
       // Login first
       await page.goto(`http://localhost:${config.frontend.port}/login`);
       await page.waitForSelector('[data-testid="login-form"]');
@@ -153,29 +151,29 @@ describe('Frontend-Backend Integration E2E Tests', function() {
       await page.click('[data-testid="login-button"]');
       
       await page.waitForNavigation();
-    });
+    }), 90000;
 
-    it('should render dashboard with real data', async function() {
+    it('should render dashboard with real data', async () => {
       await page.goto(`http://localhost:${config.frontend.port}/dashboard`);
       await page.waitForSelector('[data-testid="dashboard"]', { timeout: 10000 });
       
       // Check for dashboard components
       const statsCards = await page.$$('[data-testid="stats-card"]');
-      expect(statsCards.length).to.be.greaterThan(0);
+      expect(statsCards.length).toBeGreaterThan(0);
       
       // Check for charts/graphs
       const charts = await page.$$('[data-testid="chart"]');
-      expect(charts.length).to.be.greaterThan(0);
+      expect(charts.length).toBeGreaterThan(0);
       
       // Verify API calls were made
       const dashboardRequests = page.requests.filter(req => 
         req.url.includes('/api/analytics/dashboard') || 
         req.url.includes('/api/workflows')
       );
-      expect(dashboardRequests.length).to.be.greaterThan(0);
+      expect(dashboardRequests.length).toBeGreaterThan(0);
     });
 
-    it('should handle loading states', async function() {
+    it('should handle loading states', async () => {
       // Clear requests
       page.requests.length = 0;
       
@@ -189,10 +187,10 @@ describe('Frontend-Backend Integration E2E Tests', function() {
       await page.waitForSelector('[data-testid="dashboard"]', { timeout: 10000 });
       
       const loadingAfter = await page.$('[data-testid="loading"]');
-      expect(loadingAfter).to.be.null;
+      expect(loadingAfter).toBeNull();
     });
 
-    it('should handle error states gracefully', async function() {
+    it('should handle error states gracefully', async () => {
       // Intercept API calls and return errors
       await page.setRequestInterception(true);
       
@@ -214,15 +212,15 @@ describe('Frontend-Backend Integration E2E Tests', function() {
       await page.waitForSelector('[data-testid="error-boundary"]', { timeout: 10000 });
       
       const errorMessage = await page.$eval('[data-testid="error-message"]', el => el.textContent);
-      expect(errorMessage).to.include('error');
+      expect(errorMessage).toContain('error');
       
       // Reset request interception
       await page.setRequestInterception(false);
     });
   });
 
-  describe('Workflow Management UI', function() {
-    before(async function() {
+  describe('Workflow Management UI', () => {
+    beforeAll(async () => {
       // Ensure logged in
       await page.goto(`http://localhost:${config.frontend.port}/workflows`);
       
@@ -235,9 +233,9 @@ describe('Frontend-Backend Integration E2E Tests', function() {
         await page.waitForNavigation();
         await page.goto(`http://localhost:${config.frontend.port}/workflows`);
       }
-    });
+    }), 90000;
 
-    it('should render workflows list', async function() {
+    it('should render workflows list', async () => {
       await page.waitForSelector('[data-testid="workflows-list"]', { timeout: 10000 });
       
       // Check for workflow items or empty state
@@ -245,10 +243,10 @@ describe('Frontend-Backend Integration E2E Tests', function() {
       const emptyState = await page.$('[data-testid="empty-state"]');
       
       // Should have either workflow items or empty state
-      expect(workflowItems.length > 0 || emptyState !== null).to.be.true;
+      expect(workflowItems.length > 0 || emptyState !== null).toBe(true);
     });
 
-    it('should handle workflow creation form', async function() {
+    it('should handle workflow creation form', async () => {
       // Click create workflow button
       await page.click('[data-testid="create-workflow-button"]');
       
@@ -275,7 +273,7 @@ describe('Frontend-Backend Integration E2E Tests', function() {
       expect(createRequest).to.not.be.undefined;
     });
 
-    it('should handle workflow form validation', async function() {
+    it('should handle workflow form validation', async () => {
       await page.click('[data-testid="create-workflow-button"]');
       await page.waitForSelector('[data-testid="workflow-form"]');
       
@@ -286,12 +284,12 @@ describe('Frontend-Backend Integration E2E Tests', function() {
       await page.waitForSelector('[data-testid="field-error"]', { timeout: 5000 });
       
       const fieldErrors = await page.$$('[data-testid="field-error"]');
-      expect(fieldErrors.length).to.be.greaterThan(0);
+      expect(fieldErrors.length).toBeGreaterThan(0);
     });
   });
 
-  describe('Onboarding Flow Integration', function() {
-    it('should complete onboarding flow end-to-end', async function() {
+  describe('Onboarding Flow Integration', () => {
+    it('should complete onboarding flow end-to-end', async () => {
       // Start fresh onboarding
       await page.goto(`http://localhost:${config.frontend.port}/onboarding`);
       
@@ -328,12 +326,12 @@ describe('Frontend-Backend Integration E2E Tests', function() {
       await page.waitForSelector('[data-testid="onboarding-complete"]', { timeout: 15000 });
       
       const completionMessage = await page.$eval('[data-testid="completion-message"]', el => el.textContent);
-      expect(completionMessage).to.include('complete');
+      expect(completionMessage).toContain('complete');
     });
   });
 
-  describe('Real-time Updates and Notifications', function() {
-    it('should handle real-time workflow status updates', async function() {
+  describe('Real-time Updates and Notifications', () => {
+    it('should handle real-time workflow status updates', async () => {
       await page.goto(`http://localhost:${config.frontend.port}/workflows`);
       await page.waitForSelector('[data-testid="workflows-list"]');
       
@@ -352,7 +350,7 @@ describe('Frontend-Backend Integration E2E Tests', function() {
       }
     });
 
-    it('should display notifications correctly', async function() {
+    it('should display notifications correctly', async () => {
       await page.goto(`http://localhost:${config.frontend.port}/dashboard`);
       await page.waitForSelector('[data-testid="dashboard"]');
       
@@ -363,13 +361,13 @@ describe('Frontend-Backend Integration E2E Tests', function() {
         // Verify notifications can be displayed
         const notifications = await page.$$('[data-testid="notification-item"]');
         // Notifications might be empty, which is fine
-        expect(notifications).to.be.an('array');
+        expect(Array.isArray(notifications) ? "array" : typeof notifications).toBe('array');
       }
     });
   });
 
-  describe('Error Boundary Functionality', function() {
-    it('should catch and display component errors', async function() {
+  describe('Error Boundary Functionality', () => {
+    it('should catch and display component errors', async () => {
       // This would require triggering a component error
       // For now, verify error boundary exists
       await page.goto(`http://localhost:${config.frontend.port}/dashboard`);
@@ -381,7 +379,7 @@ describe('Frontend-Backend Integration E2E Tests', function() {
       // This test would be more meaningful with actual error scenarios
     });
 
-    it('should provide error recovery options', async function() {
+    it('should provide error recovery options', async () => {
       // Navigate to a potentially error-prone page
       await page.goto(`http://localhost:${config.frontend.port}/workflows/invalid-id`);
       
@@ -389,7 +387,7 @@ describe('Frontend-Backend Integration E2E Tests', function() {
       await page.waitForSelector('[data-testid="not-found"]', { timeout: 10000 });
       
       const notFoundMessage = await page.$eval('[data-testid="not-found-message"]', el => el.textContent);
-      expect(notFoundMessage).to.include('not found');
+      expect(notFoundMessage).toContain('not found');
       
       // Should provide navigation back
       const backButton = await page.$('[data-testid="back-button"]');
@@ -397,8 +395,8 @@ describe('Frontend-Backend Integration E2E Tests', function() {
     });
   });
 
-  describe('Performance and User Experience', function() {
-    it('should load pages within acceptable time', async function() {
+  describe('Performance and User Experience', () => {
+    it('should load pages within acceptable time', async () => {
       const startTime = Date.now();
       
       await page.goto(`http://localhost:${config.frontend.port}/dashboard`);
@@ -408,10 +406,10 @@ describe('Frontend-Backend Integration E2E Tests', function() {
       console.log(`Dashboard load time: ${loadTime}ms`);
       
       // Should load within 5 seconds
-      expect(loadTime).to.be.lessThan(5000);
+      expect(loadTime).toBeLessThan(5000);
     });
 
-    it('should handle slow API responses gracefully', async function() {
+    it('should handle slow API responses gracefully', async () => {
       // Intercept API calls and add delay
       await page.setRequestInterception(true);
       
@@ -436,7 +434,7 @@ describe('Frontend-Backend Integration E2E Tests', function() {
       await page.setRequestInterception(false);
     });
 
-    it('should be responsive on different screen sizes', async function() {
+    it('should be responsive on different screen sizes', async () => {
       // Test mobile viewport
       await page.setViewport({ width: 375, height: 667 });
       await page.goto(`http://localhost:${config.frontend.port}/dashboard`);

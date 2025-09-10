@@ -100,9 +100,9 @@ const RegisterForm = () => {
 
   // Update form values when persistence is loaded
   useEffect(() => {
-    console.log('🔍 Persistence effect triggered:', { persistenceLoaded, persistedValues });
+    // Handle form persistence restoration
     if (persistenceLoaded && Object.keys(persistedValues).length > 0) {
-      console.log('🔄 Updating form with persisted values:', persistedValues);
+      // Update form with persisted values
       setValues(prev => ({
         ...prev,
         email: persistedValues.email || prev.email,
@@ -164,14 +164,7 @@ const RegisterForm = () => {
 
   const handleRegistration = async values => {
     try {
-      console.log('🚀 DEBUG: handleRegistration called with values:', {
-        ...values,
-        password: '[HIDDEN]',
-      });
-      console.log('🚀 Starting registration with data:', {
-        ...values,
-        password: '[HIDDEN]',
-      });
+      // Starting registration process
 
       // Show processing feedback
       showInfo('Creating your account...');
@@ -343,10 +336,7 @@ const RegisterForm = () => {
         )}
 
         <form onSubmit={e => {
-          console.log('🚀 DEBUG: Form onSubmit triggered');
-          console.log('🚀 DEBUG: Event object:', e);
-          console.log('🚀 DEBUG: handleSubmit function:', typeof handleSubmit);
-          console.log('🚀 DEBUG: handleRegistration function:', typeof handleRegistration);
+          // Form submission handling
           return handleSubmit(handleRegistration, e);
         }} className='space-y-6'>
           <div className='grid grid-cols-2 gap-4'>

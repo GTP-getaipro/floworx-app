@@ -186,18 +186,16 @@ const useFormValidation = (initialValues, validationRules, options = {}) => {
    */
   const handleSubmit = useCallback(
     async (onSubmit, e) => {
-      console.log('🚀 DEBUG: useFormValidation handleSubmit called');
-      console.log('🚀 DEBUG: onSubmit function:', typeof onSubmit);
-      console.log('🚀 DEBUG: event object:', e);
+      // Form validation and submission handling
 
       if (e?.preventDefault) {
         e.preventDefault();
-        console.log('🚀 DEBUG: preventDefault called');
+        // Prevent default form submission
       }
 
       hasSubmitted.current = true;
       setIsSubmitting(true);
-      console.log('🚀 DEBUG: isSubmitting set to true');
+      // Set submitting state
 
       try {
         const isValid = await validateForm(true);

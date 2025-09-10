@@ -33,7 +33,7 @@ const useFormPersistence = (formKey, initialValues = {}, options = {}) => {
         setValues(prev => ({ ...prev, ...filteredData }));
         setHasPersistedData(true);
         console.log('📥 Form data restored from', storage, ':', Object.keys(filteredData));
-        console.log('🔍 hasPersistedData set to true');
+        // Mark that persisted data was found
       }
     } catch (error) {
       console.warn('Failed to load persisted form data:', error);
@@ -56,7 +56,7 @@ const useFormPersistence = (formKey, initialValues = {}, options = {}) => {
 
         if (Object.keys(filteredData).length > 0) {
           storageAPI.setItem(storageKey, JSON.stringify(filteredData));
-          console.log('💾 Form data persisted to', storage);
+          // Form data persisted successfully
         }
       } catch (error) {
         console.warn('Failed to persist form data:', error);
@@ -91,7 +91,7 @@ const useFormPersistence = (formKey, initialValues = {}, options = {}) => {
     try {
       storageAPI.removeItem(storageKey);
       setHasPersistedData(false);
-      console.log('🗑️ Persisted form data cleared');
+      // Persisted form data cleared
     } catch (error) {
       console.warn('Failed to clear persisted data:', error);
     }

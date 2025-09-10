@@ -25,14 +25,10 @@ const ProtectedButton = ({
     const hasOnClickHandler = onClick && typeof onClick === 'function' &&
       onClickString !== '()=>{}' && onClickString !== 'function(){}' && onClickString !== '()=>undefined';
 
-    console.log('🚀 DEBUG: ProtectedButton handleClick called');
-    console.log('🚀 DEBUG: isSubmitButton:', isSubmitButton);
-    console.log('🚀 DEBUG: onClick type:', typeof onClick);
-    console.log('🚀 DEBUG: onClick string (normalized):', onClickString);
-    console.log('🚀 DEBUG: hasOnClickHandler:', hasOnClickHandler);
+    // Button click handling
 
     if (isSubmitButton && !hasOnClickHandler) {
-      console.log('🚀 DEBUG: Submit button clicked - allowing natural form submission');
+      // Allow natural form submission for submit buttons
       // Don't prevent default, let the form handle submission
       return;
     }

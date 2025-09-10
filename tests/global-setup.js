@@ -1,7 +1,7 @@
 const { chromium } = require('@playwright/test');
 const { Pool } = require('pg');
 
-async function globalSetup(config) {
+async function globalSetup(_config) {
   console.log('🚀 Starting global test setup...');
   
   // Database setup
@@ -36,7 +36,7 @@ async function setupTestDatabase() {
     host: process.env.DB_HOST,
     database: process.env.DB_NAME,
     password: process.env.DB_PASSWORD,
-    port: parseInt(process.env.DB_PORT) || 5432,
+    port: parseInt(process.env.DB_PORT, 10) || 5432,
     ssl: { rejectUnauthorized: false }, // Always use SSL for Supabase
   });
 
@@ -116,7 +116,7 @@ async function createTestData() {
     host: process.env.DB_HOST,
     database: process.env.DB_NAME,
     password: process.env.DB_PASSWORD,
-    port: parseInt(process.env.DB_PORT) || 5432,
+    port: parseInt(process.env.DB_PORT, 10) || 5432,
     ssl: { rejectUnauthorized: false }, // Always use SSL for Supabase
   });
 

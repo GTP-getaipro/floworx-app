@@ -1,8 +1,9 @@
 // Single API handler for all routes to work within Vercel's serverless function limits
-const { getSupabaseClient, getSupabaseAdmin } = require('./_lib/database.js');
+const axios = require('axios');
 const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
-const axios = require('axios');
+
+const { getSupabaseClient, getSupabaseAdmin } = require('./_lib/database.js');
 
 // Simple authentication helper for single API handler
 const authenticate = async (req) => {
@@ -61,7 +62,7 @@ const routes = {
   'GET /health': async (req, res) => {
     try {
       const supabase = getSupabaseClient();
-      const { data, error } = await supabase.from('users').select('count').limit(1);
+      const { data: _data, error } = await supabase.from('users').select('count').limit(1);
       const databaseConnected = !error || error.message.includes('row-level security');
 
       res.status(200).json({
@@ -87,7 +88,7 @@ const routes = {
   'GET /health/db': async (req, res) => {
     try {
       const supabase = getSupabaseClient();
-      const { data, error } = await supabase.from('users').select('count').limit(1);
+      const { data: _data, error } = await supabase.from('users').select('count').limit(1);
       const databaseConnected = !error || error.message.includes('row-level security');
 
       if (databaseConnected) {
@@ -141,7 +142,7 @@ const routes = {
       console.log('Initiating password reset for:', email);
 
       const supabase = getSupabaseClient();
-      const { data, error } = await supabase.auth.resetPasswordForEmail(email, {
+      const { data: _data, error } = await supabase.auth.resetPasswordForEmail(email, {
         redirectTo: `${process.env.FRONTEND_URL || 'https://app.floworx-iq.com'}/reset-password`
       });
 
@@ -172,7 +173,7 @@ const routes = {
     try {
       console.log('Registration request received:', { body: req.body });
 
-      const { firstName, lastName, businessName, companyName, email, password, agreeToTerms, marketingConsent } = req.body;
+      const { firstName, lastName, businessName, companyName, email, password, agreeToTerms: _agreeToTerms, marketingConsent: _marketingConsent } = req.body;
 
       if (!email || !password || !firstName || !lastName) {
         return res.status(400).json({
@@ -197,9 +198,9 @@ const routes = {
       }
 
       console.log('Checking environment variables:', {
-        hasSupabaseUrl: !!process.env.SUPABASE_URL,
-        hasSupabaseServiceKey: !!process.env.SUPABASE_SERVICE_ROLE_KEY,
-        hasJwtSecret: !!process.env.JWT_SECRET
+        hasSupabaseUrl: Boolean(process.env.SUPABASE_URL),
+        hasSupabaseServiceKey: Boolean(process.env.SUPABASE_SERVICE_ROLE_KEY),
+        hasJwtSecret: Boolean(process.env.JWT_SECRET)
       });
 
       const supabase = getSupabaseAdmin();
@@ -245,7 +246,9 @@ const routes = {
         .select()
         .single();
 
-      if (insertError) throw insertError;
+      if (insertError) {
+        throw insertError;
+      }
 
       // Send verification email (in production, you'd use a real email service)
       const verificationUrl = `${process.env.FRONTEND_URL || 'https://app.floworx-iq.com'}/verify-email?token=${verificationToken}`;
@@ -561,7 +564,7 @@ const routes = {
   },
 
   // Test endpoint
-  'GET /test': async (req, res) => {
+  'GET /test': (req, res) => {
     res.status(200).json({
       message: 'Test endpoint working',
       timestamp: new Date().toISOString(),
@@ -570,7 +573,7 @@ const routes = {
   },
 
   // Password requirements endpoint
-  'GET /auth/password-requirements': async (req, res) => {
+  'GET /auth/password-requirements': (req, res) => {
     res.status(200).json({
       requirements: {
         minLength: 8,
@@ -683,7 +686,7 @@ const routes = {
         .eq('user_id', user.id)
         .eq('service_name', 'google');
 
-      const { data: credentials, error: credError } = await Promise.race([credentialsPromise, dbTimeout]);
+      const { data: credentials, error: _credError } = await Promise.race([credentialsPromise, dbTimeout]);
 
       // Don't throw error for credentials - just assume not connected if query fails
       const googleConnected = credentials && credentials.length > 0;
@@ -1615,7 +1618,7 @@ const routes = {
   },
 
   // Additional common SaaS endpoints
-  'GET /api/status': async (req, res) => {
+  'GET /api/status': (req, res) => {
     // API status endpoint (different from /health)
     res.status(200).json({
       api: 'online',
@@ -1999,7 +2002,7 @@ const routes = {
         business_phone,
         emergency_phone,
         business_address,
-        service_area_radius: parseInt(service_area_radius),
+        service_area_radius: parseInt(service_area_radius, 10),
         primary_services: Array.isArray(primary_services) ? primary_services : [primary_services],
         business_hours,
         response_time_goal,
@@ -2139,7 +2142,7 @@ const routes = {
         business_phone,
         emergency_phone,
         business_address,
-        service_area_radius: parseInt(service_area_radius),
+        service_area_radius: parseInt(service_area_radius, 10),
         primary_services: Array.isArray(primary_services) ? primary_services : [primary_services],
         business_hours,
         response_time_goal,
@@ -2265,8 +2268,8 @@ const routes = {
           name: userInfo.name,
           picture: userInfo.picture
         },
-        tokenReceived: !!tokenData.access_token,
-        refreshTokenReceived: !!tokenData.refresh_token
+        tokenReceived: Boolean(tokenData.access_token),
+        refreshTokenReceived: Boolean(tokenData.refresh_token)
       });
     } catch (error) {
       console.error('OAuth callback error:', error);

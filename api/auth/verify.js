@@ -2,7 +2,7 @@ const { authenticateToken } = require('../_lib/auth');
 
 // GET /api/auth/verify
 // Verify if current JWT token is valid
-module.exports = async (req, res) => {
+module.exports = (req, res) => {
   // Set CORS headers
   res.setHeader('Access-Control-Allow-Origin', '*');
   res.setHeader('Access-Control-Allow-Methods', 'GET, OPTIONS');

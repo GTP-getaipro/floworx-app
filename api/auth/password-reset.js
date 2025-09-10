@@ -1,5 +1,6 @@
-const passwordResetService = require('../../backend/services/passwordResetService');
 const rateLimit = require('express-rate-limit');
+
+const passwordResetService = require('../../backend/services/passwordResetService');
 
 // Rate limiting for password reset requests
 const resetRequestLimit = rateLimit({

@@ -13,10 +13,10 @@ class TestHelpers {
 
     // Store security settings for test validation
     this.securitySettings = {
-      ACCOUNT_RECOVERY_TOKEN_EXPIRY: parseInt(process.env.ACCOUNT_RECOVERY_TOKEN_EXPIRY) || 86400000,
-      MAX_FAILED_LOGIN_ATTEMPTS: parseInt(process.env.MAX_FAILED_LOGIN_ATTEMPTS) || 5,
-      ACCOUNT_LOCKOUT_DURATION: parseInt(process.env.ACCOUNT_LOCKOUT_DURATION) || 900000,
-      PROGRESSIVE_LOCKOUT_MULTIPLIER: parseInt(process.env.PROGRESSIVE_LOCKOUT_MULTIPLIER) || 2
+      ACCOUNT_RECOVERY_TOKEN_EXPIRY: parseInt(process.env.ACCOUNT_RECOVERY_TOKEN_EXPIRY, 10) || 86400000,
+      MAX_FAILED_LOGIN_ATTEMPTS: parseInt(process.env.MAX_FAILED_LOGIN_ATTEMPTS, 10) || 5,
+      ACCOUNT_LOCKOUT_DURATION: parseInt(process.env.ACCOUNT_LOCKOUT_DURATION, 10) || 900000,
+      PROGRESSIVE_LOCKOUT_MULTIPLIER: parseInt(process.env.PROGRESSIVE_LOCKOUT_MULTIPLIER, 10) || 2
     };
 
     // Supabase connection (always use SSL)
@@ -25,7 +25,7 @@ class TestHelpers {
       host: process.env.DB_HOST,
       database: process.env.DB_NAME,
       password: process.env.DB_PASSWORD,
-      port: parseInt(process.env.DB_PORT) || 5432,
+      port: parseInt(process.env.DB_PORT, 10) || 5432,
       ssl: { rejectUnauthorized: false },
     });
 
@@ -220,46 +220,6 @@ class TestHelpers {
   }
 
   // Database helpers (Safe for Supabase Cloud)
-  async createTestUser(userData = {}) {
-    const timestamp = Date.now();
-    const testPrefix = 'e2e-test';
-
-    const defaultData = {
-      email: `${testPrefix}.${timestamp}@playwright-test.local`,
-      password_hash: '$2b$10$test.hash.for.testing.purposes.only',
-      first_name: 'E2E-Test',
-      last_name: 'User',
-      business_type: 'hot_tub_service',
-      email_verified: true
-    };
-
-    const user = { ...defaultData, ...userData };
-
-    try {
-      console.log(`   🔍 Creating test user in Supabase: ${user.email}`);
-      const result = await this.pool.query(`
-        INSERT INTO users (email, password_hash, first_name, last_name, business_type, email_verified, created_at)
-        VALUES ($1, $2, $3, $4, $5, $6, NOW())
-        ON CONFLICT (email) DO UPDATE SET
-          first_name = EXCLUDED.first_name,
-          last_name = EXCLUDED.last_name,
-          updated_at = NOW()
-        RETURNING id, email, first_name, last_name
-      `, [user.email, user.password_hash, user.first_name, user.last_name, user.business_type, user.email_verified]);
-
-      console.log(`   ✅ Test user created with ID: ${result.rows[0].id}`);
-      return result.rows[0];
-    } catch (error) {
-      console.warn(`   ⚠️  Could not create test user ${user.email}:`, error.message);
-      // Return a mock user for tests that don't require database
-      return {
-        id: `mock-${timestamp}`,
-        email: user.email,
-        first_name: user.first_name,
-        last_name: user.last_name
-      };
-    }
-  }
 
   async deleteTestUser(email) {
     try {
@@ -370,93 +330,9 @@ class TestHelpers {
 
   // ===== BUSINESS LOGIC HELPERS =====
 
-  /**
-   * Create a test workflow with specified configuration
-   */
-  async createTestWorkflow(config = {}) {
-    const defaultConfig = {
-      name: `E2E-Test Workflow ${Date.now()}`,
-      description: 'Test workflow created by E2E tests',
-      trigger_type: 'email_received',
-      trigger_conditions: {
-        category: 'service_request'
-      },
-      actions: [
-        {
-          type: 'send_auto_reply',
-          template: 'test_template',
-          delay_minutes: 0
-        }
-      ],
-      active: true,
-      user_id: config.user_id
-    };
 
-    const workflowConfig = { ...defaultConfig, ...config };
 
-    try {
-      const result = await this.pool.query(`
-        INSERT INTO workflows (name, description, trigger_type, trigger_conditions, actions, active, user_id, created_at)
-        VALUES ($1, $2, $3, $4, $5, $6, $7, NOW())
-        RETURNING id
-      `, [
-        workflowConfig.name,
-        workflowConfig.description,
-        workflowConfig.trigger_type,
-        JSON.stringify(workflowConfig.trigger_conditions),
-        JSON.stringify(workflowConfig.actions),
-        workflowConfig.active,
-        workflowConfig.user_id
-      ]);
 
-      const workflowId = result.rows[0].id;
-      console.log(`✅ Test workflow created with ID: ${workflowId}`);
-      return workflowId;
-    } catch (error) {
-      console.log(`⚠️ Could not create test workflow: ${error.message}`);
-      return `mock-workflow-${Date.now()}`;
-    }
-  }
-
-  /**
-   * Simulate email received with test data
-   */
-  async simulateEmailReceived(emailData = {}) {
-    const defaultEmail = {
-      from: 'test.customer@example.com',
-      subject: 'Test Email',
-      body: 'This is a test email body',
-      category: 'general_inquiry',
-      priority: 'medium',
-      user_id: emailData.user_id,
-      received_at: new Date().toISOString()
-    };
-
-    const email = { ...defaultEmail, ...emailData };
-
-    try {
-      const result = await this.pool.query(`
-        INSERT INTO emails (from_email, subject, body, category, priority, user_id, received_at, created_at)
-        VALUES ($1, $2, $3, $4, $5, $6, $7, NOW())
-        RETURNING id
-      `, [
-        email.from,
-        email.subject,
-        email.body,
-        email.category,
-        email.priority,
-        email.user_id,
-        email.received_at
-      ]);
-
-      const emailId = result.rows[0].id;
-      console.log(`📧 Test email created with ID: ${emailId}`);
-      return emailId;
-    } catch (error) {
-      console.log(`⚠️ Could not create test email: ${error.message}`);
-      return `mock-email-${Date.now()}`;
-    }
-  }
 
   /**
    * Validate workflow execution status and results

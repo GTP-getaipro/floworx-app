@@ -89,8 +89,6 @@ module.exports = {
     // Best practices
     'no-implicit-coercion': 'error',
     'no-implicit-globals': 'error',
-    'no-implied-eval': 'error',
-    'no-new-func': 'error',
     'no-new-wrappers': 'error',
     'no-throw-literal': 'error',
     'radix': 'error',

@@ -17,7 +17,7 @@ const {
   sanitizeInput,
   sanitizeRequest,
   sanitizeResponse,
-  securityHeaders,
+  // securityHeaders, // Not used in this file
   handleValidationErrors
 } = require('./middleware/security');
 

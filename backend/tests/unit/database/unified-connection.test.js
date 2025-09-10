@@ -189,7 +189,7 @@ describe('DatabaseManager', () => {
         .mockResolvedValueOnce({ rows: [], rowCount: 0 }); // COMMIT
 
       const result = await dbManager.transaction(async (client) => {
-        return await client.query('INSERT INTO users (name) VALUES ($1) RETURNING id', ['Test']);
+        return client.query('INSERT INTO users (name) VALUES ($1) RETURNING id', ['Test']);
       });
 
       expect(mockClient.query).toHaveBeenCalledWith('BEGIN');
@@ -221,7 +221,7 @@ describe('DatabaseManager', () => {
         .mockResolvedValueOnce({ rows: [], rowCount: 0 }); // COMMIT
 
       await dbManager.transaction(async (client) => {
-        return await client.query('INSERT INTO users (name) VALUES ($1)', ['Test']);
+        return client.query('INSERT INTO users (name) VALUES ($1)', ['Test']);
       });
 
       expect(mockClient.query).toHaveBeenCalledWith('BEGIN');

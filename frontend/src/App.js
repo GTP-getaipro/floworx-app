@@ -58,30 +58,35 @@ function App() {
                 </header>
 
                 <main className='App-main'>
-                  <Suspense fallback={<LoadingSpinner />}>
-                    <Routes>
-                      {/* Public routes with error boundaries */}
-                      <Route
-                        path='/login'
-                        element={
-                          <ErrorBoundary key='login'>
-                            <Login />
-                          </ErrorBoundary>
-                        }
-                      />
-                      <Route
-                        path='/register'
-                        element={
-                          <ErrorBoundary key='register'>
+                  <Routes>
+                    {/* Critical routes - no Suspense delay */}
+                    <Route
+                      path='/login'
+                      element={
+                        <ErrorBoundary key='login'>
+                          <Login />
+                        </ErrorBoundary>
+                      }
+                    />
+
+                    {/* Lazy-loaded routes with Suspense */}
+                    <Route
+                      path='/register'
+                      element={
+                        <ErrorBoundary key='register'>
+                          <Suspense fallback={<LoadingSpinner />}>
                             <Register />
-                          </ErrorBoundary>
-                        }
-                      />
-                      <Route
-                        path='/verify-email'
+                          </Suspense>
+                        </ErrorBoundary>
+                      }
+                    />
+                    <Route
+                      path='/verify-email'
                       element={
                         <ErrorBoundary key='verify-email'>
-                          <EmailVerification />
+                          <Suspense fallback={<LoadingSpinner />}>
+                            <EmailVerification />
+                          </Suspense>
                         </ErrorBoundary>
                       }
                     />
@@ -89,7 +94,9 @@ function App() {
                       path='/forgot-password'
                       element={
                         <ErrorBoundary key='forgot-password'>
-                          <ForgotPassword />
+                          <Suspense fallback={<LoadingSpinner />}>
+                            <ForgotPassword />
+                          </Suspense>
                         </ErrorBoundary>
                       }
                     />
@@ -97,7 +104,9 @@ function App() {
                       path='/reset-password'
                       element={
                         <ErrorBoundary key='reset-password'>
-                          <ResetPassword />
+                          <Suspense fallback={<LoadingSpinner />}>
+                            <ResetPassword />
+                          </Suspense>
                         </ErrorBoundary>
                       }
                     />
@@ -105,7 +114,9 @@ function App() {
                       path='/account-recovery'
                       element={
                         <ErrorBoundary key='account-recovery'>
-                          <AccountRecoveryDashboard />
+                          <Suspense fallback={<LoadingSpinner />}>
+                            <AccountRecoveryDashboard />
+                          </Suspense>
                         </ErrorBoundary>
                       }
                     />
@@ -113,18 +124,22 @@ function App() {
                       path='/database-test'
                       element={
                         <ErrorBoundary key='database-test'>
-                          <DatabaseTest />
+                          <Suspense fallback={<LoadingSpinner />}>
+                            <DatabaseTest />
+                          </Suspense>
                         </ErrorBoundary>
                       }
                     />
 
-                    {/* Protected routes with error boundaries */}
+                    {/* Protected routes with Suspense */}
                     <Route
                       path='/dashboard'
                       element={
                         <ErrorBoundary key='dashboard'>
                           <ProtectedRoute>
-                            <Dashboard />
+                            <Suspense fallback={<LoadingSpinner />}>
+                              <Dashboard />
+                            </Suspense>
                           </ProtectedRoute>
                         </ErrorBoundary>
                       }
@@ -134,7 +149,9 @@ function App() {
                       element={
                         <ErrorBoundary key='user-management'>
                           <ProtectedRoute>
-                            <UserManagement />
+                            <Suspense fallback={<LoadingSpinner />}>
+                              <UserManagement />
+                            </Suspense>
                           </ProtectedRoute>
                         </ErrorBoundary>
                       }
@@ -144,7 +161,9 @@ function App() {
                       element={
                         <ErrorBoundary key='settings'>
                           <ProtectedRoute>
-                            <Settings />
+                            <Suspense fallback={<LoadingSpinner />}>
+                              <Settings />
+                            </Suspense>
                           </ProtectedRoute>
                         </ErrorBoundary>
                       }
@@ -156,12 +175,13 @@ function App() {
                       path='*'
                       element={
                         <ErrorBoundary key='not-found'>
-                          <NotFoundPage />
+                          <Suspense fallback={<LoadingSpinner />}>
+                            <NotFoundPage />
+                          </Suspense>
                         </ErrorBoundary>
                       }
                     />
                   </Routes>
-                  </Suspense>
                 </main>
 
                 <footer className='App-footer'>

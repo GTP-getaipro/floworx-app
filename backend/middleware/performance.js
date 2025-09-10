@@ -298,7 +298,7 @@ const cachePerformanceTracker = (req, res, next) => {
   };
 
   // Wrap cache set method
-  cacheService.set = async function (key, value, ttl) {
+  cacheService.set = function (key, value, ttl) {
     cacheOperations++;
     return originalCacheSet.call(this, key, value, ttl);
   };

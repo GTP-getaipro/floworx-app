@@ -1,0 +1,267 @@
+{
+  "timestamp": "2025-09-11T17:41:52.049Z",
+  "baseUrl": "https://app.floworx-iq.com",
+  "existingUser": "dizelll.test.1757606995372@gmail.com",
+  "newUser": "e2e.test.1757612512046@floworx-test.com",
+  "tests": {
+    "API Integration Test": {
+      "name": "API Integration Test",
+      "success": true,
+      "message": "API integration working",
+      "details": {
+        "Registration API": 201,
+        "Login API": 200,
+        "JWT Token": true
+      },
+      "duration": 1496,
+      "timestamp": "2025-09-11T17:41:53.839Z"
+    },
+    "Registration Flow Test": {
+      "name": "Registration Flow Test",
+      "success": false,
+      "message": "Registration failed",
+      "details": {
+        "Current URL": "https://app.floworx-iq.com/register",
+        "Redirected from Register": false,
+        "Success Message": false,
+        "Error Message": false,
+        "User in Database": false,
+        "Test Email": "e2e.test.1757612512046@floworx-test.com"
+      },
+      "duration": 14682,
+      "timestamp": "2025-09-11T17:42:08.522Z"
+    },
+    "Email Verification Test": {
+      "name": "Email Verification Test",
+      "success": true,
+      "message": "Email verification test skipped (no database access)",
+      "details": {
+        "Reason": "Supabase not available for direct testing"
+      },
+      "duration": 365,
+      "timestamp": "2025-09-11T17:42:08.887Z"
+    },
+    "Login Flow Test": {
+      "name": "Login Flow Test",
+      "success": false,
+      "message": "Login failed",
+      "details": {
+        "Current URL": "https://app.floworx-iq.com/login",
+        "Redirected from Login": false,
+        "Has Auth Token": false,
+        "Error Message": false,
+        "LocalStorage Token": false,
+        "SessionStorage Token": false,
+        "Cookies": false
+      },
+      "duration": 9400,
+      "timestamp": "2025-09-11T17:42:18.288Z"
+    },
+    "Protected Route Access Test": {
+      "name": "Protected Route Access Test",
+      "success": false,
+      "message": "Protected route access blocked",
+      "details": {
+        "Current URL": "https://app.floworx-iq.com/login",
+        "On Dashboard": false,
+        "Redirected to Login": true
+      },
+      "duration": 1167,
+      "timestamp": "2025-09-11T17:42:19.455Z"
+    },
+    "Session Persistence Test": {
+      "name": "Session Persistence Test",
+      "success": false,
+      "message": "Session persistence not working",
+      "details": {
+        "Still Authenticated": false,
+        "Persisted Token": false,
+        "Current URL": "https://app.floworx-iq.com/login",
+        "LocalStorage Token": false,
+        "SessionStorage Token": false
+      },
+      "duration": 1189,
+      "timestamp": "2025-09-11T17:42:20.645Z"
+    },
+    "Form Validation Test": {
+      "name": "Form Validation Test",
+      "success": false,
+      "message": "Form validation not working",
+      "details": {
+        "Initial Validation Errors": 0,
+        "Final Validation Errors": 0,
+        "Email Validation": "Tested invalid format",
+        "Password Validation": "Tested weak password"
+      },
+      "duration": 10245,
+      "timestamp": "2025-09-11T17:42:30.891Z"
+    },
+    "Logout Flow Test": {
+      "name": "Logout Flow Test",
+      "success": false,
+      "message": "Logout button not found",
+      "details": {
+        "Reason": "No logout element found on page"
+      },
+      "duration": 5,
+      "timestamp": "2025-09-11T17:42:30.896Z"
+    }
+  },
+  "screenshots": [],
+  "summary": {
+    "totalTests": 8,
+    "passedTests": 2,
+    "successRate": 25,
+    "screenshots": [
+      {
+        "name": "registration-page",
+        "description": "Registration page loaded",
+        "filename": "e2e-registration-page-1757612515406.png"
+      },
+      {
+        "name": "registration-filled",
+        "description": "Registration form filled",
+        "filename": "e2e-registration-filled-1757612519580.png"
+      },
+      {
+        "name": "registration-submitted",
+        "description": "After registration submission",
+        "filename": "e2e-registration-submitted-1757612525709.png"
+      },
+      {
+        "name": "login-page",
+        "description": "Login page loaded",
+        "filename": "e2e-login-page-1757612529986.png"
+      },
+      {
+        "name": "login-filled",
+        "description": "Login form filled",
+        "filename": "e2e-login-filled-1757612532105.png"
+      },
+      {
+        "name": "login-submitted",
+        "description": "After login submission",
+        "filename": "e2e-login-submitted-1757612538208.png"
+      },
+      {
+        "name": "dashboard-access",
+        "description": "Dashboard access attempt",
+        "filename": "e2e-dashboard-access-1757612539383.png"
+      },
+      {
+        "name": "session-refresh",
+        "description": "After page refresh",
+        "filename": "e2e-session-refresh-1757612540565.png"
+      },
+      {
+        "name": "validation-errors",
+        "description": "Form validation errors",
+        "filename": "e2e-validation-errors-1757612544705.png"
+      }
+    ],
+    "testResults": [
+      {
+        "name": "API Integration Test",
+        "success": true,
+        "message": "API integration working",
+        "details": {
+          "Registration API": 201,
+          "Login API": 200,
+          "JWT Token": true
+        },
+        "duration": 1496,
+        "timestamp": "2025-09-11T17:41:53.839Z"
+      },
+      {
+        "name": "Registration Flow Test",
+        "success": false,
+        "message": "Registration failed",
+        "details": {
+          "Current URL": "https://app.floworx-iq.com/register",
+          "Redirected from Register": false,
+          "Success Message": false,
+          "Error Message": false,
+          "User in Database": false,
+          "Test Email": "e2e.test.1757612512046@floworx-test.com"
+        },
+        "duration": 14682,
+        "timestamp": "2025-09-11T17:42:08.522Z"
+      },
+      {
+        "name": "Email Verification Test",
+        "success": true,
+        "message": "Email verification test skipped (no database access)",
+        "details": {
+          "Reason": "Supabase not available for direct testing"
+        },
+        "duration": 365,
+        "timestamp": "2025-09-11T17:42:08.887Z"
+      },
+      {
+        "name": "Login Flow Test",
+        "success": false,
+        "message": "Login failed",
+        "details": {
+          "Current URL": "https://app.floworx-iq.com/login",
+          "Redirected from Login": false,
+          "Has Auth Token": false,
+          "Error Message": false,
+          "LocalStorage Token": false,
+          "SessionStorage Token": false,
+          "Cookies": false
+        },
+        "duration": 9400,
+        "timestamp": "2025-09-11T17:42:18.288Z"
+      },
+      {
+        "name": "Protected Route Access Test",
+        "success": false,
+        "message": "Protected route access blocked",
+        "details": {
+          "Current URL": "https://app.floworx-iq.com/login",
+          "On Dashboard": false,
+          "Redirected to Login": true
+        },
+        "duration": 1167,
+        "timestamp": "2025-09-11T17:42:19.455Z"
+      },
+      {
+        "name": "Session Persistence Test",
+        "success": false,
+        "message": "Session persistence not working",
+        "details": {
+          "Still Authenticated": false,
+          "Persisted Token": false,
+          "Current URL": "https://app.floworx-iq.com/login",
+          "LocalStorage Token": false,
+          "SessionStorage Token": false
+        },
+        "duration": 1189,
+        "timestamp": "2025-09-11T17:42:20.645Z"
+      },
+      {
+        "name": "Form Validation Test",
+        "success": false,
+        "message": "Form validation not working",
+        "details": {
+          "Initial Validation Errors": 0,
+          "Final Validation Errors": 0,
+          "Email Validation": "Tested invalid format",
+          "Password Validation": "Tested weak password"
+        },
+        "duration": 10245,
+        "timestamp": "2025-09-11T17:42:30.891Z"
+      },
+      {
+        "name": "Logout Flow Test",
+        "success": false,
+        "message": "Logout button not found",
+        "details": {
+          "Reason": "No logout element found on page"
+        },
+        "duration": 5,
+        "timestamp": "2025-09-11T17:42:30.896Z"
+      }
+    ]
+  }
+}

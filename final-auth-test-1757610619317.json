@@ -1,0 +1,54 @@
+{
+  "timestamp": "2025-09-11T17:10:17.432Z",
+  "workingUser": {
+    "email": "dizelll.test.1757606995372@gmail.com",
+    "password": "TestPassword123!"
+  },
+  "tests": {
+    "apiHealth": {
+      "success": true,
+      "status": 200,
+      "message": "API healthy and responding"
+    },
+    "apiLogin": {
+      "success": true,
+      "status": 200,
+      "hasToken": true,
+      "userId": "de1c4228-f845-44e6-a2a8-d61602ae7d09",
+      "message": "API login working perfectly"
+    },
+    "registration": {
+      "success": true,
+      "status": 201,
+      "email": "test.final.1757610618103@example.com",
+      "requiresVerification": false,
+      "message": "Registration working"
+    },
+    "businessTypes": {
+      "success": true,
+      "status": 200,
+      "count": 6,
+      "hasHotTub": true,
+      "message": "6 business types available"
+    },
+    "passwordReset": {
+      "success": true,
+      "status": 200,
+      "message": "If an account with this email exists, you will receive a password reset link.",
+      "hasResetUrl": false
+    },
+    "security": {
+      "success": false,
+      "status": 200,
+      "protected": false,
+      "message": "Dashboard security issue"
+    }
+  },
+  "summary": {
+    "totalTests": 6,
+    "passedTests": 5,
+    "successRate": 83.3,
+    "assessment": "GOOD",
+    "readyForProduction": false
+  }
+}

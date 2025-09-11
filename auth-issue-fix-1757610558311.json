@@ -1,0 +1,131 @@
+{
+  "frontendLogin": {
+    "success": false,
+    "issue": "FRONTEND_INTEGRATION",
+    "message": "Frontend login integration issue",
+    "details": {
+      "currentUrl": "https://app.floworx-iq.com/login",
+      "isRedirected": false,
+      "networkRequests": 1,
+      "authTokens": false,
+      "errorMessages": 0
+    }
+  },
+  "businessTypesAPI": {
+    "success": true,
+    "message": "Business Types API working - 6 types found",
+    "businessTypes": [
+      {
+        "id": "6",
+        "name": "General Contractor",
+        "slug": "general-contractor",
+        "description": "General construction and contracting services",
+        "default_categories": [
+          "Project Inquiries",
+          "Estimates",
+          "Scheduling",
+          "Material Orders",
+          "Customer Communication"
+        ],
+        "created_at": {},
+        "updated_at": {}
+      },
+      {
+        "id": "1",
+        "name": "Hot Tub & Spa",
+        "slug": "hot-tub-spa",
+        "description": "Email automation for hot tub dealers, service companies, and spa retailers specializing in sales, service calls, parts orders, and warranty claims",
+        "default_categories": [
+          {
+            "name": "Service Calls",
+            "priority": "high",
+            "description": "Emergency repairs and maintenance requests"
+          },
+          {
+            "name": "Sales Inquiries",
+            "priority": "medium",
+            "description": "New customer quotes and product information"
+          },
+          {
+            "name": "Parts Orders",
+            "priority": "medium",
+            "description": "Replacement parts and accessories"
+          },
+          {
+            "name": "Warranty Claims",
+            "priority": "high",
+            "description": "Product warranty and support issues"
+          },
+          {
+            "name": "General Support",
+            "priority": "low",
+            "description": "General questions and customer support"
+          }
+        ],
+        "created_at": {},
+        "updated_at": {}
+      },
+      {
+        "id": "5",
+        "name": "HVAC Services",
+        "slug": "hvac-services",
+        "description": "Heating, ventilation, and air conditioning services",
+        "default_categories": [
+          "Service Calls",
+          "Maintenance",
+          "Installation",
+          "Emergency Repairs",
+          "Customer Support"
+        ],
+        "created_at": {},
+        "updated_at": {}
+      },
+      {
+        "id": "7",
+        "name": "Other Service Business",
+        "slug": "other-service",
+        "description": "Other professional service businesses",
+        "default_categories": [
+          "Customer Inquiries",
+          "Service Requests",
+          "Scheduling",
+          "Follow-up",
+          "Support"
+        ],
+        "created_at": {},
+        "updated_at": {}
+      },
+      {
+        "id": "4",
+        "name": "Pool Services",
+        "slug": "pool-services",
+        "description": "Swimming pool maintenance, cleaning, and repair services",
+        "default_categories": [
+          "Pool Cleaning",
+          "Chemical Balancing",
+          "Equipment Repair",
+          "Pool Opening/Closing",
+          "Customer Inquiries"
+        ],
+        "created_at": {},
+        "updated_at": {}
+      },
+      {
+        "id": "2",
+        "name": "Test Business Type",
+        "slug": "duplicate-test-slug",
+        "description": null,
+        "default_categories": [],
+        "created_at": {},
+        "updated_at": {}
+      }
+    ],
+    "hasHotTub": true
+  },
+  "passwordReset": {
+    "success": true,
+    "message": "Password reset working for test emails",
+    "status": 200
+  },
+  "timestamp": "2025-09-11T17:08:37.686Z"
+}

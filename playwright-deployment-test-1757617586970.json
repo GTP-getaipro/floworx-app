@@ -1,0 +1,135 @@
+{
+  "timestamp": "2025-09-11T19:06:26.968Z",
+  "baseUrl": "https://app.floworx-iq.com",
+  "testUser": "dizelll.test.1757606995372@gmail.com",
+  "apiTests": [
+    {
+      "name": "Health Check",
+      "success": true,
+      "status": 200,
+      "expected": [
+        200
+      ]
+    },
+    {
+      "name": "Business Types",
+      "success": true,
+      "status": 200,
+      "expected": [
+        200
+      ]
+    },
+    {
+      "name": "Auth Login (Invalid)",
+      "success": true,
+      "status": 401,
+      "expected": [
+        401
+      ],
+      "error": "Request failed with status code 401"
+    }
+  ],
+  "pageTests": [
+    {
+      "name": "Home Page",
+      "success": true,
+      "status": 200,
+      "url": "https://app.floworx-iq.com/",
+      "elementResults": [],
+      "screenshot": "playwright-home-page-1757617580649.png"
+    },
+    {
+      "name": "Login Page",
+      "success": true,
+      "status": 200,
+      "url": "https://app.floworx-iq.com/login",
+      "elementResults": [
+        {
+          "element": "Email Input",
+          "found": true
+        }
+      ],
+      "screenshot": "playwright-login-page-1757617581335.png"
+    },
+    {
+      "name": "Register Page",
+      "success": true,
+      "status": 200,
+      "url": "https://app.floworx-iq.com/register",
+      "elementResults": [
+        {
+          "element": "Email Input",
+          "found": true
+        }
+      ],
+      "screenshot": "playwright-register-page-1757617582107.png"
+    }
+  ],
+  "authTests": [
+    {
+      "test": "Login Page Load",
+      "success": true,
+      "details": "Login form elements validation"
+    },
+    {
+      "test": "Login Form Submission",
+      "success": true,
+      "details": "API returned 200, redirected: false"
+    },
+    {
+      "test": "Registration Page Load",
+      "success": true,
+      "details": "Registration form elements validation"
+    }
+  ],
+  "screenshots": [
+    {
+      "name": "home-page",
+      "description": "Home Page page loaded",
+      "filename": "playwright-home-page-1757617580649.png",
+      "timestamp": "2025-09-11T19:06:20.732Z"
+    },
+    {
+      "name": "login-page",
+      "description": "Login Page page loaded",
+      "filename": "playwright-login-page-1757617581335.png",
+      "timestamp": "2025-09-11T19:06:21.410Z"
+    },
+    {
+      "name": "register-page",
+      "description": "Register Page page loaded",
+      "filename": "playwright-register-page-1757617582107.png",
+      "timestamp": "2025-09-11T19:06:22.184Z"
+    },
+    {
+      "name": "login-page",
+      "description": "Login page loaded",
+      "filename": "playwright-login-page-1757617582711.png",
+      "timestamp": "2025-09-11T19:06:22.775Z"
+    },
+    {
+      "name": "login-filled",
+      "description": "Login form filled",
+      "filename": "playwright-login-filled-1757617582809.png",
+      "timestamp": "2025-09-11T19:06:22.880Z"
+    },
+    {
+      "name": "login-submitted",
+      "description": "After login submission",
+      "filename": "playwright-login-submitted-1757617586303.png",
+      "timestamp": "2025-09-11T19:06:26.361Z"
+    },
+    {
+      "name": "register-page",
+      "description": "Registration page loaded",
+      "filename": "playwright-register-page-1757617586884.png",
+      "timestamp": "2025-09-11T19:06:26.949Z"
+    }
+  ],
+  "summary": {
+    "totalTests": 9,
+    "passedTests": 9,
+    "failedTests": 0,
+    "successRate": 100
+  }
+}

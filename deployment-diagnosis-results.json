@@ -1,6 +1,10 @@
 {
-  "status": "HEALTHY",
+  "status": "WARNING",
   "errors": [],
-  "warnings": [],
-  "fixes": []
+  "warnings": [
+    "Found potentially problematic file: frontend/build"
+  ],
+  "fixes": [
+    "Remove frontend/build directory to ensure clean build"
+  ]
 }

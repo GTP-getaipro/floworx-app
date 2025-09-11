@@ -8,11 +8,11 @@
       "name": "Homepage Load Performance",
       "category": "Performance",
       "success": true,
-      "message": "Page loaded in 1419ms",
+      "message": "Page loaded in 1450ms",
       "data": {
-        "loadTime": 1419
+        "loadTime": 1450
       },
-      "timestamp": "2025-09-11T08:01:09.277Z"
+      "timestamp": "2025-09-11T14:37:04.037Z"
     },
     {
       "name": "SEO Meta Tags Validation",
@@ -24,7 +24,7 @@
         "description": "Floworx - Secure automation platform for your workflows",
         "viewport": "width=device-width,initial-scale=1"
       },
-      "timestamp": "2025-09-11T08:01:10.827Z"
+      "timestamp": "2025-09-11T14:37:05.596Z"
     },
     {
       "name": "Valid User Registration",
@@ -34,12 +34,12 @@
       "data": {
         "currentUrl": "https://app.floworx-iq.com/login",
         "hasError": false,
-        "uniqueEmail": "test1757577672513@example.com",
+        "uniqueEmail": "test1757601427280@example.com",
         "hasSuccessMessage": false,
         "hasToastSuccess": false,
         "hasSuccessCard": false
       },
-      "timestamp": "2025-09-11T08:01:24.148Z"
+      "timestamp": "2025-09-11T14:37:18.894Z"
     },
     {
       "name": "Invalid Email Format Validation",
@@ -49,7 +49,7 @@
       "data": {
         "hasValidationError": true
       },
-      "timestamp": "2025-09-11T08:01:29.310Z"
+      "timestamp": "2025-09-11T14:37:24.059Z"
     },
     {
       "name": "Weak Password Validation",
@@ -59,7 +59,7 @@
       "data": {
         "hasPasswordError": true
       },
-      "timestamp": "2025-09-11T08:01:34.406Z"
+      "timestamp": "2025-09-11T14:37:29.162Z"
     },
     {
       "name": "SQL Injection Protection",
@@ -70,7 +70,7 @@
         "pageTitle": "Floworx - Secure Workflow Automation",
         "isPageBroken": false
       },
-      "timestamp": "2025-09-11T08:01:41.106Z"
+      "timestamp": "2025-09-11T14:37:35.854Z"
     },
     {
       "name": "Login with Valid Credentials",
@@ -85,7 +85,7 @@
         "leftLoginPage": false,
         "note": "Login API functional, credentials need verification"
       },
-      "timestamp": "2025-09-11T08:01:47.343Z"
+      "timestamp": "2025-09-11T14:37:42.069Z"
     },
     {
       "name": "Login with Invalid Credentials",
@@ -96,7 +96,7 @@
         "hasError": false,
         "stayedOnLogin": true
       },
-      "timestamp": "2025-09-11T08:01:53.494Z"
+      "timestamp": "2025-09-11T14:37:48.232Z"
     },
     {
       "name": "Password Reset Flow",
@@ -106,7 +106,7 @@
       "data": {
         "hasSuccess": false
       },
-      "timestamp": "2025-09-11T08:01:58.676Z"
+      "timestamp": "2025-09-11T14:37:53.387Z"
     },
     {
       "name": "Business Type Selection",
@@ -120,7 +120,7 @@
         "isLoading": false,
         "hasError": false
       },
-      "timestamp": "2025-09-11T08:02:03.346Z"
+      "timestamp": "2025-09-11T14:37:58.076Z"
     },
     {
       "name": "Google OAuth Button Presence",
@@ -130,7 +130,7 @@
       "data": {
         "googleButton": 1
       },
-      "timestamp": "2025-09-11T08:02:04.940Z"
+      "timestamp": "2025-09-11T14:37:59.680Z"
     },
     {
       "name": "Mobile Responsiveness",
@@ -142,7 +142,7 @@
         "viewportWidth": 375,
         "hasHorizontalScroll": false
       },
-      "timestamp": "2025-09-11T08:02:07.485Z"
+      "timestamp": "2025-09-11T14:38:02.231Z"
     },
     {
       "name": "Accessibility - Keyboard Navigation",
@@ -153,7 +153,7 @@
         "firstFocused": "INPUT",
         "secondFocused": "INPUT"
       },
-      "timestamp": "2025-09-11T08:02:10.047Z"
+      "timestamp": "2025-09-11T14:38:04.797Z"
     },
     {
       "name": "Form Validation Messages",
@@ -163,7 +163,7 @@
       "data": {
         "validationMessages": 11
       },
-      "timestamp": "2025-09-11T08:02:13.125Z"
+      "timestamp": "2025-09-11T14:38:07.905Z"
     },
     {
       "name": "HTTPS Security",
@@ -174,7 +174,7 @@
         "url": "https://app.floworx-iq.com/login",
         "isHTTPS": true
       },
-      "timestamp": "2025-09-11T08:02:14.658Z"
+      "timestamp": "2025-09-11T14:38:09.418Z"
     },
     {
       "name": "Console Errors Check",
@@ -184,7 +184,7 @@
       "data": {
         "consoleErrors": []
       },
-      "timestamp": "2025-09-11T08:02:16.246Z"
+      "timestamp": "2025-09-11T14:38:11.008Z"
     },
     {
       "name": "Email Verification Flow",
@@ -195,7 +195,7 @@
         "hasForm": true,
         "hasResendButton": true
       },
-      "timestamp": "2025-09-11T08:02:17.951Z"
+      "timestamp": "2025-09-11T14:38:12.710Z"
     },
     {
       "name": "Dashboard Navigation",
@@ -207,7 +207,7 @@
         "authenticationProtectionWorking": true,
         "note": "Dashboard navigation exists but requires authentication"
       },
-      "timestamp": "2025-09-11T08:02:26.114Z"
+      "timestamp": "2025-09-11T14:38:20.887Z"
     },
     {
       "name": "Error Page Handling",
@@ -218,7 +218,7 @@
         "hasErrorMessage": true,
         "hasHomeLink": false
       },
-      "timestamp": "2025-09-11T08:02:27.805Z"
+      "timestamp": "2025-09-11T14:38:22.584Z"
     },
     {
       "name": "API Health Check",
@@ -229,16 +229,16 @@
         "status": 200,
         "responseData": {
           "status": "ok",
-          "timestamp": "2025-09-11T08:02:30.519Z",
+          "timestamp": "2025-09-11T14:38:23.881Z",
           "version": "1.0.1",
           "environment": "production",
           "deployment": {
-            "buildTime": "2025-09-11T08:02:30.519Z",
+            "buildTime": "2025-09-11T14:38:23.881Z",
             "nodeVersion": "v22.11.0"
           }
         }
       },
-      "timestamp": "2025-09-11T08:02:29.077Z"
+      "timestamp": "2025-09-11T14:38:23.877Z"
     },
     {
       "name": "Workflow Management Access",
@@ -249,7 +249,7 @@
         "workflowElements": 0,
         "hasCreateButton": false
       },
-      "timestamp": "2025-09-11T08:02:30.693Z"
+      "timestamp": "2025-09-11T14:38:25.507Z"
     },
     {
       "name": "Profile Settings Access",
@@ -260,7 +260,7 @@
         "hasProfileForm": false,
         "hasSaveButton": false
       },
-      "timestamp": "2025-09-11T08:02:32.319Z"
+      "timestamp": "2025-09-11T14:38:27.117Z"
     }
   ],
   "categories": {

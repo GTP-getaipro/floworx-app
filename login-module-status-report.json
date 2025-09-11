@@ -1,16 +1,16 @@
 {
-  "timestamp": "2025-09-11T13:38:47.450Z",
+  "timestamp": "2025-09-11T14:36:45.698Z",
   "components": {
     "apiConnectivity": {
       "status": "WORKING",
       "message": "✅ API responding: 200",
       "data": {
         "status": "ok",
-        "timestamp": "2025-09-11T13:38:47.722Z",
+        "timestamp": "2025-09-11T14:36:45.987Z",
         "version": "1.0.1",
         "environment": "production",
         "deployment": {
-          "buildTime": "2025-09-11T13:38:47.722Z",
+          "buildTime": "2025-09-11T14:36:45.987Z",
           "nodeVersion": "v22.11.0"
         }
       }
@@ -20,16 +20,22 @@
       "message": "✅ Registration working: 201",
       "requiresVerification": false,
       "testUser": {
-        "email": "status.test.1757597927730@floworx-iq.com",
+        "email": "status.test.1757601405991@floworx-iq.com",
         "password": "StatusTest123!"
       }
     },
     "loginApi": {
-      "status": "BLOCKED_BY_VERIFICATION",
-      "message": "⚠️  Login API blocked by email verification requirement",
-      "errorType": "EMAIL_NOT_VERIFIED",
-      "errorMessage": "Please verify your email address before logging in",
-      "needsDeployment": true
+      "status": "WORKING",
+      "message": "✅ Login API working: 200",
+      "hasToken": true,
+      "userInfo": {
+        "id": "e32f6b02-f430-4dda-b15b-b605a6ea9bb2",
+        "email": "status.test.1757601405991@floworx-iq.com",
+        "firstName": null,
+        "lastName": null,
+        "companyName": null,
+        "createdAt": {}
+      }
     },
     "frontendForm": {
       "status": "WORKING",
@@ -43,13 +49,13 @@
     }
   },
   "overall": {
-    "workingComponents": 3,
+    "workingComponents": 4,
     "totalComponents": 4,
-    "blockedComponents": 1,
-    "successRate": "75.0",
-    "status": "READY_PENDING_DEPLOYMENT",
+    "blockedComponents": 0,
+    "successRate": "100.0",
+    "status": "FULLY_FUNCTIONAL",
     "recommendations": [
-      "🚀 Deploy backend changes to disable email verification requirement"
+      "🎉 Login module is fully functional!"
     ]
   }
 }

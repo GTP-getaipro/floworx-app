@@ -43,6 +43,9 @@ RUN adduser --system --uid 1001 nextjs
 COPY backend/ ./backend/
 COPY --from=deps /app/backend/node_modules ./backend/node_modules
 
+# Copy shared utilities
+COPY shared/ ./shared/
+
 # Copy built frontend
 COPY --from=frontend-builder /app/frontend/build ./frontend/build
 

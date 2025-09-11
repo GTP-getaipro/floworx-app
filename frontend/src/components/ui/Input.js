@@ -1,4 +1,4 @@
-import React from 'react';
+// Input component for forms
 
 const Input = ({ label, error, helperText, required = false, className = '', id, name, ...props }) => {
   const inputId = id || `input-${Math.random().toString(36).substr(2, 9)}`;
@@ -36,13 +36,18 @@ const Input = ({ label, error, helperText, required = false, className = '', id,
         name={name}
         data-testid={props['data-testid'] || (kebabCaseName ? `${kebabCaseName}-input` : undefined)}
         className={inputClasses}
+        aria-invalid={error ? 'true' : 'false'}
+        aria-describedby={error ? `${inputId}-error` : (helperText ? `${inputId}-help` : undefined)}
         {...props}
       />
 
       {error && (
         <p
+          id={`${inputId}-error`}
           data-testid={kebabCaseName ? `${kebabCaseName}-error` : 'input-error'}
           className='text-sm text-danger flex items-start gap-1 break-words'
+          role='alert'
+          aria-live='polite'
         >
           <svg className='w-4 h-4 flex-shrink-0 mt-0.5' fill='currentColor' viewBox='0 0 20 20'>
             <path

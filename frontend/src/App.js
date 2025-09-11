@@ -22,6 +22,7 @@ const ResetPassword = React.lazy(() => import('./components/ResetPassword'));
 const UserManagement = React.lazy(() => import('./components/UserManagement'));
 const Settings = React.lazy(() => import('./components/Settings'));
 const APITestDashboard = React.lazy(() => import('./components/APITestDashboard'));
+const OnboardingWizard = React.lazy(() => import('./components/OnboardingWizard'));
 
 import './App.css';
 
@@ -174,6 +175,18 @@ function App() {
                           <ProtectedRoute>
                             <Suspense fallback={<LoadingSpinner />}>
                               <Settings />
+                            </Suspense>
+                          </ProtectedRoute>
+                        </ErrorBoundary>
+                      }
+                    />
+                    <Route
+                      path='/onboarding'
+                      element={
+                        <ErrorBoundary key='onboarding'>
+                          <ProtectedRoute>
+                            <Suspense fallback={<LoadingSpinner />}>
+                              <OnboardingWizard />
                             </Suspense>
                           </ProtectedRoute>
                         </ErrorBoundary>

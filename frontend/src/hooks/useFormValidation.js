@@ -63,7 +63,7 @@ const useFormValidation = (initialValues, validationRules, options = {}) => {
           }
         } catch (error) {
           // Log validation error for debugging
-          console.error(`Validation error for field ${name}:`, error);
+          console.error(`Validation error for field ${name}:`, error); // eslint-disable-line no-console
           errorMessage = 'Validation failed';
           break;
         }
@@ -205,17 +205,40 @@ const useFormValidation = (initialValues, validationRules, options = {}) => {
           return result;
         }
 
-        // Focus first invalid field
-        const firstError = Object.keys(errors)[0];
-        if (firstError) {
-          const element = document.querySelector(`[name="${firstError}"]`);
-          element?.focus();
+        // Focus first invalid field with better error handling
+        const firstErrorField = Object.keys(errors)[0];
+        if (firstErrorField) {
+          // Try multiple selectors to find the field
+          const selectors = [
+            `[name="${firstErrorField}"]`,
+            `#${firstErrorField}`,
+            `[data-testid="${firstErrorField}-input"]`,
+            `input[name="${firstErrorField}"]`,
+            `select[name="${firstErrorField}"]`,
+            `textarea[name="${firstErrorField}"]`
+          ];
+
+          let element = null;
+          for (const selector of selectors) {
+            element = document.querySelector(selector);
+            if (element) break;
+          }
+
+          if (element) {
+            // Scroll into view and focus
+            element.scrollIntoView({ behavior: 'smooth', block: 'center' });
+            setTimeout(() => {
+              element.focus();
+              // Add visual indication for keyboard users
+              element.setAttribute('aria-invalid', 'true');
+            }, 100);
+          }
         }
 
         return { success: false, errors };
       } catch (error) {
         // Log submission error for debugging
-        console.error('Form submission error:', error);
+        console.error('Form submission error:', error); // eslint-disable-line no-console
         setErrors(prev => ({
           ...prev,
           submit: error.message || 'An error occurred during submission',

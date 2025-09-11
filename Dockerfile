@@ -1,6 +1,9 @@
 # Multi-stage build for FloWorx
 FROM node:20-alpine AS base
 
+# Install bash and other necessary tools
+RUN apk add --no-cache bash curl git
+
 # Install dependencies only when needed
 FROM base AS deps
 WORKDIR /app

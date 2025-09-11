@@ -1,0 +1,80 @@
+{
+  "timestamp": "2025-09-11T19:43:20.807Z",
+  "baseUrl": "https://app.floworx-iq.com",
+  "staticAssetResults": [
+    {
+      "asset": "/static/css/main.css",
+      "status": 200,
+      "contentType": "text/html; charset=UTF-8",
+      "success": true
+    },
+    {
+      "asset": "/static/js/main.js",
+      "status": 200,
+      "contentType": "text/html; charset=UTF-8",
+      "success": true
+    },
+    {
+      "asset": "/static/css/679.6b0c9db3.chunk.css",
+      "status": 200,
+      "contentType": "text/html; charset=UTF-8",
+      "success": true
+    },
+    {
+      "asset": "/static/js/679.6b0c9db3.chunk.js",
+      "status": 200,
+      "contentType": "text/html; charset=UTF-8",
+      "success": true
+    },
+    {
+      "asset": "/manifest.json",
+      "status": 200,
+      "contentType": "application/json; charset=UTF-8",
+      "success": true
+    },
+    {
+      "asset": "/favicon.ico",
+      "status": 200,
+      "contentType": "image/x-icon",
+      "size": "1",
+      "success": true
+    }
+  ],
+  "buildResults": [
+    {
+      "check": "Build Directory",
+      "exists": true
+    },
+    {
+      "check": "index.html",
+      "exists": true
+    },
+    {
+      "check": "static/css",
+      "exists": true
+    },
+    {
+      "check": "static/js",
+      "exists": true
+    },
+    {
+      "check": "manifest.json",
+      "exists": true
+    }
+  ],
+  "serverResults": [
+    {
+      "check": "API Health",
+      "status": 200,
+      "success": true
+    },
+    {
+      "check": "Index Page",
+      "status": 200,
+      "isReactApp": true,
+      "success": true
+    }
+  ],
+  "issues": [],
+  "fixes": []
+}

@@ -1,0 +1,435 @@
+{
+  "timestamp": "2025-09-11T20:41:20.760Z",
+  "baseUrl": "https://app.floworx-iq.com",
+  "summary": {
+    "totalTests": 22,
+    "successfulTests": 16,
+    "failedTests": 6,
+    "errorTests": 0,
+    "successRate": 72.72727272727273,
+    "criticalIssues": 1,
+    "categories": {
+      "Health": [
+        {
+          "method": "GET",
+          "path": "/health",
+          "status": 200,
+          "success": true,
+          "contentType": "application/json; charset=utf-8",
+          "responseSize": "178",
+          "error": null
+        },
+        {
+          "method": "GET",
+          "path": "/health/database",
+          "status": 200,
+          "success": true,
+          "contentType": "application/json; charset=utf-8",
+          "responseSize": "170",
+          "error": null
+        },
+        {
+          "method": "GET",
+          "path": "/health/oauth",
+          "status": 200,
+          "success": true,
+          "contentType": "application/json; charset=utf-8",
+          "responseSize": "219",
+          "error": null
+        }
+      ],
+      "Authentication": [
+        {
+          "method": "POST",
+          "path": "/auth/login",
+          "status": 400,
+          "success": true,
+          "contentType": "application/json; charset=utf-8",
+          "responseSize": "111",
+          "error": null
+        },
+        {
+          "method": "POST",
+          "path": "/auth/register",
+          "status": 400,
+          "success": true,
+          "contentType": "application/json; charset=utf-8",
+          "responseSize": "114",
+          "error": null
+        },
+        {
+          "method": "GET",
+          "path": "/auth/verify",
+          "status": 401,
+          "success": true,
+          "contentType": "application/json; charset=utf-8",
+          "responseSize": "137",
+          "error": null
+        },
+        {
+          "method": "POST",
+          "path": "/auth/register",
+          "status": 400,
+          "success": false,
+          "contentType": "application/json; charset=utf-8",
+          "responseSize": "114",
+          "error": "Unexpected status: 400"
+        },
+        {
+          "method": "POST",
+          "path": "/auth/login",
+          "status": 401,
+          "success": true,
+          "contentType": "application/json; charset=utf-8",
+          "responseSize": "100",
+          "error": null
+        },
+        {
+          "method": "POST",
+          "path": "/auth/login",
+          "status": 200,
+          "success": true,
+          "contentType": "application/json; charset=utf-8",
+          "responseSize": "496",
+          "error": null
+        }
+      ],
+      "User Management": [
+        {
+          "method": "GET",
+          "path": "/user/status",
+          "status": 403,
+          "success": false,
+          "contentType": "application/json; charset=utf-8",
+          "responseSize": "133",
+          "error": "Unexpected status: 403"
+        },
+        {
+          "method": "GET",
+          "path": "/user/profile",
+          "status": 200,
+          "success": true,
+          "contentType": "application/json; charset=utf-8",
+          "responseSize": "85",
+          "error": null
+        }
+      ],
+      "OAuth": [
+        {
+          "method": "GET",
+          "path": "/health/oauth",
+          "status": 200,
+          "success": true,
+          "contentType": "application/json; charset=utf-8",
+          "responseSize": "219",
+          "error": null
+        },
+        {
+          "method": "GET",
+          "path": "/oauth/google",
+          "status": 302,
+          "success": true,
+          "contentType": "text/plain; charset=utf-8",
+          "responseSize": "unknown",
+          "error": null
+        },
+        {
+          "method": "GET",
+          "path": "/oauth/status",
+          "status": 404,
+          "success": true,
+          "contentType": "application/json; charset=utf-8",
+          "responseSize": "34",
+          "error": null
+        }
+      ],
+      "Dashboard": [
+        {
+          "method": "GET",
+          "path": "/dashboard/status",
+          "status": 403,
+          "success": false,
+          "contentType": "application/json; charset=utf-8",
+          "responseSize": "138",
+          "error": "Unexpected status: 403"
+        }
+      ],
+      "Business": [
+        {
+          "method": "GET",
+          "path": "/business-types",
+          "status": 200,
+          "success": true,
+          "contentType": "application/json; charset=utf-8",
+          "responseSize": "unknown",
+          "error": null
+        }
+      ],
+      "Other": [
+        {
+          "method": "GET",
+          "path": "/onboarding/status",
+          "status": 403,
+          "success": false,
+          "contentType": "application/json; charset=utf-8",
+          "responseSize": "139",
+          "error": "Unexpected status: 403"
+        },
+        {
+          "method": "POST",
+          "path": "/onboarding/complete",
+          "status": 404,
+          "success": false,
+          "contentType": "application/json; charset=utf-8",
+          "responseSize": "160",
+          "error": "Unexpected status: 404"
+        },
+        {
+          "method": "GET",
+          "path": "/workflows",
+          "status": 401,
+          "success": true,
+          "contentType": "application/json; charset=utf-8",
+          "responseSize": "135",
+          "error": null
+        },
+        {
+          "method": "GET",
+          "path": "/analytics",
+          "status": 401,
+          "success": true,
+          "contentType": "application/json; charset=utf-8",
+          "responseSize": "135",
+          "error": null
+        },
+        {
+          "method": "GET",
+          "path": "/performance",
+          "status": 200,
+          "success": true,
+          "contentType": "application/json; charset=utf-8",
+          "responseSize": "163",
+          "error": null
+        },
+        {
+          "method": "POST",
+          "path": "/recovery/initiate",
+          "status": 200,
+          "success": true,
+          "contentType": "application/json; charset=utf-8",
+          "responseSize": "87",
+          "error": null
+        },
+        {
+          "method": "POST",
+          "path": "/password-reset/request",
+          "status": 404,
+          "success": false,
+          "contentType": "application/json; charset=utf-8",
+          "responseSize": "166",
+          "error": "Unexpected status: 404"
+        }
+      ]
+    }
+  },
+  "detailedResults": [
+    {
+      "method": "GET",
+      "path": "/health",
+      "status": 200,
+      "success": true,
+      "contentType": "application/json; charset=utf-8",
+      "responseSize": "178",
+      "error": null
+    },
+    {
+      "method": "GET",
+      "path": "/health/database",
+      "status": 200,
+      "success": true,
+      "contentType": "application/json; charset=utf-8",
+      "responseSize": "170",
+      "error": null
+    },
+    {
+      "method": "GET",
+      "path": "/health/oauth",
+      "status": 200,
+      "success": true,
+      "contentType": "application/json; charset=utf-8",
+      "responseSize": "219",
+      "error": null
+    },
+    {
+      "method": "GET",
+      "path": "/business-types",
+      "status": 200,
+      "success": true,
+      "contentType": "application/json; charset=utf-8",
+      "responseSize": "unknown",
+      "error": null
+    },
+    {
+      "method": "POST",
+      "path": "/auth/login",
+      "status": 400,
+      "success": true,
+      "contentType": "application/json; charset=utf-8",
+      "responseSize": "111",
+      "error": null
+    },
+    {
+      "method": "POST",
+      "path": "/auth/register",
+      "status": 400,
+      "success": true,
+      "contentType": "application/json; charset=utf-8",
+      "responseSize": "114",
+      "error": null
+    },
+    {
+      "method": "GET",
+      "path": "/auth/verify",
+      "status": 401,
+      "success": true,
+      "contentType": "application/json; charset=utf-8",
+      "responseSize": "137",
+      "error": null
+    },
+    {
+      "method": "POST",
+      "path": "/auth/register",
+      "status": 400,
+      "success": false,
+      "contentType": "application/json; charset=utf-8",
+      "responseSize": "114",
+      "error": "Unexpected status: 400"
+    },
+    {
+      "method": "POST",
+      "path": "/auth/login",
+      "status": 401,
+      "success": true,
+      "contentType": "application/json; charset=utf-8",
+      "responseSize": "100",
+      "error": null
+    },
+    {
+      "method": "POST",
+      "path": "/auth/login",
+      "status": 200,
+      "success": true,
+      "contentType": "application/json; charset=utf-8",
+      "responseSize": "496",
+      "error": null
+    },
+    {
+      "method": "GET",
+      "path": "/user/status",
+      "status": 403,
+      "success": false,
+      "contentType": "application/json; charset=utf-8",
+      "responseSize": "133",
+      "error": "Unexpected status: 403"
+    },
+    {
+      "method": "GET",
+      "path": "/user/profile",
+      "status": 200,
+      "success": true,
+      "contentType": "application/json; charset=utf-8",
+      "responseSize": "85",
+      "error": null
+    },
+    {
+      "method": "GET",
+      "path": "/dashboard/status",
+      "status": 403,
+      "success": false,
+      "contentType": "application/json; charset=utf-8",
+      "responseSize": "138",
+      "error": "Unexpected status: 403"
+    },
+    {
+      "method": "GET",
+      "path": "/oauth/google",
+      "status": 302,
+      "success": true,
+      "contentType": "text/plain; charset=utf-8",
+      "responseSize": "unknown",
+      "error": null
+    },
+    {
+      "method": "GET",
+      "path": "/oauth/status",
+      "status": 404,
+      "success": true,
+      "contentType": "application/json; charset=utf-8",
+      "responseSize": "34",
+      "error": null
+    },
+    {
+      "method": "GET",
+      "path": "/onboarding/status",
+      "status": 403,
+      "success": false,
+      "contentType": "application/json; charset=utf-8",
+      "responseSize": "139",
+      "error": "Unexpected status: 403"
+    },
+    {
+      "method": "POST",
+      "path": "/onboarding/complete",
+      "status": 404,
+      "success": false,
+      "contentType": "application/json; charset=utf-8",
+      "responseSize": "160",
+      "error": "Unexpected status: 404"
+    },
+    {
+      "method": "GET",
+      "path": "/workflows",
+      "status": 401,
+      "success": true,
+      "contentType": "application/json; charset=utf-8",
+      "responseSize": "135",
+      "error": null
+    },
+    {
+      "method": "GET",
+      "path": "/analytics",
+      "status": 401,
+      "success": true,
+      "contentType": "application/json; charset=utf-8",
+      "responseSize": "135",
+      "error": null
+    },
+    {
+      "method": "GET",
+      "path": "/performance",
+      "status": 200,
+      "success": true,
+      "contentType": "application/json; charset=utf-8",
+      "responseSize": "163",
+      "error": null
+    },
+    {
+      "method": "POST",
+      "path": "/recovery/initiate",
+      "status": 200,
+      "success": true,
+      "contentType": "application/json; charset=utf-8",
+      "responseSize": "87",
+      "error": null
+    },
+    {
+      "method": "POST",
+      "path": "/password-reset/request",
+      "status": 404,
+      "success": false,
+      "contentType": "application/json; charset=utf-8",
+      "responseSize": "166",
+      "error": "Unexpected status: 404"
+    }
+  ]
+}

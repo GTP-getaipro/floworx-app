@@ -144,19 +144,19 @@ class ComprehensiveAPITester {
       : {};
 
     // User endpoints
-    await this.testEndpoint('GET', '/user/status', null, authHeaders, [200, 401]);
-    await this.testEndpoint('GET', '/user/profile', null, authHeaders, [200, 401]);
+    await this.testEndpoint('GET', '/user/status', null, authHeaders, [200]);
+    await this.testEndpoint('GET', '/user/profile', null, authHeaders, [200]);
 
     // Dashboard endpoints
-    await this.testEndpoint('GET', '/dashboard/status', null, authHeaders, [200, 401]);
+    await this.testEndpoint('GET', '/dashboard/status', null, authHeaders, [200]);
 
     // OAuth endpoints
-    await this.testEndpoint('GET', '/oauth/google', null, authHeaders, [302, 401]);
-    await this.testEndpoint('GET', '/oauth/status', null, authHeaders, [200, 401, 404]);
+    await this.testEndpoint('GET', '/oauth/google', null, authHeaders, [302]);
+    await this.testEndpoint('GET', '/oauth/status', null, authHeaders, [200, 404]);
 
     // Onboarding endpoints
-    await this.testEndpoint('GET', '/onboarding/status', null, authHeaders, [200, 401]);
-    await this.testEndpoint('POST', '/onboarding/complete', {}, authHeaders, [200, 400, 401]);
+    await this.testEndpoint('GET', '/onboarding/status', null, authHeaders, [200]);
+    await this.testEndpoint('POST', '/onboarding/complete', {}, authHeaders, [200, 400]);
   }
 
   async testSpecialEndpoints() {

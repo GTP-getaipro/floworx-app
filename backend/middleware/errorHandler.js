@@ -156,6 +156,8 @@ const errorHandler = (error, req, res, _next) => {
       err = new ValidationError(err.message);
     } else if (err.name === 'CastError') {
       err = new ValidationError('Invalid data format');
+    } else if (err.name === 'SyntaxError' && err.message.includes('JSON')) {
+      err = new ValidationError('Invalid JSON format');
     } else if (err.code && err.code.startsWith('23')) {
       err = parseDatabaseError(err);
     } else if (err.name === 'JsonWebTokenError') {
@@ -188,33 +190,40 @@ const errorHandler = (error, req, res, _next) => {
 
   console.error('Error:', JSON.stringify(logData, null, 2));
 
-  // Track error for monitoring and analytics
+  // Track error for monitoring and analytics (avoid circular references)
   errorTrackingService.trackError(err, {
-    req,
+    method: req.method,
+    url: req.originalUrl,
     user: req.user,
     endpoint: req.route?.path || req.originalUrl,
     statusCode: err.statusCode,
     userAgent: req.get('User-Agent'),
-    ip: req.ip
+    ip: req.ip,
+    headers: {
+      'content-type': req.get('content-type'),
+      'user-agent': req.get('user-agent'),
+      'authorization': req.get('authorization') ? '[REDACTED]' : undefined
+    }
   }).catch(trackingError => {
     console.error('Error tracking failed:', trackingError.message);
   });
 
   // Prepare response
+  const errorType = err.errorType || err.errorCode || 'INTERNAL_ERROR';
   const response = {
     success: false,
     error: {
-      type: err.errorType,
+      type: errorType,
       message:
         isProduction && err.statusCode >= 500
-          ? SAFE_ERROR_MESSAGES[err.errorType] || 'Internal server error'
+          ? SAFE_ERROR_MESSAGES[errorType] || 'Internal server error'
           : err.message,
       code: err.statusCode
     }
   };
 
   // Add details for validation errors (safe to expose)
-  if (err.errorType === 'VALIDATION_ERROR' && err.details) {
+  if (errorType === 'VALIDATION_ERROR' && err.details) {
     response.error.details = err.details;
   }
 

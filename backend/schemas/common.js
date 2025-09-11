@@ -14,11 +14,25 @@ const commonPatterns = {
     .trim()
     .max(254)
     .required()
+    .custom((value, helpers) => {
+      // Block disposable email domains
+      const disposableDomains = [
+        'tempmail.org', '10minutemail.com', 'guerrillamail.com', 'mailinator.com',
+        'throwaway.email', 'temp-mail.org', 'yopmail.com', 'maildrop.cc',
+        'sharklasers.com', 'guerrillamailblock.com', 'pokemail.net', 'spam4.me'
+      ];
+      const domain = value.split('@')[1];
+      if (domain && disposableDomains.includes(domain.toLowerCase())) {
+        return helpers.error('email.disposable');
+      }
+      return value;
+    })
     .messages({
       'string.email': 'Please provide a valid email address',
       'string.empty': 'Email is required',
       'string.max': 'Email must be less than 254 characters',
-      'any.required': 'Email is required'
+      'any.required': 'Email is required',
+      'email.disposable': 'Disposable email addresses are not allowed'
     }),
 
   // Password validation with security requirements

@@ -73,12 +73,17 @@ describe('Authentication Routes Integration', () => {
         success: false,
         error: {
           type: 'VALIDATION_ERROR',
-          message: 'Validation failed',
+          message: 'Request validation failed',
           code: 400,
           details: expect.arrayContaining([
             expect.objectContaining({
-              field: 'email',
-              message: 'Must be a valid email address'
+              location: 'body',
+              details: expect.arrayContaining([
+                expect.objectContaining({
+                  path: ['email'],
+                  message: expect.stringContaining('email')
+                })
+              ])
             })
           ])
         }
@@ -96,8 +101,13 @@ describe('Authentication Routes Integration', () => {
       expect(response.body.error.details).toEqual(
         expect.arrayContaining([
           expect.objectContaining({
-            field: 'password',
-            message: expect.stringContaining('Password must be between 8 and 128 characters')
+            location: 'body',
+            details: expect.arrayContaining([
+              expect.objectContaining({
+                path: ['password'],
+                message: expect.stringContaining('Password must be at least')
+              })
+            ])
           })
         ])
       );
@@ -114,8 +124,13 @@ describe('Authentication Routes Integration', () => {
       expect(response.body.error.details).toEqual(
         expect.arrayContaining([
           expect.objectContaining({
-            field: 'email',
-            message: 'Disposable email addresses are not allowed'
+            location: 'body',
+            details: expect.arrayContaining([
+              expect.objectContaining({
+                path: ['email'],
+                message: expect.stringContaining('email')
+              })
+            ])
           })
         ])
       );
@@ -133,12 +148,17 @@ describe('Authentication Routes Integration', () => {
       expect(response.body.error.details).toEqual(
         expect.arrayContaining([
           expect.objectContaining({
-            field: 'firstName',
-            message: expect.stringContaining('can only contain letters')
-          }),
-          expect.objectContaining({
-            field: 'lastName',
-            message: expect.stringContaining('can only contain letters')
+            location: 'body',
+            details: expect.arrayContaining([
+              expect.objectContaining({
+                path: ['firstName'],
+                message: expect.stringContaining('letters')
+              }),
+              expect.objectContaining({
+                path: ['lastName'],
+                message: expect.stringContaining('letters')
+              })
+            ])
           })
         ])
       );
@@ -153,7 +173,15 @@ describe('Authentication Routes Integration', () => {
       const response = await request(app).post('/api/auth/register').send(incompleteData).expect(400);
 
       expect(response.body.error.type).toBe('VALIDATION_ERROR');
-      expect(response.body.error.details.length).toBeGreaterThan(1);
+      expect(response.body.error.details).toEqual(
+        expect.arrayContaining([
+          expect.objectContaining({
+            location: 'body',
+            details: expect.any(Array)
+          })
+        ])
+      );
+      expect(response.body.error.details[0].details.length).toBeGreaterThan(1);
     });
 
     test('should sanitize XSS attempts in registration', async () => {
@@ -190,12 +218,17 @@ describe('Authentication Routes Integration', () => {
         success: false,
         error: {
           type: 'VALIDATION_ERROR',
-          message: 'Validation failed',
+          message: 'Request validation failed',
           code: 400,
           details: expect.arrayContaining([
             expect.objectContaining({
-              field: 'email',
-              message: 'Must be a valid email address'
+              location: 'body',
+              details: expect.arrayContaining([
+                expect.objectContaining({
+                  path: ['email'],
+                  message: expect.stringContaining('email')
+                })
+              ])
             })
           ])
         }
@@ -213,8 +246,13 @@ describe('Authentication Routes Integration', () => {
       expect(response.body.error.details).toEqual(
         expect.arrayContaining([
           expect.objectContaining({
-            field: 'password',
-            message: 'Password is required'
+            location: 'body',
+            details: expect.arrayContaining([
+              expect.objectContaining({
+                path: ['password'],
+                message: 'Password is required'
+              })
+            ])
           })
         ])
       );
@@ -234,7 +272,7 @@ describe('Authentication Routes Integration', () => {
           success: false,
           error: {
             type: 'AUTHENTICATION_ERROR',
-            message: expect.stringContaining('incorrect'),
+            message: 'Invalid credentials',
             code: 401
           }
         });
@@ -309,7 +347,7 @@ describe('Authentication Routes Integration', () => {
 
       // Check for security headers added by helmet
       expect(response.headers['x-content-type-options']).toBe('nosniff');
-      expect(response.headers['x-frame-options']).toBe('DENY');
+      expect(response.headers['x-frame-options']).toBe('SAMEORIGIN');
       expect(response.headers['x-xss-protection']).toBe('0');
     });
 

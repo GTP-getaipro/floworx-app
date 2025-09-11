@@ -6,7 +6,7 @@
 const _bcrypt = require('bcrypt');
 const request = require('supertest');
 
-const app = require('../../app');
+const app = require('../../server');
 const { query } = require('../../database/unified-connection');
 
 describe('Authentication Flow Integration Tests', () => {

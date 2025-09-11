@@ -36,6 +36,16 @@ beforeAll(async () => {
 
 // Global test teardown
 afterAll(async () => {
+  // Stop monitoring service if it exists
+  try {
+    const RealTimeMonitoringService = require('../services/realTimeMonitoringService');
+    if (RealTimeMonitoringService && typeof RealTimeMonitoringService.stopMonitoring === 'function') {
+      RealTimeMonitoringService.stopMonitoring();
+    }
+  } catch (error) {
+    // Monitoring service might not be initialized, ignore
+  }
+
   // Close database connections
   const { databaseManager } = require('../database/unified-connection');
   if (databaseManager && databaseManager.pool) {
@@ -52,7 +62,8 @@ global.testUtils = {
     password: 'TestPass123!',
     firstName: 'Test',
     lastName: 'User',
-    companyName: 'Test Company'
+    companyName: 'Test Company',
+    agreeToTerms: true
   }),
 
   // Create invalid user data for validation testing

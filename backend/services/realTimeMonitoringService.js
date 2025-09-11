@@ -32,6 +32,7 @@ class RealTimeMonitoringService extends EventEmitter {
 
     this.isMonitoring = false;
     this.monitoringInterval = null;
+    this.connectionMonitoringInterval = null;
     this.alertCooldowns = new Map();
     
     // Start monitoring
@@ -55,7 +56,7 @@ class RealTimeMonitoringService extends EventEmitter {
     }, 30000);
 
     // Monitor database connections every 10 seconds
-    setInterval(() => {
+    this.connectionMonitoringInterval = setInterval(() => {
       this.monitorConnections();
     }, 10000);
 
@@ -73,6 +74,10 @@ class RealTimeMonitoringService extends EventEmitter {
     if (this.monitoringInterval) {
       clearInterval(this.monitoringInterval);
       this.monitoringInterval = null;
+    }
+    if (this.connectionMonitoringInterval) {
+      clearInterval(this.connectionMonitoringInterval);
+      this.connectionMonitoringInterval = null;
     }
 
     console.log('⏹️ Stopped real-time query monitoring');

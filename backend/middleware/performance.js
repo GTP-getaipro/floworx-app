@@ -6,7 +6,7 @@
 const compression = require('compression');
 
 const cacheService = require('../services/cacheService');
-// eslint-disable-next-line import/order
+// eslint-disable-next-line
 const performanceService = require('../services/performanceService');
 
 /**

@@ -37,7 +37,7 @@ const recoveryRoutes = require('./routes/recovery');
 const testKeydbRoutes = require('./routes/test-keydb');
 const userRoutes = require('./routes/user');
 const workflowRoutes = require('./routes/workflows');
-// eslint-disable-next-line import/order
+// eslint-disable-next-line
 const { router: schedulerRoutes, scheduler } = require('./scheduler/n8nScheduler');
 
 const app = express();

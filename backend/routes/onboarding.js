@@ -348,4 +348,61 @@ function getNextStep(completedSteps, googleConnected) {
   return 'completed';
 }
 
+// POST /api/onboarding/complete
+// Mark onboarding as completed
+router.post('/complete', authenticateToken, async (req, res) => {
+  try {
+    const userId = req.user.id;
+    const { workflowId, webhookUrl } = req.body;
+
+    // Update user's onboarding status as completed
+    const updateQuery = `
+      UPDATE users
+      SET onboarding_completed = true, updated_at = CURRENT_TIMESTAMP
+      WHERE id = $1
+      RETURNING id, email, onboarding_completed
+    `;
+    const result = await query(updateQuery, [userId]);
+
+    if (result.rows.length === 0) {
+      return res.status(404).json({
+        error: 'User not found',
+        message: 'User account not found'
+      });
+    }
+
+    // Record completion in onboarding status table
+    const statusQuery = `
+      INSERT INTO user_onboarding_status (user_id, step_completed, step_data, completed_at)
+      VALUES ($1, $2, $3, CURRENT_TIMESTAMP)
+      ON CONFLICT (user_id, step_completed)
+      DO UPDATE SET
+        step_data = EXCLUDED.step_data,
+        completed_at = EXCLUDED.completed_at
+    `;
+
+    const completionData = {
+      workflowId: workflowId || null,
+      webhookUrl: webhookUrl || null,
+      completedAt: new Date().toISOString()
+    };
+
+    await query(statusQuery, [userId, 'onboarding-complete', JSON.stringify(completionData)]);
+
+    res.json({
+      success: true,
+      message: 'Onboarding completed successfully',
+      user: result.rows[0],
+      completionData
+    });
+
+  } catch (error) {
+    console.error('Onboarding completion error:', error);
+    res.status(500).json({
+      error: 'Failed to complete onboarding',
+      message: error.message
+    });
+  }
+});
+
 module.exports = router;

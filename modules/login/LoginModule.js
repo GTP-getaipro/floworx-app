@@ -26,9 +26,9 @@ class LoginModule {
     // Test users for different scenarios
     this.testUsers = {
       valid: {
-        email: 'owner@hottubparadise.com',
-        password: 'TestPassword123!',
-        description: 'Known existing user'
+        email: 'login.test@floworx-iq.com',
+        password: 'LoginTest123!',
+        description: 'Created test user'
       },
       invalid: {
         email: 'nonexistent@example.com',
@@ -286,6 +286,8 @@ class LoginModule {
   async runComprehensiveTests(options = {}) {
     console.log('🧪 FLOWORX LOGIN MODULE - COMPREHENSIVE TESTING');
     console.log('===============================================');
+    console.log('ℹ️  Note: Testing login functionality and form validation');
+    console.log('ℹ️  Some tests may show "needs work" due to email verification requirements');
 
     const results = {
       apiTests: {},

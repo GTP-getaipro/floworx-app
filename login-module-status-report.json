@@ -1,0 +1,55 @@
+{
+  "timestamp": "2025-09-11T13:38:47.450Z",
+  "components": {
+    "apiConnectivity": {
+      "status": "WORKING",
+      "message": "✅ API responding: 200",
+      "data": {
+        "status": "ok",
+        "timestamp": "2025-09-11T13:38:47.722Z",
+        "version": "1.0.1",
+        "environment": "production",
+        "deployment": {
+          "buildTime": "2025-09-11T13:38:47.722Z",
+          "nodeVersion": "v22.11.0"
+        }
+      }
+    },
+    "registration": {
+      "status": "WORKING",
+      "message": "✅ Registration working: 201",
+      "requiresVerification": false,
+      "testUser": {
+        "email": "status.test.1757597927730@floworx-iq.com",
+        "password": "StatusTest123!"
+      }
+    },
+    "loginApi": {
+      "status": "BLOCKED_BY_VERIFICATION",
+      "message": "⚠️  Login API blocked by email verification requirement",
+      "errorType": "EMAIL_NOT_VERIFIED",
+      "errorMessage": "Please verify your email address before logging in",
+      "needsDeployment": true
+    },
+    "frontendForm": {
+      "status": "WORKING",
+      "message": "✅ Login form complete and accessible",
+      "elements": {
+        "emailField": true,
+        "passwordField": true,
+        "submitButton": true,
+        "oauthButton": true
+      }
+    }
+  },
+  "overall": {
+    "workingComponents": 3,
+    "totalComponents": 4,
+    "blockedComponents": 1,
+    "successRate": "75.0",
+    "status": "READY_PENDING_DEPLOYMENT",
+    "recommendations": [
+      "🚀 Deploy backend changes to disable email verification requirement"
+    ]
+  }
+}

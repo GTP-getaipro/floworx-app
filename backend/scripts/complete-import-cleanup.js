@@ -153,7 +153,7 @@ const main = () => {
       `Remaining unused variable errors in main source: ${remainingErrors}`,
       remainingErrors > 0 ? 'warning' : 'success'
     );
-  } catch (error) {
+  } catch (_error) {
     log('ESLint check completed with some remaining issues', 'warning');
   }
 

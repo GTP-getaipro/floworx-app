@@ -6,15 +6,14 @@
 const compression = require('compression');
 
 const cacheService = require('../services/cacheService');
-// eslint-disable-next-line
-const performanceService = require('../services/performanceService');
+const _performanceService = require('../services/performanceService');
 
 /**
  * Request performance tracking middleware
  */
 const performanceTracker = (req, res, next) => {
   // Add performance tracking
-  performanceService.trackRequest(req, res, next);
+  _performanceService.trackRequest(req, res, next);
 };
 
 /**

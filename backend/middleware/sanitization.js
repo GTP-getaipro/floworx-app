@@ -144,7 +144,7 @@ const sanitizeRequest = (req, res, next) => {
     req.headers = sanitizedHeaders;
 
     next();
-  } catch (error) {
+  } catch (_error) {
     next(createError(400, 'Invalid request data'));
   }
 };

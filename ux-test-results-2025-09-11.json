@@ -1,0 +1,341 @@
+{
+  "passed": 14,
+  "failed": 8,
+  "warnings": 0,
+  "total": 22,
+  "tests": [
+    {
+      "name": "Homepage Load Performance",
+      "category": "Performance",
+      "success": true,
+      "message": "Page loaded in 1402ms",
+      "data": {
+        "loadTime": 1402
+      },
+      "timestamp": "2025-09-11T07:17:09.461Z"
+    },
+    {
+      "name": "SEO Meta Tags Validation",
+      "category": "SEO",
+      "success": "width=device-width,initial-scale=1",
+      "message": "Title: \"Floworx - Secure Workflow Automation\", Description: Present",
+      "data": {
+        "title": "Floworx - Secure Workflow Automation",
+        "description": "Floworx - Secure automation platform for your workflows",
+        "viewport": "width=device-width,initial-scale=1"
+      },
+      "timestamp": "2025-09-11T07:17:11.024Z"
+    },
+    {
+      "name": "Valid User Registration",
+      "category": "Authentication",
+      "success": false,
+      "message": "Registration failed with error",
+      "data": {
+        "currentUrl": "https://app.floworx-iq.com/register",
+        "hasError": true
+      },
+      "timestamp": "2025-09-11T07:17:18.312Z"
+    },
+    {
+      "name": "Invalid Email Format Validation",
+      "category": "Validation",
+      "success": true,
+      "message": "Email validation working correctly",
+      "data": {
+        "hasValidationError": true
+      },
+      "timestamp": "2025-09-11T07:17:23.460Z"
+    },
+    {
+      "name": "Weak Password Validation",
+      "category": "Security",
+      "success": true,
+      "message": "Password validation working",
+      "data": {
+        "hasPasswordError": true
+      },
+      "timestamp": "2025-09-11T07:17:28.558Z"
+    },
+    {
+      "name": "SQL Injection Protection",
+      "category": "Security",
+      "success": true,
+      "message": "SQL injection protection working",
+      "data": {
+        "pageTitle": "Floworx - Secure Workflow Automation",
+        "isPageBroken": false
+      },
+      "timestamp": "2025-09-11T07:17:35.282Z"
+    },
+    {
+      "name": "Login with Valid Credentials",
+      "category": "Authentication",
+      "success": false,
+      "message": "Login attempt processed",
+      "data": {
+        "currentUrl": "https://app.floworx-iq.com/login",
+        "hasError": false
+      },
+      "timestamp": "2025-09-11T07:17:41.523Z"
+    },
+    {
+      "name": "Login with Invalid Credentials",
+      "category": "Security",
+      "success": true,
+      "message": "Login security needs review",
+      "data": {
+        "hasError": false,
+        "stayedOnLogin": true
+      },
+      "timestamp": "2025-09-11T07:17:47.691Z"
+    },
+    {
+      "name": "Password Reset Flow",
+      "category": "Authentication",
+      "success": false,
+      "message": "Password reset flow needs attention",
+      "data": {
+        "hasSuccess": false
+      },
+      "timestamp": "2025-09-11T07:17:52.891Z"
+    },
+    {
+      "name": "Business Type Selection",
+      "category": "Onboarding",
+      "success": false,
+      "message": "Found 0 business type options, Hot Tub option: No",
+      "data": {
+        "businessTypes": 0,
+        "hotTubOption": 0
+      },
+      "timestamp": "2025-09-11T07:17:54.557Z"
+    },
+    {
+      "name": "Google OAuth Button Presence",
+      "category": "OAuth",
+      "success": true,
+      "message": "Google OAuth button found",
+      "data": {
+        "googleButton": 1
+      },
+      "timestamp": "2025-09-11T07:17:56.133Z"
+    },
+    {
+      "name": "Mobile Responsiveness",
+      "category": "Responsive",
+      "success": true,
+      "message": "Mobile layout responsive",
+      "data": {
+        "bodyWidth": 360,
+        "viewportWidth": 375,
+        "hasHorizontalScroll": false
+      },
+      "timestamp": "2025-09-11T07:17:58.677Z"
+    },
+    {
+      "name": "Accessibility - Keyboard Navigation",
+      "category": "Accessibility",
+      "success": false,
+      "message": "Keyboard navigation: INPUT → INPUT",
+      "data": {
+        "firstFocused": "INPUT",
+        "secondFocused": "INPUT"
+      },
+      "timestamp": "2025-09-11T07:18:01.231Z"
+    },
+    {
+      "name": "Form Validation Messages",
+      "category": "UX",
+      "success": true,
+      "message": "Found 9 validation messages",
+      "data": {
+        "validationMessages": 9
+      },
+      "timestamp": "2025-09-11T07:18:04.309Z"
+    },
+    {
+      "name": "HTTPS Security",
+      "category": "Security",
+      "success": true,
+      "message": "HTTPS enabled",
+      "data": {
+        "url": "https://app.floworx-iq.com/login",
+        "isHTTPS": true
+      },
+      "timestamp": "2025-09-11T07:18:05.850Z"
+    },
+    {
+      "name": "Console Errors Check",
+      "category": "Technical",
+      "success": true,
+      "message": "Found 0 console errors",
+      "data": {
+        "consoleErrors": []
+      },
+      "timestamp": "2025-09-11T07:18:07.429Z"
+    },
+    {
+      "name": "Email Verification Flow",
+      "category": "Email",
+      "success": true,
+      "message": "Email verification page accessible with resend functionality",
+      "data": {
+        "hasForm": true,
+        "hasResendButton": true
+      },
+      "timestamp": "2025-09-11T07:18:09.112Z"
+    },
+    {
+      "name": "Dashboard Navigation",
+      "category": "Navigation",
+      "success": false,
+      "message": "Dashboard missing navigation or content areas",
+      "data": {
+        "navItems": 0,
+        "hasDashboardContent": true
+      },
+      "timestamp": "2025-09-11T07:18:10.738Z"
+    },
+    {
+      "name": "Error Page Handling",
+      "category": "Error Handling",
+      "success": true,
+      "message": "Custom 404 error page displayed with navigation",
+      "data": {
+        "hasErrorMessage": true,
+        "hasHomeLink": false
+      },
+      "timestamp": "2025-09-11T07:18:12.426Z"
+    },
+    {
+      "name": "API Health Check",
+      "category": "API",
+      "success": true,
+      "message": "API health endpoint responding correctly",
+      "data": {
+        "status": 200,
+        "responseData": {
+          "status": "ok",
+          "timestamp": "2025-09-11T07:18:15.120Z",
+          "version": "1.0.1",
+          "environment": "production",
+          "deployment": {
+            "buildTime": "2025-09-11T07:18:15.120Z",
+            "nodeVersion": "v22.11.0"
+          }
+        }
+      },
+      "timestamp": "2025-09-11T07:18:13.700Z"
+    },
+    {
+      "name": "Workflow Management Access",
+      "category": "Workflows",
+      "success": false,
+      "message": "Workflow management page not accessible or missing elements",
+      "data": {
+        "workflowElements": 0,
+        "hasCreateButton": false
+      },
+      "timestamp": "2025-09-11T07:18:15.324Z"
+    },
+    {
+      "name": "Profile Settings Access",
+      "category": "User Management",
+      "success": false,
+      "message": "Profile settings page missing or incomplete",
+      "data": {
+        "hasProfileForm": false,
+        "hasSaveButton": false
+      },
+      "timestamp": "2025-09-11T07:18:16.959Z"
+    }
+  ],
+  "categories": {
+    "Performance": {
+      "passed": 1,
+      "failed": 0,
+      "total": 1
+    },
+    "SEO": {
+      "passed": 1,
+      "failed": 0,
+      "total": 1
+    },
+    "Authentication": {
+      "passed": 0,
+      "failed": 3,
+      "total": 3
+    },
+    "Validation": {
+      "passed": 1,
+      "failed": 0,
+      "total": 1
+    },
+    "Security": {
+      "passed": 4,
+      "failed": 0,
+      "total": 4
+    },
+    "Onboarding": {
+      "passed": 0,
+      "failed": 1,
+      "total": 1
+    },
+    "OAuth": {
+      "passed": 1,
+      "failed": 0,
+      "total": 1
+    },
+    "Responsive": {
+      "passed": 1,
+      "failed": 0,
+      "total": 1
+    },
+    "Accessibility": {
+      "passed": 0,
+      "failed": 1,
+      "total": 1
+    },
+    "UX": {
+      "passed": 1,
+      "failed": 0,
+      "total": 1
+    },
+    "Technical": {
+      "passed": 1,
+      "failed": 0,
+      "total": 1
+    },
+    "Email": {
+      "passed": 1,
+      "failed": 0,
+      "total": 1
+    },
+    "Navigation": {
+      "passed": 0,
+      "failed": 1,
+      "total": 1
+    },
+    "Error Handling": {
+      "passed": 1,
+      "failed": 0,
+      "total": 1
+    },
+    "API": {
+      "passed": 1,
+      "failed": 0,
+      "total": 1
+    },
+    "Workflows": {
+      "passed": 0,
+      "failed": 1,
+      "total": 1
+    },
+    "User Management": {
+      "passed": 0,
+      "failed": 1,
+      "total": 1
+    }
+  }
+}

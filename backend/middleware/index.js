@@ -60,14 +60,14 @@ const setupMiddleware = app => {
   // Global rate limiting - before routes
   app.use(security.apiRateLimit);
 
-  // Apply route-specific rate limits
-  app.use('/auth', security.authRateLimit, security.authSlowDown);
+  // Apply route-specific rate limits (more specific routes first)
   app.use('/auth/register', security.registrationRateLimit);
   app.use('/auth/password-reset', security.passwordResetRateLimit);
   app.use('/auth/oauth', security.oauthRateLimit);
+  app.use('/auth/login', security.authRateLimit, security.authSlowDown, security.accountLockoutLimiter);
 
-  // Apply account lockout protection
-  app.use('/auth/login', security.accountLockoutLimiter);
+  // General auth rate limiting for other auth endpoints
+  app.use('/auth', security.authRateLimit);
 
   // Health check endpoint - before authentication
   app.get('/health', (req, res) => {

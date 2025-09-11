@@ -17,7 +17,7 @@
     "test:regression:verbose": "node tests/regression/run-regression.js --verbose",
     "test:regression:keep-server": "node tests/regression/run-regression.js --keep-server",
     "test:regression:direct": "node tests/regression/api-regression-suite.js",
-    "test:comprehensive": "node tests/regression/run-comprehensive-regression.js",
+    "test:comprehensive": "npm run validate:hybrid-setup && npx playwright test tests/business-logic.spec.js tests/api-integration.spec.js tests/edge-cases.spec.js tests/mobile-responsive.spec.js",
     "test:comprehensive:verbose": "node tests/regression/run-comprehensive-regression.js --verbose",
     "test:comprehensive:keep-server": "node tests/regression/run-comprehensive-regression.js --keep-server",
     "test:comprehensive:skip-frontend": "node tests/regression/run-comprehensive-regression.js --skip-frontend",
@@ -68,7 +68,6 @@
     "test:api-integration": "npm run validate:hybrid-setup && npx playwright test tests/api-integration.spec.js",
     "test:edge-cases": "npm run validate:hybrid-setup && npx playwright test tests/edge-cases.spec.js",
     "test:mobile-responsive": "npm run validate:hybrid-setup && npx playwright test tests/mobile-responsive.spec.js",
-    "test:comprehensive": "npm run validate:hybrid-setup && npx playwright test tests/business-logic.spec.js tests/api-integration.spec.js tests/edge-cases.spec.js tests/mobile-responsive.spec.js",
     "test:concurrent": "npm run validate:hybrid-setup && npx playwright test tests/edge-cases.spec.js --grep=\"Concurrent\"",
     "lint": "npm run lint:backend && npm run lint:frontend",
     "lint:fix": "npm run lint:backend -- --fix && npm run lint:frontend -- --fix",
@@ -147,7 +146,8 @@
     "faker": "^5.5.3",
     "morgan": "^1.10.1",
     "nodemailer": "^7.0.6",
-    "pg": "^8.16.3"
+    "pg": "^8.16.3",
+    "playwright": "^1.55.0"
   },
   "engines": {
     "node": ">=18.0.0"

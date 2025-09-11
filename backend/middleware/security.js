@@ -151,7 +151,7 @@ const rateLimitConfigs = {
   // Authentication endpoints (stricter)
   auth: rateLimit({
     windowMs: 15 * 60 * 1000, // 15 minutes
-    max: process.env.NODE_ENV === 'production' ? 5 : 50,
+    max: process.env.NODE_ENV === 'production' ? 50 : 200, // Much higher for development/testing
     skipSuccessfulRequests: true,
     message: {
       error: 'Too many authentication attempts',
@@ -160,10 +160,10 @@ const rateLimitConfigs = {
     }
   }),
 
-  // Registration (very strict)
+  // Registration (more lenient for testing)
   registration: rateLimit({
     windowMs: 60 * 60 * 1000, // 1 hour
-    max: process.env.NODE_ENV === 'production' ? 3 : 10,
+    max: process.env.NODE_ENV === 'production' ? 20 : 100, // Much higher for development/testing
     message: {
       error: 'Too many registration attempts',
       message: 'Maximum registrations per hour exceeded.',

@@ -45,7 +45,7 @@ router.get('/', authenticateToken, async (req, res) => {
         timestamp: activity.created_at,
         ip_address: activity.ip_address
       }));
-    } catch (actError) {
+    } catch (_actError) {
       console.log('Activities data not available, continuing without recent activities');
     }
 
@@ -65,7 +65,7 @@ router.get('/', authenticateToken, async (req, res) => {
           connected_at: oauth.created_at
         };
       });
-    } catch (oauthError) {
+    } catch (_oauthError) {
       console.log('OAuth data not available, showing default connection status');
     }
 

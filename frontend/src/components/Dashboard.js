@@ -574,38 +574,72 @@ const Dashboard = () => {
           </div>
 
           <div className='space-y-6'>
-            {/* Quick Actions Card */}
+            {/* Quick Actions Card with Navigation */}
             <Card>
               <Card.Header>
                 <Card.Title>Quick Actions</Card.Title>
               </Card.Header>
               <Card.Content>
-                <div className='space-y-3'>
-                  <Button
-                    onClick={() => window.location.href = '/settings'}
-                    variant='secondary'
-                    className='w-full justify-start'
-                    data-testid="nav-settings"
-                  >
-                    ⚙️ Settings
-                  </Button>
-                  <Button
-                    onClick={() => window.location.href = '/workflows'}
-                    variant='secondary'
-                    className='w-full justify-start'
-                    data-testid="nav-workflows"
-                  >
-                    🔄 Workflows
-                  </Button>
-                  <Button
-                    onClick={() => window.location.href = '/analytics'}
-                    variant='secondary'
-                    className='w-full justify-start'
-                    data-testid="nav-analytics"
-                  >
-                    📊 Analytics
-                  </Button>
-                </div>
+                <nav role="navigation" aria-label="Dashboard navigation">
+                  <div className='space-y-3'>
+                    <Button
+                      onClick={() => window.location.href = '/settings'}
+                      variant='secondary'
+                      className='w-full justify-start'
+                      data-testid="nav-settings"
+                    >
+                      ⚙️ Settings
+                    </Button>
+                    <Button
+                      onClick={() => window.location.href = '/workflows'}
+                      variant='secondary'
+                      className='w-full justify-start'
+                      data-testid="nav-workflows"
+                    >
+                      🔄 Workflows
+                    </Button>
+                    <Button
+                      onClick={() => window.location.href = '/analytics'}
+                      variant='secondary'
+                      className='w-full justify-start'
+                      data-testid="nav-analytics"
+                    >
+                      📊 Analytics
+                    </Button>
+                    <Button
+                      onClick={() => window.location.href = '/campaigns'}
+                      variant='secondary'
+                      className='w-full justify-start'
+                      data-testid="nav-campaigns"
+                    >
+                      📧 Email Campaigns
+                    </Button>
+                    <Button
+                      onClick={() => window.location.href = '/customers'}
+                      variant='secondary'
+                      className='w-full justify-start'
+                      data-testid="nav-customers"
+                    >
+                      👥 Customers
+                    </Button>
+                    <Button
+                      onClick={() => window.location.href = '/automation'}
+                      variant='secondary'
+                      className='w-full justify-start'
+                      data-testid="nav-automation"
+                    >
+                      🤖 Automation Rules
+                    </Button>
+                    <Button
+                      onClick={() => window.location.href = '/profile'}
+                      variant='secondary'
+                      className='w-full justify-start'
+                      data-testid="nav-profile"
+                    >
+                      👤 Profile Settings
+                    </Button>
+                  </div>
+                </nav>
               </Card.Content>
             </Card>
           </div>

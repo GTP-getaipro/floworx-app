@@ -266,7 +266,7 @@ class SecurityAudit {
       if (filePath.includes('.env') && mode & parseInt('044', 8)) {
         this.addFinding('file_permissions', 'high', filePath, 0, 'Environment file is readable by others');
       }
-    } catch (error) {
+    } catch (_error) {
       // Ignore permission check errors
     }
   }

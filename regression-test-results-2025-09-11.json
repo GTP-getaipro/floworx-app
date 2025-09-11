@@ -1,0 +1,235 @@
+{
+  "suites": {
+    "health": {
+      "passed": 4,
+      "failed": 0,
+      "tests": [
+        {
+          "name": "Main Health Check",
+          "passed": true,
+          "status": 200
+        },
+        {
+          "name": "Database Health",
+          "passed": true,
+          "status": 200
+        },
+        {
+          "name": "Cache Health",
+          "passed": true,
+          "status": 503
+        },
+        {
+          "name": "Performance Metrics",
+          "passed": true,
+          "status": 200
+        }
+      ]
+    },
+    "auth": {
+      "passed": 4,
+      "failed": 0,
+      "tests": [
+        {
+          "name": "Password Requirements",
+          "passed": true,
+          "status": 200
+        },
+        {
+          "name": "Registration Validation",
+          "passed": true,
+          "status": 400
+        },
+        {
+          "name": "Login Validation",
+          "passed": true,
+          "status": 401
+        },
+        {
+          "name": "Forgot Password",
+          "passed": true,
+          "status": 200
+        }
+      ]
+    },
+    "business": {
+      "passed": 3,
+      "failed": 0,
+      "tests": [
+        {
+          "name": "Business Types List",
+          "passed": true,
+          "status": 200
+        },
+        {
+          "name": "Hot Tub Business Type",
+          "passed": true,
+          "status": 200
+        },
+        {
+          "name": "Business Types Structure",
+          "passed": true,
+          "status": 200
+        }
+      ]
+    },
+    "oauth": {
+      "passed": 2,
+      "failed": 0,
+      "tests": [
+        {
+          "name": "Google OAuth Redirect",
+          "passed": true,
+          "status": 302
+        },
+        {
+          "name": "OAuth Callback Handler",
+          "passed": true,
+          "status": 302
+        }
+      ]
+    },
+    "protected": {
+      "passed": 7,
+      "failed": 0,
+      "tests": [
+        {
+          "name": "User Status (Auth Required)",
+          "passed": true,
+          "status": 401
+        },
+        {
+          "name": "User Profile (Auth Required)",
+          "passed": true,
+          "status": 401
+        },
+        {
+          "name": "Dashboard Data (Auth Required)",
+          "passed": true,
+          "status": 401
+        },
+        {
+          "name": "Onboarding Status (Auth Required)",
+          "passed": true,
+          "status": 401
+        },
+        {
+          "name": "Gmail Labels (Auth Required)",
+          "passed": true,
+          "status": 401
+        },
+        {
+          "name": "Workflow Status (Auth Required)",
+          "passed": true,
+          "status": 401
+        },
+        {
+          "name": "Analytics Dashboard (Auth Required)",
+          "passed": true,
+          "status": 401
+        }
+      ]
+    },
+    "onboarding": {
+      "passed": 3,
+      "failed": 0,
+      "tests": [
+        {
+          "name": "Business Categories Endpoint",
+          "passed": true,
+          "status": 401
+        },
+        {
+          "name": "Label Mapping Endpoint",
+          "passed": true,
+          "status": 401
+        },
+        {
+          "name": "Team Setup Endpoint",
+          "passed": true,
+          "status": 401
+        }
+      ]
+    },
+    "workflows": {
+      "passed": 3,
+      "failed": 0,
+      "tests": [
+        {
+          "name": "Workflow Health Check",
+          "passed": true,
+          "status": 401
+        },
+        {
+          "name": "Workflow Deploy Endpoint",
+          "passed": true,
+          "status": 401
+        },
+        {
+          "name": "Workflow Status Check",
+          "passed": true,
+          "status": 401
+        }
+      ]
+    },
+    "analytics": {
+      "passed": 5,
+      "failed": 0,
+      "tests": [
+        {
+          "name": "Analytics Dashboard",
+          "passed": true,
+          "status": 401
+        },
+        {
+          "name": "Onboarding Funnel",
+          "passed": true,
+          "status": 401
+        },
+        {
+          "name": "Conversion Analytics",
+          "passed": true,
+          "status": 401
+        },
+        {
+          "name": "User Behavior Analytics",
+          "passed": true,
+          "status": 401
+        },
+        {
+          "name": "Real-time Metrics",
+          "passed": true,
+          "status": 401
+        }
+      ]
+    },
+    "performance": {
+      "passed": 3,
+      "failed": 0,
+      "tests": [
+        {
+          "name": "System Performance (Public)",
+          "passed": true,
+          "status": 200
+        },
+        {
+          "name": "Endpoint Performance (Protected)",
+          "passed": true,
+          "status": 401
+        },
+        {
+          "name": "System Performance (Protected)",
+          "passed": true,
+          "status": 401
+        }
+      ]
+    }
+  },
+  "summary": {
+    "total": 34,
+    "passed": 34,
+    "failed": 0
+  },
+  "timestamp": "2025-09-11T06:00:04.073Z",
+  "baseUrl": "https://app.floworx-iq.com"
+}

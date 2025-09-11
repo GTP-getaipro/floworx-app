@@ -1,7 +1,10 @@
 const { body, param, query } = require('express-validator');
 const xss = require('xss');
 
-const { VALIDATION_RULES, validateFields } = require('../../shared/utils/validation');
+const {
+  VALIDATION_RULES: _VALIDATION_RULES,
+  validateFields: _validateFields
+} = require('../../shared/utils/validation');
 
 const { handleValidationErrors } = require('./errorHandler');
 

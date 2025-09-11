@@ -4,9 +4,10 @@
  */
 
 const request = require('supertest');
+
 const { query } = require('../database/unified-connection');
-const emailService = require('../services/emailService');
 const app = require('../server');
+const emailService = require('../services/emailService');
 
 describe('Authentication and Email Comprehensive Tests', () => {
   let testUser;
@@ -17,7 +18,9 @@ describe('Authentication and Email Comprehensive Tests', () => {
     // Clean up any existing test data
     await query('DELETE FROM users WHERE email LIKE $1', ['%test-auth-email%']);
     await query('DELETE FROM email_verification_tokens WHERE email LIKE $1', ['%test-auth-email%']);
-    await query('DELETE FROM password_reset_tokens WHERE user_id IN (SELECT id FROM users WHERE email LIKE $1)', ['%test-auth-email%']);
+    await query('DELETE FROM password_reset_tokens WHERE user_id IN (SELECT id FROM users WHERE email LIKE $1)', [
+      '%test-auth-email%'
+    ]);
   });
 
   afterAll(async () => {
@@ -39,10 +42,7 @@ describe('Authentication and Email Comprehensive Tests', () => {
       };
 
       console.log('🧪 Testing user registration...');
-      const response = await request(app)
-        .post('/api/auth/register')
-        .send(userData)
-        .expect(201);
+      const response = await request(app).post('/api/auth/register').send(userData).expect(201);
 
       expect(response.body.success).toBe(true);
       expect(response.body.message).toContain('registered successfully');
@@ -57,7 +57,7 @@ describe('Authentication and Email Comprehensive Tests', () => {
 
     test('should create email verification token in database', async () => {
       console.log('🧪 Checking email verification token creation...');
-      
+
       const tokenQuery = `
         SELECT token, email, user_id, expires_at, created_at
         FROM email_verification_tokens 
@@ -76,14 +76,10 @@ describe('Authentication and Email Comprehensive Tests', () => {
 
     test('should attempt to send verification email', async () => {
       console.log('🧪 Testing email service call...');
-      
+
       // Test email service directly
       try {
-        await emailService.sendVerificationEmail(
-          testUser.email, 
-          testUser.firstName, 
-          verificationToken
-        );
+        await emailService.sendVerificationEmail(testUser.email, testUser.firstName, verificationToken);
         console.log('✅ Email service call completed (check SMTP for actual delivery)');
       } catch (error) {
         console.log('❌ Email service failed:', error.message);
@@ -96,11 +92,8 @@ describe('Authentication and Email Comprehensive Tests', () => {
   describe('2. Email Verification Process', () => {
     test('should verify email with valid token', async () => {
       console.log('🧪 Testing email verification...');
-      
-      const response = await request(app)
-        .post('/api/auth/verify-email')
-        .send({ token: verificationToken })
-        .expect(200);
+
+      const response = await request(app).post('/api/auth/verify-email').send({ token: verificationToken }).expect(200);
 
       expect(response.body.message).toContain('verified successfully');
       expect(response.body.user.emailVerified).toBe(true);
@@ -111,7 +104,7 @@ describe('Authentication and Email Comprehensive Tests', () => {
 
     test('should reject invalid verification token', async () => {
       console.log('🧪 Testing invalid verification token...');
-      
+
       const response = await request(app)
         .post('/api/auth/verify-email')
         .send({ token: 'invalid-token-12345' })
@@ -127,11 +120,8 @@ describe('Authentication and Email Comprehensive Tests', () => {
   describe('3. Password Recovery Process', () => {
     test('should initiate password reset', async () => {
       console.log('🧪 Testing password reset initiation...');
-      
-      const response = await request(app)
-        .post('/api/auth/forgot-password')
-        .send({ email: testUser.email })
-        .expect(200);
+
+      const response = await request(app).post('/api/auth/forgot-password').send({ email: testUser.email }).expect(200);
 
       expect(response.body.success).toBe(true);
       expect(response.body.message).toContain('reset email sent');
@@ -141,7 +131,7 @@ describe('Authentication and Email Comprehensive Tests', () => {
 
     test('should create password reset token in database', async () => {
       console.log('🧪 Checking password reset token creation...');
-      
+
       const tokenQuery = `
         SELECT token, user_id, expires_at, created_at
         FROM password_reset_tokens 
@@ -161,13 +151,9 @@ describe('Authentication and Email Comprehensive Tests', () => {
 
     test('should attempt to send password reset email', async () => {
       console.log('🧪 Testing password reset email service...');
-      
+
       try {
-        await emailService.sendPasswordResetEmail(
-          testUser.email, 
-          testUser.firstName, 
-          resetToken
-        );
+        await emailService.sendPasswordResetEmail(testUser.email, testUser.firstName, resetToken);
         console.log('✅ Password reset email service call completed');
       } catch (error) {
         console.log('❌ Password reset email failed:', error.message);
@@ -180,15 +166,8 @@ describe('Authentication and Email Comprehensive Tests', () => {
   describe('4. Email Service Configuration Tests', () => {
     test('should have all required email environment variables', () => {
       console.log('🧪 Checking email environment variables...');
-      
-      const requiredVars = [
-        'SMTP_HOST',
-        'SMTP_PORT', 
-        'SMTP_USER',
-        'SMTP_PASS',
-        'FROM_EMAIL',
-        'FROM_NAME'
-      ];
+
+      const requiredVars = ['SMTP_HOST', 'SMTP_PORT', 'SMTP_USER', 'SMTP_PASS', 'FROM_EMAIL', 'FROM_NAME'];
 
       requiredVars.forEach(varName => {
         expect(process.env[varName]).toBeDefined();
@@ -200,7 +179,7 @@ describe('Authentication and Email Comprehensive Tests', () => {
 
     test('should generate valid verification tokens', () => {
       console.log('🧪 Testing token generation...');
-      
+
       const token1 = emailService.generateVerificationToken();
       const token2 = emailService.generateVerificationToken();
 
@@ -214,16 +193,13 @@ describe('Authentication and Email Comprehensive Tests', () => {
 
     test('should render email templates correctly', () => {
       console.log('🧪 Testing email template rendering...');
-      
+
       const verificationHtml = emailService.getVerificationEmailTemplate(
-        'Test User', 
+        'Test User',
         'https://example.com/verify?token=test123'
       );
-      
-      const resetHtml = emailService.getPasswordResetTemplate(
-        'Test User',
-        'https://example.com/reset?token=test123'
-      );
+
+      const resetHtml = emailService.getPasswordResetTemplate('Test User', 'https://example.com/reset?token=test123');
 
       expect(verificationHtml).toContain('Test User');
       expect(verificationHtml).toContain('verify?token=test123');
@@ -237,12 +213,12 @@ describe('Authentication and Email Comprehensive Tests', () => {
   describe('5. Email Delivery Diagnosis', () => {
     test('should diagnose SMTP connection issues', async () => {
       console.log('🧪 Diagnosing SMTP connection...');
-      
+
       const nodemailer = require('nodemailer');
-      
+
       const transporter = nodemailer.createTransporter({
         host: process.env.SMTP_HOST,
-        port: parseInt(process.env.SMTP_PORT),
+        port: parseInt(process.env.SMTP_PORT, 10),
         secure: false,
         auth: {
           user: process.env.SMTP_USER,
@@ -255,7 +231,7 @@ describe('Authentication and Email Comprehensive Tests', () => {
         console.log('✅ SMTP connection successful');
       } catch (error) {
         console.log('❌ SMTP connection failed:', error.message);
-        
+
         // Provide specific diagnosis
         if (error.message.includes('Invalid login')) {
           console.log('🔧 DIAGNOSIS: Gmail App Password issue');
@@ -267,7 +243,7 @@ describe('Authentication and Email Comprehensive Tests', () => {
           console.log('   - Check SMTP_HOST and SMTP_PORT settings');
           console.log('   - Verify network connectivity to Gmail SMTP');
         }
-        
+
         // Don't fail the test - this is diagnostic
         expect(error.message).toBeDefined();
       }

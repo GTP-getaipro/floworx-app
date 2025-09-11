@@ -43,7 +43,7 @@ router.get('/status', authenticateToken, async (req, res) => {
         connected_at: cred.created_at,
         expires_at: cred.expiry_date
       }));
-    } catch (credError) {
+    } catch (_credError) {
       console.log('Credentials table not found or accessible, continuing without service data');
     }
 
@@ -62,7 +62,7 @@ router.get('/status', authenticateToken, async (req, res) => {
         expires_at: oauth.expires_at,
         status: 'active'
       }));
-    } catch (oauthError) {
+    } catch (_oauthError) {
       console.log('OAuth tokens table not found or accessible, continuing without OAuth data');
     }
 

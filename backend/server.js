@@ -12,11 +12,11 @@ const {
   helmet,
   additionalSecurityHeaders,
   apiRateLimit,
-  authRateLimit,
+  // authRateLimit, // Not used in this file - handled in middleware/index.js
   // registrationRateLimit, // Not used in this file
   passwordResetRateLimit,
   oauthRateLimit,
-  authSlowDown,
+  // authSlowDown, // Not used in this file - handled in middleware/index.js
   sanitizeInput,
   sanitizeRequest,
   sanitizeResponse,
@@ -37,7 +37,6 @@ const recoveryRoutes = require('./routes/recovery');
 const testKeydbRoutes = require('./routes/test-keydb');
 const userRoutes = require('./routes/user');
 const workflowRoutes = require('./routes/workflows');
-// eslint-disable-next-line
 const { router: schedulerRoutes, scheduler } = require('./scheduler/n8nScheduler');
 
 const app = express();
@@ -253,8 +252,8 @@ app.get('/api/user/profile', (req, res) => {
   });
 });
 
-// API routes with enhanced rate limiting
-app.use('/api/auth', authRateLimit, authSlowDown, authRoutes);
+// API routes (rate limiting handled in middleware/index.js)
+app.use('/api/auth', authRoutes);
 app.use('/api/user', userRoutes);
 app.use('/api/dashboard', dashboardRoutes);
 app.use('/api/oauth', oauthRateLimit, oauthRoutes);

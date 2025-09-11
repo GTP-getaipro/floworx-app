@@ -206,6 +206,10 @@ class CacheService {
       console.warn('⚠️ KeyDB initialization failed completely, using memory cache only:', error.message);
       this.isRedisConnected = false;
       this.redis = null;
+
+      // Don't let KeyDB failures crash the application
+      // The app will continue with memory cache only
+      console.log('✅ Application will continue with memory cache only');
     }
   }
 

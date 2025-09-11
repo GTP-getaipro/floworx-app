@@ -1,0 +1,143 @@
+{
+  "passed": 2,
+  "failed": 6,
+  "total": 8,
+  "tests": [
+    {
+      "name": "Complete User Registration Journey",
+      "category": "User Journey",
+      "success": false,
+      "message": "Registration did not complete - still on register page",
+      "data": {
+        "currentUrl": "https://app.floworx-iq.com/register",
+        "email": "test1757574969267@example.com",
+        "hasSuccessMessage": false
+      },
+      "timestamp": "2025-09-11T07:16:18.406Z"
+    },
+    {
+      "name": "Business Type Selection Flow",
+      "category": "Onboarding",
+      "success": false,
+      "message": "Found 0 business types, Hot Tub option: No",
+      "data": {
+        "businessTypes": 0,
+        "hotTubOption": false,
+        "selectionMade": false
+      },
+      "timestamp": "2025-09-11T07:16:21.588Z"
+    },
+    {
+      "name": "Gmail Integration Setup",
+      "category": "Integration",
+      "success": true,
+      "message": "Gmail integration setup available",
+      "data": {
+        "hasGmailButton": true,
+        "hasOAuthButton": false
+      },
+      "timestamp": "2025-09-11T07:16:24.683Z"
+    },
+    {
+      "name": "Workflow Template Selection",
+      "category": "Workflows",
+      "success": false,
+      "message": "No workflow templates found",
+      "data": {
+        "templates": 0,
+        "hasHotTubTemplate": false
+      },
+      "timestamp": "2025-09-11T07:16:27.850Z"
+    },
+    {
+      "name": "Dashboard Analytics Display",
+      "category": "Analytics",
+      "success": true,
+      "message": "Dashboard shows analytics: 0 metrics, 1 charts, 0 values",
+      "data": {
+        "metrics": 0,
+        "charts": 1,
+        "numbers": 0
+      },
+      "timestamp": "2025-09-11T07:16:31.013Z"
+    },
+    {
+      "name": "Email Campaign Management",
+      "category": "Email Management",
+      "success": false,
+      "message": "Email campaign management not found",
+      "data": {
+        "campaigns": 0,
+        "hasCreateButton": false,
+        "templates": 0
+      },
+      "timestamp": "2025-09-11T07:16:34.203Z"
+    },
+    {
+      "name": "Customer Segmentation",
+      "category": "Customer Management",
+      "success": false,
+      "message": "Customer management not accessible",
+      "data": {
+        "customers": 0,
+        "filters": 0,
+        "segments": 0
+      },
+      "timestamp": "2025-09-11T07:16:37.376Z"
+    },
+    {
+      "name": "Automation Rules Setup",
+      "category": "Automation",
+      "success": false,
+      "message": "Automation rules setup not found",
+      "data": {
+        "rules": 0,
+        "triggers": 0,
+        "actions": 0
+      },
+      "timestamp": "2025-09-11T07:16:40.566Z"
+    }
+  ],
+  "categories": {
+    "User Journey": {
+      "passed": 0,
+      "failed": 1,
+      "total": 1
+    },
+    "Onboarding": {
+      "passed": 0,
+      "failed": 1,
+      "total": 1
+    },
+    "Integration": {
+      "passed": 1,
+      "failed": 0,
+      "total": 1
+    },
+    "Workflows": {
+      "passed": 0,
+      "failed": 1,
+      "total": 1
+    },
+    "Analytics": {
+      "passed": 1,
+      "failed": 0,
+      "total": 1
+    },
+    "Email Management": {
+      "passed": 0,
+      "failed": 1,
+      "total": 1
+    },
+    "Customer Management": {
+      "passed": 0,
+      "failed": 1,
+      "total": 1
+    },
+    "Automation": {
+      "passed": 0,
+      "failed": 1,
+      "total": 1
+    }
+  }
+}

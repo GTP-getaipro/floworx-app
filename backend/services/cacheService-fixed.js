@@ -437,7 +437,7 @@ class CacheService {
         await this.redis.ping();
         health.redis.status = 'connected';
         health.redis.latency = performance.now() - start;
-      } catch (error) {
+      } catch (_error) {
         health.redis.status = 'error';
       }
     }

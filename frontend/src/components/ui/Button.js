@@ -42,6 +42,12 @@ const Button = ({
       active:bg-brand-primary-100
       focus-visible:ring-2 focus-visible:ring-brand-primary-hover
     `,
+    outline: `
+      bg-transparent border border-gray-300 text-gray-700
+      hover:bg-gray-50 hover:border-gray-400
+      active:bg-gray-100
+      focus-visible:ring-2 focus-visible:ring-brand-primary-hover
+    `,
     link: `
       bg-transparent text-brand-primary underline-offset-2
       hover:text-brand-primary-hover hover:underline

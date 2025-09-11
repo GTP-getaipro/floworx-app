@@ -42,7 +42,7 @@ afterAll(async () => {
     if (RealTimeMonitoringService && typeof RealTimeMonitoringService.stopMonitoring === 'function') {
       RealTimeMonitoringService.stopMonitoring();
     }
-  } catch (error) {
+  } catch (_error) {
     // Monitoring service might not be initialized, ignore
   }
 

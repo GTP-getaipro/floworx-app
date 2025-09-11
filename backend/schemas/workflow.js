@@ -159,7 +159,7 @@ const webhookConfigSchema = Joi.object({
     'any.only': 'HTTP method must be one of: GET, POST, PUT, PATCH, DELETE'
   }),
   path: Joi.string()
-    .pattern(/^\/[a-zA-Z0-9\-_\/]*$/)
+    .pattern(/^\/[a-zA-Z0-9\-_/]*$/)
     .required()
     .messages({
       'string.pattern.base':

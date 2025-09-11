@@ -90,8 +90,8 @@ class DatabaseManager {
   async query(text, params = []) {
     const pool = await this.getPool();
     const start = Date.now();
-    let success = true;
-    let error = null;
+    let _success = true;
+    let _error = null;
 
     try {
       const result = await pool.query(text, params);
@@ -112,7 +112,7 @@ class DatabaseManager {
       _error = queryError;
 
       // Track failed query
-      this.trackQueryPerformance(text, params, duration, false, queryError);
+      this.trackQueryPerformance(text, params, duration, false, _error);
 
       console.error('❌ Database query error:', queryError.message);
       console.error('Query:', text);

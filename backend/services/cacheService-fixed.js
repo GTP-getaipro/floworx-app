@@ -150,7 +150,7 @@ class CacheService {
   /**
    * Get value from cache with automatic tier fallback
    */
-  async get(key, options = {}) {
+  async get(key, _options = {}) {
     const startTime = performance.now();
 
     try {

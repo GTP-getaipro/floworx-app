@@ -6,6 +6,7 @@
 const compression = require('compression');
 
 const cacheService = require('../services/cacheService');
+// eslint-disable-next-line import/order
 const performanceService = require('../services/performanceService');
 
 /**
@@ -35,7 +36,7 @@ const smartCompression = compression({
 
     // Skip compression for very small responses
     const contentLength = res.getHeader('content-length');
-    if (contentLength && parseInt(contentLength) < 512) {
+    if (contentLength && parseInt(contentLength, 10) < 512) {
       return false;
     }
 
@@ -119,7 +120,7 @@ const cacheHeaders = (req, res, next) => {
  * Request size limiter for performance
  */
 const requestSizeLimiter = (req, res, next) => {
-  const contentLength = parseInt(req.get('content-length') || '0');
+  const contentLength = parseInt(req.get('content-length') || '0', 10);
   const maxSize = 10 * 1024 * 1024; // 10MB limit
 
   if (contentLength > maxSize) {

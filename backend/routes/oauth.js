@@ -19,8 +19,32 @@ const getGoogleOAuth2Client = () => {
 
 // GET /api/oauth/google
 // Initiate Google OAuth flow
-router.get('/google', authenticateToken, (req, res) => {
+router.get('/google', (req, res) => {
   try {
+    // Handle token from query parameter (for frontend redirects) or Authorization header
+    let token = req.query.token;
+    if (!token) {
+      const authHeader = req.headers.authorization;
+      if (authHeader && authHeader.startsWith('Bearer ')) {
+        token = authHeader.substring(7);
+      }
+    }
+
+    if (!token) {
+      return res.redirect(`${process.env.FRONTEND_URL || 'http://localhost:3000'}/dashboard?error=auth_required`);
+    }
+
+    // Verify the token manually
+    const jwt = require('jsonwebtoken');
+    let user;
+    try {
+      const decoded = jwt.verify(token, process.env.JWT_SECRET);
+      user = { id: decoded.userId, email: decoded.email };
+    } catch (jwtError) {
+      console.error('JWT verification failed:', jwtError);
+      return res.redirect(`${process.env.FRONTEND_URL || 'http://localhost:3000'}/dashboard?error=invalid_token`);
+    }
+
     const oauth2Client = getGoogleOAuth2Client();
 
     // Generate the consent screen URL
@@ -35,7 +59,7 @@ router.get('/google', authenticateToken, (req, res) => {
     const authUrl = oauth2Client.generateAuthUrl({
       access_type: 'offline', // Required to get refresh token
       scope: scopes,
-      state: req.user.id, // Pass user ID to callback
+      state: user.id, // Pass user ID to callback
       prompt: 'consent' // Force consent screen to ensure refresh token
     });
 
@@ -43,10 +67,7 @@ router.get('/google', authenticateToken, (req, res) => {
     res.redirect(authUrl);
   } catch (error) {
     console.error('OAuth initiation error:', error);
-    res.status(500).json({
-      error: 'OAuth initiation failed',
-      message: 'Unable to start Google authentication process'
-    });
+    res.redirect(`${process.env.FRONTEND_URL || 'http://localhost:3000'}/dashboard?error=oauth_failed`);
   }
 });
 

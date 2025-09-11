@@ -10,7 +10,7 @@ const router = express.Router();
 // Get all active business types for selection UI
 router.get('/', async (req, res) => {
   try {
-    const query = `
+    const queryText = `
       SELECT id, name, slug, description, default_categories,
              created_at, updated_at
       FROM business_types
@@ -18,7 +18,7 @@ router.get('/', async (req, res) => {
       ORDER BY name ASC
     `;
 
-    const result = await query(query);
+    const result = await query(queryText);
     const businessTypes = result.rows;
 
     res.json({
@@ -40,13 +40,13 @@ router.get('/:slug', async (req, res) => {
   try {
     const { slug } = req.params;
 
-    const query = `
+    const queryText = `
       SELECT id, name, description, slug, default_categories
       FROM business_types
       WHERE slug = $1 AND is_active = true
     `;
 
-    const result = await query(query, [slug]);
+    const result = await query(queryText, [slug]);
 
     if (result.rows.length === 0) {
       return res.status(404).json({
@@ -200,7 +200,7 @@ router.get('/user/current', authenticateToken, async (req, res) => {
   try {
     const userId = req.user.id;
 
-    const query = `
+    const queryText = `
       SELECT u.business_type_id,
              bt.id, bt.name, bt.description, bt.slug, bt.default_categories
       FROM users u
@@ -208,7 +208,7 @@ router.get('/user/current', authenticateToken, async (req, res) => {
       WHERE u.id = $1
     `;
 
-    const result = await query(query, [userId]);
+    const result = await query(queryText, [userId]);
 
     if (result.rows.length === 0) {
       return res.status(404).json({
@@ -256,13 +256,13 @@ router.get('/:businessTypeId/template', authenticateToken, async (req, res) => {
 
     // For now, return a basic template structure
     // This can be expanded when workflow templates are implemented
-    const queryStr = `
+    const queryText = `
       SELECT id, name, slug, default_categories
       FROM business_types
       WHERE id = $1 AND is_active = true
     `;
 
-    const result = await query(queryStr, [parseInt(businessTypeId, 10)]);
+    const result = await query(queryText, [parseInt(businessTypeId, 10)]);
 
     if (result.rows.length === 0) {
       return res.status(404).json({

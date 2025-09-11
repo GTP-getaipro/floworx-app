@@ -3,14 +3,14 @@
  * Tests complete user registration, login, and authentication workflows
  */
 
-const bcrypt = require('bcrypt');
+const _bcrypt = require('bcrypt');
 const request = require('supertest');
 
 const app = require('../../app');
 const { query } = require('../../database/unified-connection');
 
 describe('Authentication Flow Integration Tests', () => {
-  let testUser;
+  let _testUser;
   let authToken;
 
   beforeAll(async () => {
@@ -50,7 +50,7 @@ describe('Authentication Flow Integration Tests', () => {
       expect(dbUser.rows[0].email).toBe(userData.email);
       expect(dbUser.rows[0].email_verified).toBe(false);
 
-      testUser = response.body.user;
+      const _testUser = response.body.user;
       authToken = response.body.token;
     });
 

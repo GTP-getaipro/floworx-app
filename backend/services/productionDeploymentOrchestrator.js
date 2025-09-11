@@ -180,7 +180,7 @@ class ProductionDeploymentOrchestrator extends EventEmitter {
   /**
    * Phase 3: Monitoring Integration
    */
-  async monitoringIntegrationPhase() {
+  monitoringIntegrationPhase() {
     logger.info('🔗 Setting up monitoring integrations');
 
     // Integrate monitoring services
@@ -303,7 +303,7 @@ class ProductionDeploymentOrchestrator extends EventEmitter {
   /**
    * Validate environment configuration
    */
-  async validateEnvironmentConfiguration() {
+  validateEnvironmentConfiguration() {
     const requiredEnvVars = [
       'NODE_ENV',
       'DATABASE_URL',
@@ -409,7 +409,7 @@ class ProductionDeploymentOrchestrator extends EventEmitter {
   /**
    * Perform comprehensive health checks
    */
-  async performHealthChecks() {
+  performHealthChecks() {
     const healthResults = {
       allHealthy: true,
       services: {},
@@ -446,7 +446,7 @@ class ProductionDeploymentOrchestrator extends EventEmitter {
   /**
    * Generate deployment summary
    */
-  async generateDeploymentSummary() {
+  generateDeploymentSummary() {
     const duration = Date.now() - this.deploymentStatus.startTime;
     
     return {
@@ -463,7 +463,7 @@ class ProductionDeploymentOrchestrator extends EventEmitter {
   /**
    * Send deployment notification
    */
-  async sendDeploymentNotification(summary) {
+  sendDeploymentNotification(summary) {
     logger.info('📧 Sending deployment notification', summary);
     
     // This would integrate with your notification system

@@ -30,7 +30,7 @@ const requireAdmin = (req, res, next) => {
  * GET /api/monitoring/dashboard
  * Get real-time performance dashboard data
  */
-router.get('/dashboard', authenticateToken, requireAdmin, asyncHandler(async (req, res) => {
+router.get('/dashboard', authenticateToken, requireAdmin, asyncHandler((req, res) => {
   const dashboardData = realTimeMonitoringService.getDashboardData();
   
   res.json({
@@ -43,7 +43,7 @@ router.get('/dashboard', authenticateToken, requireAdmin, asyncHandler(async (re
  * GET /api/monitoring/metrics
  * Get detailed performance metrics
  */
-router.get('/metrics', authenticateToken, requireAdmin, asyncHandler(async (req, res) => {
+router.get('/metrics', authenticateToken, requireAdmin, asyncHandler((req, res) => {
   const metrics = realTimeMonitoringService.getMetrics();
   
   res.json({
@@ -56,22 +56,22 @@ router.get('/metrics', authenticateToken, requireAdmin, asyncHandler(async (req,
  * GET /api/monitoring/alerts
  * Get current alerts
  */
-router.get('/alerts', authenticateToken, requireAdmin, asyncHandler(async (req, res) => {
+router.get('/alerts', authenticateToken, requireAdmin, asyncHandler((req, res) => {
   const { severity, limit = 50 } = req.query;
   const metrics = realTimeMonitoringService.getMetrics();
-  
+
   let alerts = metrics.alerts;
-  
+
   // Filter by severity if specified
   if (severity) {
     alerts = alerts.filter(alert => alert.severity === severity);
   }
-  
+
   // Sort by timestamp (newest first) and limit
   alerts = alerts
     .sort((a, b) => b.timestamp - a.timestamp)
     .slice(0, parseInt(limit, 10));
-  
+
   res.json({
     success: true,
     data: {
@@ -86,7 +86,7 @@ router.get('/alerts', authenticateToken, requireAdmin, asyncHandler(async (req, 
  * GET /api/monitoring/queries
  * Get query performance data
  */
-router.get('/queries', authenticateToken, requireAdmin, asyncHandler(async (req, res) => {
+router.get('/queries', authenticateToken, requireAdmin, asyncHandler((req, res) => {
   const { sortBy = 'averageDuration', order = 'desc', limit = 20 } = req.query;
   const metrics = realTimeMonitoringService.getMetrics();
   
@@ -118,7 +118,7 @@ router.get('/queries', authenticateToken, requireAdmin, asyncHandler(async (req,
  * GET /api/monitoring/recommendations
  * Get optimization recommendations
  */
-router.get('/recommendations', authenticateToken, requireAdmin, asyncHandler(async (req, res) => {
+router.get('/recommendations', authenticateToken, requireAdmin, asyncHandler((req, res) => {
   const recommendations = realTimeMonitoringService.getOptimizationRecommendations();
   
   res.json({
@@ -134,7 +134,7 @@ router.get('/recommendations', authenticateToken, requireAdmin, asyncHandler(asy
  * POST /api/monitoring/thresholds
  * Update monitoring thresholds
  */
-router.post('/thresholds', authenticateToken, requireAdmin, asyncHandler(async (req, res) => {
+router.post('/thresholds', authenticateToken, requireAdmin, asyncHandler((req, res) => {
   const { slowQuery, criticalQuery, highConnectionCount, errorRate } = req.body;
   
   const newThresholds = {};
@@ -156,7 +156,7 @@ router.post('/thresholds', authenticateToken, requireAdmin, asyncHandler(async (
  * POST /api/monitoring/reset
  * Reset monitoring metrics
  */
-router.post('/reset', authenticateToken, requireAdmin, asyncHandler(async (req, res) => {
+router.post('/reset', authenticateToken, requireAdmin, asyncHandler((req, res) => {
   realTimeMonitoringService.resetMetrics();
   
   res.json({
@@ -169,7 +169,7 @@ router.post('/reset', authenticateToken, requireAdmin, asyncHandler(async (req, 
  * GET /api/monitoring/status
  * Get monitoring service status
  */
-router.get('/status', authenticateToken, requireAdmin, asyncHandler(async (req, res) => {
+router.get('/status', authenticateToken, requireAdmin, asyncHandler((req, res) => {
   const metrics = realTimeMonitoringService.getMetrics();
   
   res.json({
@@ -248,7 +248,7 @@ router.get('/stream', authenticateToken, requireAdmin, (req, res) => {
  * GET /api/monitoring/export
  * Export monitoring data
  */
-router.get('/export', authenticateToken, requireAdmin, asyncHandler(async (req, res) => {
+router.get('/export', authenticateToken, requireAdmin, asyncHandler((req, res) => {
   const { format = 'json', timeRange = '1h' } = req.query;
   
   const metrics = realTimeMonitoringService.getMetrics();

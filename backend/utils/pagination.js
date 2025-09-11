@@ -33,9 +33,9 @@ class PaginationUtils {
     } = query;
 
     // Validate and sanitize parameters
-    const parsedLimit = Math.min(parseInt(limit) || this.defaults.limit, this.defaults.maxLimit);
-    const parsedPage = Math.max(parseInt(page) || 1, 1);
-    const parsedOffset = Math.max(parseInt(offset) || (parsedPage - 1) * parsedLimit, 0);
+    const parsedLimit = Math.min(parseInt(limit, 10) || this.defaults.limit, this.defaults.maxLimit);
+    const parsedPage = Math.max(parseInt(page, 10) || 1, 1);
+    const parsedOffset = Math.max(parseInt(offset, 10) || (parsedPage - 1) * parsedLimit, 0);
 
     // Validate sort field (whitelist approach)
     const allowedSortFields = [
@@ -111,7 +111,7 @@ class PaginationUtils {
     }
 
     // Use PostgreSQL full-text search for better performance
-    const searchConditions = searchColumns.map((column, index) => {
+    const searchConditions = searchColumns.map((column) => {
       return `"${column}" ILIKE $${this.getNextParamIndex()}`;
     });
 
@@ -199,7 +199,7 @@ class PaginationUtils {
     const [dataResult, countResult] = await Promise.all([queryBuilder(), countQueryBuilder()]);
 
     const items = dataResult.rows;
-    const totalCount = parseInt(countResult.rows[0]?.count || 0);
+    const totalCount = parseInt(countResult.rows[0]?.count || 0, 10);
     const totalPages = Math.ceil(totalCount / limit);
     const currentPage = Math.floor(offset / limit) + 1;
     const hasNextPage = currentPage < totalPages;
@@ -269,7 +269,7 @@ class PaginationUtils {
    * Optimize query for large datasets
    */
   optimizeForLargeDataset(baseQuery, params) {
-    const { offset, limit } = params;
+    const { offset } = params;
 
     // For large offsets, use cursor-based pagination
     if (offset > 10000) {

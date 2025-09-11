@@ -3,9 +3,9 @@
  * Tests error categorization, tracking, and alerting
  */
 
-const errorTrackingService = require('../../../services/errorTrackingService');
-
 const fs = require('fs').promises;
+
+const errorTrackingService = require('../../../services/errorTrackingService');
 
 // Mock dependencies
 jest.mock('fs', () => ({
@@ -163,7 +163,7 @@ describe('Error Tracking Service', () => {
     test('should update group timestamps correctly', async () => {
       const error = new Error('Test error');
       
-      const firstTime = Date.now();
+      const _firstTime = Date.now();
       await errorTrackingService.trackError(error, {});
       
       // Wait a bit and track same error again
@@ -482,7 +482,7 @@ describe('Error Tracking Service', () => {
     });
 
     test('should update trends correctly', () => {
-      const initialHourlyTrend = [...errorTrackingService.errorStats.trends.hourly];
+      const _initialHourlyTrend = [...errorTrackingService.errorStats.trends.hourly];
       
       errorTrackingService.updateTrends();
       

@@ -1,8 +1,8 @@
 const cors = require('cors');
 const express = require('express');
-require('dotenv').config();
-
 const morgan = require('morgan');
+
+require('dotenv').config();
 
 // Enhanced security imports
 const { initialize: initializeDatabase } = require('./database/unified-connection');
@@ -23,9 +23,6 @@ const {
   // securityHeaders, // Not used in this file
   handleValidationErrors
 } = require('./middleware/security');
-
-// Performance middleware imports
-
 const accountRecoveryRoutes = require('./routes/accountRecovery');
 const analyticsRoutes = require('./routes/analytics');
 const authRoutes = require('./routes/auth');
@@ -37,10 +34,11 @@ const onboardingRoutes = require('./routes/onboarding');
 const passwordResetRoutes = require('./routes/passwordReset');
 const performanceRoutes = require('./routes/performance');
 const recoveryRoutes = require('./routes/recovery');
-const { router: schedulerRoutes, scheduler } = require('./scheduler/n8nScheduler');
 const testKeydbRoutes = require('./routes/test-keydb');
 const userRoutes = require('./routes/user');
 const workflowRoutes = require('./routes/workflows');
+// eslint-disable-next-line import/order
+const { router: schedulerRoutes, scheduler } = require('./scheduler/n8nScheduler');
 
 const app = express();
 const PORT = process.env.PORT || 5000;
@@ -81,7 +79,7 @@ const globalMemoryMonitor = new ContainerMemoryMonitor({
 });
 
 // Set up memory monitoring events
-globalMemoryMonitor.on('critical', ({ stats, relevantUsage }) => {
+globalMemoryMonitor.on('critical', ({ stats: _stats, relevantUsage }) => {
   console.error(`🚨 CRITICAL: Memory usage at ${relevantUsage.description}`);
   if (process.env.NODE_ENV === 'production') {
     console.error('🚨 Memory threshold exceeded - consider scaling');
@@ -89,7 +87,7 @@ globalMemoryMonitor.on('critical', ({ stats, relevantUsage }) => {
   }
 });
 
-globalMemoryMonitor.on('emergency', ({ stats, relevantUsage }) => {
+globalMemoryMonitor.on('emergency', ({ stats: _stats, relevantUsage }) => {
   console.error(`🚨 EMERGENCY: Critical memory usage at ${relevantUsage.description}`);
   console.error('🚨 IMMEDIATE ACTION REQUIRED - System may become unstable');
 

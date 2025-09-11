@@ -4,11 +4,10 @@
  */
 
 const EventEmitter = require('events');
+const _fs = require('fs').promises;
+const _path = require('path');
 
 const cron = require('node-cron');
-
-const fs = require('fs').promises;
-const path = require('path');
 
 const logger = require('../utils/logger');
 
@@ -86,7 +85,7 @@ class StakeholderReportingService extends EventEmitter {
   /**
    * Initialize report templates
    */
-  async initializeReportTemplates() {
+  initializeReportTemplates() {
     // Executive Report Template
     this.reportTemplates.set('executives', {
       title: 'FloWorx Executive Dashboard',
@@ -348,11 +347,11 @@ class StakeholderReportingService extends EventEmitter {
       `);
 
       return {
-        activeUsers: parseInt(activeUsersResult.rows[0].count) || 0,
-        newSignups: parseInt(signupsResult.rows[0].count) || 0,
-        onboardingRate: onboardingResult.rows[0].total > 0 ? 
+        activeUsers: parseInt(activeUsersResult.rows[0].count, 10) || 0,
+        newSignups: parseInt(signupsResult.rows[0].count, 10) || 0,
+        onboardingRate: onboardingResult.rows[0].total > 0 ?
           (onboardingResult.rows[0].completed / onboardingResult.rows[0].total) * 100 : 0,
-        workflowExecutions: parseInt(workflowsResult.rows[0].count) || 0,
+        workflowExecutions: parseInt(workflowsResult.rows[0].count, 10) || 0,
         timestamp: Date.now()
       };
     } catch (error) {
@@ -364,7 +363,7 @@ class StakeholderReportingService extends EventEmitter {
   /**
    * Collect system performance metrics
    */
-  async collectSystemPerformance() {
+  collectSystemPerformance() {
     try {
       const realTimeMonitoringService = require('./realTimeMonitoringService');
       const metrics = realTimeMonitoringService.getMetrics();
@@ -388,7 +387,7 @@ class StakeholderReportingService extends EventEmitter {
   /**
    * Collect error rates and analysis
    */
-  async collectErrorRates() {
+  collectErrorRates() {
     try {
       const errorTrackingService = require('./errorTrackingService');
       const stats = errorTrackingService.getStats();
@@ -410,7 +409,7 @@ class StakeholderReportingService extends EventEmitter {
   /**
    * Generate report content from template and data
    */
-  async generateReportContent(template, metricsData) {
+  generateReportContent(template, metricsData) {
     const reportContent = {
       title: template.title,
       generatedAt: new Date().toISOString(),
@@ -524,7 +523,7 @@ class StakeholderReportingService extends EventEmitter {
   /**
    * Create email report
    */
-  async createEmailReport(reportData) {
+  createEmailReport(reportData) {
     let html = `
       <html>
         <head>
@@ -578,7 +577,7 @@ class StakeholderReportingService extends EventEmitter {
   /**
    * Create Slack report
    */
-  async createSlackReport(reportData) {
+  createSlackReport(reportData) {
     const blocks = [
       {
         type: 'header',
@@ -639,7 +638,7 @@ class StakeholderReportingService extends EventEmitter {
       
       const transporter = nodemailer.createTransport({
         host: process.env.SMTP_HOST,
-        port: parseInt(process.env.SMTP_PORT) || 587,
+        port: parseInt(process.env.SMTP_PORT, 10) || 587,
         secure: process.env.SMTP_PORT === '465',
         auth: {
           user: process.env.SMTP_USER,
@@ -664,7 +663,7 @@ class StakeholderReportingService extends EventEmitter {
   /**
    * Send Slack report
    */
-  async sendSlackReport(slackContent, config) {
+  async sendSlackReport(slackContent, _config) {
     try {
       const axios = require('axios');
       const webhookUrl = process.env.SLACK_REPORTS_WEBHOOK_URL;

@@ -187,7 +187,7 @@ class AdaptiveThresholdService extends EventEmitter {
   /**
    * Initialize baseline thresholds
    */
-  async initializeBaselineThresholds() {
+  initializeBaselineThresholds() {
     for (const [metricName, config] of Object.entries(this.metricConfigs)) {
       // Set conservative initial thresholds
       let initialThreshold;
@@ -239,7 +239,7 @@ class AdaptiveThresholdService extends EventEmitter {
   /**
    * Adapt threshold for a specific metric
    */
-  async adaptThreshold(metricName) {
+  adaptThreshold(metricName) {
     const historicalData = this.historicalData.get(metricName);
     const config = this.metricConfigs[metricName];
     const currentThreshold = this.adaptiveThresholds.get(metricName);
@@ -307,7 +307,7 @@ class AdaptiveThresholdService extends EventEmitter {
   /**
    * Calculate statistics for historical data
    */
-  calculateStatistics(data, config) {
+  calculateStatistics(data, _config) {
     const values = data.map(point => point.value);
     
     // Basic statistics
@@ -617,7 +617,7 @@ class AdaptiveThresholdService extends EventEmitter {
   /**
    * Load historical data (placeholder for persistence)
    */
-  async loadHistoricalData() {
+  loadHistoricalData() {
     // In production, this would load from persistent storage
     logger.info('Historical data loading placeholder - implement persistence as needed');
   }

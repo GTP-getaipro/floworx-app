@@ -147,7 +147,7 @@ class BusinessAlertingEngine extends EventEmitter {
   /**
    * Evaluate user impact rules
    */
-  async evaluateUserImpactRules(metrics) {
+  async evaluateUserImpactRules(_metrics) {
     const userImpactRules = this.rules.userImpactRules;
 
     // Onboarding Impact
@@ -199,7 +199,7 @@ class BusinessAlertingEngine extends EventEmitter {
   /**
    * Evaluate business process rules
    */
-  async evaluateBusinessProcessRules(metrics) {
+  async evaluateBusinessProcessRules(_metrics) {
     const businessProcessRules = this.rules.businessProcessRules;
 
     // Revenue Impact
@@ -382,7 +382,7 @@ class BusinessAlertingEngine extends EventEmitter {
   /**
    * Calculate business metrics
    */
-  async updateBusinessContext(metrics) {
+  async updateBusinessContext(_metrics) {
     try {
       const { query } = require('../database/unified-connection');
       
@@ -401,10 +401,10 @@ class BusinessAlertingEngine extends EventEmitter {
       if (activeUsersResult.rows.length > 0) {
         const row = activeUsersResult.rows[0];
         this.businessMetrics = {
-          activeUsers: parseInt(row.total_active) || 0,
-          onboardingUsers: parseInt(row.onboarding_users) || 0,
-          workflowUsers: parseInt(row.workflow_users) || 0,
-          payingCustomers: parseInt(row.paying_customers) || 0
+          activeUsers: parseInt(row.total_active, 10) || 0,
+          onboardingUsers: parseInt(row.onboarding_users, 10) || 0,
+          workflowUsers: parseInt(row.workflow_users, 10) || 0,
+          payingCustomers: parseInt(row.paying_customers, 10) || 0
         };
       }
     } catch (error) {
@@ -462,7 +462,7 @@ class BusinessAlertingEngine extends EventEmitter {
   /**
    * Calculate payment failure rate
    */
-  async calculatePaymentFailureRate() {
+  calculatePaymentFailureRate() {
     // This would integrate with your payment processor
     // For now, return a mock value
     return 0;
@@ -477,8 +477,8 @@ class BusinessAlertingEngine extends EventEmitter {
     
     const currentHour = now.getHours();
     const currentDay = now.getDay();
-    const startHour = parseInt(businessHours.start.split(':')[0]);
-    const endHour = parseInt(businessHours.end.split(':')[0]);
+    const startHour = parseInt(businessHours.start.split(':')[0], 10);
+    const endHour = parseInt(businessHours.end.split(':')[0], 10);
 
     return businessHours.weekdays.includes(currentDay) &&
            currentHour >= startHour &&
@@ -507,6 +507,7 @@ class BusinessAlertingEngine extends EventEmitter {
         return variables[match] !== undefined ? variables[match] : match;
       });
 
+      // eslint-disable-next-line no-eval
       return eval(conditionStr);
     } catch (error) {
       logger.error('Failed to evaluate condition', { condition, error: error.message });

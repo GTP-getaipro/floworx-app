@@ -370,7 +370,7 @@ class SecurityAudit {
 /**
  * Main audit function
  */
-async function runSecurityAudit() {
+function runSecurityAudit() {
   console.log('🔒 Starting FloWorx Security Audit...');
   console.log('=====================================');
 

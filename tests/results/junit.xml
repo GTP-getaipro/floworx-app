@@ -1,0 +1,670 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<testsuites name="jest tests" tests="24" failures="15" errors="0" time="1.489">
+  <testsuite name="BusinessTypeStep Component Tests" errors="0" failures="15" skipped="0" timestamp="2025-09-10T20:22:38" time="0.587" tests="15">
+    <testcase classname="BusinessTypeStep Component Tests › Component Rendering" name="BTS-001: Renders loading state while fetching business types" time="0.007">
+      <failure>TypeError: React.act is not a function
+    at exports.act (C:\FloworxInvite\node_modules\react-dom\cjs\react-dom-test-utils.production.js:20:16)
+    at C:\FloworxInvite\node_modules\@testing-library\react\dist\act-compat.js:47:25
+    at renderRoot (C:\FloworxInvite\node_modules\@testing-library\react\dist\pure.js:190:26)
+    at render (C:\FloworxInvite\node_modules\@testing-library\react\dist\pure.js:292:10)
+    at Object.&lt;anonymous&gt; (C:\FloworxInvite\tests\frontend\BusinessTypeStep.test.js:61:13)
+    at Promise.finally.completed (C:\FloworxInvite\node_modules\jest-circus\build\jestAdapterInit.js:1556:28)
+    at new Promise (&lt;anonymous&gt;)
+    at callAsyncCircusFn (C:\FloworxInvite\node_modules\jest-circus\build\jestAdapterInit.js:1496:10)
+    at _callCircusTest (C:\FloworxInvite\node_modules\jest-circus\build\jestAdapterInit.js:1006:40)
+    at processTicksAndRejections (node:internal/process/task_queues:105:5)
+    at _runTest (C:\FloworxInvite\node_modules\jest-circus\build\jestAdapterInit.js:946:3)
+    at _runTestsForDescribeBlock (C:\FloworxInvite\node_modules\jest-circus\build\jestAdapterInit.js:839:13)
+    at _runTestsForDescribeBlock (C:\FloworxInvite\node_modules\jest-circus\build\jestAdapterInit.js:829:11)
+    at _runTestsForDescribeBlock (C:\FloworxInvite\node_modules\jest-circus\build\jestAdapterInit.js:829:11)
+    at run (C:\FloworxInvite\node_modules\jest-circus\build\jestAdapterInit.js:757:3)
+    at runAndTransformResultsToJestFormat (C:\FloworxInvite\node_modules\jest-circus\build\jestAdapterInit.js:1917:21)
+    at jestAdapter (C:\FloworxInvite\node_modules\jest-circus\build\runner.js:101:19)
+    at runTestInternal (C:\FloworxInvite\node_modules\jest-runner\build\index.js:275:16)
+    at runTest (C:\FloworxInvite\node_modules\jest-runner\build\index.js:343:7)</failure>
+      <failure>TypeError: React.act is not a function
+    at exports.act (C:\FloworxInvite\node_modules\react-dom\cjs\react-dom-test-utils.production.js:20:16)
+    at C:\FloworxInvite\node_modules\@testing-library\react\dist\act-compat.js:47:25
+    at C:\FloworxInvite\node_modules\@testing-library\react\dist\pure.js:307:28
+    at Array.forEach (&lt;anonymous&gt;)
+    at cleanup (C:\FloworxInvite\node_modules\@testing-library\react\dist\pure.js:303:22)
+    at Object.&lt;anonymous&gt; (C:\FloworxInvite\node_modules\@testing-library\react\dist\index.js:28:25)
+    at Promise.finally.completed (C:\FloworxInvite\node_modules\jest-circus\build\jestAdapterInit.js:1556:28)
+    at new Promise (&lt;anonymous&gt;)
+    at callAsyncCircusFn (C:\FloworxInvite\node_modules\jest-circus\build\jestAdapterInit.js:1496:10)
+    at _callCircusHook (C:\FloworxInvite\node_modules\jest-circus\build\jestAdapterInit.js:975:40)
+    at processTicksAndRejections (node:internal/process/task_queues:105:5)
+    at _runTest (C:\FloworxInvite\node_modules\jest-circus\build\jestAdapterInit.js:948:5)
+    at _runTestsForDescribeBlock (C:\FloworxInvite\node_modules\jest-circus\build\jestAdapterInit.js:839:13)
+    at _runTestsForDescribeBlock (C:\FloworxInvite\node_modules\jest-circus\build\jestAdapterInit.js:829:11)
+    at _runTestsForDescribeBlock (C:\FloworxInvite\node_modules\jest-circus\build\jestAdapterInit.js:829:11)
+    at run (C:\FloworxInvite\node_modules\jest-circus\build\jestAdapterInit.js:757:3)
+    at runAndTransformResultsToJestFormat (C:\FloworxInvite\node_modules\jest-circus\build\jestAdapterInit.js:1917:21)
+    at jestAdapter (C:\FloworxInvite\node_modules\jest-circus\build\runner.js:101:19)
+    at runTestInternal (C:\FloworxInvite\node_modules\jest-runner\build\index.js:275:16)
+    at runTest (C:\FloworxInvite\node_modules\jest-runner\build\index.js:343:7)</failure>
+    </testcase>
+    <testcase classname="BusinessTypeStep Component Tests › Component Rendering" name="BTS-002: Displays business type cards with correct data" time="0.001">
+      <failure>TypeError: React.act is not a function
+    at exports.act (C:\FloworxInvite\node_modules\react-dom\cjs\react-dom-test-utils.production.js:20:16)
+    at C:\FloworxInvite\node_modules\@testing-library\react\dist\act-compat.js:47:25
+    at renderRoot (C:\FloworxInvite\node_modules\@testing-library\react\dist\pure.js:190:26)
+    at render (C:\FloworxInvite\node_modules\@testing-library\react\dist\pure.js:292:10)
+    at Object.&lt;anonymous&gt; (C:\FloworxInvite\tests\frontend\BusinessTypeStep.test.js:82:13)
+    at Promise.finally.completed (C:\FloworxInvite\node_modules\jest-circus\build\jestAdapterInit.js:1556:28)
+    at new Promise (&lt;anonymous&gt;)
+    at callAsyncCircusFn (C:\FloworxInvite\node_modules\jest-circus\build\jestAdapterInit.js:1496:10)
+    at _callCircusTest (C:\FloworxInvite\node_modules\jest-circus\build\jestAdapterInit.js:1006:40)
+    at processTicksAndRejections (node:internal/process/task_queues:105:5)
+    at _runTest (C:\FloworxInvite\node_modules\jest-circus\build\jestAdapterInit.js:946:3)
+    at _runTestsForDescribeBlock (C:\FloworxInvite\node_modules\jest-circus\build\jestAdapterInit.js:839:13)
+    at _runTestsForDescribeBlock (C:\FloworxInvite\node_modules\jest-circus\build\jestAdapterInit.js:829:11)
+    at _runTestsForDescribeBlock (C:\FloworxInvite\node_modules\jest-circus\build\jestAdapterInit.js:829:11)
+    at run (C:\FloworxInvite\node_modules\jest-circus\build\jestAdapterInit.js:757:3)
+    at runAndTransformResultsToJestFormat (C:\FloworxInvite\node_modules\jest-circus\build\jestAdapterInit.js:1917:21)
+    at jestAdapter (C:\FloworxInvite\node_modules\jest-circus\build\runner.js:101:19)
+    at runTestInternal (C:\FloworxInvite\node_modules\jest-runner\build\index.js:275:16)
+    at runTest (C:\FloworxInvite\node_modules\jest-runner\build\index.js:343:7)</failure>
+      <failure>TypeError: React.act is not a function
+    at exports.act (C:\FloworxInvite\node_modules\react-dom\cjs\react-dom-test-utils.production.js:20:16)
+    at C:\FloworxInvite\node_modules\@testing-library\react\dist\act-compat.js:47:25
+    at C:\FloworxInvite\node_modules\@testing-library\react\dist\pure.js:307:28
+    at Array.forEach (&lt;anonymous&gt;)
+    at cleanup (C:\FloworxInvite\node_modules\@testing-library\react\dist\pure.js:303:22)
+    at Object.&lt;anonymous&gt; (C:\FloworxInvite\node_modules\@testing-library\react\dist\index.js:28:25)
+    at Promise.finally.completed (C:\FloworxInvite\node_modules\jest-circus\build\jestAdapterInit.js:1556:28)
+    at new Promise (&lt;anonymous&gt;)
+    at callAsyncCircusFn (C:\FloworxInvite\node_modules\jest-circus\build\jestAdapterInit.js:1496:10)
+    at _callCircusHook (C:\FloworxInvite\node_modules\jest-circus\build\jestAdapterInit.js:975:40)
+    at processTicksAndRejections (node:internal/process/task_queues:105:5)
+    at _runTest (C:\FloworxInvite\node_modules\jest-circus\build\jestAdapterInit.js:948:5)
+    at _runTestsForDescribeBlock (C:\FloworxInvite\node_modules\jest-circus\build\jestAdapterInit.js:839:13)
+    at _runTestsForDescribeBlock (C:\FloworxInvite\node_modules\jest-circus\build\jestAdapterInit.js:829:11)
+    at _runTestsForDescribeBlock (C:\FloworxInvite\node_modules\jest-circus\build\jestAdapterInit.js:829:11)
+    at run (C:\FloworxInvite\node_modules\jest-circus\build\jestAdapterInit.js:757:3)
+    at runAndTransformResultsToJestFormat (C:\FloworxInvite\node_modules\jest-circus\build\jestAdapterInit.js:1917:21)
+    at jestAdapter (C:\FloworxInvite\node_modules\jest-circus\build\runner.js:101:19)
+    at runTestInternal (C:\FloworxInvite\node_modules\jest-runner\build\index.js:275:16)
+    at runTest (C:\FloworxInvite\node_modules\jest-runner\build\index.js:343:7)</failure>
+    </testcase>
+    <testcase classname="BusinessTypeStep Component Tests › Component Rendering" name="BTS-002-CATEGORIES: Displays email categories with priority badges" time="0">
+      <failure>TypeError: React.act is not a function
+    at exports.act (C:\FloworxInvite\node_modules\react-dom\cjs\react-dom-test-utils.production.js:20:16)
+    at C:\FloworxInvite\node_modules\@testing-library\react\dist\act-compat.js:47:25
+    at renderRoot (C:\FloworxInvite\node_modules\@testing-library\react\dist\pure.js:190:26)
+    at render (C:\FloworxInvite\node_modules\@testing-library\react\dist\pure.js:292:10)
+    at Object.&lt;anonymous&gt; (C:\FloworxInvite\tests\frontend\BusinessTypeStep.test.js:113:13)
+    at Promise.finally.completed (C:\FloworxInvite\node_modules\jest-circus\build\jestAdapterInit.js:1556:28)
+    at new Promise (&lt;anonymous&gt;)
+    at callAsyncCircusFn (C:\FloworxInvite\node_modules\jest-circus\build\jestAdapterInit.js:1496:10)
+    at _callCircusTest (C:\FloworxInvite\node_modules\jest-circus\build\jestAdapterInit.js:1006:40)
+    at processTicksAndRejections (node:internal/process/task_queues:105:5)
+    at _runTest (C:\FloworxInvite\node_modules\jest-circus\build\jestAdapterInit.js:946:3)
+    at _runTestsForDescribeBlock (C:\FloworxInvite\node_modules\jest-circus\build\jestAdapterInit.js:839:13)
+    at _runTestsForDescribeBlock (C:\FloworxInvite\node_modules\jest-circus\build\jestAdapterInit.js:829:11)
+    at _runTestsForDescribeBlock (C:\FloworxInvite\node_modules\jest-circus\build\jestAdapterInit.js:829:11)
+    at run (C:\FloworxInvite\node_modules\jest-circus\build\jestAdapterInit.js:757:3)
+    at runAndTransformResultsToJestFormat (C:\FloworxInvite\node_modules\jest-circus\build\jestAdapterInit.js:1917:21)
+    at jestAdapter (C:\FloworxInvite\node_modules\jest-circus\build\runner.js:101:19)
+    at runTestInternal (C:\FloworxInvite\node_modules\jest-runner\build\index.js:275:16)
+    at runTest (C:\FloworxInvite\node_modules\jest-runner\build\index.js:343:7)</failure>
+      <failure>TypeError: React.act is not a function
+    at exports.act (C:\FloworxInvite\node_modules\react-dom\cjs\react-dom-test-utils.production.js:20:16)
+    at C:\FloworxInvite\node_modules\@testing-library\react\dist\act-compat.js:47:25
+    at C:\FloworxInvite\node_modules\@testing-library\react\dist\pure.js:307:28
+    at Array.forEach (&lt;anonymous&gt;)
+    at cleanup (C:\FloworxInvite\node_modules\@testing-library\react\dist\pure.js:303:22)
+    at Object.&lt;anonymous&gt; (C:\FloworxInvite\node_modules\@testing-library\react\dist\index.js:28:25)
+    at Promise.finally.completed (C:\FloworxInvite\node_modules\jest-circus\build\jestAdapterInit.js:1556:28)
+    at new Promise (&lt;anonymous&gt;)
+    at callAsyncCircusFn (C:\FloworxInvite\node_modules\jest-circus\build\jestAdapterInit.js:1496:10)
+    at _callCircusHook (C:\FloworxInvite\node_modules\jest-circus\build\jestAdapterInit.js:975:40)
+    at processTicksAndRejections (node:internal/process/task_queues:105:5)
+    at _runTest (C:\FloworxInvite\node_modules\jest-circus\build\jestAdapterInit.js:948:5)
+    at _runTestsForDescribeBlock (C:\FloworxInvite\node_modules\jest-circus\build\jestAdapterInit.js:839:13)
+    at _runTestsForDescribeBlock (C:\FloworxInvite\node_modules\jest-circus\build\jestAdapterInit.js:829:11)
+    at _runTestsForDescribeBlock (C:\FloworxInvite\node_modules\jest-circus\build\jestAdapterInit.js:829:11)
+    at run (C:\FloworxInvite\node_modules\jest-circus\build\jestAdapterInit.js:757:3)
+    at runAndTransformResultsToJestFormat (C:\FloworxInvite\node_modules\jest-circus\build\jestAdapterInit.js:1917:21)
+    at jestAdapter (C:\FloworxInvite\node_modules\jest-circus\build\runner.js:101:19)
+    at runTestInternal (C:\FloworxInvite\node_modules\jest-runner\build\index.js:275:16)
+    at runTest (C:\FloworxInvite\node_modules\jest-runner\build\index.js:343:7)</failure>
+    </testcase>
+    <testcase classname="BusinessTypeStep Component Tests › User Interactions" name="BTS-003: Handles business type selection interaction" time="0.001">
+      <failure>TypeError: React.act is not a function
+    at exports.act (C:\FloworxInvite\node_modules\react-dom\cjs\react-dom-test-utils.production.js:20:16)
+    at C:\FloworxInvite\node_modules\@testing-library\react\dist\act-compat.js:47:25
+    at renderRoot (C:\FloworxInvite\node_modules\@testing-library\react\dist\pure.js:190:26)
+    at render (C:\FloworxInvite\node_modules\@testing-library\react\dist\pure.js:292:10)
+    at Object.&lt;anonymous&gt; (C:\FloworxInvite\tests\frontend\BusinessTypeStep.test.js:146:13)
+    at Promise.finally.completed (C:\FloworxInvite\node_modules\jest-circus\build\jestAdapterInit.js:1556:28)
+    at new Promise (&lt;anonymous&gt;)
+    at callAsyncCircusFn (C:\FloworxInvite\node_modules\jest-circus\build\jestAdapterInit.js:1496:10)
+    at _callCircusTest (C:\FloworxInvite\node_modules\jest-circus\build\jestAdapterInit.js:1006:40)
+    at processTicksAndRejections (node:internal/process/task_queues:105:5)
+    at _runTest (C:\FloworxInvite\node_modules\jest-circus\build\jestAdapterInit.js:946:3)
+    at _runTestsForDescribeBlock (C:\FloworxInvite\node_modules\jest-circus\build\jestAdapterInit.js:839:13)
+    at _runTestsForDescribeBlock (C:\FloworxInvite\node_modules\jest-circus\build\jestAdapterInit.js:829:11)
+    at _runTestsForDescribeBlock (C:\FloworxInvite\node_modules\jest-circus\build\jestAdapterInit.js:829:11)
+    at run (C:\FloworxInvite\node_modules\jest-circus\build\jestAdapterInit.js:757:3)
+    at runAndTransformResultsToJestFormat (C:\FloworxInvite\node_modules\jest-circus\build\jestAdapterInit.js:1917:21)
+    at jestAdapter (C:\FloworxInvite\node_modules\jest-circus\build\runner.js:101:19)
+    at runTestInternal (C:\FloworxInvite\node_modules\jest-runner\build\index.js:275:16)
+    at runTest (C:\FloworxInvite\node_modules\jest-runner\build\index.js:343:7)</failure>
+      <failure>TypeError: React.act is not a function
+    at exports.act (C:\FloworxInvite\node_modules\react-dom\cjs\react-dom-test-utils.production.js:20:16)
+    at C:\FloworxInvite\node_modules\@testing-library\react\dist\act-compat.js:47:25
+    at C:\FloworxInvite\node_modules\@testing-library\react\dist\pure.js:307:28
+    at Array.forEach (&lt;anonymous&gt;)
+    at cleanup (C:\FloworxInvite\node_modules\@testing-library\react\dist\pure.js:303:22)
+    at Object.&lt;anonymous&gt; (C:\FloworxInvite\node_modules\@testing-library\react\dist\index.js:28:25)
+    at Promise.finally.completed (C:\FloworxInvite\node_modules\jest-circus\build\jestAdapterInit.js:1556:28)
+    at new Promise (&lt;anonymous&gt;)
+    at callAsyncCircusFn (C:\FloworxInvite\node_modules\jest-circus\build\jestAdapterInit.js:1496:10)
+    at _callCircusHook (C:\FloworxInvite\node_modules\jest-circus\build\jestAdapterInit.js:975:40)
+    at processTicksAndRejections (node:internal/process/task_queues:105:5)
+    at _runTest (C:\FloworxInvite\node_modules\jest-circus\build\jestAdapterInit.js:948:5)
+    at _runTestsForDescribeBlock (C:\FloworxInvite\node_modules\jest-circus\build\jestAdapterInit.js:839:13)
+    at _runTestsForDescribeBlock (C:\FloworxInvite\node_modules\jest-circus\build\jestAdapterInit.js:829:11)
+    at _runTestsForDescribeBlock (C:\FloworxInvite\node_modules\jest-circus\build\jestAdapterInit.js:829:11)
+    at run (C:\FloworxInvite\node_modules\jest-circus\build\jestAdapterInit.js:757:3)
+    at runAndTransformResultsToJestFormat (C:\FloworxInvite\node_modules\jest-circus\build\jestAdapterInit.js:1917:21)
+    at jestAdapter (C:\FloworxInvite\node_modules\jest-circus\build\runner.js:101:19)
+    at runTestInternal (C:\FloworxInvite\node_modules\jest-runner\build\index.js:275:16)
+    at runTest (C:\FloworxInvite\node_modules\jest-runner\build\index.js:343:7)</failure>
+    </testcase>
+    <testcase classname="BusinessTypeStep Component Tests › User Interactions" name="BTS-003-MULTIPLE: Allows switching between business type selections" time="0">
+      <failure>TypeError: React.act is not a function
+    at exports.act (C:\FloworxInvite\node_modules\react-dom\cjs\react-dom-test-utils.production.js:20:16)
+    at C:\FloworxInvite\node_modules\@testing-library\react\dist\act-compat.js:47:25
+    at renderRoot (C:\FloworxInvite\node_modules\@testing-library\react\dist\pure.js:190:26)
+    at render (C:\FloworxInvite\node_modules\@testing-library\react\dist\pure.js:292:10)
+    at Object.&lt;anonymous&gt; (C:\FloworxInvite\tests\frontend\BusinessTypeStep.test.js:179:13)
+    at Promise.finally.completed (C:\FloworxInvite\node_modules\jest-circus\build\jestAdapterInit.js:1556:28)
+    at new Promise (&lt;anonymous&gt;)
+    at callAsyncCircusFn (C:\FloworxInvite\node_modules\jest-circus\build\jestAdapterInit.js:1496:10)
+    at _callCircusTest (C:\FloworxInvite\node_modules\jest-circus\build\jestAdapterInit.js:1006:40)
+    at processTicksAndRejections (node:internal/process/task_queues:105:5)
+    at _runTest (C:\FloworxInvite\node_modules\jest-circus\build\jestAdapterInit.js:946:3)
+    at _runTestsForDescribeBlock (C:\FloworxInvite\node_modules\jest-circus\build\jestAdapterInit.js:839:13)
+    at _runTestsForDescribeBlock (C:\FloworxInvite\node_modules\jest-circus\build\jestAdapterInit.js:829:11)
+    at _runTestsForDescribeBlock (C:\FloworxInvite\node_modules\jest-circus\build\jestAdapterInit.js:829:11)
+    at run (C:\FloworxInvite\node_modules\jest-circus\build\jestAdapterInit.js:757:3)
+    at runAndTransformResultsToJestFormat (C:\FloworxInvite\node_modules\jest-circus\build\jestAdapterInit.js:1917:21)
+    at jestAdapter (C:\FloworxInvite\node_modules\jest-circus\build\runner.js:101:19)
+    at runTestInternal (C:\FloworxInvite\node_modules\jest-runner\build\index.js:275:16)
+    at runTest (C:\FloworxInvite\node_modules\jest-runner\build\index.js:343:7)</failure>
+      <failure>TypeError: React.act is not a function
+    at exports.act (C:\FloworxInvite\node_modules\react-dom\cjs\react-dom-test-utils.production.js:20:16)
+    at C:\FloworxInvite\node_modules\@testing-library\react\dist\act-compat.js:47:25
+    at C:\FloworxInvite\node_modules\@testing-library\react\dist\pure.js:307:28
+    at Array.forEach (&lt;anonymous&gt;)
+    at cleanup (C:\FloworxInvite\node_modules\@testing-library\react\dist\pure.js:303:22)
+    at Object.&lt;anonymous&gt; (C:\FloworxInvite\node_modules\@testing-library\react\dist\index.js:28:25)
+    at Promise.finally.completed (C:\FloworxInvite\node_modules\jest-circus\build\jestAdapterInit.js:1556:28)
+    at new Promise (&lt;anonymous&gt;)
+    at callAsyncCircusFn (C:\FloworxInvite\node_modules\jest-circus\build\jestAdapterInit.js:1496:10)
+    at _callCircusHook (C:\FloworxInvite\node_modules\jest-circus\build\jestAdapterInit.js:975:40)
+    at processTicksAndRejections (node:internal/process/task_queues:105:5)
+    at _runTest (C:\FloworxInvite\node_modules\jest-circus\build\jestAdapterInit.js:948:5)
+    at _runTestsForDescribeBlock (C:\FloworxInvite\node_modules\jest-circus\build\jestAdapterInit.js:839:13)
+    at _runTestsForDescribeBlock (C:\FloworxInvite\node_modules\jest-circus\build\jestAdapterInit.js:829:11)
+    at _runTestsForDescribeBlock (C:\FloworxInvite\node_modules\jest-circus\build\jestAdapterInit.js:829:11)
+    at run (C:\FloworxInvite\node_modules\jest-circus\build\jestAdapterInit.js:757:3)
+    at runAndTransformResultsToJestFormat (C:\FloworxInvite\node_modules\jest-circus\build\jestAdapterInit.js:1917:21)
+    at jestAdapter (C:\FloworxInvite\node_modules\jest-circus\build\runner.js:101:19)
+    at runTestInternal (C:\FloworxInvite\node_modules\jest-runner\build\index.js:275:16)
+    at runTest (C:\FloworxInvite\node_modules\jest-runner\build\index.js:343:7)</failure>
+    </testcase>
+    <testcase classname="BusinessTypeStep Component Tests › Form Validation" name="BTS-004: Shows validation error for no selection" time="0.001">
+      <failure>TypeError: React.act is not a function
+    at exports.act (C:\FloworxInvite\node_modules\react-dom\cjs\react-dom-test-utils.production.js:20:16)
+    at C:\FloworxInvite\node_modules\@testing-library\react\dist\act-compat.js:47:25
+    at renderRoot (C:\FloworxInvite\node_modules\@testing-library\react\dist\pure.js:190:26)
+    at render (C:\FloworxInvite\node_modules\@testing-library\react\dist\pure.js:292:10)
+    at Object.&lt;anonymous&gt; (C:\FloworxInvite\tests\frontend\BusinessTypeStep.test.js:226:13)
+    at Promise.finally.completed (C:\FloworxInvite\node_modules\jest-circus\build\jestAdapterInit.js:1556:28)
+    at new Promise (&lt;anonymous&gt;)
+    at callAsyncCircusFn (C:\FloworxInvite\node_modules\jest-circus\build\jestAdapterInit.js:1496:10)
+    at _callCircusTest (C:\FloworxInvite\node_modules\jest-circus\build\jestAdapterInit.js:1006:40)
+    at processTicksAndRejections (node:internal/process/task_queues:105:5)
+    at _runTest (C:\FloworxInvite\node_modules\jest-circus\build\jestAdapterInit.js:946:3)
+    at _runTestsForDescribeBlock (C:\FloworxInvite\node_modules\jest-circus\build\jestAdapterInit.js:839:13)
+    at _runTestsForDescribeBlock (C:\FloworxInvite\node_modules\jest-circus\build\jestAdapterInit.js:829:11)
+    at _runTestsForDescribeBlock (C:\FloworxInvite\node_modules\jest-circus\build\jestAdapterInit.js:829:11)
+    at run (C:\FloworxInvite\node_modules\jest-circus\build\jestAdapterInit.js:757:3)
+    at runAndTransformResultsToJestFormat (C:\FloworxInvite\node_modules\jest-circus\build\jestAdapterInit.js:1917:21)
+    at jestAdapter (C:\FloworxInvite\node_modules\jest-circus\build\runner.js:101:19)
+    at runTestInternal (C:\FloworxInvite\node_modules\jest-runner\build\index.js:275:16)
+    at runTest (C:\FloworxInvite\node_modules\jest-runner\build\index.js:343:7)</failure>
+      <failure>TypeError: React.act is not a function
+    at exports.act (C:\FloworxInvite\node_modules\react-dom\cjs\react-dom-test-utils.production.js:20:16)
+    at C:\FloworxInvite\node_modules\@testing-library\react\dist\act-compat.js:47:25
+    at C:\FloworxInvite\node_modules\@testing-library\react\dist\pure.js:307:28
+    at Array.forEach (&lt;anonymous&gt;)
+    at cleanup (C:\FloworxInvite\node_modules\@testing-library\react\dist\pure.js:303:22)
+    at Object.&lt;anonymous&gt; (C:\FloworxInvite\node_modules\@testing-library\react\dist\index.js:28:25)
+    at Promise.finally.completed (C:\FloworxInvite\node_modules\jest-circus\build\jestAdapterInit.js:1556:28)
+    at new Promise (&lt;anonymous&gt;)
+    at callAsyncCircusFn (C:\FloworxInvite\node_modules\jest-circus\build\jestAdapterInit.js:1496:10)
+    at _callCircusHook (C:\FloworxInvite\node_modules\jest-circus\build\jestAdapterInit.js:975:40)
+    at processTicksAndRejections (node:internal/process/task_queues:105:5)
+    at _runTest (C:\FloworxInvite\node_modules\jest-circus\build\jestAdapterInit.js:948:5)
+    at _runTestsForDescribeBlock (C:\FloworxInvite\node_modules\jest-circus\build\jestAdapterInit.js:839:13)
+    at _runTestsForDescribeBlock (C:\FloworxInvite\node_modules\jest-circus\build\jestAdapterInit.js:829:11)
+    at _runTestsForDescribeBlock (C:\FloworxInvite\node_modules\jest-circus\build\jestAdapterInit.js:829:11)
+    at run (C:\FloworxInvite\node_modules\jest-circus\build\jestAdapterInit.js:757:3)
+    at runAndTransformResultsToJestFormat (C:\FloworxInvite\node_modules\jest-circus\build\jestAdapterInit.js:1917:21)
+    at jestAdapter (C:\FloworxInvite\node_modules\jest-circus\build\runner.js:101:19)
+    at runTestInternal (C:\FloworxInvite\node_modules\jest-runner\build\index.js:275:16)
+    at runTest (C:\FloworxInvite\node_modules\jest-runner\build\index.js:343:7)</failure>
+    </testcase>
+    <testcase classname="BusinessTypeStep Component Tests › Form Validation" name="BTS-004-DISABLED: Continue button disabled when no selection" time="0">
+      <failure>TypeError: React.act is not a function
+    at exports.act (C:\FloworxInvite\node_modules\react-dom\cjs\react-dom-test-utils.production.js:20:16)
+    at C:\FloworxInvite\node_modules\@testing-library\react\dist\act-compat.js:47:25
+    at renderRoot (C:\FloworxInvite\node_modules\@testing-library\react\dist\pure.js:190:26)
+    at render (C:\FloworxInvite\node_modules\@testing-library\react\dist\pure.js:292:10)
+    at Object.&lt;anonymous&gt; (C:\FloworxInvite\tests\frontend\BusinessTypeStep.test.js:248:13)
+    at Promise.finally.completed (C:\FloworxInvite\node_modules\jest-circus\build\jestAdapterInit.js:1556:28)
+    at new Promise (&lt;anonymous&gt;)
+    at callAsyncCircusFn (C:\FloworxInvite\node_modules\jest-circus\build\jestAdapterInit.js:1496:10)
+    at _callCircusTest (C:\FloworxInvite\node_modules\jest-circus\build\jestAdapterInit.js:1006:40)
+    at processTicksAndRejections (node:internal/process/task_queues:105:5)
+    at _runTest (C:\FloworxInvite\node_modules\jest-circus\build\jestAdapterInit.js:946:3)
+    at _runTestsForDescribeBlock (C:\FloworxInvite\node_modules\jest-circus\build\jestAdapterInit.js:839:13)
+    at _runTestsForDescribeBlock (C:\FloworxInvite\node_modules\jest-circus\build\jestAdapterInit.js:829:11)
+    at _runTestsForDescribeBlock (C:\FloworxInvite\node_modules\jest-circus\build\jestAdapterInit.js:829:11)
+    at run (C:\FloworxInvite\node_modules\jest-circus\build\jestAdapterInit.js:757:3)
+    at runAndTransformResultsToJestFormat (C:\FloworxInvite\node_modules\jest-circus\build\jestAdapterInit.js:1917:21)
+    at jestAdapter (C:\FloworxInvite\node_modules\jest-circus\build\runner.js:101:19)
+    at runTestInternal (C:\FloworxInvite\node_modules\jest-runner\build\index.js:275:16)
+    at runTest (C:\FloworxInvite\node_modules\jest-runner\build\index.js:343:7)</failure>
+      <failure>TypeError: React.act is not a function
+    at exports.act (C:\FloworxInvite\node_modules\react-dom\cjs\react-dom-test-utils.production.js:20:16)
+    at C:\FloworxInvite\node_modules\@testing-library\react\dist\act-compat.js:47:25
+    at C:\FloworxInvite\node_modules\@testing-library\react\dist\pure.js:307:28
+    at Array.forEach (&lt;anonymous&gt;)
+    at cleanup (C:\FloworxInvite\node_modules\@testing-library\react\dist\pure.js:303:22)
+    at Object.&lt;anonymous&gt; (C:\FloworxInvite\node_modules\@testing-library\react\dist\index.js:28:25)
+    at Promise.finally.completed (C:\FloworxInvite\node_modules\jest-circus\build\jestAdapterInit.js:1556:28)
+    at new Promise (&lt;anonymous&gt;)
+    at callAsyncCircusFn (C:\FloworxInvite\node_modules\jest-circus\build\jestAdapterInit.js:1496:10)
+    at _callCircusHook (C:\FloworxInvite\node_modules\jest-circus\build\jestAdapterInit.js:975:40)
+    at processTicksAndRejections (node:internal/process/task_queues:105:5)
+    at _runTest (C:\FloworxInvite\node_modules\jest-circus\build\jestAdapterInit.js:948:5)
+    at _runTestsForDescribeBlock (C:\FloworxInvite\node_modules\jest-circus\build\jestAdapterInit.js:839:13)
+    at _runTestsForDescribeBlock (C:\FloworxInvite\node_modules\jest-circus\build\jestAdapterInit.js:829:11)
+    at _runTestsForDescribeBlock (C:\FloworxInvite\node_modules\jest-circus\build\jestAdapterInit.js:829:11)
+    at run (C:\FloworxInvite\node_modules\jest-circus\build\jestAdapterInit.js:757:3)
+    at runAndTransformResultsToJestFormat (C:\FloworxInvite\node_modules\jest-circus\build\jestAdapterInit.js:1917:21)
+    at jestAdapter (C:\FloworxInvite\node_modules\jest-circus\build\runner.js:101:19)
+    at runTestInternal (C:\FloworxInvite\node_modules\jest-runner\build\index.js:275:16)
+    at runTest (C:\FloworxInvite\node_modules\jest-runner\build\index.js:343:7)</failure>
+    </testcase>
+    <testcase classname="BusinessTypeStep Component Tests › Success States" name="BTS-005: Displays success state after selection" time="0">
+      <failure>TypeError: React.act is not a function
+    at exports.act (C:\FloworxInvite\node_modules\react-dom\cjs\react-dom-test-utils.production.js:20:16)
+    at C:\FloworxInvite\node_modules\@testing-library\react\dist\act-compat.js:47:25
+    at renderRoot (C:\FloworxInvite\node_modules\@testing-library\react\dist\pure.js:190:26)
+    at render (C:\FloworxInvite\node_modules\@testing-library\react\dist\pure.js:292:10)
+    at Object.&lt;anonymous&gt; (C:\FloworxInvite\tests\frontend\BusinessTypeStep.test.js:290:13)
+    at Promise.finally.completed (C:\FloworxInvite\node_modules\jest-circus\build\jestAdapterInit.js:1556:28)
+    at new Promise (&lt;anonymous&gt;)
+    at callAsyncCircusFn (C:\FloworxInvite\node_modules\jest-circus\build\jestAdapterInit.js:1496:10)
+    at _callCircusTest (C:\FloworxInvite\node_modules\jest-circus\build\jestAdapterInit.js:1006:40)
+    at processTicksAndRejections (node:internal/process/task_queues:105:5)
+    at _runTest (C:\FloworxInvite\node_modules\jest-circus\build\jestAdapterInit.js:946:3)
+    at _runTestsForDescribeBlock (C:\FloworxInvite\node_modules\jest-circus\build\jestAdapterInit.js:839:13)
+    at _runTestsForDescribeBlock (C:\FloworxInvite\node_modules\jest-circus\build\jestAdapterInit.js:829:11)
+    at _runTestsForDescribeBlock (C:\FloworxInvite\node_modules\jest-circus\build\jestAdapterInit.js:829:11)
+    at run (C:\FloworxInvite\node_modules\jest-circus\build\jestAdapterInit.js:757:3)
+    at runAndTransformResultsToJestFormat (C:\FloworxInvite\node_modules\jest-circus\build\jestAdapterInit.js:1917:21)
+    at jestAdapter (C:\FloworxInvite\node_modules\jest-circus\build\runner.js:101:19)
+    at runTestInternal (C:\FloworxInvite\node_modules\jest-runner\build\index.js:275:16)
+    at runTest (C:\FloworxInvite\node_modules\jest-runner\build\index.js:343:7)</failure>
+      <failure>TypeError: React.act is not a function
+    at exports.act (C:\FloworxInvite\node_modules\react-dom\cjs\react-dom-test-utils.production.js:20:16)
+    at C:\FloworxInvite\node_modules\@testing-library\react\dist\act-compat.js:47:25
+    at C:\FloworxInvite\node_modules\@testing-library\react\dist\pure.js:307:28
+    at Array.forEach (&lt;anonymous&gt;)
+    at cleanup (C:\FloworxInvite\node_modules\@testing-library\react\dist\pure.js:303:22)
+    at Object.&lt;anonymous&gt; (C:\FloworxInvite\node_modules\@testing-library\react\dist\index.js:28:25)
+    at Promise.finally.completed (C:\FloworxInvite\node_modules\jest-circus\build\jestAdapterInit.js:1556:28)
+    at new Promise (&lt;anonymous&gt;)
+    at callAsyncCircusFn (C:\FloworxInvite\node_modules\jest-circus\build\jestAdapterInit.js:1496:10)
+    at _callCircusHook (C:\FloworxInvite\node_modules\jest-circus\build\jestAdapterInit.js:975:40)
+    at processTicksAndRejections (node:internal/process/task_queues:105:5)
+    at _runTest (C:\FloworxInvite\node_modules\jest-circus\build\jestAdapterInit.js:948:5)
+    at _runTestsForDescribeBlock (C:\FloworxInvite\node_modules\jest-circus\build\jestAdapterInit.js:839:13)
+    at _runTestsForDescribeBlock (C:\FloworxInvite\node_modules\jest-circus\build\jestAdapterInit.js:829:11)
+    at _runTestsForDescribeBlock (C:\FloworxInvite\node_modules\jest-circus\build\jestAdapterInit.js:829:11)
+    at run (C:\FloworxInvite\node_modules\jest-circus\build\jestAdapterInit.js:757:3)
+    at runAndTransformResultsToJestFormat (C:\FloworxInvite\node_modules\jest-circus\build\jestAdapterInit.js:1917:21)
+    at jestAdapter (C:\FloworxInvite\node_modules\jest-circus\build\runner.js:101:19)
+    at runTestInternal (C:\FloworxInvite\node_modules\jest-runner\build\index.js:275:16)
+    at runTest (C:\FloworxInvite\node_modules\jest-runner\build\index.js:343:7)</failure>
+    </testcase>
+    <testcase classname="BusinessTypeStep Component Tests › Success States" name="BTS-005-SUMMARY: Shows selection summary" time="0.001">
+      <failure>TypeError: React.act is not a function
+    at exports.act (C:\FloworxInvite\node_modules\react-dom\cjs\react-dom-test-utils.production.js:20:16)
+    at C:\FloworxInvite\node_modules\@testing-library\react\dist\act-compat.js:47:25
+    at renderRoot (C:\FloworxInvite\node_modules\@testing-library\react\dist\pure.js:190:26)
+    at render (C:\FloworxInvite\node_modules\@testing-library\react\dist\pure.js:292:10)
+    at Object.&lt;anonymous&gt; (C:\FloworxInvite\tests\frontend\BusinessTypeStep.test.js:326:13)
+    at Promise.finally.completed (C:\FloworxInvite\node_modules\jest-circus\build\jestAdapterInit.js:1556:28)
+    at new Promise (&lt;anonymous&gt;)
+    at callAsyncCircusFn (C:\FloworxInvite\node_modules\jest-circus\build\jestAdapterInit.js:1496:10)
+    at _callCircusTest (C:\FloworxInvite\node_modules\jest-circus\build\jestAdapterInit.js:1006:40)
+    at processTicksAndRejections (node:internal/process/task_queues:105:5)
+    at _runTest (C:\FloworxInvite\node_modules\jest-circus\build\jestAdapterInit.js:946:3)
+    at _runTestsForDescribeBlock (C:\FloworxInvite\node_modules\jest-circus\build\jestAdapterInit.js:839:13)
+    at _runTestsForDescribeBlock (C:\FloworxInvite\node_modules\jest-circus\build\jestAdapterInit.js:829:11)
+    at _runTestsForDescribeBlock (C:\FloworxInvite\node_modules\jest-circus\build\jestAdapterInit.js:829:11)
+    at run (C:\FloworxInvite\node_modules\jest-circus\build\jestAdapterInit.js:757:3)
+    at runAndTransformResultsToJestFormat (C:\FloworxInvite\node_modules\jest-circus\build\jestAdapterInit.js:1917:21)
+    at jestAdapter (C:\FloworxInvite\node_modules\jest-circus\build\runner.js:101:19)
+    at runTestInternal (C:\FloworxInvite\node_modules\jest-runner\build\index.js:275:16)
+    at runTest (C:\FloworxInvite\node_modules\jest-runner\build\index.js:343:7)</failure>
+      <failure>TypeError: React.act is not a function
+    at exports.act (C:\FloworxInvite\node_modules\react-dom\cjs\react-dom-test-utils.production.js:20:16)
+    at C:\FloworxInvite\node_modules\@testing-library\react\dist\act-compat.js:47:25
+    at C:\FloworxInvite\node_modules\@testing-library\react\dist\pure.js:307:28
+    at Array.forEach (&lt;anonymous&gt;)
+    at cleanup (C:\FloworxInvite\node_modules\@testing-library\react\dist\pure.js:303:22)
+    at Object.&lt;anonymous&gt; (C:\FloworxInvite\node_modules\@testing-library\react\dist\index.js:28:25)
+    at Promise.finally.completed (C:\FloworxInvite\node_modules\jest-circus\build\jestAdapterInit.js:1556:28)
+    at new Promise (&lt;anonymous&gt;)
+    at callAsyncCircusFn (C:\FloworxInvite\node_modules\jest-circus\build\jestAdapterInit.js:1496:10)
+    at _callCircusHook (C:\FloworxInvite\node_modules\jest-circus\build\jestAdapterInit.js:975:40)
+    at processTicksAndRejections (node:internal/process/task_queues:105:5)
+    at _runTest (C:\FloworxInvite\node_modules\jest-circus\build\jestAdapterInit.js:948:5)
+    at _runTestsForDescribeBlock (C:\FloworxInvite\node_modules\jest-circus\build\jestAdapterInit.js:839:13)
+    at _runTestsForDescribeBlock (C:\FloworxInvite\node_modules\jest-circus\build\jestAdapterInit.js:829:11)
+    at _runTestsForDescribeBlock (C:\FloworxInvite\node_modules\jest-circus\build\jestAdapterInit.js:829:11)
+    at run (C:\FloworxInvite\node_modules\jest-circus\build\jestAdapterInit.js:757:3)
+    at runAndTransformResultsToJestFormat (C:\FloworxInvite\node_modules\jest-circus\build\jestAdapterInit.js:1917:21)
+    at jestAdapter (C:\FloworxInvite\node_modules\jest-circus\build\runner.js:101:19)
+    at runTestInternal (C:\FloworxInvite\node_modules\jest-runner\build\index.js:275:16)
+    at runTest (C:\FloworxInvite\node_modules\jest-runner\build\index.js:343:7)</failure>
+    </testcase>
+    <testcase classname="BusinessTypeStep Component Tests › Error Handling" name="BTS-006: Handles API error states gracefully" time="0.001">
+      <failure>TypeError: React.act is not a function
+    at exports.act (C:\FloworxInvite\node_modules\react-dom\cjs\react-dom-test-utils.production.js:20:16)
+    at C:\FloworxInvite\node_modules\@testing-library\react\dist\act-compat.js:47:25
+    at renderRoot (C:\FloworxInvite\node_modules\@testing-library\react\dist\pure.js:190:26)
+    at render (C:\FloworxInvite\node_modules\@testing-library\react\dist\pure.js:292:10)
+    at Object.&lt;anonymous&gt; (C:\FloworxInvite\tests\frontend\BusinessTypeStep.test.js:359:13)
+    at Promise.finally.completed (C:\FloworxInvite\node_modules\jest-circus\build\jestAdapterInit.js:1556:28)
+    at new Promise (&lt;anonymous&gt;)
+    at callAsyncCircusFn (C:\FloworxInvite\node_modules\jest-circus\build\jestAdapterInit.js:1496:10)
+    at _callCircusTest (C:\FloworxInvite\node_modules\jest-circus\build\jestAdapterInit.js:1006:40)
+    at processTicksAndRejections (node:internal/process/task_queues:105:5)
+    at _runTest (C:\FloworxInvite\node_modules\jest-circus\build\jestAdapterInit.js:946:3)
+    at _runTestsForDescribeBlock (C:\FloworxInvite\node_modules\jest-circus\build\jestAdapterInit.js:839:13)
+    at _runTestsForDescribeBlock (C:\FloworxInvite\node_modules\jest-circus\build\jestAdapterInit.js:829:11)
+    at _runTestsForDescribeBlock (C:\FloworxInvite\node_modules\jest-circus\build\jestAdapterInit.js:829:11)
+    at run (C:\FloworxInvite\node_modules\jest-circus\build\jestAdapterInit.js:757:3)
+    at runAndTransformResultsToJestFormat (C:\FloworxInvite\node_modules\jest-circus\build\jestAdapterInit.js:1917:21)
+    at jestAdapter (C:\FloworxInvite\node_modules\jest-circus\build\runner.js:101:19)
+    at runTestInternal (C:\FloworxInvite\node_modules\jest-runner\build\index.js:275:16)
+    at runTest (C:\FloworxInvite\node_modules\jest-runner\build\index.js:343:7)</failure>
+      <failure>TypeError: React.act is not a function
+    at exports.act (C:\FloworxInvite\node_modules\react-dom\cjs\react-dom-test-utils.production.js:20:16)
+    at C:\FloworxInvite\node_modules\@testing-library\react\dist\act-compat.js:47:25
+    at C:\FloworxInvite\node_modules\@testing-library\react\dist\pure.js:307:28
+    at Array.forEach (&lt;anonymous&gt;)
+    at cleanup (C:\FloworxInvite\node_modules\@testing-library\react\dist\pure.js:303:22)
+    at Object.&lt;anonymous&gt; (C:\FloworxInvite\node_modules\@testing-library\react\dist\index.js:28:25)
+    at Promise.finally.completed (C:\FloworxInvite\node_modules\jest-circus\build\jestAdapterInit.js:1556:28)
+    at new Promise (&lt;anonymous&gt;)
+    at callAsyncCircusFn (C:\FloworxInvite\node_modules\jest-circus\build\jestAdapterInit.js:1496:10)
+    at _callCircusHook (C:\FloworxInvite\node_modules\jest-circus\build\jestAdapterInit.js:975:40)
+    at processTicksAndRejections (node:internal/process/task_queues:105:5)
+    at _runTest (C:\FloworxInvite\node_modules\jest-circus\build\jestAdapterInit.js:948:5)
+    at _runTestsForDescribeBlock (C:\FloworxInvite\node_modules\jest-circus\build\jestAdapterInit.js:839:13)
+    at _runTestsForDescribeBlock (C:\FloworxInvite\node_modules\jest-circus\build\jestAdapterInit.js:829:11)
+    at _runTestsForDescribeBlock (C:\FloworxInvite\node_modules\jest-circus\build\jestAdapterInit.js:829:11)
+    at run (C:\FloworxInvite\node_modules\jest-circus\build\jestAdapterInit.js:757:3)
+    at runAndTransformResultsToJestFormat (C:\FloworxInvite\node_modules\jest-circus\build\jestAdapterInit.js:1917:21)
+    at jestAdapter (C:\FloworxInvite\node_modules\jest-circus\build\runner.js:101:19)
+    at runTestInternal (C:\FloworxInvite\node_modules\jest-runner\build\index.js:275:16)
+    at runTest (C:\FloworxInvite\node_modules\jest-runner\build\index.js:343:7)</failure>
+    </testcase>
+    <testcase classname="BusinessTypeStep Component Tests › Error Handling" name="BTS-006-RETRY: Retry button reloads data" time="0.001">
+      <failure>TypeError: React.act is not a function
+    at exports.act (C:\FloworxInvite\node_modules\react-dom\cjs\react-dom-test-utils.production.js:20:16)
+    at C:\FloworxInvite\node_modules\@testing-library\react\dist\act-compat.js:47:25
+    at renderRoot (C:\FloworxInvite\node_modules\@testing-library\react\dist\pure.js:190:26)
+    at render (C:\FloworxInvite\node_modules\@testing-library\react\dist\pure.js:292:10)
+    at Object.&lt;anonymous&gt; (C:\FloworxInvite\tests\frontend\BusinessTypeStep.test.js:394:13)
+    at Promise.finally.completed (C:\FloworxInvite\node_modules\jest-circus\build\jestAdapterInit.js:1556:28)
+    at new Promise (&lt;anonymous&gt;)
+    at callAsyncCircusFn (C:\FloworxInvite\node_modules\jest-circus\build\jestAdapterInit.js:1496:10)
+    at _callCircusTest (C:\FloworxInvite\node_modules\jest-circus\build\jestAdapterInit.js:1006:40)
+    at processTicksAndRejections (node:internal/process/task_queues:105:5)
+    at _runTest (C:\FloworxInvite\node_modules\jest-circus\build\jestAdapterInit.js:946:3)
+    at _runTestsForDescribeBlock (C:\FloworxInvite\node_modules\jest-circus\build\jestAdapterInit.js:839:13)
+    at _runTestsForDescribeBlock (C:\FloworxInvite\node_modules\jest-circus\build\jestAdapterInit.js:829:11)
+    at _runTestsForDescribeBlock (C:\FloworxInvite\node_modules\jest-circus\build\jestAdapterInit.js:829:11)
+    at run (C:\FloworxInvite\node_modules\jest-circus\build\jestAdapterInit.js:757:3)
+    at runAndTransformResultsToJestFormat (C:\FloworxInvite\node_modules\jest-circus\build\jestAdapterInit.js:1917:21)
+    at jestAdapter (C:\FloworxInvite\node_modules\jest-circus\build\runner.js:101:19)
+    at runTestInternal (C:\FloworxInvite\node_modules\jest-runner\build\index.js:275:16)
+    at runTest (C:\FloworxInvite\node_modules\jest-runner\build\index.js:343:7)</failure>
+      <failure>TypeError: React.act is not a function
+    at exports.act (C:\FloworxInvite\node_modules\react-dom\cjs\react-dom-test-utils.production.js:20:16)
+    at C:\FloworxInvite\node_modules\@testing-library\react\dist\act-compat.js:47:25
+    at C:\FloworxInvite\node_modules\@testing-library\react\dist\pure.js:307:28
+    at Array.forEach (&lt;anonymous&gt;)
+    at cleanup (C:\FloworxInvite\node_modules\@testing-library\react\dist\pure.js:303:22)
+    at Object.&lt;anonymous&gt; (C:\FloworxInvite\node_modules\@testing-library\react\dist\index.js:28:25)
+    at Promise.finally.completed (C:\FloworxInvite\node_modules\jest-circus\build\jestAdapterInit.js:1556:28)
+    at new Promise (&lt;anonymous&gt;)
+    at callAsyncCircusFn (C:\FloworxInvite\node_modules\jest-circus\build\jestAdapterInit.js:1496:10)
+    at _callCircusHook (C:\FloworxInvite\node_modules\jest-circus\build\jestAdapterInit.js:975:40)
+    at processTicksAndRejections (node:internal/process/task_queues:105:5)
+    at _runTest (C:\FloworxInvite\node_modules\jest-circus\build\jestAdapterInit.js:948:5)
+    at _runTestsForDescribeBlock (C:\FloworxInvite\node_modules\jest-circus\build\jestAdapterInit.js:839:13)
+    at _runTestsForDescribeBlock (C:\FloworxInvite\node_modules\jest-circus\build\jestAdapterInit.js:829:11)
+    at _runTestsForDescribeBlock (C:\FloworxInvite\node_modules\jest-circus\build\jestAdapterInit.js:829:11)
+    at run (C:\FloworxInvite\node_modules\jest-circus\build\jestAdapterInit.js:757:3)
+    at runAndTransformResultsToJestFormat (C:\FloworxInvite\node_modules\jest-circus\build\jestAdapterInit.js:1917:21)
+    at jestAdapter (C:\FloworxInvite\node_modules\jest-circus\build\runner.js:101:19)
+    at runTestInternal (C:\FloworxInvite\node_modules\jest-runner\build\index.js:275:16)
+    at runTest (C:\FloworxInvite\node_modules\jest-runner\build\index.js:343:7)</failure>
+    </testcase>
+    <testcase classname="BusinessTypeStep Component Tests › Error Handling" name="BTS-006-SUBMISSION: Handles submission error gracefully" time="0.001">
+      <failure>TypeError: React.act is not a function
+    at exports.act (C:\FloworxInvite\node_modules\react-dom\cjs\react-dom-test-utils.production.js:20:16)
+    at C:\FloworxInvite\node_modules\@testing-library\react\dist\act-compat.js:47:25
+    at renderRoot (C:\FloworxInvite\node_modules\@testing-library\react\dist\pure.js:190:26)
+    at render (C:\FloworxInvite\node_modules\@testing-library\react\dist\pure.js:292:10)
+    at Object.&lt;anonymous&gt; (C:\FloworxInvite\tests\frontend\BusinessTypeStep.test.js:434:13)
+    at Promise.finally.completed (C:\FloworxInvite\node_modules\jest-circus\build\jestAdapterInit.js:1556:28)
+    at new Promise (&lt;anonymous&gt;)
+    at callAsyncCircusFn (C:\FloworxInvite\node_modules\jest-circus\build\jestAdapterInit.js:1496:10)
+    at _callCircusTest (C:\FloworxInvite\node_modules\jest-circus\build\jestAdapterInit.js:1006:40)
+    at processTicksAndRejections (node:internal/process/task_queues:105:5)
+    at _runTest (C:\FloworxInvite\node_modules\jest-circus\build\jestAdapterInit.js:946:3)
+    at _runTestsForDescribeBlock (C:\FloworxInvite\node_modules\jest-circus\build\jestAdapterInit.js:839:13)
+    at _runTestsForDescribeBlock (C:\FloworxInvite\node_modules\jest-circus\build\jestAdapterInit.js:829:11)
+    at _runTestsForDescribeBlock (C:\FloworxInvite\node_modules\jest-circus\build\jestAdapterInit.js:829:11)
+    at run (C:\FloworxInvite\node_modules\jest-circus\build\jestAdapterInit.js:757:3)
+    at runAndTransformResultsToJestFormat (C:\FloworxInvite\node_modules\jest-circus\build\jestAdapterInit.js:1917:21)
+    at jestAdapter (C:\FloworxInvite\node_modules\jest-circus\build\runner.js:101:19)
+    at runTestInternal (C:\FloworxInvite\node_modules\jest-runner\build\index.js:275:16)
+    at runTest (C:\FloworxInvite\node_modules\jest-runner\build\index.js:343:7)</failure>
+      <failure>TypeError: React.act is not a function
+    at exports.act (C:\FloworxInvite\node_modules\react-dom\cjs\react-dom-test-utils.production.js:20:16)
+    at C:\FloworxInvite\node_modules\@testing-library\react\dist\act-compat.js:47:25
+    at C:\FloworxInvite\node_modules\@testing-library\react\dist\pure.js:307:28
+    at Array.forEach (&lt;anonymous&gt;)
+    at cleanup (C:\FloworxInvite\node_modules\@testing-library\react\dist\pure.js:303:22)
+    at Object.&lt;anonymous&gt; (C:\FloworxInvite\node_modules\@testing-library\react\dist\index.js:28:25)
+    at Promise.finally.completed (C:\FloworxInvite\node_modules\jest-circus\build\jestAdapterInit.js:1556:28)
+    at new Promise (&lt;anonymous&gt;)
+    at callAsyncCircusFn (C:\FloworxInvite\node_modules\jest-circus\build\jestAdapterInit.js:1496:10)
+    at _callCircusHook (C:\FloworxInvite\node_modules\jest-circus\build\jestAdapterInit.js:975:40)
+    at processTicksAndRejections (node:internal/process/task_queues:105:5)
+    at _runTest (C:\FloworxInvite\node_modules\jest-circus\build\jestAdapterInit.js:948:5)
+    at _runTestsForDescribeBlock (C:\FloworxInvite\node_modules\jest-circus\build\jestAdapterInit.js:839:13)
+    at _runTestsForDescribeBlock (C:\FloworxInvite\node_modules\jest-circus\build\jestAdapterInit.js:829:11)
+    at _runTestsForDescribeBlock (C:\FloworxInvite\node_modules\jest-circus\build\jestAdapterInit.js:829:11)
+    at run (C:\FloworxInvite\node_modules\jest-circus\build\jestAdapterInit.js:757:3)
+    at runAndTransformResultsToJestFormat (C:\FloworxInvite\node_modules\jest-circus\build\jestAdapterInit.js:1917:21)
+    at jestAdapter (C:\FloworxInvite\node_modules\jest-circus\build\runner.js:101:19)
+    at runTestInternal (C:\FloworxInvite\node_modules\jest-runner\build\index.js:275:16)
+    at runTest (C:\FloworxInvite\node_modules\jest-runner\build\index.js:343:7)</failure>
+    </testcase>
+    <testcase classname="BusinessTypeStep Component Tests › Accessibility" name="BTS-008: Keyboard navigation support" time="0">
+      <failure>TypeError: React.act is not a function
+    at exports.act (C:\FloworxInvite\node_modules\react-dom\cjs\react-dom-test-utils.production.js:20:16)
+    at C:\FloworxInvite\node_modules\@testing-library\react\dist\act-compat.js:47:25
+    at renderRoot (C:\FloworxInvite\node_modules\@testing-library\react\dist\pure.js:190:26)
+    at render (C:\FloworxInvite\node_modules\@testing-library\react\dist\pure.js:292:10)
+    at Object.&lt;anonymous&gt; (C:\FloworxInvite\tests\frontend\BusinessTypeStep.test.js:470:13)
+    at Promise.finally.completed (C:\FloworxInvite\node_modules\jest-circus\build\jestAdapterInit.js:1556:28)
+    at new Promise (&lt;anonymous&gt;)
+    at callAsyncCircusFn (C:\FloworxInvite\node_modules\jest-circus\build\jestAdapterInit.js:1496:10)
+    at _callCircusTest (C:\FloworxInvite\node_modules\jest-circus\build\jestAdapterInit.js:1006:40)
+    at processTicksAndRejections (node:internal/process/task_queues:105:5)
+    at _runTest (C:\FloworxInvite\node_modules\jest-circus\build\jestAdapterInit.js:946:3)
+    at _runTestsForDescribeBlock (C:\FloworxInvite\node_modules\jest-circus\build\jestAdapterInit.js:839:13)
+    at _runTestsForDescribeBlock (C:\FloworxInvite\node_modules\jest-circus\build\jestAdapterInit.js:829:11)
+    at _runTestsForDescribeBlock (C:\FloworxInvite\node_modules\jest-circus\build\jestAdapterInit.js:829:11)
+    at run (C:\FloworxInvite\node_modules\jest-circus\build\jestAdapterInit.js:757:3)
+    at runAndTransformResultsToJestFormat (C:\FloworxInvite\node_modules\jest-circus\build\jestAdapterInit.js:1917:21)
+    at jestAdapter (C:\FloworxInvite\node_modules\jest-circus\build\runner.js:101:19)
+    at runTestInternal (C:\FloworxInvite\node_modules\jest-runner\build\index.js:275:16)
+    at runTest (C:\FloworxInvite\node_modules\jest-runner\build\index.js:343:7)</failure>
+      <failure>TypeError: React.act is not a function
+    at exports.act (C:\FloworxInvite\node_modules\react-dom\cjs\react-dom-test-utils.production.js:20:16)
+    at C:\FloworxInvite\node_modules\@testing-library\react\dist\act-compat.js:47:25
+    at C:\FloworxInvite\node_modules\@testing-library\react\dist\pure.js:307:28
+    at Array.forEach (&lt;anonymous&gt;)
+    at cleanup (C:\FloworxInvite\node_modules\@testing-library\react\dist\pure.js:303:22)
+    at Object.&lt;anonymous&gt; (C:\FloworxInvite\node_modules\@testing-library\react\dist\index.js:28:25)
+    at Promise.finally.completed (C:\FloworxInvite\node_modules\jest-circus\build\jestAdapterInit.js:1556:28)
+    at new Promise (&lt;anonymous&gt;)
+    at callAsyncCircusFn (C:\FloworxInvite\node_modules\jest-circus\build\jestAdapterInit.js:1496:10)
+    at _callCircusHook (C:\FloworxInvite\node_modules\jest-circus\build\jestAdapterInit.js:975:40)
+    at processTicksAndRejections (node:internal/process/task_queues:105:5)
+    at _runTest (C:\FloworxInvite\node_modules\jest-circus\build\jestAdapterInit.js:948:5)
+    at _runTestsForDescribeBlock (C:\FloworxInvite\node_modules\jest-circus\build\jestAdapterInit.js:839:13)
+    at _runTestsForDescribeBlock (C:\FloworxInvite\node_modules\jest-circus\build\jestAdapterInit.js:829:11)
+    at _runTestsForDescribeBlock (C:\FloworxInvite\node_modules\jest-circus\build\jestAdapterInit.js:829:11)
+    at run (C:\FloworxInvite\node_modules\jest-circus\build\jestAdapterInit.js:757:3)
+    at runAndTransformResultsToJestFormat (C:\FloworxInvite\node_modules\jest-circus\build\jestAdapterInit.js:1917:21)
+    at jestAdapter (C:\FloworxInvite\node_modules\jest-circus\build\runner.js:101:19)
+    at runTestInternal (C:\FloworxInvite\node_modules\jest-runner\build\index.js:275:16)
+    at runTest (C:\FloworxInvite\node_modules\jest-runner\build\index.js:343:7)</failure>
+    </testcase>
+    <testcase classname="BusinessTypeStep Component Tests › Accessibility" name="BTS-009: Screen reader accessibility" time="0">
+      <failure>TypeError: React.act is not a function
+    at exports.act (C:\FloworxInvite\node_modules\react-dom\cjs\react-dom-test-utils.production.js:20:16)
+    at C:\FloworxInvite\node_modules\@testing-library\react\dist\act-compat.js:47:25
+    at renderRoot (C:\FloworxInvite\node_modules\@testing-library\react\dist\pure.js:190:26)
+    at render (C:\FloworxInvite\node_modules\@testing-library\react\dist\pure.js:292:10)
+    at Object.&lt;anonymous&gt; (C:\FloworxInvite\tests\frontend\BusinessTypeStep.test.js:501:13)
+    at Promise.finally.completed (C:\FloworxInvite\node_modules\jest-circus\build\jestAdapterInit.js:1556:28)
+    at new Promise (&lt;anonymous&gt;)
+    at callAsyncCircusFn (C:\FloworxInvite\node_modules\jest-circus\build\jestAdapterInit.js:1496:10)
+    at _callCircusTest (C:\FloworxInvite\node_modules\jest-circus\build\jestAdapterInit.js:1006:40)
+    at processTicksAndRejections (node:internal/process/task_queues:105:5)
+    at _runTest (C:\FloworxInvite\node_modules\jest-circus\build\jestAdapterInit.js:946:3)
+    at _runTestsForDescribeBlock (C:\FloworxInvite\node_modules\jest-circus\build\jestAdapterInit.js:839:13)
+    at _runTestsForDescribeBlock (C:\FloworxInvite\node_modules\jest-circus\build\jestAdapterInit.js:829:11)
+    at _runTestsForDescribeBlock (C:\FloworxInvite\node_modules\jest-circus\build\jestAdapterInit.js:829:11)
+    at run (C:\FloworxInvite\node_modules\jest-circus\build\jestAdapterInit.js:757:3)
+    at runAndTransformResultsToJestFormat (C:\FloworxInvite\node_modules\jest-circus\build\jestAdapterInit.js:1917:21)
+    at jestAdapter (C:\FloworxInvite\node_modules\jest-circus\build\runner.js:101:19)
+    at runTestInternal (C:\FloworxInvite\node_modules\jest-runner\build\index.js:275:16)
+    at runTest (C:\FloworxInvite\node_modules\jest-runner\build\index.js:343:7)</failure>
+      <failure>TypeError: React.act is not a function
+    at exports.act (C:\FloworxInvite\node_modules\react-dom\cjs\react-dom-test-utils.production.js:20:16)
+    at C:\FloworxInvite\node_modules\@testing-library\react\dist\act-compat.js:47:25
+    at C:\FloworxInvite\node_modules\@testing-library\react\dist\pure.js:307:28
+    at Array.forEach (&lt;anonymous&gt;)
+    at cleanup (C:\FloworxInvite\node_modules\@testing-library\react\dist\pure.js:303:22)
+    at Object.&lt;anonymous&gt; (C:\FloworxInvite\node_modules\@testing-library\react\dist\index.js:28:25)
+    at Promise.finally.completed (C:\FloworxInvite\node_modules\jest-circus\build\jestAdapterInit.js:1556:28)
+    at new Promise (&lt;anonymous&gt;)
+    at callAsyncCircusFn (C:\FloworxInvite\node_modules\jest-circus\build\jestAdapterInit.js:1496:10)
+    at _callCircusHook (C:\FloworxInvite\node_modules\jest-circus\build\jestAdapterInit.js:975:40)
+    at processTicksAndRejections (node:internal/process/task_queues:105:5)
+    at _runTest (C:\FloworxInvite\node_modules\jest-circus\build\jestAdapterInit.js:948:5)
+    at _runTestsForDescribeBlock (C:\FloworxInvite\node_modules\jest-circus\build\jestAdapterInit.js:839:13)
+    at _runTestsForDescribeBlock (C:\FloworxInvite\node_modules\jest-circus\build\jestAdapterInit.js:829:11)
+    at _runTestsForDescribeBlock (C:\FloworxInvite\node_modules\jest-circus\build\jestAdapterInit.js:829:11)
+    at run (C:\FloworxInvite\node_modules\jest-circus\build\jestAdapterInit.js:757:3)
+    at runAndTransformResultsToJestFormat (C:\FloworxInvite\node_modules\jest-circus\build\jestAdapterInit.js:1917:21)
+    at jestAdapter (C:\FloworxInvite\node_modules\jest-circus\build\runner.js:101:19)
+    at runTestInternal (C:\FloworxInvite\node_modules\jest-runner\build\index.js:275:16)
+    at runTest (C:\FloworxInvite\node_modules\jest-runner\build\index.js:343:7)</failure>
+    </testcase>
+    <testcase classname="BusinessTypeStep Component Tests › Performance" name="BTS-PERF-001: Component renders within performance budget" time="0.001">
+      <failure>TypeError: React.act is not a function
+    at exports.act (C:\FloworxInvite\node_modules\react-dom\cjs\react-dom-test-utils.production.js:20:16)
+    at C:\FloworxInvite\node_modules\@testing-library\react\dist\act-compat.js:47:25
+    at renderRoot (C:\FloworxInvite\node_modules\@testing-library\react\dist\pure.js:190:26)
+    at render (C:\FloworxInvite\node_modules\@testing-library\react\dist\pure.js:292:10)
+    at Object.&lt;anonymous&gt; (C:\FloworxInvite\tests\frontend\BusinessTypeStep.test.js:536:13)
+    at Promise.finally.completed (C:\FloworxInvite\node_modules\jest-circus\build\jestAdapterInit.js:1556:28)
+    at new Promise (&lt;anonymous&gt;)
+    at callAsyncCircusFn (C:\FloworxInvite\node_modules\jest-circus\build\jestAdapterInit.js:1496:10)
+    at _callCircusTest (C:\FloworxInvite\node_modules\jest-circus\build\jestAdapterInit.js:1006:40)
+    at processTicksAndRejections (node:internal/process/task_queues:105:5)
+    at _runTest (C:\FloworxInvite\node_modules\jest-circus\build\jestAdapterInit.js:946:3)
+    at _runTestsForDescribeBlock (C:\FloworxInvite\node_modules\jest-circus\build\jestAdapterInit.js:839:13)
+    at _runTestsForDescribeBlock (C:\FloworxInvite\node_modules\jest-circus\build\jestAdapterInit.js:829:11)
+    at _runTestsForDescribeBlock (C:\FloworxInvite\node_modules\jest-circus\build\jestAdapterInit.js:829:11)
+    at run (C:\FloworxInvite\node_modules\jest-circus\build\jestAdapterInit.js:757:3)
+    at runAndTransformResultsToJestFormat (C:\FloworxInvite\node_modules\jest-circus\build\jestAdapterInit.js:1917:21)
+    at jestAdapter (C:\FloworxInvite\node_modules\jest-circus\build\runner.js:101:19)
+    at runTestInternal (C:\FloworxInvite\node_modules\jest-runner\build\index.js:275:16)
+    at runTest (C:\FloworxInvite\node_modules\jest-runner\build\index.js:343:7)</failure>
+      <failure>TypeError: React.act is not a function
+    at exports.act (C:\FloworxInvite\node_modules\react-dom\cjs\react-dom-test-utils.production.js:20:16)
+    at C:\FloworxInvite\node_modules\@testing-library\react\dist\act-compat.js:47:25
+    at C:\FloworxInvite\node_modules\@testing-library\react\dist\pure.js:307:28
+    at Array.forEach (&lt;anonymous&gt;)
+    at cleanup (C:\FloworxInvite\node_modules\@testing-library\react\dist\pure.js:303:22)
+    at Object.&lt;anonymous&gt; (C:\FloworxInvite\node_modules\@testing-library\react\dist\index.js:28:25)
+    at Promise.finally.completed (C:\FloworxInvite\node_modules\jest-circus\build\jestAdapterInit.js:1556:28)
+    at new Promise (&lt;anonymous&gt;)
+    at callAsyncCircusFn (C:\FloworxInvite\node_modules\jest-circus\build\jestAdapterInit.js:1496:10)
+    at _callCircusHook (C:\FloworxInvite\node_modules\jest-circus\build\jestAdapterInit.js:975:40)
+    at processTicksAndRejections (node:internal/process/task_queues:105:5)
+    at _runTest (C:\FloworxInvite\node_modules\jest-circus\build\jestAdapterInit.js:948:5)
+    at _runTestsForDescribeBlock (C:\FloworxInvite\node_modules\jest-circus\build\jestAdapterInit.js:839:13)
+    at _runTestsForDescribeBlock (C:\FloworxInvite\node_modules\jest-circus\build\jestAdapterInit.js:829:11)
+    at _runTestsForDescribeBlock (C:\FloworxInvite\node_modules\jest-circus\build\jestAdapterInit.js:829:11)
+    at run (C:\FloworxInvite\node_modules\jest-circus\build\jestAdapterInit.js:757:3)
+    at runAndTransformResultsToJestFormat (C:\FloworxInvite\node_modules\jest-circus\build\jestAdapterInit.js:1917:21)
+    at jestAdapter (C:\FloworxInvite\node_modules\jest-circus\build\runner.js:101:19)
+    at runTestInternal (C:\FloworxInvite\node_modules\jest-runner\build\index.js:275:16)
+    at runTest (C:\FloworxInvite\node_modules\jest-runner\build\index.js:343:7)</failure>
+    </testcase>
+  </testsuite>
+  <testsuite name="Business Type Selection Logic Tests" errors="0" failures="0" skipped="0" timestamp="2025-09-10T20:22:38" time="0.066" tests="9">
+    <testcase classname="Business Type Selection Logic Tests › Business Type Data Processing" name="BTS-LOGIC-001: Processes business type API response correctly" time="0.001">
+    </testcase>
+    <testcase classname="Business Type Selection Logic Tests › Business Type Data Processing" name="BTS-LOGIC-002: Validates business type selection data" time="0.001">
+    </testcase>
+    <testcase classname="Business Type Selection Logic Tests › Business Type Data Processing" name="BTS-LOGIC-003: Formats step data correctly" time="0">
+    </testcase>
+    <testcase classname="Business Type Selection Logic Tests › API Integration Logic" name="BTS-API-001: Fetches business types successfully" time="0">
+    </testcase>
+    <testcase classname="Business Type Selection Logic Tests › API Integration Logic" name="BTS-API-002: Handles API errors gracefully" time="0">
+    </testcase>
+    <testcase classname="Business Type Selection Logic Tests › API Integration Logic" name="BTS-API-003: Submits business type selection" time="0.001">
+    </testcase>
+    <testcase classname="Business Type Selection Logic Tests › Validation Logic" name="BTS-VALIDATION-001: Validates required business type selection" time="0">
+    </testcase>
+    <testcase classname="Business Type Selection Logic Tests › Validation Logic" name="BTS-VALIDATION-002: Validates business type data structure" time="0">
+    </testcase>
+    <testcase classname="Business Type Selection Logic Tests › Performance Logic" name="BTS-PERF-001: Business type processing performance" time="0.001">
+    </testcase>
+  </testsuite>
+</testsuites>

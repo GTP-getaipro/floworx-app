@@ -10,7 +10,7 @@ const router = express.Router();
  * DELETE THIS FILE after testing is complete
  */
 
-router.get('/test-keydb', async (req, res) => {
+router.get('/test-keydb', (req, res) => {
   try {
     console.log('🧪 Running KeyDB test from deployed environment...');
     

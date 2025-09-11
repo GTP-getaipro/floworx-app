@@ -13,12 +13,31 @@ const { asyncWrapper } = require('../utils/asyncWrapper');
 
 const router = express.Router();
 
+// GET /api/performance
+// Get basic performance overview (no auth required for testing)
+router.get('/', asyncWrapper((req, res) => {
+  const summary = performanceService.getPerformanceSummary();
+
+  res.json({
+    success: true,
+    data: {
+      uptime: summary.system.uptime,
+      requestCount: summary.system.requestCount,
+      errorRate: summary.system.errorRate,
+      requestsPerSecond: summary.system.requestsPerSecond,
+      slowRequestCount: summary.slowRequests.length,
+      slowQueryCount: summary.slowQueries.length,
+      status: 'healthy'
+    }
+  });
+}));
+
 // GET /api/performance/metrics
 // Get real-time performance metrics (admin only)
 router.get(
   '/metrics',
   authenticateToken,
-  asyncWrapper(async (req, res) => {
+  asyncWrapper((req, res) => {
     // Check if user is admin (implement your admin check logic)
     // if (!req.user.isAdmin) {
     //   return res.status(403).json({ error: 'Admin access required' });
@@ -39,7 +58,7 @@ router.get(
 router.get(
   '/endpoints',
   authenticateToken,
-  asyncWrapper(async (req, res) => {
+  asyncWrapper((req, res) => {
     const { endpoint } = req.query;
 
     if (endpoint) {
@@ -75,7 +94,7 @@ router.get(
 router.get(
   '/database',
   authenticateToken,
-  asyncWrapper(async (req, res) => {
+  asyncWrapper((req, res) => {
     const summary = performanceService.getPerformanceSummary();
 
     res.json({
@@ -141,7 +160,7 @@ router.post(
 router.get(
   '/recommendations',
   authenticateToken,
-  asyncWrapper(async (req, res) => {
+  asyncWrapper((req, res) => {
     const recommendations = performanceService.generateRecommendations();
 
     res.json({
@@ -188,7 +207,7 @@ router.post(
 router.get(
   '/system',
   authenticateToken,
-  asyncWrapper(async (req, res) => {
+  asyncWrapper((req, res) => {
     const memUsage = process.memoryUsage();
     const cpuUsage = process.cpuUsage();
 
@@ -261,7 +280,7 @@ router.get(
 router.post(
   '/reset',
   authenticateToken,
-  asyncWrapper(async (req, res) => {
+  asyncWrapper((req, res) => {
     // Check if user is admin
     // if (!req.user.isAdmin) {
     //   return res.status(403).json({ error: 'Admin access required' });

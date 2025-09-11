@@ -3,49 +3,43 @@
 
 -- Add index on users.email for fast login lookups
 -- This is the most critical index for authentication performance
-CREATE INDEX CONCURRENTLY IF NOT EXISTS idx_users_email 
-ON users (email) 
-WHERE deleted_at IS NULL;
+CREATE INDEX CONCURRENTLY IF NOT EXISTS idx_users_email
+ON users (email);
 
 -- Add index on users.email_verified for filtering verified users
-CREATE INDEX CONCURRENTLY IF NOT EXISTS idx_users_email_verified 
-ON users (email_verified) 
-WHERE deleted_at IS NULL;
+CREATE INDEX CONCURRENTLY IF NOT EXISTS idx_users_email_verified
+ON users (email_verified);
 
 -- Add composite index for email + email_verified (most common auth query pattern)
-CREATE INDEX CONCURRENTLY IF NOT EXISTS idx_users_email_verified_composite 
-ON users (email, email_verified) 
-WHERE deleted_at IS NULL;
+CREATE INDEX CONCURRENTLY IF NOT EXISTS idx_users_email_verified_composite
+ON users (email, email_verified);
 
 -- Add index on users.id for JWT token validation
-CREATE INDEX CONCURRENTLY IF NOT EXISTS idx_users_id 
-ON users (id) 
-WHERE deleted_at IS NULL;
+CREATE INDEX CONCURRENTLY IF NOT EXISTS idx_users_id
+ON users (id);
 
 -- Add index on users.created_at for user analytics
-CREATE INDEX CONCURRENTLY IF NOT EXISTS idx_users_created_at 
-ON users (created_at) 
-WHERE deleted_at IS NULL;
+CREATE INDEX CONCURRENTLY IF NOT EXISTS idx_users_created_at
+ON users (created_at);
 
 -- Add index on users.last_login_at for activity tracking
-CREATE INDEX CONCURRENTLY IF NOT EXISTS idx_users_last_login_at 
-ON users (last_login_at) 
-WHERE deleted_at IS NULL;
+CREATE INDEX CONCURRENTLY IF NOT EXISTS idx_users_last_login_at
+ON users (last_login_at);
 
 -- Add index on users.failed_login_attempts for security monitoring
-CREATE INDEX CONCURRENTLY IF NOT EXISTS idx_users_failed_login_attempts 
-ON users (failed_login_attempts) 
-WHERE deleted_at IS NULL AND failed_login_attempts > 0;
+CREATE INDEX CONCURRENTLY IF NOT EXISTS idx_users_failed_login_attempts
+ON users (failed_login_attempts)
+WHERE failed_login_attempts > 0;
 
 -- Add index on users.account_locked_until for lockout management
-CREATE INDEX CONCURRENTLY IF NOT EXISTS idx_users_account_locked_until 
-ON users (account_locked_until) 
-WHERE deleted_at IS NULL AND account_locked_until IS NOT NULL;
+CREATE INDEX CONCURRENTLY IF NOT EXISTS idx_users_account_locked_until
+ON users (account_locked_until)
+WHERE account_locked_until IS NOT NULL;
 
 -- Performance optimization: Add partial index for active users only
-CREATE INDEX CONCURRENTLY IF NOT EXISTS idx_users_active 
-ON users (id, email, email_verified) 
-WHERE deleted_at IS NULL AND email_verified = true;
+CREATE INDEX CONCURRENTLY IF NOT EXISTS idx_users_active
+ON users (id, email, email_verified)
+WHERE email_verified = true;
 
 -- Add index for workflow_executions table (used by scheduler)
 CREATE INDEX CONCURRENTLY IF NOT EXISTS idx_workflow_executions_user_id 
@@ -82,15 +76,14 @@ ANALYZE notifications;
 
 -- Performance monitoring: Create a view for slow query analysis
 CREATE OR REPLACE VIEW v_user_login_performance AS
-SELECT 
+SELECT
     email,
     email_verified,
     failed_login_attempts,
     account_locked_until,
     last_login_at,
     created_at
-FROM users 
-WHERE deleted_at IS NULL
+FROM users
 ORDER BY last_login_at DESC NULLS LAST;
 
 -- Grant appropriate permissions
@@ -105,8 +98,8 @@ COMMENT ON VIEW v_user_login_performance IS 'Performance monitoring view for use
 -- Performance validation query (for testing)
 -- This query should use the new indexes efficiently
 /*
-EXPLAIN (ANALYZE, BUFFERS) 
-SELECT id, email, password_hash, email_verified, first_name 
-FROM users 
-WHERE email = 'test@example.com' AND deleted_at IS NULL;
+EXPLAIN (ANALYZE, BUFFERS)
+SELECT id, email, password_hash, email_verified, first_name
+FROM users
+WHERE email = 'test@example.com';
 */

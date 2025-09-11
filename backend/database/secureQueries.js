@@ -68,7 +68,7 @@ class SecureQueryBuilder {
   limit(count) {
     const paramIndex = ++this.paramCount;
     this.queryText += ` LIMIT $${paramIndex}`;
-    this.parameters.push(parseInt(count));
+    this.parameters.push(parseInt(count, 10));
     return this;
   }
 
@@ -78,7 +78,7 @@ class SecureQueryBuilder {
   offset(count) {
     const paramIndex = ++this.paramCount;
     this.queryText += ` OFFSET $${paramIndex}`;
-    this.parameters.push(parseInt(count));
+    this.parameters.push(parseInt(count, 10));
     return this;
   }
 
@@ -125,11 +125,11 @@ const UserQueries = {
              created_at, updated_at, failed_login_attempts, account_locked_until,
              two_factor_enabled, last_login_at
       FROM users
-      WHERE email = $1 AND deleted_at IS NULL
+      WHERE email = $1
     `;
 
     try {
-      const result = await performanceService.trackQuery(queryText, [email.toLowerCase()], async () => {
+      const result = await performanceService.trackQuery(queryText, [email.toLowerCase()], () => {
         return query(queryText, [email.toLowerCase()]);
       });
 
@@ -151,11 +151,11 @@ const UserQueries = {
    */
   async findById(userId) {
     const queryText = `
-      SELECT id, email, first_name, last_name, email_verified, 
+      SELECT id, email, first_name, last_name, email_verified,
              created_at, updated_at, business_name, phone,
              onboarding_completed, preferences
-      FROM users 
-      WHERE id = $1 AND deleted_at IS NULL
+      FROM users
+      WHERE id = $1
     `;
 
     try {
@@ -226,9 +226,9 @@ const UserQueries = {
     values.push(userId);
 
     const queryText = `
-      UPDATE users 
+      UPDATE users
       SET ${updateFields.join(', ')}
-      WHERE id = $${++paramCount} AND deleted_at IS NULL
+      WHERE id = $${++paramCount}
       RETURNING id, email, first_name, last_name, business_name, phone, updated_at
     `;
 
@@ -337,10 +337,9 @@ const AuthQueries = {
       SELECT prt.id, prt.user_id, u.email
       FROM password_reset_tokens prt
       JOIN users u ON prt.user_id = u.id
-      WHERE prt.token = $1 
+      WHERE prt.token = $1
         AND prt.expires_at > NOW()
         AND prt.used = false
-        AND u.deleted_at IS NULL
     `;
 
     try {
@@ -354,7 +353,7 @@ const AuthQueries = {
   /**
    * Use password reset token (secure)
    */
-  async usePasswordResetToken(tokenId, newPasswordHash) {
+  usePasswordResetToken(tokenId, newPasswordHash) {
     return transaction(async client => {
       // Mark token as used
       await client.query('UPDATE password_reset_tokens SET used = true, used_at = NOW() WHERE id = $1', [tokenId]);

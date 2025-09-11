@@ -3,7 +3,7 @@
  * Middleware for validating request data using Joi schemas
  */
 
-const Joi = require('joi');
+// const Joi = require('joi'); // Unused import
 
 const { ValidationError } = require('./errors');
 
@@ -78,7 +78,7 @@ const validateRequest = (schemas, options = {}) => {
 
     // Validate headers
     if (schemas.headers) {
-      const { error, value } = schemas.headers.validate(req.headers, validationOptions);
+      const { error } = schemas.headers.validate(req.headers, validationOptions);
       if (error) {
         errors.push({
           location: 'headers',

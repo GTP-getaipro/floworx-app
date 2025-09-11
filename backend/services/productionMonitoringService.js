@@ -5,7 +5,7 @@
 
 const EventEmitter = require('events');
 
-const businessAlertingRules = require('../config/business-alerting-rules');
+const _businessAlertingRules = require('../config/business-alerting-rules');
 const productionConfig = require('../config/production-monitoring');
 const logger = require('../utils/logger');
 
@@ -76,7 +76,7 @@ class ProductionMonitoringService extends EventEmitter {
   /**
    * Initialize real-time monitoring with production settings
    */
-  async initializeMonitoring() {
+  initializeMonitoring() {
     // Configure monitoring thresholds
     realTimeMonitoringService.updateThresholds(this.config.monitoring.thresholds);
 
@@ -142,7 +142,7 @@ class ProductionMonitoringService extends EventEmitter {
   /**
    * Initialize business metrics tracking
    */
-  async initializeBusinessMetrics() {
+  initializeBusinessMetrics() {
     // Set up FloWorx-specific KPI tracking
     this.setupBusinessKPIs();
 
@@ -186,7 +186,7 @@ class ProductionMonitoringService extends EventEmitter {
   /**
    * Set up alert channels
    */
-  async setupAlertChannels() {
+  setupAlertChannels() {
     const channels = this.config.alerting.channels;
 
     // Slack integration
@@ -596,7 +596,7 @@ class ProductionMonitoringService extends EventEmitter {
   /**
    * Shutdown monitoring services gracefully
    */
-  async shutdown() {
+  shutdown() {
     logger.info('Shutting down production monitoring services...');
     
     // Stop all intervals and cleanup

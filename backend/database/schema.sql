@@ -180,3 +180,52 @@ COMMENT ON TABLE category_label_mappings IS 'Maps business categories to Gmail l
 COMMENT ON TABLE team_notifications IS 'Team member notification configurations';
 COMMENT ON TABLE user_onboarding_status IS 'Tracks user onboarding progress';
 COMMENT ON TABLE workflow_deployments IS 'Tracks deployed n8n automation workflows';
+
+-- Business Types Table
+CREATE TABLE IF NOT EXISTS business_types (
+    id SERIAL PRIMARY KEY,
+    name VARCHAR(100) NOT NULL UNIQUE,
+    slug VARCHAR(100) NOT NULL UNIQUE,
+    description TEXT,
+    default_categories JSONB DEFAULT '[]'::jsonb,
+    is_active BOOLEAN DEFAULT true,
+    created_at TIMESTAMP WITH TIME ZONE DEFAULT NOW(),
+    updated_at TIMESTAMP WITH TIME ZONE DEFAULT NOW()
+);
+
+-- Insert default business types
+INSERT INTO business_types (name, slug, description, default_categories, is_active) VALUES
+('Hot Tub & Spa Services', 'hot-tub-spa', 'Professional hot tub and spa maintenance, repair, and installation services',
+ '["Service Requests", "Maintenance", "Repairs", "Installation", "Parts Orders", "Customer Support"]'::jsonb, true),
+('Pool Services', 'pool-services', 'Swimming pool maintenance, cleaning, and repair services',
+ '["Pool Cleaning", "Chemical Balancing", "Equipment Repair", "Pool Opening/Closing", "Customer Inquiries"]'::jsonb, true),
+('HVAC Services', 'hvac-services', 'Heating, ventilation, and air conditioning services',
+ '["Service Calls", "Maintenance", "Installation", "Emergency Repairs", "Customer Support"]'::jsonb, true),
+('General Contractor', 'general-contractor', 'General construction and contracting services',
+ '["Project Inquiries", "Estimates", "Scheduling", "Material Orders", "Customer Communication"]'::jsonb, true),
+('Other Service Business', 'other-service', 'Other professional service businesses',
+ '["Customer Inquiries", "Service Requests", "Scheduling", "Follow-up", "Support"]'::jsonb, true)
+ON CONFLICT (slug) DO NOTHING;
+
+-- Add business_type_id to users table if not exists
+ALTER TABLE users ADD COLUMN IF NOT EXISTS business_type_id INTEGER REFERENCES business_types(id);
+
+-- Create indexes for better performance
+CREATE INDEX IF NOT EXISTS idx_users_email ON users(email);
+CREATE INDEX IF NOT EXISTS idx_users_created_at ON users(created_at);
+CREATE INDEX IF NOT EXISTS idx_users_business_type_id ON users(business_type_id);
+CREATE INDEX IF NOT EXISTS idx_business_types_slug ON business_types(slug);
+CREATE INDEX IF NOT EXISTS idx_business_types_is_active ON business_types(is_active);
+CREATE INDEX IF NOT EXISTS idx_email_verification_tokens_user_id ON email_verification_tokens(user_id);
+CREATE INDEX IF NOT EXISTS idx_email_verification_tokens_token ON email_verification_tokens(token);
+CREATE INDEX IF NOT EXISTS idx_email_verification_tokens_expires_at ON email_verification_tokens(expires_at);
+CREATE INDEX IF NOT EXISTS idx_password_reset_tokens_user_id ON password_reset_tokens(user_id);
+CREATE INDEX IF NOT EXISTS idx_password_reset_tokens_token ON password_reset_tokens(token);
+CREATE INDEX IF NOT EXISTS idx_password_reset_tokens_expires_at ON password_reset_tokens(expires_at);
+CREATE INDEX IF NOT EXISTS idx_oauth_tokens_user_id ON oauth_tokens(user_id);
+CREATE INDEX IF NOT EXISTS idx_oauth_tokens_provider ON oauth_tokens(provider);
+CREATE INDEX IF NOT EXISTS idx_onboarding_progress_user_id ON onboarding_progress(user_id);
+CREATE INDEX IF NOT EXISTS idx_business_configs_user_id ON business_configs(user_id);
+CREATE INDEX IF NOT EXISTS idx_user_analytics_user_id ON user_analytics(user_id);
+CREATE INDEX IF NOT EXISTS idx_user_analytics_event_type ON user_analytics(event_type);
+CREATE INDEX IF NOT EXISTS idx_user_analytics_created_at ON user_analytics(created_at);

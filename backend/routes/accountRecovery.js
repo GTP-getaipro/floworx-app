@@ -1,7 +1,7 @@
 const express = require('express');
+const rateLimit = require('express-rate-limit');
 
 const router = express.Router();
-const rateLimit = require('express-rate-limit');
 
 const { authenticateToken } = require('../middleware/auth');
 const accountRecoveryService = require('../services/accountRecoveryService');
@@ -225,7 +225,7 @@ router.get('/backup-codes', authenticateToken, async (req, res) => {
 
 // POST /api/account-recovery/verify-backup-code
 // Verify backup code for recovery
-router.post('/verify-backup-code', async (req, res) => {
+router.post('/verify-backup-code', (req, res) => {
   try {
     const { email, backupCode } = req.body;
 
@@ -253,7 +253,7 @@ router.post('/verify-backup-code', async (req, res) => {
 
 // GET /api/account-recovery/security-log/:userId
 // Get security audit log for user (admin or self)
-router.get('/security-log/:userId', authenticateToken, async (req, res) => {
+router.get('/security-log/:userId', authenticateToken, (req, res) => {
   try {
     const { userId } = req.params;
     const { limit: _limit = 50, offset: _offset = 0 } = req.query;

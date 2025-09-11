@@ -1,70 +1,35 @@
 version: '3.8'
 
 services:
-  # 1. Your Node.js Application Service
-  app:
-    build: . # Build the image from the Dockerfile in the current directory
-    container_name: floworx-app
+  floworx-app:
+    build: .
     ports:
-      - "80:5000" # Map host port 80 to container port 5000
-    depends_on:
-      - postgres-db # Wait for the database to be ready
-      - redis-db    # Wait for the redis cache to be ready
-    networks:
-      - floworx-net
+      - "5001:5001"
     environment:
-      # --- Critical Connection Variables ---
-      NODE_ENV: production
-      DATABASE_URL: postgresql://user:password@postgres-db:5432/mydatabase
-      REDIS_HOST: redis-db # Use the service name for DNS resolution
-      REDIS_PORT: 6379
-      # Add any other required environment variables for your app
-      # e.g., FRONTEND_URL, JWT_SECRET, etc.
-    deploy:
-      resources:
-        limits:
-          memory: 512M # Set a 512MB hard memory limit
-        reservations:
-          memory: 256M # Request at least 256MB to start
-
-  # 2. PostgreSQL Database Service
-  postgres-db:
-    image: postgres:15-alpine
-    container_name: floworx-postgres
-    networks:
-      - floworx-net
-    environment:
-      POSTGRES_USER: user
-      POSTGRES_PASSWORD: password
-      POSTGRES_DB: mydatabase
-    volumes:
-      - postgres_data:/var/lib/postgresql/data # Persist database data
+      - NODE_ENV=production
+      - PORT=5001
+      - FRONTEND_URL=https://app.floworx-iq.com
+    env_file:
+      - .env.production
+    restart: unless-stopped
     healthcheck:
-      test: ["CMD-SHELL", "pg_isready -U user -d mydatabase"]
-      interval: 10s
-      timeout: 5s
-      retries: 5
+      test: ["CMD", "curl", "-f", "http://localhost:5001/api/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 40s
 
-  # 3. Redis Caching Service
-  redis-db:
-    image: redis:7-alpine
-    container_name: floworx-redis
-    networks:
-      - floworx-net
-    volumes:
-      - redis_data:/data # Persist redis data
-    healthcheck:
-      test: ["CMD", "redis-cli", "ping"]
-      interval: 10s
-      timeout: 5s
-      retries: 5
+  # Optional: Add PostgreSQL if not using Supabase
+  # postgres:
+  #   image: postgres:15-alpine
+  #   environment:
+  #     POSTGRES_DB: floworx_db
+  #     POSTGRES_USER: floworx_user
+  #     POSTGRES_PASSWORD: your_secure_password
+  #   volumes:
+  #     - postgres_data:/var/lib/postgresql/data
+  #   ports:
+  #     - "5432:5432"
 
-# Define the shared network for all services
-networks:
-  floworx-net:
-    driver: bridge
-
-# Define the volumes for data persistence
-volumes:
-  postgres_data:
-  redis_data:
+# volumes:
+#   postgres_data:

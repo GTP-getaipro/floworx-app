@@ -71,7 +71,7 @@ class Services {
   /**
    * Cleanup services on shutdown
    */
-  async cleanup() {
+  cleanup() {
     const perfMonitor = this.get('performance');
     if (perfMonitor) {
       perfMonitor.stop();

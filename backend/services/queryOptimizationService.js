@@ -27,8 +27,8 @@ class QueryOptimizationService {
     const {
       cache = true,
       cacheTTL = 300, // 5 minutes default
-      batch = false,
-      batchKey = null
+      batch: _batch = false,
+      batchKey: _batchKey = null
     } = options;
 
     // Generate cache key
@@ -65,8 +65,8 @@ class QueryOptimizationService {
 
     try {
       // Execute all queries in parallel where possible
-      const promises = queries.map(async ({ queryText, params, options = {} }) => {
-        return await this.executeOptimized(queryText, params, options);
+      const promises = queries.map(({ queryText, params, options = {} }) => {
+        return this.executeOptimized(queryText, params, options);
       });
 
       const batchResults = await Promise.all(promises);
@@ -122,7 +122,7 @@ class QueryOptimizationService {
       LEFT JOIN credentials c ON u.id = c.user_id
       LEFT JOIN business_categories bc ON u.id = bc.user_id
       LEFT JOIN workflow_deployments wd ON u.id = wd.user_id
-      WHERE u.id = $1 AND u.deleted_at IS NULL
+      WHERE u.id = $1
     `;
 
     try {
@@ -333,10 +333,10 @@ class QueryOptimizationService {
     }));
 
     const summary = {
-      businessCategoriesCount: parseInt(rows[0].business_categories_count) || 0,
-      labelMappingsCount: parseInt(rows[0].label_mappings_count) || 0,
-      teamMembersCount: parseInt(rows[0].team_members_count) || 0,
-      workflowsCount: parseInt(rows[0].workflows_count) || 0
+      businessCategoriesCount: parseInt(rows[0].business_categories_count, 10) || 0,
+      labelMappingsCount: parseInt(rows[0].label_mappings_count, 10) || 0,
+      teamMembersCount: parseInt(rows[0].team_members_count, 10) || 0,
+      workflowsCount: parseInt(rows[0].workflows_count, 10) || 0
     };
 
     return {

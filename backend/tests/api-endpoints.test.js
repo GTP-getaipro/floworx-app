@@ -1,3 +1,4 @@
+const axios = require('axios');
 const jwt = require('jsonwebtoken');
 const request = require('supertest');
 
@@ -7,8 +8,6 @@ jest.mock('../../api/_lib/database.js', () => ({
   getSupabaseClient: jest.fn(),
   getSupabaseAdmin: jest.fn()
 }));
-
-const axios = require('axios');
 
 const { getSupabaseAdmin } = require('../../api/_lib/database.js');
 

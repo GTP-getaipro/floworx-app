@@ -10,15 +10,9 @@ const {
   registerSchema,
   loginSchema
 } = require('../schemas/auth');
-const { asyncWrapper } = require('../utils/asyncWrapper');
 const emailService = require('../services/emailService');
 const passwordResetService = require('../services/passwordResetService');
-
-// Import database connection
-
-// Import secure database queries
-
-// Import new validation schemas and utilities
+const { asyncWrapper } = require('../utils/asyncWrapper');
 const { ConflictError } = require('../utils/errors');
 const { validateRequest } = require('../utils/validateRequest');
 
@@ -43,7 +37,7 @@ router.post(
       } else {
         // User exists but email not verified - resend verification
         const verificationToken = emailService.generateVerificationToken();
-        await emailService.storeVerificationToken(existingUser.id, verificationToken);
+        await emailService.storeVerificationToken(existingUser.id, verificationToken, email, firstName);
         await emailService.sendVerificationEmail(email, firstName, verificationToken);
 
         return res.status(200).json({
@@ -80,13 +74,14 @@ router.post(
 
     try {
       verificationToken = emailService.generateVerificationToken();
-      await emailService.storeVerificationToken(user.id, verificationToken);
+      await emailService.storeVerificationToken(user.id, verificationToken, email, firstName);
 
       // Send verification email
       await emailService.sendVerificationEmail(email, firstName, verificationToken);
       emailSent = true;
     } catch (emailError) {
       console.error('Failed to handle email verification:', emailError.message);
+      console.error('Full error details:', emailError);
       // Continue with registration even if email verification fails
       // This allows registration to work even if email_verification_tokens table doesn't exist
     }
@@ -493,7 +488,7 @@ router.post('/resend-verification', async (req, res) => {
 
     // Generate and send new verification token
     const verificationToken = emailService.generateVerificationToken();
-    await emailService.storeVerificationToken(user.id, verificationToken);
+    await emailService.storeVerificationToken(user.id, verificationToken, email, user.first_name);
     await emailService.sendVerificationEmail(email, user.first_name, verificationToken);
 
     res.json({

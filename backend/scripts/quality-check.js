@@ -297,7 +297,7 @@ const printSummary = summary => {
 };
 
 // Main execution
-const main = async () => {
+const main = () => {
   console.log('🔍 FloWorx Backend Quality Check'.cyan.bold);
   console.log('================================'.cyan);
 

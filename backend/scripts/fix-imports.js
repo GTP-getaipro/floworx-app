@@ -363,7 +363,7 @@ const fixSpecificUnusedVars = () => {
 };
 
 // Main execution
-const main = async () => {
+const main = () => {
   log('🧹 Starting Import & Declaration Cleanup', 'info');
   log('=====================================', 'info');
 

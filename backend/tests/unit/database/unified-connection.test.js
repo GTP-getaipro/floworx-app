@@ -189,7 +189,7 @@ describe('DatabaseManager', () => {
         .mockResolvedValueOnce({ rows: [{ id: 1 }], rowCount: 1 }) // INSERT
         .mockResolvedValueOnce({ rows: [], rowCount: 0 }); // COMMIT
 
-      const result = await dbManager.transaction(async (client) => {
+      const result = await dbManager.transaction((client) => {
         return client.query('INSERT INTO users (name) VALUES ($1) RETURNING id', ['Test']);
       });
 
@@ -221,7 +221,7 @@ describe('DatabaseManager', () => {
         .mockResolvedValueOnce({ rows: [{ id: 1 }], rowCount: 1 }) // Query
         .mockResolvedValueOnce({ rows: [], rowCount: 0 }); // COMMIT
 
-      await dbManager.transaction(async (client) => {
+      await dbManager.transaction((client) => {
         return client.query('INSERT INTO users (name) VALUES ($1)', ['Test']);
       });
 
@@ -315,7 +315,7 @@ describe('DatabaseManager', () => {
       mockPool.connect.mockRejectedValue(new Error('Pool connection failed'));
 
       await expect(
-        dbManager.transaction(async () => {})
+        dbManager.transaction(() => {})
       ).rejects.toThrow('Pool connection failed');
     });
 

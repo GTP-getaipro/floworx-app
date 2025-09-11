@@ -1,4 +1,4 @@
-const { query } = require('../database/unified-connection');
+const { query: _query } = require('../database/unified-connection');
 
 class IntelligentLabelMatcher {
   constructor() {
@@ -324,7 +324,7 @@ class IntelligentLabelMatcher {
    * @param {Array} gmailLabels - User's Gmail labels
    * @returns {Object} Analysis results with matches and recommendations
    */
-  async analyzeLabelsForAutomation(gmailLabels) {
+  analyzeLabelsForAutomation(gmailLabels) {
     try {
       // Handle null or undefined input
       if (!gmailLabels || !Array.isArray(gmailLabels)) {
@@ -545,7 +545,7 @@ class IntelligentLabelMatcher {
         type: 'tel',
         required: true,
         placeholder: '+1 (555) 123-4567',
-        validation: { pattern: /^\+?[\d\s\-\(\)]+$/ },
+        validation: { pattern: /^\+?[\d\s\-()]+$/ },
         description: 'Primary contact number for customers',
         tooltip: 'This is your main business phone number that customers will see in automated responses. Include area code and use standard formatting.'
       },
@@ -555,7 +555,7 @@ class IntelligentLabelMatcher {
         type: 'tel',
         required: false,
         placeholder: '+1 (555) 999-9999',
-        validation: { pattern: /^\+?[\d\s\-\(\)]+$/ },
+        validation: { pattern: /^\+?[\d\s\-()]+$/ },
         description: 'For urgent hot tub issues (optional)',
         tooltip: 'A separate number for emergency hot tub issues (broken heaters, leaks, etc.). This will be included in urgent email responses. Leave blank if you use the same number.'
       },
@@ -703,7 +703,7 @@ www.hottubparadise.com`,
    * @param {Object} analysisResult - Label analysis result
    * @returns {Array} Business-specific form fields
    */
-  getBusinessSpecificFields(businessType, analysisResult) {
+  getBusinessSpecificFields(businessType, _analysisResult) {
     if (businessType === 'hot-tub-spa') {
       return [
         {

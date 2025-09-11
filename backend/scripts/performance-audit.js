@@ -5,7 +5,7 @@
  * Comprehensive performance analysis and optimization recommendations
  */
 
-const { execSync } = require('child_process');
+const { execSync: _execSync } = require('child_process');
 const fs = require('fs');
 const path = require('path');
 
@@ -103,7 +103,7 @@ class PerformanceAudit {
   /**
    * Audit API endpoint performance
    */
-  async auditEndpoints() {
+  auditEndpoints() {
     console.log('📊 Auditing API endpoints...');
 
     const performanceSummary = performanceService.getPerformanceSummary();
@@ -226,7 +226,7 @@ class PerformanceAudit {
   /**
    * Audit system resources
    */
-  async auditSystem() {
+  auditSystem() {
     console.log('🖥️ Auditing system resources...');
 
     const memUsage = process.memoryUsage();
@@ -264,7 +264,7 @@ class PerformanceAudit {
   /**
    * Check for missing database indexes
    */
-  async checkMissingIndexes() {
+  checkMissingIndexes() {
     // This is a simplified check - in a real implementation,
     // you would analyze query patterns and suggest specific indexes
     const commonMissingIndexes = [
@@ -456,9 +456,9 @@ class PerformanceAudit {
 /**
  * Main audit function
  */
-async function runPerformanceAudit() {
+function runPerformanceAudit() {
   const audit = new PerformanceAudit();
-  return await audit.runAudit();
+  return audit.runAudit();
 }
 
 // Run audit if called directly

@@ -233,7 +233,7 @@ describe('Regression Testing Framework Demo', () => {
 
   describe('Performance and Load Testing Simulation', () => {
     test('should simulate concurrent operations', async () => {
-      const concurrentOperations = Array(10).fill().map(async (_, index) => {
+      const concurrentOperations = Array(10).fill().map((_, index) => {
         return new Promise(resolve => {
           setTimeout(() => {
             const user = testDataFactory.createUser({

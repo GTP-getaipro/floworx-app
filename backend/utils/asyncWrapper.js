@@ -80,7 +80,7 @@ const wrapController = ControllerClass => {
 
           // If this looks like an Express middleware (3 args with next)
           if (args.length === 3 && typeof args[2] === 'function') {
-            const [req, res, next] = args;
+            const [_req, _res, next] = args;
             return Promise.resolve(result).catch(next);
           }
 

@@ -212,7 +212,7 @@ class N8nService {
    * Get master workflow template
    * @returns {Object} Master template
    */
-  async getMasterTemplate() {
+  getMasterTemplate() {
     // This would typically load from a file or database
     // For now, return a basic email automation template
     return {
@@ -341,7 +341,7 @@ class N8nService {
    * @param {Object} config - User configuration
    * @returns {Object} Customized workflow
    */
-  async customizeWorkflow(template, userId, config) {
+  customizeWorkflow(template, userId, config) {
     const customized = JSON.parse(JSON.stringify(template)); // Deep clone
 
     // Customize workflow name

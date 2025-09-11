@@ -45,7 +45,7 @@ class RedisConnectionManager {
 
     const config = {
       host: possibleHosts[0] || 'localhost',
-      port: parseInt(process.env.REDIS_PORT) || 6379,
+      port: parseInt(process.env.REDIS_PORT, 10) || 6379,
       password: process.env.REDIS_PASSWORD || undefined,
       retryDelayOnFailover: 100,
       retryDelayOnClusterDown: 300,

@@ -121,7 +121,7 @@ class N8nWorkflowGenerator {
    * @param {string} phoneSystem - Phone system type for support
    * @returns {Object} Personalized n8n workflow JSON
    */
-  async generatePersonalizedWorkflow(businessData, labelMappings, customManagers = [], customSuppliers = [], phoneSystem = 'RingCentral') {
+  generatePersonalizedWorkflow(businessData, labelMappings, customManagers = [], customSuppliers = [], phoneSystem = 'RingCentral') {
     try {
       // Start with your proven workflow template
       const baseTemplate = this.getWorkingTemplate();
@@ -244,7 +244,7 @@ class N8nWorkflowGenerator {
   /**
    * Add the main category switch node - this is the heart of your workflow
    */
-  addCategorySwitchNode(workflow, labelMappings) {
+  addCategorySwitchNode(workflow, _labelMappings) {
     const switchNode = {
       parameters: {
         rules: {
@@ -437,7 +437,7 @@ class N8nWorkflowGenerator {
     // Add connections for custom managers
     if (customManagers.length > 0) {
       workflow.connections["Manager"] = {
-        main: customManagers.slice(0, 5).map((manager, index) => [
+        main: customManagers.slice(0, 5).map((manager, _index) => [
           { node: manager, type: "main", index: 0 }
         ])
       };
@@ -446,7 +446,7 @@ class N8nWorkflowGenerator {
     // Add connections for custom suppliers
     if (customSuppliers.length > 0) {
       workflow.connections["Suppliers"] = {
-        main: customSuppliers.slice(0, 10).map((supplier, index) => [
+        main: customSuppliers.slice(0, 10).map((supplier, _index) => [
           { node: supplier.length > 20 ? supplier.substring(0, 20) + '...' : supplier, type: "main", index: 0 }
         ])
       };

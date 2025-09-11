@@ -59,7 +59,7 @@ describe('Database Performance Tests', () => {
       const userId = testUsers[0].id;
       const startTime = Date.now();
       
-      const result = await query(
+      const _result = await query(
         'SELECT * FROM credentials WHERE user_id = $1 AND service_name = $2',
         [userId, 'google']
       );
@@ -73,7 +73,7 @@ describe('Database Performance Tests', () => {
       const userId = testUsers[0].id;
       const startTime = Date.now();
       
-      const result = await query(`
+      const _result = await query(`
         SELECT 
           u.id, u.email, u.first_name, u.last_name,
           c.service_name, c.expiry_date,
@@ -210,7 +210,7 @@ describe('Database Performance Tests', () => {
         const data = { index, timestamp: Date.now() };
         
         await cacheService.set(key, data, 300);
-        return await cacheService.get(key);
+        return cacheService.get(key);
       });
       
       const startTime = Date.now();
@@ -267,7 +267,7 @@ describe('Database Performance Tests', () => {
       expect(duration).toBeLessThan(PERFORMANCE_THRESHOLD.SLOW_QUERY);
       
       results.forEach(result => {
-        expect(parseInt(result.rows[0].count)).toBeGreaterThan(0);
+        expect(parseInt(result.rows[0].count, 10)).toBeGreaterThan(0);
       });
     });
   });

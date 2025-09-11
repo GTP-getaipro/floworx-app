@@ -21,6 +21,7 @@ const Register = React.lazy(() => import('./components/Register'));
 const ResetPassword = React.lazy(() => import('./components/ResetPassword'));
 const UserManagement = React.lazy(() => import('./components/UserManagement'));
 const Settings = React.lazy(() => import('./components/Settings'));
+const APITestDashboard = React.lazy(() => import('./components/APITestDashboard'));
 
 import './App.css';
 
@@ -28,7 +29,7 @@ import './App.css';
 const LoadingSpinner = () => (
   <div className="min-h-screen flex items-center justify-center bg-surface">
     <div className="text-center">
-      <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-brand-primary mx-auto mb-4"></div>
+      <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-brand-primary mx-auto mb-4" />
       <p className="text-ink-sub">Loading...</p>
     </div>
   </div>
@@ -126,6 +127,16 @@ function App() {
                         <ErrorBoundary key='database-test'>
                           <Suspense fallback={<LoadingSpinner />}>
                             <DatabaseTest />
+                          </Suspense>
+                        </ErrorBoundary>
+                      }
+                    />
+                    <Route
+                      path='/api-test'
+                      element={
+                        <ErrorBoundary key='api-test'>
+                          <Suspense fallback={<LoadingSpinner />}>
+                            <APITestDashboard />
                           </Suspense>
                         </ErrorBoundary>
                       }

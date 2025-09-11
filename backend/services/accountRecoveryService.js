@@ -334,7 +334,7 @@ class AccountRecoveryService {
    * Handle emergency access recovery
    * @private
    */
-  async handleEmergencyAccess(_client, _tokenData, _actions) {
+  handleEmergencyAccess(_client, _tokenData, _actions) {
     // Emergency access logic - provide temporary access with limited permissions
     return {
       type: 'emergency_access',

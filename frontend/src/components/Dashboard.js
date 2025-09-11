@@ -354,9 +354,19 @@ const Dashboard = () => {
   }, [userStatus, showOnboarding, refreshing, fetchDashboardData]);
 
   const handleConnectGoogle = () => {
-    // Redirect to backend OAuth endpoint
-    const backendUrl = process.env.REACT_APP_API_URL || 'http://localhost:5000/api';
-    window.location.href = `${backendUrl}/oauth/google`;
+    // Redirect to backend OAuth endpoint with authentication
+    const backendUrl = process.env.REACT_APP_API_URL || 'http://localhost:5001/api';
+    const token = localStorage.getItem('floworx_token');
+
+    if (!token) {
+      setError('Authentication required. Please log in again.');
+      return;
+    }
+
+    // For OAuth flows, we need to redirect directly with the token in the URL
+    // This is secure because it's a server-to-server redirect
+    const oauthUrl = `${backendUrl}/oauth/google?token=${encodeURIComponent(token)}`;
+    window.location.href = oauthUrl;
   };
 
   const handleDisconnectGoogle = async () => {

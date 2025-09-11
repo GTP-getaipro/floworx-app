@@ -9,7 +9,7 @@ const request = require('supertest');
 const { errorHandler } = require('../../middleware/errorHandler');
 const {
   validateRegistration,
-  validateLoginSecure,
+  validateLoginSecure: _validateLoginSecure,
   validateEmailSecure,
   validatePasswordSecure,
   validateUUID,

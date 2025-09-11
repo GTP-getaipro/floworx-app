@@ -37,8 +37,7 @@ class TestUtils {
       email: user.email
     });
 
-    return request(this.app)
-      [method.toLowerCase()](endpoint)
+    return request(this.app)[method.toLowerCase()](endpoint)
       .set('Authorization', `Bearer ${token}`)
       .set('Content-Type', 'application/json');
   }
@@ -51,15 +50,14 @@ class TestUtils {
       throw new Error('Test app not initialized. Call initialize() first.');
     }
 
-    return request(this.app)
-      [method.toLowerCase()](endpoint)
+    return request(this.app)[method.toLowerCase()](endpoint)
       .set('Content-Type', 'application/json');
   }
 
   /**
    * Wait for specified duration
    */
-  async wait(ms) {
+  wait(ms) {
     return new Promise(resolve => setTimeout(resolve, ms));
   }
 
@@ -181,7 +179,7 @@ class TestUtils {
   /**
    * Create test database transaction
    */
-  async createTestTransaction() {
+  createTestTransaction() {
     if (!this.testDatabase) {
       throw new Error('Test database not configured');
     }
@@ -198,7 +196,7 @@ class TestUtils {
   /**
    * Setup test data in database
    */
-  async setupTestData(dataType, data) {
+  setupTestData(dataType, data) {
     // This would insert test data into the database
     // For now, we'll simulate it
     const testData = Array.isArray(data) ? data : [data];
@@ -215,7 +213,7 @@ class TestUtils {
   /**
    * Cleanup test data
    */
-  async cleanup() {
+  cleanup() {
     for (const task of this.cleanupTasks) {
       try {
         if (task.type === 'database') {

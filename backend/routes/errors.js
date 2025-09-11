@@ -340,7 +340,7 @@ router.get('/export', authenticateToken, requireAdmin, asyncHandler((req, res) =
     severity
   } = req.query;
 
-  const stats = errorTrackingService.getStats();
+  const _stats = errorTrackingService.getStats();
   const recentErrors = errorTrackingService.getRecentErrors(1000);
   
   // Filter errors based on parameters

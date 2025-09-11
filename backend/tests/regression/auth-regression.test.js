@@ -3,7 +3,7 @@
  * Comprehensive testing of authentication flows and security
  */
 
-const request = require('supertest');
+const _request = require('supertest');
 
 // const app = require('../../server'); // Commented out for now - will be provided by test setup
 const testDataFactory = require('../helpers/testDataFactory');
@@ -261,7 +261,7 @@ describe('Authentication Regression Tests', () => {
     });
 
     test('should validate password reset token', async () => {
-      const userData = testDataFactory.createUser();
+      const _userData = testDataFactory.createUser();
       const resetToken = testDataFactory.generateToken();
       
       // This would normally validate against database

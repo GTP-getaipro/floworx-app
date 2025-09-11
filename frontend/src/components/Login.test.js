@@ -1,7 +1,6 @@
 import React from 'react';
-import { render, screen, waitFor } from '@testing-library/react';
+import { render, screen, waitFor } from '../setupTests';
 import userEvent from '@testing-library/user-event';
-import { BrowserRouter } from 'react-router-dom';
 import Login from './Login';
 import { useAuth } from '../contexts/AuthContext';
 
@@ -31,11 +30,7 @@ describe('Login Component', () => {
   });
 
   const renderLoginComponent = () => {
-    return render(
-      <BrowserRouter>
-        <Login />
-      </BrowserRouter>
-    );
+    return render(<Login />);
   };
 
   test('renders login form correctly', () => {
@@ -79,7 +74,7 @@ describe('Login Component', () => {
       await user.type(emailInput, 'invalid-email');
       await user.tab();
 
-      expect(await screen.findByText('Invalid email format')).toBeInTheDocument();
+      expect(await screen.findByText('Please enter a valid email address')).toBeInTheDocument();
     });
 
     test('shows password min length error', async () => {
@@ -168,8 +163,8 @@ describe('Login Component', () => {
         await user.type(passwordInput, 'wrongpassword');
         await user.click(submitButton);
 
-        expect(await screen.findByText('Invalid credentials')).toBeInTheDocument();
-        expect(screen.getByRole('alert')).toBeInTheDocument();
+        expect(await screen.findAllByText('Invalid credentials')).toHaveLength(2); // Toast and form error
+        expect(screen.getByTestId('toast-error')).toBeInTheDocument();
         expect(mockNavigate).not.toHaveBeenCalled();
     });
 
@@ -187,7 +182,7 @@ describe('Login Component', () => {
         await user.type(passwordInput, 'password123');
         await user.click(submitButton);
 
-        expect(await screen.findByText('An unexpected error occurred. Please try again.')).toBeInTheDocument();
+        expect(await screen.findAllByText('An unexpected error occurred. Please try again.')).toHaveLength(2); // Toast and form error
         expect(mockNavigate).not.toHaveBeenCalled();
     });
   });

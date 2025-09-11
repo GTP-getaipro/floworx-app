@@ -90,10 +90,10 @@ async function applyPerformanceIndexes() {
     
     try {
       const testQuery = `
-        EXPLAIN (ANALYZE, BUFFERS) 
-        SELECT id, email, password_hash, email_verified, first_name 
-        FROM users 
-        WHERE email = $1 AND deleted_at IS NULL
+        EXPLAIN (ANALYZE, BUFFERS)
+        SELECT id, email, password_hash, email_verified, first_name
+        FROM users
+        WHERE email = $1
       `;
       
       const testResult = await query(testQuery, ['test@example.com']);

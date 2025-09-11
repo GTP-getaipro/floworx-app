@@ -19,20 +19,20 @@ const productionMonitoringConfig = {
     // Performance thresholds for FloWorx SaaS
     thresholds: {
       // Database query performance
-      slowQuery: parseInt(process.env.MONITOR_SLOW_QUERY_MS) || 500,
-      criticalQuery: parseInt(process.env.MONITOR_CRITICAL_QUERY_MS) || 2000,
-      
+      slowQuery: parseInt(process.env.MONITOR_SLOW_QUERY_MS, 10) || 500,
+      criticalQuery: parseInt(process.env.MONITOR_CRITICAL_QUERY_MS, 10) || 2000,
+
       // API response times
-      slowEndpoint: parseInt(process.env.MONITOR_SLOW_ENDPOINT_MS) || 1000,
-      criticalEndpoint: parseInt(process.env.MONITOR_CRITICAL_ENDPOINT_MS) || 3000,
+      slowEndpoint: parseInt(process.env.MONITOR_SLOW_ENDPOINT_MS, 10) || 1000,
+      criticalEndpoint: parseInt(process.env.MONITOR_CRITICAL_ENDPOINT_MS, 10) || 3000,
       
       // System resources
       highMemoryUsage: parseFloat(process.env.MONITOR_HIGH_MEMORY) || 0.85,
       highCpuUsage: parseFloat(process.env.MONITOR_HIGH_CPU) || 0.80,
       
       // Database connections
-      highConnectionCount: parseInt(process.env.MONITOR_HIGH_CONNECTIONS) || 15,
-      criticalConnectionCount: parseInt(process.env.MONITOR_CRITICAL_CONNECTIONS) || 25,
+      highConnectionCount: parseInt(process.env.MONITOR_HIGH_CONNECTIONS, 10) || 15,
+      criticalConnectionCount: parseInt(process.env.MONITOR_CRITICAL_CONNECTIONS, 10) || 25,
       
       // Error rates
       errorRate: parseFloat(process.env.MONITOR_ERROR_RATE) || 0.02, // 2%
@@ -46,18 +46,18 @@ const productionMonitoringConfig = {
 
     // Data retention policies
     retention: {
-      queryMetrics: parseInt(process.env.MONITOR_QUERY_RETENTION_HOURS) || 24, // 24 hours
-      errorData: parseInt(process.env.MONITOR_ERROR_RETENTION_DAYS) || 30, // 30 days
-      performanceMetrics: parseInt(process.env.MONITOR_PERFORMANCE_RETENTION_DAYS) || 7, // 7 days
-      alertHistory: parseInt(process.env.MONITOR_ALERT_RETENTION_DAYS) || 90 // 90 days
+      queryMetrics: parseInt(process.env.MONITOR_QUERY_RETENTION_HOURS, 10) || 24, // 24 hours
+      errorData: parseInt(process.env.MONITOR_ERROR_RETENTION_DAYS, 10) || 30, // 30 days
+      performanceMetrics: parseInt(process.env.MONITOR_PERFORMANCE_RETENTION_DAYS, 10) || 7, // 7 days
+      alertHistory: parseInt(process.env.MONITOR_ALERT_RETENTION_DAYS, 10) || 90 // 90 days
     },
 
     // Collection intervals
     intervals: {
-      metricsCollection: parseInt(process.env.MONITOR_METRICS_INTERVAL_MS) || 30000, // 30 seconds
-      healthCheck: parseInt(process.env.MONITOR_HEALTH_CHECK_INTERVAL_MS) || 60000, // 1 minute
-      alertCheck: parseInt(process.env.MONITOR_ALERT_CHECK_INTERVAL_MS) || 60000, // 1 minute
-      cleanup: parseInt(process.env.MONITOR_CLEANUP_INTERVAL_MS) || 3600000 // 1 hour
+      metricsCollection: parseInt(process.env.MONITOR_METRICS_INTERVAL_MS, 10) || 30000, // 30 seconds
+      healthCheck: parseInt(process.env.MONITOR_HEALTH_CHECK_INTERVAL_MS, 10) || 60000, // 1 minute
+      alertCheck: parseInt(process.env.MONITOR_ALERT_CHECK_INTERVAL_MS, 10) || 60000, // 1 minute
+      cleanup: parseInt(process.env.MONITOR_CLEANUP_INTERVAL_MS, 10) || 3600000 // 1 hour
     }
   },
 
@@ -70,7 +70,7 @@ const productionMonitoringConfig = {
       enabled: process.env.ERROR_FILE_LOGGING === 'true',
       directory: process.env.ERROR_LOG_DIRECTORY || '/var/log/floworx/errors',
       maxFileSize: process.env.ERROR_LOG_MAX_SIZE || '100MB',
-      maxFiles: parseInt(process.env.ERROR_LOG_MAX_FILES) || 10,
+      maxFiles: parseInt(process.env.ERROR_LOG_MAX_FILES, 10) || 10,
       rotationInterval: process.env.ERROR_LOG_ROTATION || 'daily'
     },
 
@@ -129,7 +129,7 @@ const productionMonitoringConfig = {
       email: {
         enabled: process.env.EMAIL_ALERTS_ENABLED === 'true',
         smtpHost: process.env.SMTP_HOST,
-        smtpPort: parseInt(process.env.SMTP_PORT) || 587,
+        smtpPort: parseInt(process.env.SMTP_PORT, 10) || 587,
         smtpUser: process.env.SMTP_USER,
         smtpPassword: process.env.SMTP_PASSWORD,
         fromAddress: process.env.ALERT_FROM_EMAIL || 'alerts@floworx-iq.com',
@@ -158,19 +158,19 @@ const productionMonitoringConfig = {
     rules: {
       // Cooldown periods to prevent alert spam
       cooldowns: {
-        critical: parseInt(process.env.ALERT_COOLDOWN_CRITICAL_MS) || 300000, // 5 minutes
-        high: parseInt(process.env.ALERT_COOLDOWN_HIGH_MS) || 900000, // 15 minutes
-        medium: parseInt(process.env.ALERT_COOLDOWN_MEDIUM_MS) || 1800000, // 30 minutes
-        low: parseInt(process.env.ALERT_COOLDOWN_LOW_MS) || 3600000 // 1 hour
+        critical: parseInt(process.env.ALERT_COOLDOWN_CRITICAL_MS, 10) || 300000, // 5 minutes
+        high: parseInt(process.env.ALERT_COOLDOWN_HIGH_MS, 10) || 900000, // 15 minutes
+        medium: parseInt(process.env.ALERT_COOLDOWN_MEDIUM_MS, 10) || 1800000, // 30 minutes
+        low: parseInt(process.env.ALERT_COOLDOWN_LOW_MS, 10) || 3600000 // 1 hour
       },
 
       // Escalation rules
       escalation: {
         enabled: process.env.ALERT_ESCALATION_ENABLED === 'true',
         timeouts: {
-          critical: parseInt(process.env.ESCALATION_CRITICAL_MS) || 900000, // 15 minutes
-          high: parseInt(process.env.ESCALATION_HIGH_MS) || 1800000, // 30 minutes
-          medium: parseInt(process.env.ESCALATION_MEDIUM_MS) || 3600000 // 1 hour
+          critical: parseInt(process.env.ESCALATION_CRITICAL_MS, 10) || 900000, // 15 minutes
+          high: parseInt(process.env.ESCALATION_HIGH_MS, 10) || 1800000, // 30 minutes
+          medium: parseInt(process.env.ESCALATION_MEDIUM_MS, 10) || 3600000 // 1 hour
         }
       }
     }
@@ -232,33 +232,33 @@ const productionMonitoringConfig = {
     services: {
       database: {
         enabled: true,
-        timeout: parseInt(process.env.HEALTH_CHECK_DB_TIMEOUT_MS) || 5000,
+        timeout: parseInt(process.env.HEALTH_CHECK_DB_TIMEOUT_MS, 10) || 5000,
         query: 'SELECT 1 as health_check'
       },
       
       n8n: {
         enabled: process.env.N8N_HEALTH_CHECK_ENABLED === 'true',
         url: process.env.N8N_HEALTH_CHECK_URL,
-        timeout: parseInt(process.env.HEALTH_CHECK_N8N_TIMEOUT_MS) || 10000
+        timeout: parseInt(process.env.HEALTH_CHECK_N8N_TIMEOUT_MS, 10) || 10000
       },
 
       gmail: {
         enabled: true,
-        timeout: parseInt(process.env.HEALTH_CHECK_GMAIL_TIMEOUT_MS) || 15000
+        timeout: parseInt(process.env.HEALTH_CHECK_GMAIL_TIMEOUT_MS, 10) || 15000
       },
 
       supabase: {
         enabled: process.env.SUPABASE_HEALTH_CHECK_ENABLED === 'true',
         url: process.env.SUPABASE_URL,
-        timeout: parseInt(process.env.HEALTH_CHECK_SUPABASE_TIMEOUT_MS) || 10000
+        timeout: parseInt(process.env.HEALTH_CHECK_SUPABASE_TIMEOUT_MS, 10) || 10000
       }
     },
 
     // Health check intervals
     intervals: {
-      internal: parseInt(process.env.HEALTH_CHECK_INTERNAL_INTERVAL_MS) || 30000, // 30 seconds
-      external: parseInt(process.env.HEALTH_CHECK_EXTERNAL_INTERVAL_MS) || 60000, // 1 minute
-      deep: parseInt(process.env.HEALTH_CHECK_DEEP_INTERVAL_MS) || 300000 // 5 minutes
+      internal: parseInt(process.env.HEALTH_CHECK_INTERNAL_INTERVAL_MS, 10) || 30000, // 30 seconds
+      external: parseInt(process.env.HEALTH_CHECK_EXTERNAL_INTERVAL_MS, 10) || 60000, // 1 minute
+      deep: parseInt(process.env.HEALTH_CHECK_DEEP_INTERVAL_MS, 10) || 300000 // 5 minutes
     }
   },
 
@@ -272,7 +272,7 @@ const productionMonitoringConfig = {
       triggers: {
         cpuThreshold: parseFloat(process.env.AUTO_SCALE_CPU_THRESHOLD) || 0.70,
         memoryThreshold: parseFloat(process.env.AUTO_SCALE_MEMORY_THRESHOLD) || 0.80,
-        responseTimeThreshold: parseInt(process.env.AUTO_SCALE_RESPONSE_TIME_MS) || 2000
+        responseTimeThreshold: parseInt(process.env.AUTO_SCALE_RESPONSE_TIME_MS, 10) || 2000
       }
     },
 
@@ -296,7 +296,7 @@ const productionMonitoringConfig = {
     rateLimiting: {
       trackViolations: true,
       alertOnSuspiciousActivity: true,
-      blockThreshold: parseInt(process.env.SECURITY_BLOCK_THRESHOLD) || 100
+      blockThreshold: parseInt(process.env.SECURITY_BLOCK_THRESHOLD, 10) || 100
     },
 
     // Authentication monitoring
@@ -304,7 +304,7 @@ const productionMonitoringConfig = {
       trackFailedLogins: true,
       trackSuspiciousPatterns: true,
       alertOnBruteForce: true,
-      lockoutThreshold: parseInt(process.env.AUTH_LOCKOUT_THRESHOLD) || 5
+      lockoutThreshold: parseInt(process.env.AUTH_LOCKOUT_THRESHOLD, 10) || 5
     }
   }
 };

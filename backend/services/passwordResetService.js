@@ -68,7 +68,7 @@ class PasswordResetService {
       const oneHourAgo = new Date(Date.now() - 60 * 60 * 1000);
       const attemptsResult = await pool.query(recentAttemptsQuery, [user.id, oneHourAgo]);
 
-      if (parseInt(attemptsResult.rows[0].attempt_count) >= this.maxResetAttempts) {
+      if (parseInt(attemptsResult.rows[0].attempt_count, 10) >= this.maxResetAttempts) {
         return {
           success: false,
           error: 'Rate limit exceeded',

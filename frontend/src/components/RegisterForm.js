@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useCallback, useMemo } from 'react';
 import { useNavigate } from 'react-router-dom';
 
 import { useAuth } from '../contexts/AuthContext';
@@ -43,6 +43,20 @@ const RegisterForm = () => {
   const [submitResult, setSubmitResult] = useState(null);
   const [currentStep, setCurrentStep] = useState(0);
 
+  // Memoize options to prevent infinite re-renders
+  const persistenceOptions = useMemo(() => ({
+    excludeFields: ['password', 'confirmPassword'], // Don't persist sensitive data
+    storage: 'sessionStorage',
+    debounceMs: 300,
+  }), []);
+
+  const initialPersistenceValues = useMemo(() => ({
+    firstName: '',
+    lastName: '',
+    companyName: '',
+    email: '',
+  }), []);
+
   // Form persistence
   const {
     values: persistedValues,
@@ -53,17 +67,8 @@ const RegisterForm = () => {
     clearPersistedData,
   } = useFormPersistence(
     'registration',
-    {
-      firstName: '',
-      lastName: '',
-      companyName: '',
-      email: '',
-    },
-    {
-      excludeFields: ['password', 'confirmPassword'], // Don't persist sensitive data
-      storage: 'sessionStorage',
-      debounceMs: 300,
-    }
+    initialPersistenceValues,
+    persistenceOptions
   );
 
   // Registration steps for progress indicator
@@ -111,10 +116,10 @@ const RegisterForm = () => {
         // Don't override password fields - let them maintain their current values
       }));
     }
-  }, [persistenceLoaded, persistedValues, setValues]);
+  }, [persistenceLoaded, persistedValues]);
 
   // Progress tracking
-  const updateProgress = (fieldName, fieldValue) => {
+  const updateProgress = useCallback((fieldName, fieldValue) => {
     const personalInfoFields = ['firstName', 'lastName', 'companyName'];
     const accountFields = ['email', 'password', 'confirmPassword'];
 
@@ -133,17 +138,17 @@ const RegisterForm = () => {
     } else {
       setCurrentStep(0);
     }
-  };
+  }, [formData]);
 
   // Enhanced change handler with persistence
-  const handleChange = e => {
+  const handleChange = useCallback(e => {
     originalHandleChange(e);
     handlePersistenceChange(e);
 
     // Update progress based on form completion
     const { name, value } = e.target;
     updateProgress(name, value);
-  };
+  }, [originalHandleChange, handlePersistenceChange, updateProgress]);
 
   // Redirect if already authenticated
   useEffect(() => {

@@ -14,7 +14,7 @@ class EmailService {
     // Configure email transporter with flexible SMTP settings
     return nodemailer.createTransport({
       host: process.env.SMTP_HOST || 'smtp.gmail.com',
-      port: parseInt(process.env.SMTP_PORT) || 587,
+      port: parseInt(process.env.SMTP_PORT, 10) || 587,
       secure: false, // true for 465, false for other ports
       auth: {
         user: process.env.SMTP_USER,
@@ -193,18 +193,20 @@ class EmailService {
    * Store verification token in database
    * @param {string} userId - User ID
    * @param {string} token - Verification token
+   * @param {string} email - User email
+   * @param {string} firstName - User first name
    */
-  async storeVerificationToken(userId, token) {
+  async storeVerificationToken(userId, token, email = '', firstName = '') {
     const expiresAt = new Date(Date.now() + 24 * 60 * 60 * 1000); // 24 hours
 
     const queryText = `
-      INSERT INTO email_verification_tokens (user_id, token, expires_at)
-      VALUES ($1, $2, $3)
+      INSERT INTO email_verification_tokens (user_id, token, email, first_name, expires_at)
+      VALUES ($1, $2, $3, $4, $5)
       ON CONFLICT (user_id)
-      DO UPDATE SET token = EXCLUDED.token, expires_at = EXCLUDED.expires_at, created_at = CURRENT_TIMESTAMP
+      DO UPDATE SET token = EXCLUDED.token, email = EXCLUDED.email, first_name = EXCLUDED.first_name, expires_at = EXCLUDED.expires_at, created_at = CURRENT_TIMESTAMP
     `;
 
-    await query(queryText, [userId, token, expiresAt]);
+    await query(queryText, [userId, token, email, firstName, expiresAt]);
   }
 
   /**

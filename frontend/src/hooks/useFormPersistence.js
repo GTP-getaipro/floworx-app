@@ -1,4 +1,4 @@
-import { useState, useEffect, useCallback } from 'react';
+import { useState, useEffect, useCallback, useMemo } from 'react';
 
 const useFormPersistence = (formKey, initialValues = {}, options = {}) => {
   const {
@@ -12,8 +12,8 @@ const useFormPersistence = (formKey, initialValues = {}, options = {}) => {
   const [isLoaded, setIsLoaded] = useState(false);
   const [hasPersistedData, setHasPersistedData] = useState(false);
 
-  const storageKey = `form_${formKey}`;
-  const storageAPI = storage === 'localStorage' ? localStorage : sessionStorage;
+  const storageKey = useMemo(() => `form_${formKey}`, [formKey]);
+  const storageAPI = useMemo(() => storage === 'localStorage' ? localStorage : sessionStorage, [storage]);
 
   // Load persisted data on mount
   useEffect(() => {

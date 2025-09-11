@@ -3,10 +3,10 @@
  * Tests authentication, encryption, and security features
  */
 
-const bcrypt = require('bcrypt');
+const _bcrypt = require('bcrypt');
 const jwt = require('jsonwebtoken');
 
-const SecurityService = require('../../../services/SecurityService');
+const _SecurityService = require('../../../services/SecurityService');
 
 // Mock dependencies
 jest.mock('../../../utils/logger');

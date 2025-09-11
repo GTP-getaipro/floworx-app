@@ -1,64 +1,62 @@
-﻿# ---- Frontend build stage ----
-FROM node:20-alpine AS frontend-builder
-WORKDIR /app/frontend
+# Multi-stage build for FloWorx
+FROM node:18-alpine AS base
 
-COPY frontend/package*.json ./
-# Install ALL dependencies for build (dev included)
-RUN npm ci
-
-COPY frontend/ ./
-# Build the React application with memory optimization
-RUN NODE_OPTIONS="--max-old-space-size=2048" npm run build
-
-
-# ---- Production stage ----
-FROM node:20-alpine AS production
+# Install dependencies only when needed
+FROM base AS deps
 WORKDIR /app
 
-# Cache busting - force rebuild with timestamp
-ARG CACHEBUST=1
-ARG BUILD_DATE
-RUN echo "Build timestamp: $(date)" > /tmp/buildtime && \
-    echo "Build date arg: ${BUILD_DATE}" >> /tmp/buildtime
+# Copy package files
+COPY backend/package*.json ./backend/
+COPY frontend/package*.json ./frontend/
+COPY package*.json ./
 
-# Install dependencies needed as root
-RUN apk add --no-cache dumb-init
+# Install dependencies
+RUN cd backend && npm ci --only=production
+RUN cd frontend && npm ci
+
+# Build frontend
+FROM base AS frontend-builder
+WORKDIR /app
+COPY frontend/ ./frontend/
+COPY --from=deps /app/frontend/node_modules ./frontend/node_modules
+
+# Set production environment for build
+ENV NODE_ENV=production
+ENV REACT_APP_API_URL=https://app.floworx-iq.com/api
+ENV GENERATE_SOURCEMAP=false
+ENV CI=false
+
+RUN cd frontend && npm run build
+
+# Production image
+FROM base AS runner
+WORKDIR /app
+
+ENV NODE_ENV=production
+ENV PORT=5001
 
 # Create non-root user
-RUN addgroup -g 1001 -S nodejs && \
-    adduser -S floworx -u 1001
+RUN addgroup --system --gid 1001 nodejs
+RUN adduser --system --uid 1001 nextjs
 
-# Copy all application files as root first
-COPY package*.json ./
-COPY backend/package*.json ./backend/
-COPY --from=frontend-builder /app/frontend/build ./frontend/build
+# Copy backend files
 COPY backend/ ./backend/
-COPY shared/ ./shared/
-COPY database/ ./database/
-COPY start.sh /app/start.sh
+COPY --from=deps /app/backend/node_modules ./backend/node_modules
 
-# Install all dependencies
-RUN npm ci --only=production && npm cache clean --force
-RUN cd backend && \
-    npm pkg delete scripts.prepare && \
-    npm ci --omit=dev && \
-    npm cache clean --force
+# Copy built frontend
+COPY --from=frontend-builder /app/frontend/build ./frontend/build
 
-# Set correct permissions for all files as root
-RUN chmod +x /app/start.sh
-RUN chown -R floworx:nodejs /app
+# Copy API files for serverless functions
+COPY api/ ./api/
 
-# ---- Switch to non-root user for security ----
-USER floworx
+# Set permissions
+RUN chown -R nextjs:nodejs /app
+USER nextjs
 
-EXPOSE 5000
+EXPOSE 5001
 
-# Health check with better error handling
-HEALTHCHECK --interval=30s --timeout=10s --start-period=30s --retries=3 \
-  CMD node -e "require('http').get('http://localhost:5000/api/health', (res) => { process.exit(res.statusCode === 200 ? 0 : 1) }).on('error', () => process.exit(1))"
+# Health check
+HEALTHCHECK --interval=30s --timeout=3s --start-period=5s --retries=3 \
+  CMD curl -f http://localhost:5001/api/health || exit 1
 
-# Use dumb-init to handle signals properly
-ENTRYPOINT ["dumb-init", "--"]
-
-# Start the application using the startup script
-CMD ["/app/start.sh"]
+CMD ["node", "backend/server.js"]

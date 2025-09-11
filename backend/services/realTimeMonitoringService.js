@@ -225,9 +225,9 @@ class RealTimeMonitoringService extends EventEmitter {
       `);
 
       return {
-        activeConnections: parseInt(stats.rows[0].active_connections) || 0,
-        totalConnections: parseInt(stats.rows[0].total_connections) || 0,
-        backendCount: parseInt(stats.rows[0].backend_count) || 0
+        activeConnections: parseInt(stats.rows[0].active_connections, 10) || 0,
+        totalConnections: parseInt(stats.rows[0].total_connections, 10) || 0,
+        backendCount: parseInt(stats.rows[0].backend_count, 10) || 0
       };
     } catch (error) {
       logger.error('Failed to get database stats', { error: error.message });
@@ -264,7 +264,7 @@ class RealTimeMonitoringService extends EventEmitter {
    */
   checkGlobalPerformanceAlerts() {
     const perf = this.metrics.performance;
-    const now = Date.now();
+    const _now = Date.now();
 
     // High error rate alert
     const errorRate = perf.totalQueries > 0 ? perf.failedQueries / perf.totalQueries : 0;

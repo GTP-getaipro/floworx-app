@@ -17,7 +17,7 @@ describe('Monitoring System Regression Tests', () => {
 
   describe('Real-time Monitoring Service', () => {
     test('should track database query performance', async () => {
-      const queryData = testDataFactory.createDatabaseQuery({
+      const _queryData = testDataFactory.createDatabaseQuery({
         text: 'SELECT * FROM users WHERE id = $1',
         values: ['test-user-1'],
         duration: 150
@@ -31,7 +31,7 @@ describe('Monitoring System Regression Tests', () => {
     });
 
     test('should identify slow queries above threshold', async () => {
-      const slowQueryData = testDataFactory.createDatabaseQuery({
+      const _slowQueryData = testDataFactory.createDatabaseQuery({
         text: 'SELECT * FROM users u JOIN credentials c ON u.id = c.user_id',
         duration: 1500 // Above 500ms threshold
       });
@@ -43,7 +43,7 @@ describe('Monitoring System Regression Tests', () => {
     });
 
     test('should monitor API endpoint response times', async () => {
-      const performanceData = testDataFactory.createPerformanceMetrics({
+      const _performanceData = testDataFactory.createPerformanceMetrics({
         responseTime: 250
       });
 
@@ -135,7 +135,7 @@ describe('Monitoring System Regression Tests', () => {
 
     test('should group similar errors', async () => {
       // Create multiple similar errors
-      const baseError = testDataFactory.createErrorLog({
+      const _baseError = testDataFactory.createErrorLog({
         message: 'Connection timeout',
         stack: 'Error: Connection timeout\n    at database.js:123:45'
       });
@@ -249,7 +249,7 @@ describe('Monitoring System Regression Tests', () => {
   describe('Adaptive Threshold Service', () => {
     test('should learn from historical performance data', async () => {
       // Generate historical performance data
-      const performanceData = testUtils.generatePerformanceData(100);
+      const _performanceData = testUtils.generatePerformanceData(100);
 
       const response = await testUtils.authenticatedRequest('GET', '/api/monitoring/adaptive-thresholds');
 

@@ -12,10 +12,10 @@ const {
   AppError,
   ValidationError,
   AuthenticationError,
-  AuthorizationError,
-  NotFoundError,
-  ConflictError,
-  RateLimitError,
+  // AuthorizationError,
+  // NotFoundError,
+  // ConflictError,
+  // RateLimitError,
   DatabaseError,
   asyncHandler
 } = require('../../middleware/errorHandler');
@@ -149,21 +149,21 @@ describe('Error Handler Middleware', () => {
     beforeEach(() => {
       app.get(
         '/test-async-success',
-        asyncHandler(async (req, res) => {
+        asyncHandler((req, res) => {
           res.json({ success: true, message: 'Async operation completed' });
         })
       );
 
       app.get(
         '/test-async-error',
-        asyncHandler(async (req, _res) => {
+        asyncHandler((_req, _res) => {
           throw new ValidationError('Async validation failed');
         })
       );
 
       app.get(
         '/test-async-promise-rejection',
-        asyncHandler(async (req, _res) => {
+        asyncHandler(async (_req, _res) => {
           await Promise.reject(new Error('Promise rejected'));
         })
       );

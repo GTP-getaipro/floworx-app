@@ -2,7 +2,15 @@ const jwt = require('jsonwebtoken');
 
 const { query } = require('../database/unified-connection');
 
-const { createError } = require('./errorHandler');
+const { AuthenticationError, AuthorizationError } = require('./errorHandler');
+
+// Helper function to create errors
+const createError = (message, statusCode, details) => {
+  const error = new Error(message);
+  error.statusCode = statusCode;
+  error.details = details;
+  return error;
+};
 
 // Cache of recently verified tokens and their user data
 const tokenCache = new Map();
@@ -14,23 +22,23 @@ const TOKEN_CACHE_TTL = 5 * 60 * 1000; // 5 minutes
  * @returns {Promise<Object>} User data
  */
 const verifyAndGetUser = async userId => {
-  const userQuery = 'SELECT id, email, first_name, last_name, email_verified, account_locked_until FROM users WHERE id = $1 AND deleted_at IS NULL';
+  const userQuery = 'SELECT id, email, first_name, last_name, email_verified, account_locked_until FROM users WHERE id = $1';
   const userResult = await query(userQuery, [userId]);
 
   if (userResult.rows.length === 0) {
-    throw createError('Unauthorized', 401, 'User no longer exists');
+    throw new AuthenticationError('User no longer exists');
   }
 
   const user = userResult.rows[0];
 
   // Check if account is locked
   if (user.account_locked_until && new Date(user.account_locked_until) > new Date()) {
-    throw createError('Forbidden', 403, 'Account is locked');
+    throw new AuthorizationError('Account is locked');
   }
 
   // Check if email is verified
   if (!user.email_verified) {
-    throw createError('Forbidden', 403, 'Email not verified');
+    throw new AuthorizationError('Email not verified');
   }
 
   return {
@@ -54,7 +62,7 @@ const authenticateToken = async (req, res, next) => {
     const token = authHeader && authHeader.split(' ')[1]; // Bearer TOKEN
 
     if (!token) {
-      throw createError('Unauthorized', 401, 'Access token required');
+      throw new AuthenticationError('Access token required');
     }
 
     // Check token cache first
@@ -88,9 +96,9 @@ const authenticateToken = async (req, res, next) => {
     next();
   } catch (error) {
     if (error.name === 'TokenExpiredError') {
-      next(createError('Unauthorized', 401, 'Token has expired'));
+      next(new AuthenticationError('Token has expired'));
     } else if (error.name === 'JsonWebTokenError') {
-      next(createError('Unauthorized', 401, 'Invalid token format'));
+      next(new AuthenticationError('Invalid token format'));
     } else {
       next(error);
     }

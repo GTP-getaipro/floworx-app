@@ -1,0 +1,49 @@
+{
+  "timestamp": "2025-09-11T14:00:27.975Z",
+  "tests": {
+    "frontendDeps": {
+      "success": true,
+      "message": "✅ Frontend dependencies installed",
+      "details": {
+        "exitCode": 0,
+        "hasNodeModules": true
+      }
+    },
+    "frontendBuild": {
+      "success": true,
+      "message": "✅ Frontend build successful",
+      "details": {
+        "exitCode": 0,
+        "buildExists": true,
+        "indexExists": true,
+        "staticExists": true,
+        "buildSize": 1354133
+      }
+    },
+    "backendDeps": {
+      "success": true,
+      "message": "✅ Backend dependencies installed",
+      "details": {
+        "exitCode": 0,
+        "hasNodeModules": true
+      }
+    },
+    "rootBuild": {
+      "success": true,
+      "message": "✅ Root build script successful (Coolify compatible)",
+      "details": {
+        "exitCode": 0,
+        "buildExists": true,
+        "indexExists": true,
+        "command": "npm run build"
+      }
+    }
+  },
+  "overall": {
+    "passedTests": 4,
+    "totalTests": 4,
+    "successRate": "100.0",
+    "status": "READY_FOR_DEPLOYMENT",
+    "coolifyCompatible": true
+  }
+}

@@ -1,0 +1,581 @@
+{
+  "timestamp": "2025-09-11T18:57:01.872Z",
+  "baseUrl": "https://app.floworx-iq.com",
+  "analysisResults": {
+    "results": {
+      "health": {
+        "title": "🏥 Health & Monitoring",
+        "tests": [
+          {
+            "name": "Main Health Check",
+            "endpoint": "/api/health",
+            "method": "GET",
+            "expectedStatus": [
+              200
+            ],
+            "actualStatus": 200,
+            "passed": true,
+            "success": true,
+            "data": {
+              "status": "ok",
+              "timestamp": "2025-09-11T18:56:58.578Z",
+              "version": "1.0.1",
+              "environment": "production",
+              "deployment": {
+                "buildTime": "2025-09-11T18:56:58.578Z",
+                "nodeVersion": "v22.11.0"
+              }
+            }
+          },
+          {
+            "name": "Database Health",
+            "endpoint": "/api/health/db",
+            "method": "GET",
+            "expectedStatus": [
+              200
+            ],
+            "actualStatus": 200,
+            "passed": true,
+            "success": true,
+            "data": {
+              "database": "connected",
+              "timestamp": {},
+              "status": "healthy"
+            }
+          },
+          {
+            "name": "Cache Health",
+            "endpoint": "/api/health/cache",
+            "method": "GET",
+            "expectedStatus": [
+              200,
+              503
+            ],
+            "actualStatus": 503,
+            "passed": true,
+            "success": false,
+            "error": "Request failed with status code 503",
+            "data": {
+              "status": "unhealthy",
+              "service": "cache",
+              "error": "Redis is already connecting/connected",
+              "fallback": "memory_cache_active",
+              "details": {
+                "type": "Redis/KeyDB",
+                "connection": "failed",
+                "impact": "Using memory cache fallback"
+              }
+            }
+          },
+          {
+            "name": "Performance Metrics",
+            "endpoint": "/api/performance",
+            "method": "GET",
+            "expectedStatus": [
+              200
+            ],
+            "actualStatus": 200,
+            "passed": true,
+            "success": true,
+            "data": {
+              "success": true,
+              "data": {
+                "uptime": 1954,
+                "requestCount": 418,
+                "errorRate": "4.07",
+                "requestsPerSecond": "0.21",
+                "slowRequestCount": 10,
+                "slowQueryCount": 0,
+                "status": "healthy"
+              }
+            }
+          }
+        ]
+      },
+      "auth": {
+        "title": "🔐 Authentication System",
+        "tests": [
+          {
+            "name": "Password Requirements",
+            "endpoint": "/api/auth/password-requirements",
+            "method": "GET",
+            "expectedStatus": [
+              200
+            ],
+            "actualStatus": 200,
+            "passed": true,
+            "success": true,
+            "data": {
+              "requirements": {
+                "minLength": 8,
+                "requireUppercase": true,
+                "requireLowercase": true,
+                "requireNumbers": true,
+                "requireSpecialChars": false
+              },
+              "description": "Password must be at least 8 characters long and contain uppercase letters, lowercase letters, and numbers."
+            }
+          },
+          {
+            "name": "Registration Endpoint",
+            "endpoint": "/api/auth/register",
+            "method": "POST",
+            "expectedStatus": [
+              400,
+              409,
+              429
+            ],
+            "actualStatus": 400,
+            "passed": true,
+            "success": false,
+            "error": "Request failed with status code 400",
+            "data": {
+              "success": false,
+              "error": {
+                "message": "Request validation failed",
+                "code": 400,
+                "requestId": "POST:/api/auth/register"
+              }
+            }
+          },
+          {
+            "name": "Login Endpoint",
+            "endpoint": "/api/auth/login",
+            "method": "POST",
+            "expectedStatus": [
+              401,
+              429
+            ],
+            "actualStatus": 401,
+            "passed": true,
+            "success": false,
+            "error": "Request failed with status code 401",
+            "data": {
+              "success": false,
+              "error": {
+                "type": "AUTHENTICATION_ERROR",
+                "message": "Invalid credentials",
+                "code": 401
+              }
+            }
+          }
+        ]
+      },
+      "business": {
+        "title": "🏢 Business Configuration",
+        "tests": [
+          {
+            "name": "Business Types List",
+            "endpoint": "/api/business-types",
+            "method": "GET",
+            "expectedStatus": [
+              200
+            ],
+            "actualStatus": 200,
+            "passed": true,
+            "success": true,
+            "data": {
+              "success": true,
+              "data": [
+                {
+                  "id": "6",
+                  "name": "General Contractor",
+                  "slug": "general-contractor",
+                  "description": "General construction and contracting services",
+                  "default_categories": [
+                    "Project Inquiries",
+                    "Estimates",
+                    "Scheduling",
+                    "Material Orders",
+                    "Customer Communication"
+                  ],
+                  "created_at": {},
+                  "updated_at": {}
+                },
+                {
+                  "id": "1",
+                  "name": "Hot Tub & Spa",
+                  "slug": "hot-tub-spa",
+                  "description": "Email automation for hot tub dealers, service companies, and spa retailers specializing in sales, service calls, parts orders, and warranty claims",
+                  "default_categories": [
+                    {
+                      "name": "Service Calls",
+                      "priority": "high",
+                      "description": "Emergency repairs and maintenance requests"
+                    },
+                    {
+                      "name": "Sales Inquiries",
+                      "priority": "medium",
+                      "description": "New customer quotes and product information"
+                    },
+                    {
+                      "name": "Parts Orders",
+                      "priority": "medium",
+                      "description": "Replacement parts and accessories"
+                    },
+                    {
+                      "name": "Warranty Claims",
+                      "priority": "high",
+                      "description": "Product warranty and support issues"
+                    },
+                    {
+                      "name": "General Support",
+                      "priority": "low",
+                      "description": "General questions and customer support"
+                    }
+                  ],
+                  "created_at": {},
+                  "updated_at": {}
+                },
+                {
+                  "id": "5",
+                  "name": "HVAC Services",
+                  "slug": "hvac-services",
+                  "description": "Heating, ventilation, and air conditioning services",
+                  "default_categories": [
+                    "Service Calls",
+                    "Maintenance",
+                    "Installation",
+                    "Emergency Repairs",
+                    "Customer Support"
+                  ],
+                  "created_at": {},
+                  "updated_at": {}
+                },
+                {
+                  "id": "7",
+                  "name": "Other Service Business",
+                  "slug": "other-service",
+                  "description": "Other professional service businesses",
+                  "default_categories": [
+                    "Customer Inquiries",
+                    "Service Requests",
+                    "Scheduling",
+                    "Follow-up",
+                    "Support"
+                  ],
+                  "created_at": {},
+                  "updated_at": {}
+                },
+                {
+                  "id": "4",
+                  "name": "Pool Services",
+                  "slug": "pool-services",
+                  "description": "Swimming pool maintenance, cleaning, and repair services",
+                  "default_categories": [
+                    "Pool Cleaning",
+                    "Chemical Balancing",
+                    "Equipment Repair",
+                    "Pool Opening/Closing",
+                    "Customer Inquiries"
+                  ],
+                  "created_at": {},
+                  "updated_at": {}
+                },
+                {
+                  "id": "2",
+                  "name": "Test Business Type",
+                  "slug": "duplicate-test-slug",
+                  "description": null,
+                  "default_categories": [],
+                  "created_at": {},
+                  "updated_at": {}
+                }
+              ]
+            }
+          }
+        ]
+      },
+      "oauth": {
+        "title": "🔗 OAuth Integration",
+        "tests": [
+          {
+            "name": "Google OAuth Redirect",
+            "endpoint": "/api/oauth/google",
+            "method": "GET",
+            "expectedStatus": [
+              302
+            ],
+            "actualStatus": 200,
+            "passed": false,
+            "success": true,
+            "data": "<!doctype html><html lang=\"en\"><head><meta charset=\"utf-8\"/><link rel=\"icon\" href=\"/favicon.ico\"/><meta name=\"viewport\" content=\"width=device-width,initial-scale=1\"/><meta name=\"theme-color\" content=\"#667eea\"/><meta name=\"description\" content=\"Floworx - Secure automation platform for your workflows\"/><link rel=\"apple-touch-icon\" href=\"/logo192.png\"/><link rel=\"manifest\" href=\"/manifest.json\"/><title>Floworx - Secure Workflow Automation</title><script defer=\"defer\" src=\"/static/js/main.133fba59.js\"></script><link href=\"/static/css/main.cc28efd1.css\" rel=\"stylesheet\"></head><body><noscript>You need to enable JavaScript to run this app.</noscript><div id=\"root\"></div></body></html>"
+          },
+          {
+            "name": "OAuth Callback",
+            "endpoint": "/api/oauth/google/callback",
+            "method": "GET",
+            "expectedStatus": [
+              302
+            ],
+            "actualStatus": 200,
+            "passed": false,
+            "success": true,
+            "data": "<!doctype html><html lang=\"en\"><head><meta charset=\"utf-8\"/><link rel=\"icon\" href=\"/favicon.ico\"/><meta name=\"viewport\" content=\"width=device-width,initial-scale=1\"/><meta name=\"theme-color\" content=\"#667eea\"/><meta name=\"description\" content=\"Floworx - Secure automation platform for your workflows\"/><link rel=\"apple-touch-icon\" href=\"/logo192.png\"/><link rel=\"manifest\" href=\"/manifest.json\"/><title>Floworx - Secure Workflow Automation</title><script defer=\"defer\" src=\"/static/js/main.133fba59.js\"></script><link href=\"/static/css/main.cc28efd1.css\" rel=\"stylesheet\"></head><body><noscript>You need to enable JavaScript to run this app.</noscript><div id=\"root\"></div></body></html>"
+          }
+        ]
+      },
+      "protected": {
+        "title": "🔒 Protected Endpoints",
+        "tests": [
+          {
+            "name": "User Status",
+            "endpoint": "/api/user/status",
+            "method": "GET",
+            "expectedStatus": [
+              401
+            ],
+            "actualStatus": 401,
+            "passed": true,
+            "success": false,
+            "error": "Request failed with status code 401",
+            "data": {
+              "success": false,
+              "error": {
+                "type": "AUTHENTICATION_ERROR",
+                "message": "Access token required",
+                "code": 401,
+                "requestId": "GET:/api/user/status"
+              }
+            }
+          },
+          {
+            "name": "Dashboard Data",
+            "endpoint": "/api/dashboard",
+            "method": "GET",
+            "expectedStatus": [
+              401
+            ],
+            "actualStatus": 401,
+            "passed": true,
+            "success": false,
+            "error": "Request failed with status code 401",
+            "data": {
+              "success": false,
+              "error": {
+                "type": "AUTHENTICATION_ERROR",
+                "message": "Access token required",
+                "code": 401,
+                "requestId": "GET:/api/dashboard"
+              }
+            }
+          },
+          {
+            "name": "Onboarding Status",
+            "endpoint": "/api/onboarding/status",
+            "method": "GET",
+            "expectedStatus": [
+              401
+            ],
+            "actualStatus": 401,
+            "passed": true,
+            "success": false,
+            "error": "Request failed with status code 401",
+            "data": {
+              "success": false,
+              "error": {
+                "type": "AUTHENTICATION_ERROR",
+                "message": "Access token required",
+                "code": 401,
+                "requestId": "GET:/api/onboarding/status"
+              }
+            }
+          },
+          {
+            "name": "Workflow Status",
+            "endpoint": "/api/workflows/status",
+            "method": "GET",
+            "expectedStatus": [
+              401
+            ],
+            "actualStatus": 401,
+            "passed": true,
+            "success": false,
+            "error": "Request failed with status code 401",
+            "data": {
+              "success": false,
+              "error": {
+                "type": "AUTHENTICATION_ERROR",
+                "message": "Access token required",
+                "code": 401,
+                "requestId": "GET:/api/workflows/status"
+              }
+            }
+          },
+          {
+            "name": "Analytics Dashboard",
+            "endpoint": "/api/analytics/dashboard",
+            "method": "GET",
+            "expectedStatus": [
+              401
+            ],
+            "actualStatus": 401,
+            "passed": true,
+            "success": false,
+            "error": "Request failed with status code 401",
+            "data": {
+              "success": false,
+              "error": {
+                "type": "AUTHENTICATION_ERROR",
+                "message": "Access token required",
+                "code": 401,
+                "requestId": "GET:/api/analytics/dashboard"
+              }
+            }
+          }
+        ]
+      }
+    },
+    "workingEndpoints": [
+      "GET /api/health",
+      "GET /api/health/db",
+      "GET /api/health/cache",
+      "GET /api/performance",
+      "GET /api/auth/password-requirements",
+      "POST /api/auth/register",
+      "POST /api/auth/login",
+      "GET /api/business-types",
+      "GET /api/user/status",
+      "GET /api/dashboard",
+      "GET /api/onboarding/status",
+      "GET /api/workflows/status",
+      "GET /api/analytics/dashboard"
+    ],
+    "failingEndpoints": [
+      {
+        "endpoint": "GET /api/oauth/google",
+        "expected": [
+          302
+        ],
+        "actual": 200
+      },
+      {
+        "endpoint": "GET /api/oauth/google/callback",
+        "expected": [
+          302
+        ],
+        "actual": 200
+      }
+    ],
+    "summary": {
+      "totalTests": 15,
+      "passedTests": 13,
+      "failedTests": 2
+    }
+  },
+  "fixedTestSuites": {
+    "health": {
+      "title": "🏥 Health & Monitoring",
+      "tests": [
+        {
+          "name": "Main Health Check",
+          "endpoint": "/api/health",
+          "method": "GET",
+          "expected": [
+            200
+          ]
+        },
+        {
+          "name": "Database Health",
+          "endpoint": "/api/health/db",
+          "method": "GET",
+          "expected": [
+            200
+          ]
+        }
+      ]
+    },
+    "auth": {
+      "title": "🔐 Authentication System",
+      "tests": [
+        {
+          "name": "Registration Validation",
+          "endpoint": "/api/auth/register",
+          "method": "POST",
+          "data": {
+            "email": "invalid-email",
+            "password": "123"
+          },
+          "expected": [
+            400
+          ]
+        },
+        {
+          "name": "Login Invalid Credentials",
+          "endpoint": "/api/auth/login",
+          "method": "POST",
+          "data": {
+            "email": "invalid@example.com",
+            "password": "wrongpassword"
+          },
+          "expected": [
+            401
+          ]
+        }
+      ]
+    },
+    "business": {
+      "title": "🏢 Business Configuration",
+      "tests": [
+        {
+          "name": "Business Types List",
+          "endpoint": "/api/business-types",
+          "method": "GET",
+          "expected": [
+            200
+          ]
+        }
+      ]
+    },
+    "protected": {
+      "title": "🔒 Protected Endpoints",
+      "tests": [
+        {
+          "name": "User Status",
+          "endpoint": "/api/user/status",
+          "method": "GET",
+          "expected": [
+            401,
+            404
+          ]
+        },
+        {
+          "name": "Dashboard Data",
+          "endpoint": "/api/dashboard",
+          "method": "GET",
+          "expected": [
+            401,
+            404
+          ]
+        },
+        {
+          "name": "Onboarding Status",
+          "endpoint": "/api/onboarding/status",
+          "method": "GET",
+          "expected": [
+            401,
+            404
+          ]
+        },
+        {
+          "name": "Workflow Status",
+          "endpoint": "/api/workflows/status",
+          "method": "GET",
+          "expected": [
+            401,
+            404
+          ]
+        },
+        {
+          "name": "Analytics Dashboard",
+          "endpoint": "/api/analytics/dashboard",
+          "method": "GET",
+          "expected": [
+            401,
+            404
+          ]
+        }
+      ]
+    }
+  }
+}

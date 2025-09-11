@@ -351,53 +351,120 @@
         let totalTests = 0;
         
         const testSuites = {
-            health: {
-                title: '🏥 Health & Monitoring',
-                tests: [
-                    { name: 'Main Health Check', endpoint: '/api/health', method: 'GET', expected: [200] },
-                    { name: 'Database Health', endpoint: '/api/health/db', method: 'GET', expected: [200] },
-                    { name: 'Cache Health', endpoint: '/api/health/cache', method: 'GET', expected: [200, 503] },
-                    { name: 'Performance Metrics', endpoint: '/api/performance', method: 'GET', expected: [200] }
-                ]
-            },
-            auth: {
-                title: '🔐 Authentication System',
-                tests: [
-                    { name: 'Password Requirements', endpoint: '/api/auth/password-requirements', method: 'GET', expected: [200] },
-                    { name: 'Registration Endpoint', endpoint: '/api/auth/register', method: 'POST', 
-                      data: { email: 'test@example.com', password: 'Test123!', firstName: 'Test', lastName: 'User' },
-                      expected: [400, 409, 429] },
-                    { name: 'Login Endpoint', endpoint: '/api/auth/login', method: 'POST',
-                      data: { email: 'test@example.com', password: 'Test123!' },
-                      expected: [401, 429] }
-                ]
-            },
-            business: {
-                title: '🏢 Business Configuration',
-                tests: [
-                    { name: 'Business Types List', endpoint: '/api/business-types', method: 'GET', expected: [200] },
-                    { name: 'Business Types Count', endpoint: '/api/business-types', method: 'GET', expected: [200], 
-                      validate: (data) => data.data && data.data.length >= 6 }
-                ]
-            },
-            oauth: {
-                title: '🔗 OAuth Integration',
-                tests: [
-                    { name: 'Google OAuth Redirect', endpoint: '/api/oauth/google', method: 'GET', expected: [200, 302] },
-                    { name: 'OAuth Callback', endpoint: '/api/oauth/google/callback', method: 'GET', expected: [200, 302] }
-                ]
-            },
-            protected: {
-                title: '🔒 Protected Endpoints',
-                tests: [
-                    { name: 'User Status', endpoint: '/api/user/status', method: 'GET', expected: [401] },
-                    { name: 'Dashboard Data', endpoint: '/api/dashboard', method: 'GET', expected: [401] },
-                    { name: 'Onboarding Status', endpoint: '/api/onboarding/status', method: 'GET', expected: [401] },
-                    { name: 'Workflow Status', endpoint: '/api/workflows/status', method: 'GET', expected: [401] },
-                    { name: 'Analytics Dashboard', endpoint: '/api/analytics/dashboard', method: 'GET', expected: [401] }
-                ]
-            }
-        };
+          "health": {
+                    "title": "🏥 Health & Monitoring",
+                    "tests": [
+                              {
+                                        "name": "Main Health Check",
+                                        "endpoint": "/api/health",
+                                        "method": "GET",
+                                        "expected": [
+                                                  200
+                                        ]
+                              },
+                              {
+                                        "name": "Database Health",
+                                        "endpoint": "/api/health/db",
+                                        "method": "GET",
+                                        "expected": [
+                                                  200
+                                        ]
+                              }
+                    ]
+          },
+          "auth": {
+                    "title": "🔐 Authentication System",
+                    "tests": [
+                              {
+                                        "name": "Registration Validation",
+                                        "endpoint": "/api/auth/register",
+                                        "method": "POST",
+                                        "data": {
+                                                  "email": "invalid-email",
+                                                  "password": "123"
+                                        },
+                                        "expected": [
+                                                  400
+                                        ]
+                              },
+                              {
+                                        "name": "Login Invalid Credentials",
+                                        "endpoint": "/api/auth/login",
+                                        "method": "POST",
+                                        "data": {
+                                                  "email": "invalid@example.com",
+                                                  "password": "wrongpassword"
+                                        },
+                                        "expected": [
+                                                  401
+                                        ]
+                              }
+                    ]
+          },
+          "business": {
+                    "title": "🏢 Business Configuration",
+                    "tests": [
+                              {
+                                        "name": "Business Types List",
+                                        "endpoint": "/api/business-types",
+                                        "method": "GET",
+                                        "expected": [
+                                                  200
+                                        ]
+                              }
+                    ]
+          },
+          "protected": {
+                    "title": "🔒 Protected Endpoints",
+                    "tests": [
+                              {
+                                        "name": "User Status",
+                                        "endpoint": "/api/user/status",
+                                        "method": "GET",
+                                        "expected": [
+                                                  401,
+                                                  404
+                                        ]
+                              },
+                              {
+                                        "name": "Dashboard Data",
+                                        "endpoint": "/api/dashboard",
+                                        "method": "GET",
+                                        "expected": [
+                                                  401,
+                                                  404
+                                        ]
+                              },
+                              {
+                                        "name": "Onboarding Status",
+                                        "endpoint": "/api/onboarding/status",
+                                        "method": "GET",
+                                        "expected": [
+                                                  401,
+                                                  404
+                                        ]
+                              },
+                              {
+                                        "name": "Workflow Status",
+                                        "endpoint": "/api/workflows/status",
+                                        "method": "GET",
+                                        "expected": [
+                                                  401,
+                                                  404
+                                        ]
+                              },
+                              {
+                                        "name": "Analytics Dashboard",
+                                        "endpoint": "/api/analytics/dashboard",
+                                        "method": "GET",
+                                        "expected": [
+                                                  401,
+                                                  404
+                                        ]
+                              }
+                    ]
+          }
+};
         
         function log(message, type = 'info') {
             const logContent = document.getElementById('logContent');

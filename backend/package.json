@@ -43,7 +43,7 @@
     "pre-push": "npm run quality:check && npm run test:coverage",
     "build:check": "node -c server.js",
     "deploy:check": "npm run quality:check && npm run test:coverage && npm run build:check",
-    "prepare": "husky install",
+    "prepare": "command -v husky >/dev/null 2>&1 && husky install || echo 'Husky not available, skipping install'",
     "quality:full": "node scripts/quality-check.js"
   },
   "lint-staged": {

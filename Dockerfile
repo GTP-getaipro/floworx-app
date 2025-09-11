@@ -1,5 +1,5 @@
 # Multi-stage build for FloWorx
-FROM node:18-alpine AS base
+FROM node:20-alpine AS base
 
 # Install dependencies only when needed
 FROM base AS deps
@@ -11,7 +11,7 @@ COPY frontend/package*.json ./frontend/
 COPY package*.json ./
 
 # Install dependencies
-RUN cd backend && npm ci --only=production
+RUN cd backend && npm ci --omit=dev
 RUN cd frontend && npm ci
 
 # Build frontend

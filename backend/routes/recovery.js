@@ -8,6 +8,55 @@ const transactionService = require('../services/transactionService');
 
 const router = express.Router();
 
+// GET /api/recovery
+// Get recovery options
+router.get('/', async (req, res) => {
+  try {
+    res.json({
+      success: true,
+      recovery: {
+        methods: ['email', 'security_questions'],
+        available: true,
+        message: 'Recovery options available'
+      }
+    });
+  } catch (error) {
+    console.error('Recovery error:', error);
+    res.status(500).json({
+      error: 'Failed to get recovery options',
+      message: error.message
+    });
+  }
+});
+
+// POST /api/recovery/initiate
+// Initiate account recovery
+router.post('/initiate', async (req, res) => {
+  try {
+    const { email } = req.body;
+
+    if (!email) {
+      return res.status(400).json({
+        error: 'Email required',
+        message: 'Email address is required for recovery'
+      });
+    }
+
+    // For now, just return success (implement actual recovery logic later)
+    res.json({
+      success: true,
+      message: 'Recovery initiated successfully',
+      email: email
+    });
+  } catch (error) {
+    console.error('Recovery initiation error:', error);
+    res.status(500).json({
+      error: 'Failed to initiate recovery',
+      message: error.message
+    });
+  }
+});
+
 // GET /api/recovery/session
 // Get current session and recovery information
 router.get('/session', authenticateToken, async (req, res) => {

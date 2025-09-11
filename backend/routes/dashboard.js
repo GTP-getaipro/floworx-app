@@ -122,4 +122,36 @@ router.get('/', authenticateToken, async (req, res) => {
   }
 });
 
+// GET /api/dashboard/status
+// Get dashboard status
+router.get('/status', authenticateToken, async (req, res) => {
+  try {
+    const userId = req.user.id;
+
+    // Get basic user info
+    const userQuery = 'SELECT id, email, first_name, last_name FROM users WHERE id = $1';
+    const userResult = await query(userQuery, [userId]);
+
+    if (userResult.rows.length === 0) {
+      return res.status(404).json({
+        error: 'User not found',
+        message: 'User account not found'
+      });
+    }
+
+    res.json({
+      success: true,
+      status: 'active',
+      user: userResult.rows[0],
+      timestamp: new Date().toISOString()
+    });
+  } catch (error) {
+    console.error('Dashboard status error:', error);
+    res.status(500).json({
+      error: 'Failed to get dashboard status',
+      message: error.message
+    });
+  }
+});
+
 module.exports = router;

@@ -8,6 +8,45 @@ const transactionService = require('../services/transactionService');
 
 const router = express.Router();
 
+// GET /api/workflows
+// Get user workflows
+router.get('/', authenticateToken, async (req, res) => {
+  try {
+    const userId = req.user.id;
+
+    // Get user workflows from database
+    const workflowsQuery = `
+      SELECT
+        id,
+        user_id,
+        n8n_workflow_id,
+        name,
+        status,
+        created_at,
+        updated_at,
+        business_type,
+        configuration
+      FROM user_workflows
+      WHERE user_id = $1
+      ORDER BY created_at DESC
+    `;
+    const workflowsResult = await query(workflowsQuery, [userId]);
+
+    res.json({
+      success: true,
+      workflows: workflowsResult.rows || [],
+      count: workflowsResult.rows?.length || 0,
+      message: 'Workflows retrieved successfully'
+    });
+  } catch (error) {
+    console.error('Workflows error:', error);
+    res.status(500).json({
+      error: 'Failed to get workflows',
+      message: error.message
+    });
+  }
+});
+
 // GET /api/workflows/health
 // Check n8n service health
 router.get('/health', authenticateToken, async (req, res) => {

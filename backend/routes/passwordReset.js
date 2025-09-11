@@ -11,6 +11,27 @@ const emailService = require('../services/emailService');
 
 const router = express.Router();
 
+// GET /api/password-reset
+// Get password reset information
+router.get('/', async (req, res) => {
+  try {
+    res.json({
+      success: true,
+      passwordReset: {
+        available: true,
+        methods: ['email'],
+        message: 'Password reset available'
+      }
+    });
+  } catch (error) {
+    console.error('Password reset info error:', error);
+    res.status(500).json({
+      error: 'Failed to get password reset info',
+      message: error.message
+    });
+  }
+});
+
 // POST /api/password-reset/request - SECURED with centralized rate limiting
 router.post('/request', passwordResetRateLimit, validationMiddleware.passwordResetRequest, async (req, res) => {
   try {

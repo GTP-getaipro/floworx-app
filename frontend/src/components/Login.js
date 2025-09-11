@@ -148,7 +148,8 @@ const Login = () => {
                 size='lg'
                 className='w-full flex items-center justify-center space-x-2'
                 onClick={() => {
-                  window.location.href = `${process.env.REACT_APP_API_URL || 'https://app.floworx-iq.com/api'}/auth/google`;
+                  // Fixed: Use correct OAuth endpoint (/oauth/google instead of /auth/google)
+                  window.location.href = `${process.env.REACT_APP_API_URL || 'https://app.floworx-iq.com/api'}/oauth/google`;
                 }}
                 data-testid='google-oauth-button'
               >

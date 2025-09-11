@@ -1,0 +1,137 @@
+{
+  "timestamp": "2025-09-11T17:57:00.666Z",
+  "baseUrl": "https://app.floworx-iq.com",
+  "testUser": "dizelll.test.1757606995372@gmail.com",
+  "totalTests": 7,
+  "passedTests": 6,
+  "successRate": 85.7,
+  "totalDuration": 3651,
+  "categories": {
+    "Infrastructure": {
+      "passed": 1,
+      "total": 1
+    },
+    "Authentication": {
+      "passed": 1,
+      "total": 1
+    },
+    "Database": {
+      "passed": 0,
+      "total": 1
+    },
+    "Application": {
+      "passed": 1,
+      "total": 1
+    },
+    "Security": {
+      "passed": 1,
+      "total": 1
+    },
+    "Performance": {
+      "passed": 1,
+      "total": 1
+    },
+    "Reliability": {
+      "passed": 1,
+      "total": 1
+    }
+  },
+  "testResults": [
+    {
+      "name": "API Health Check",
+      "category": "Infrastructure",
+      "success": true,
+      "message": "API Health: 200 - ok",
+      "details": {
+        "HTTP Status": 200,
+        "Response": "ok",
+        "Response Time": "< 10s"
+      },
+      "duration": 301,
+      "timestamp": "2025-09-11T17:56:57.315Z"
+    },
+    {
+      "name": "Core Authentication",
+      "category": "Authentication",
+      "success": true,
+      "message": "Core authentication fully functional",
+      "details": {
+        "Login API": 200,
+        "JWT Token": true,
+        "Registration API": 201,
+        "Test User Created": "production.ready.1757613417727@example.com",
+        "User ID": "de1c4228-f845-44e6-a2a8-d61602ae7d09"
+      },
+      "duration": 1266,
+      "timestamp": "2025-09-11T17:56:58.582Z"
+    },
+    {
+      "name": "Supabase Integration",
+      "category": "Database",
+      "success": false,
+      "message": "Supabase integration failed: supabase.rpc(...).catch is not a function",
+      "details": {
+        "Error": "supabase.rpc(...).catch is not a function"
+      },
+      "duration": 920,
+      "timestamp": "2025-09-11T17:56:59.504Z"
+    },
+    {
+      "name": "Business Logic",
+      "category": "Application",
+      "success": true,
+      "message": "Business logic endpoints working",
+      "details": {
+        "Business Types API": 200,
+        "Types Available": 6,
+        "Has Hot Tub Type": true,
+        "Sample Type": "General Contractor"
+      },
+      "duration": 121,
+      "timestamp": "2025-09-11T17:56:59.626Z"
+    },
+    {
+      "name": "Security Measures",
+      "category": "Security",
+      "success": true,
+      "message": "Security measures working correctly",
+      "details": {
+        "Unauthorized Access Blocked": true,
+        "Authorized Access Working": true,
+        "JWT Token Generated": true,
+        "Token Length": 255
+      },
+      "duration": 536,
+      "timestamp": "2025-09-11T17:57:00.164Z"
+    },
+    {
+      "name": "Performance Test",
+      "category": "Performance",
+      "success": true,
+      "message": "Performance excellent",
+      "details": {
+        "Average Response Time": "80ms",
+        "Min Response Time": "79ms",
+        "Max Response Time": "81ms",
+        "Performance Rating": "Excellent"
+      },
+      "duration": 240,
+      "timestamp": "2025-09-11T17:57:00.404Z"
+    },
+    {
+      "name": "Error Handling",
+      "category": "Reliability",
+      "success": true,
+      "message": "Error handling working correctly",
+      "details": {
+        "Invalid Login Handled": true,
+        "Invalid Registration Handled": true,
+        "Not Found Handled": true,
+        "Overall Error Handling": "Working"
+      },
+      "duration": 259,
+      "timestamp": "2025-09-11T17:57:00.664Z"
+    }
+  ],
+  "productionReady": true
+}

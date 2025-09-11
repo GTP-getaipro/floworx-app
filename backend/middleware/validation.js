@@ -1,7 +1,7 @@
 const { body, param, query } = require('express-validator');
 const xss = require('xss');
 
-const { validationRules, _mapToExpressValidatorRules } = require('../../shared/utils/validation');
+const { VALIDATION_RULES, validateFields } = require('../../shared/utils/validation');
 
 const { handleValidationErrors } = require('./errorHandler');
 
@@ -318,7 +318,7 @@ const validateOAuthCallback = createValidationMiddleware([
 
 module.exports = {
   createValidationMiddleware,
-  validationRules,
+  commonValidationRules,
   validationMiddleware,
   sanitizeInput,
   sanitizeForSQL,

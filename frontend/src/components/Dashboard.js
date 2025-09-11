@@ -461,6 +461,64 @@ const Dashboard = () => {
           </Alert>
         )}
 
+        {/* Main Navigation Bar */}
+        <div className='mb-8'>
+          <Card>
+            <Card.Content className='p-4'>
+              <nav role="navigation" aria-label="Main dashboard navigation" className='flex flex-wrap gap-2'>
+                <Button
+                  onClick={() => window.location.href = '/settings'}
+                  variant='secondary'
+                  size='sm'
+                  data-testid="nav-settings"
+                >
+                  ⚙️ Settings
+                </Button>
+                <Button
+                  onClick={() => window.location.href = '/workflows'}
+                  variant='secondary'
+                  size='sm'
+                  data-testid="nav-workflows"
+                >
+                  🔄 Workflows
+                </Button>
+                <Button
+                  onClick={() => window.location.href = '/analytics'}
+                  variant='secondary'
+                  size='sm'
+                  data-testid="nav-analytics"
+                >
+                  📊 Analytics
+                </Button>
+                <Button
+                  onClick={() => window.location.href = '/campaigns'}
+                  variant='secondary'
+                  size='sm'
+                  data-testid="nav-campaigns"
+                >
+                  📧 Campaigns
+                </Button>
+                <Button
+                  onClick={() => window.location.href = '/customers'}
+                  variant='secondary'
+                  size='sm'
+                  data-testid="nav-customers"
+                >
+                  👥 Customers
+                </Button>
+                <Button
+                  onClick={() => window.location.href = '/profile'}
+                  variant='secondary'
+                  size='sm'
+                  data-testid="nav-profile"
+                >
+                  👤 Profile
+                </Button>
+              </nav>
+            </Card.Content>
+          </Card>
+        </div>
+
         {/* Dashboard Metrics Cards */}
         <div className='grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8'>
           <Card data-testid="emails-processed-card">

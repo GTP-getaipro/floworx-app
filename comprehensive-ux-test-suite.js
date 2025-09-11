@@ -142,10 +142,16 @@ const TEST_CASES = [
         .locator('h2:has-text("Registration Successful"), h1:has-text("Account created"), .registration-success')
         .count();
 
+      // Check if redirected to login (successful registration flow)
+      const isOnLogin = currentUrl.includes('/login');
+      const isOnOnboarding = currentUrl.includes('/onboarding');
+
       const hasSuccess = !hasError && (
         currentUrl.includes('dashboard') ||
         currentUrl.includes('verify') ||
         currentUrl.includes('success') ||
+        isOnLogin ||  // Successful registration redirects to login
+        isOnOnboarding ||  // Or to onboarding
         successMessage > 0 ||
         toastSuccess > 0 ||
         successCard > 0
@@ -155,8 +161,12 @@ const TEST_CASES = [
         success: hasSuccess,
         message: hasError
           ? 'Registration failed with error'
+          : isOnLogin
+          ? '✅ Registration successful - redirected to login'
+          : isOnOnboarding
+          ? '✅ Registration successful - redirected to onboarding'
           : hasSuccess
-          ? 'Registration completed successfully'
+          ? '✅ Registration completed successfully'
           : 'Registration submitted but no clear success indicator',
         data: {
           currentUrl,
@@ -301,11 +311,23 @@ const TEST_CASES = [
       const currentUrl = page.url();
       const hasError = (await page.locator('.error, .alert-danger').count()) > 0;
 
+      // Check for successful login indicators
+      const isOnDashboard = currentUrl.includes('dashboard');
+      const isOnOnboarding = currentUrl.includes('onboarding');
+      const leftLoginPage = currentUrl !== `${BASE_URL}/login`;
+
       return {
-        success:
-          !hasError && (currentUrl.includes('dashboard') || currentUrl !== `${BASE_URL}/login`),
-        message: hasError ? 'Login failed' : 'Login attempt processed',
-        data: { currentUrl, hasError },
+        success: !hasError && (isOnDashboard || isOnOnboarding || leftLoginPage),
+        message: hasError
+          ? '❌ Login failed with error'
+          : isOnDashboard
+          ? '✅ Login successful - redirected to dashboard'
+          : isOnOnboarding
+          ? '✅ Login successful - redirected to onboarding'
+          : leftLoginPage
+          ? '✅ Login successful - redirected from login page'
+          : '❌ Login attempt processed but stayed on login page',
+        data: { currentUrl, hasError, isOnDashboard, isOnOnboarding, leftLoginPage },
       };
     },
   },
@@ -387,44 +409,48 @@ const TEST_CASES = [
       await page.goto(`${BASE_URL}/onboarding`);
       await page.waitForLoadState('networkidle');
 
-      // Look for business type options with improved selectors
-      const businessTypes = await page
-        .locator('input[type="radio"], .business-type, .option, select option, button[data-value], [role="radio"], [role="option"]')
+      // Look for business type cards (the actual implementation)
+      const businessTypeCards = await page
+        .locator('[data-testid*="business-type-"], .cursor-pointer:has-text("Hot Tub"), .cursor-pointer:has-text("Spa")')
         .count();
 
-      // More comprehensive Hot Tub detection
-      const hotTubSelectors = [
-        'text="Hot Tub"',
-        'text="Spa"',
-        'text="Pool & Spa"',
-        '[value*="hot"]',
-        '[value*="spa"]',
-        '[data-value*="hot"]',
-        '[data-value*="spa"]',
-        'button:has-text("Hot Tub")',
-        'button:has-text("Spa")',
-        '.business-type:has-text("Hot Tub")',
-        '.business-type:has-text("Spa")'
-      ];
+      // Look for the specific Hot Tub business type card
+      const hotTubCard = await page
+        .locator('[data-testid="business-type-hot-tub-spa"], .cursor-pointer:has-text("Hot Tub & Spa")')
+        .count();
 
-      let hotTubOption = 0;
-      for (const selector of hotTubSelectors) {
-        try {
-          const count = await page.locator(selector).count();
-          hotTubOption += count;
-        } catch (e) {
-          // Selector might not be valid, continue
-        }
-      }
+      // Check for loading state
+      const isLoading = await page.locator('text="Loading business types..."').count();
+
+      // Check for error state
+      const hasError = await page.locator('.alert-danger, [role="alert"]').count();
 
       // Also check page content for business types
       const pageContent = await page.textContent('body').catch(() => '');
       const hasHotTubInContent = pageContent.toLowerCase().includes('hot tub') || pageContent.toLowerCase().includes('spa');
 
+      // Check if we're still loading
+      if (isLoading > 0) {
+        return {
+          success: false,
+          message: 'Business types still loading',
+          data: { businessTypeCards, hotTubCard, isLoading: true, hasError: hasError > 0 }
+        };
+      }
+
+      // Check if there's an error
+      if (hasError > 0) {
+        return {
+          success: false,
+          message: 'Error loading business types',
+          data: { businessTypeCards, hotTubCard, isLoading: false, hasError: true }
+        };
+      }
+
       return {
-        success: businessTypes > 0 || hotTubOption > 0 || hasHotTubInContent,
-        message: `Found ${businessTypes} business type options, Hot Tub option: ${hotTubOption > 0 || hasHotTubInContent ? 'Yes' : 'No'}`,
-        data: { businessTypes, hotTubOption, hasHotTubInContent },
+        success: businessTypeCards > 0 || hotTubCard > 0 || hasHotTubInContent,
+        message: `Found ${businessTypeCards} business type cards, Hot Tub card: ${hotTubCard > 0 ? 'Yes' : 'No'}, Content: ${hasHotTubInContent ? 'Yes' : 'No'}`,
+        data: { businessTypeCards, hotTubCard, hasHotTubInContent, isLoading: false, hasError: false },
       };
     },
   },

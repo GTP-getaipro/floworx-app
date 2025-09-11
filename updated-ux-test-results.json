@@ -1,0 +1,252 @@
+{
+  "timestamp": "2025-09-11T15:06:01.553Z",
+  "totalTests": 22,
+  "passedTests": 17,
+  "failedTests": 5,
+  "successRate": 77.3,
+  "testResults": [
+    {
+      "name": "Homepage Load Performance",
+      "category": "Performance",
+      "passed": true,
+      "message": "Page loaded in 1428ms",
+      "details": {
+        "loadTime": 1428
+      }
+    },
+    {
+      "name": "SEO Meta Tags Validation",
+      "category": "SEO",
+      "passed": true,
+      "message": "Title: \"Floworx - Secure Workflow Automation\", Description: Present",
+      "details": {
+        "title": "Floworx - Secure Workflow Automation",
+        "description": "Floworx - Secure automation platform for your workflows"
+      }
+    },
+    {
+      "name": "Valid User Registration",
+      "category": "Authentication",
+      "passed": true,
+      "message": "Registration successful - redirected to login",
+      "details": {}
+    },
+    {
+      "name": "Invalid Email Format Validation",
+      "category": "Validation",
+      "passed": true,
+      "message": "Email validation working correctly",
+      "details": {}
+    },
+    {
+      "name": "Weak Password Validation",
+      "category": "Security",
+      "passed": true,
+      "message": "Password validation working",
+      "details": {}
+    },
+    {
+      "name": "SQL Injection Protection",
+      "category": "Security",
+      "passed": true,
+      "message": "SQL injection protection working",
+      "details": {}
+    },
+    {
+      "name": "Login with Valid Credentials",
+      "category": "Authentication",
+      "passed": true,
+      "message": "Login API working correctly with valid credentials",
+      "details": {
+        "apiStatus": 200,
+        "tokenReceived": true
+      }
+    },
+    {
+      "name": "Login with Invalid Credentials",
+      "category": "Security",
+      "passed": true,
+      "message": "Login security needs review",
+      "details": {}
+    },
+    {
+      "name": "Password Reset Flow",
+      "category": "Authentication",
+      "passed": true,
+      "message": "Password reset flow working correctly",
+      "details": {
+        "apiStatus": 200
+      }
+    },
+    {
+      "name": "Business Type Selection",
+      "category": "Onboarding",
+      "passed": true,
+      "message": "Hot Tub card found, business types working",
+      "details": {
+        "hotTubFound": true,
+        "businessContentFound": false
+      }
+    },
+    {
+      "name": "Google OAuth Button Presence",
+      "category": "OAuth",
+      "passed": true,
+      "message": "Google OAuth button found",
+      "details": {}
+    },
+    {
+      "name": "Mobile Responsiveness",
+      "category": "Responsive",
+      "passed": true,
+      "message": "Mobile layout responsive",
+      "details": {}
+    },
+    {
+      "name": "Accessibility - Keyboard Navigation",
+      "category": "Accessibility",
+      "passed": true,
+      "message": "Keyboard navigation working correctly",
+      "details": {
+        "sequence": [
+          "INPUT",
+          "INPUT",
+          "BUTTON"
+        ]
+      }
+    },
+    {
+      "name": "Form Validation Messages",
+      "category": "UX",
+      "passed": false,
+      "message": "Found 0 validation messages",
+      "details": {}
+    },
+    {
+      "name": "HTTPS Security",
+      "category": "Security",
+      "passed": true,
+      "message": "HTTPS enabled",
+      "details": {}
+    },
+    {
+      "name": "Console Errors Check",
+      "category": "Technical",
+      "passed": true,
+      "message": "Found 0 console errors",
+      "details": {}
+    },
+    {
+      "name": "Email Verification Flow",
+      "category": "Email",
+      "passed": true,
+      "message": "Email verification page accessible with resend functionality",
+      "details": {}
+    },
+    {
+      "name": "Dashboard Navigation",
+      "category": "Navigation",
+      "passed": false,
+      "message": "Dashboard authentication protection working - redirects to login",
+      "details": {}
+    },
+    {
+      "name": "Error Page Handling",
+      "category": "Error Handling",
+      "passed": false,
+      "message": "Custom 404 error page displayed with navigation",
+      "details": {}
+    },
+    {
+      "name": "API Health Check",
+      "category": "API",
+      "passed": true,
+      "message": "API health endpoint responding correctly",
+      "details": {}
+    },
+    {
+      "name": "Workflow Management Access",
+      "category": "Workflows",
+      "passed": false,
+      "message": "Workflow management page not accessible or missing elements",
+      "details": {}
+    },
+    {
+      "name": "Profile Settings Access",
+      "category": "User Management",
+      "passed": false,
+      "message": "Profile settings page missing or incomplete",
+      "details": {}
+    }
+  ],
+  "categories": {
+    "Performance": {
+      "passed": 1,
+      "total": 1
+    },
+    "SEO": {
+      "passed": 1,
+      "total": 1
+    },
+    "Authentication": {
+      "passed": 3,
+      "total": 3
+    },
+    "Validation": {
+      "passed": 1,
+      "total": 1
+    },
+    "Security": {
+      "passed": 4,
+      "total": 4
+    },
+    "Onboarding": {
+      "passed": 1,
+      "total": 1
+    },
+    "OAuth": {
+      "passed": 1,
+      "total": 1
+    },
+    "Responsive": {
+      "passed": 1,
+      "total": 1
+    },
+    "Accessibility": {
+      "passed": 1,
+      "total": 1
+    },
+    "UX": {
+      "passed": 0,
+      "total": 1
+    },
+    "Technical": {
+      "passed": 1,
+      "total": 1
+    },
+    "Email": {
+      "passed": 1,
+      "total": 1
+    },
+    "Navigation": {
+      "passed": 0,
+      "total": 1
+    },
+    "Error Handling": {
+      "passed": 0,
+      "total": 1
+    },
+    "API": {
+      "passed": 1,
+      "total": 1
+    },
+    "Workflows": {
+      "passed": 0,
+      "total": 1
+    },
+    "User Management": {
+      "passed": 0,
+      "total": 1
+    }
+  }
+}

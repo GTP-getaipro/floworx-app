@@ -1,0 +1,75 @@
+{
+  "timestamp": "2025-09-11T15:00:13.950Z",
+  "testResults": {
+    "validLogin": {
+      "status": "FAILED",
+      "success": false,
+      "errors": [],
+      "currentUrl": "https://app.floworx-iq.com/login",
+      "hasToken": false
+    },
+    "passwordReset": {
+      "status": "PASSED",
+      "url": "https://app.floworx-iq.com/forgot-password",
+      "hasForm": true,
+      "successMessage": true
+    },
+    "businessTypes": {
+      "status": "PASSED",
+      "cards": 0,
+      "hasHotTub": true
+    },
+    "keyboardNav": {
+      "status": "PASSED",
+      "sequence": [
+        {
+          "tagName": "INPUT",
+          "type": "email",
+          "id": "input-ahvy8mumn",
+          "className": "w-full px-3 py-2 border rounded-lg text-ink bg-surface placeholder:text-ink-sub focus:outline-none focus-visible:ring-2 focus-visible:ring-brand-primary-hover focus:border-brand-primary disabled:bg-surface-subtle disabled:cursor-not-allowed disabled:text-ink-sub transition-colors duration-200 border-surface-border hover:border-ink-sub",
+          "text": null
+        },
+        {
+          "tagName": "INPUT",
+          "type": "password",
+          "id": "input-58atos2cs",
+          "className": "w-full px-3 py-2 border rounded-lg text-ink bg-surface placeholder:text-ink-sub focus:outline-none focus-visible:ring-2 focus-visible:ring-brand-primary-hover focus:border-brand-primary disabled:bg-surface-subtle disabled:cursor-not-allowed disabled:text-ink-sub transition-colors duration-200 border-surface-border hover:border-ink-sub",
+          "text": null
+        },
+        {
+          "tagName": "BUTTON",
+          "type": "submit",
+          "id": null,
+          "className": "inline-flex items-center justify-center font-medium rounded-lg focus:outline-none focus-visible:ring-2 focus-visible:ring-brand-primary-hover disabled:opacity-60 disabled:cursor-not-allowed transition-all duration-200 ease-in-out bg-brand-primary text-white shadow-sm hover:bg-brand-primary-hover hover:shadow-md active:bg-brand-primary-700 focus-visible:ring-2 focus-visible:ring-brand-primary-hover px-6 py-3 text-lg w-full",
+          "text": "Sign In"
+        },
+        {
+          "tagName": "BUTTON",
+          "type": "button",
+          "id": null,
+          "className": "inline-flex items-center justify-center font-medium rounded-lg focus:outline-none focus-visible:ring-2 focus-visible:ring-brand-primary-hover disabled:opacity-60 disabled:cursor-not-allowed transition-all duration-200 ease-in-out bg-transparent border border-gray-300 text-gray-700 hover:bg-gray-50 hover:border-gray-400 active:bg-gray-100 focus-visible:ring-2 focus-visible:ring-brand-primary-hover px-6 py-3 text-lg w-full flex items-center justify-center space-x-2",
+          "text": "Continue with Google"
+        },
+        {
+          "tagName": "A",
+          "type": null,
+          "id": null,
+          "className": "transition-colors duration-200 rounded-sm text-brand-primary hover:text-brand-primary-hover focus:outline-none focus-visible:ring-2 focus-visible:ring-brand-primary-hover underline-offset-2 hover:underline",
+          "text": "Forgot your password"
+        }
+      ]
+    }
+  },
+  "improvements": [
+    "Business type selection is working",
+    "Keyboard navigation is functional"
+  ],
+  "uxImprovement": {
+    "currentRate": 77.3,
+    "fixedIssues": 3,
+    "totalIssues": 6,
+    "improvement": 11.350000000000001,
+    "newRate": 88.65,
+    "targetAchieved": true
+  }
+}

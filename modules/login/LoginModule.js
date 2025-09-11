@@ -23,12 +23,12 @@ class LoginModule {
     this.apiUrl = `${baseUrl}/api`;
     this.loginUrl = `${baseUrl}/login`;
     
-    // Test users for different scenarios
+        // Test users for different scenarios
     this.testUsers = {
       valid: {
-        email: 'login.test@floworx-iq.com',
-        password: 'LoginTest123!',
-        description: 'Created test user'
+        email: 'test.user@floworx-iq.com',
+        password: 'TestUser123!',
+        description: 'Verified working test user'
       },
       invalid: {
         email: 'nonexistent@example.com',

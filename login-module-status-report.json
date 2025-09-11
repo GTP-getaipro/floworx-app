@@ -1,16 +1,16 @@
 {
-  "timestamp": "2025-09-11T14:36:45.698Z",
+  "timestamp": "2025-09-11T14:58:25.732Z",
   "components": {
     "apiConnectivity": {
       "status": "WORKING",
       "message": "✅ API responding: 200",
       "data": {
         "status": "ok",
-        "timestamp": "2025-09-11T14:36:45.987Z",
+        "timestamp": "2025-09-11T14:58:26.022Z",
         "version": "1.0.1",
         "environment": "production",
         "deployment": {
-          "buildTime": "2025-09-11T14:36:45.987Z",
+          "buildTime": "2025-09-11T14:58:26.022Z",
           "nodeVersion": "v22.11.0"
         }
       }
@@ -20,7 +20,7 @@
       "message": "✅ Registration working: 201",
       "requiresVerification": false,
       "testUser": {
-        "email": "status.test.1757601405991@floworx-iq.com",
+        "email": "status.test.1757602706015@floworx-iq.com",
         "password": "StatusTest123!"
       }
     },
@@ -29,8 +29,8 @@
       "message": "✅ Login API working: 200",
       "hasToken": true,
       "userInfo": {
-        "id": "e32f6b02-f430-4dda-b15b-b605a6ea9bb2",
-        "email": "status.test.1757601405991@floworx-iq.com",
+        "id": "144d2ca3-8a4d-4422-a0cb-2bdd5fd185d7",
+        "email": "status.test.1757602706015@floworx-iq.com",
         "firstName": null,
         "lastName": null,
         "companyName": null,

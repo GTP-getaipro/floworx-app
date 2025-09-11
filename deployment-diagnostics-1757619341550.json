@@ -1,0 +1,80 @@
+{
+  "timestamp": "2025-09-11T19:35:41.550Z",
+  "baseUrl": "https://app.floworx-iq.com",
+  "staticAssetResults": [
+    {
+      "asset": "/static/css/main.css",
+      "status": 200,
+      "contentType": "text/html; charset=UTF-8",
+      "success": true
+    },
+    {
+      "asset": "/static/js/main.js",
+      "status": 200,
+      "contentType": "text/html; charset=UTF-8",
+      "success": true
+    },
+    {
+      "asset": "/static/css/679.6b0c9db3.chunk.css",
+      "status": 200,
+      "contentType": "text/html; charset=UTF-8",
+      "success": true
+    },
+    {
+      "asset": "/static/js/679.6b0c9db3.chunk.js",
+      "status": 200,
+      "contentType": "text/html; charset=UTF-8",
+      "success": true
+    },
+    {
+      "asset": "/manifest.json",
+      "status": 200,
+      "contentType": "application/json; charset=UTF-8",
+      "success": true
+    },
+    {
+      "asset": "/favicon.ico",
+      "status": 200,
+      "contentType": "image/x-icon",
+      "size": "1",
+      "success": true
+    }
+  ],
+  "buildResults": [
+    {
+      "check": "Build Directory",
+      "exists": false
+    }
+  ],
+  "serverResults": [
+    {
+      "check": "API Health",
+      "status": 200,
+      "success": true
+    },
+    {
+      "check": "Index Page",
+      "status": 200,
+      "isReactApp": true,
+      "success": true
+    }
+  ],
+  "issues": [
+    {
+      "type": "NO_BUILD_DIRECTORY",
+      "description": "Frontend build directory does not exist"
+    }
+  ],
+  "fixes": [
+    {
+      "issue": "NO_BUILD_DIRECTORY",
+      "description": "Frontend not built - run build process",
+      "commands": [
+        "cd frontend && npm install",
+        "cd frontend && npm run build",
+        "Verify build directory created with static assets"
+      ],
+      "priority": "CRITICAL"
+    }
+  ]
+}

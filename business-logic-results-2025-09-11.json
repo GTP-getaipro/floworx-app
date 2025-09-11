@@ -10,10 +10,10 @@
       "message": "Registration did not complete - still on register page",
       "data": {
         "currentUrl": "https://app.floworx-iq.com/register",
-        "email": "test1757574969267@example.com",
+        "email": "test1757577066379@example.com",
         "hasSuccessMessage": false
       },
-      "timestamp": "2025-09-11T07:16:18.406Z"
+      "timestamp": "2025-09-11T07:51:15.508Z"
     },
     {
       "name": "Business Type Selection Flow",
@@ -25,7 +25,7 @@
         "hotTubOption": false,
         "selectionMade": false
       },
-      "timestamp": "2025-09-11T07:16:21.588Z"
+      "timestamp": "2025-09-11T07:51:18.702Z"
     },
     {
       "name": "Gmail Integration Setup",
@@ -36,7 +36,7 @@
         "hasGmailButton": true,
         "hasOAuthButton": false
       },
-      "timestamp": "2025-09-11T07:16:24.683Z"
+      "timestamp": "2025-09-11T07:51:21.806Z"
     },
     {
       "name": "Workflow Template Selection",
@@ -47,7 +47,7 @@
         "templates": 0,
         "hasHotTubTemplate": false
       },
-      "timestamp": "2025-09-11T07:16:27.850Z"
+      "timestamp": "2025-09-11T07:51:24.973Z"
     },
     {
       "name": "Dashboard Analytics Display",
@@ -59,7 +59,7 @@
         "charts": 1,
         "numbers": 0
       },
-      "timestamp": "2025-09-11T07:16:31.013Z"
+      "timestamp": "2025-09-11T07:51:28.138Z"
     },
     {
       "name": "Email Campaign Management",
@@ -71,7 +71,7 @@
         "hasCreateButton": false,
         "templates": 0
       },
-      "timestamp": "2025-09-11T07:16:34.203Z"
+      "timestamp": "2025-09-11T07:51:31.291Z"
     },
     {
       "name": "Customer Segmentation",
@@ -83,7 +83,7 @@
         "filters": 0,
         "segments": 0
       },
-      "timestamp": "2025-09-11T07:16:37.376Z"
+      "timestamp": "2025-09-11T07:51:34.471Z"
     },
     {
       "name": "Automation Rules Setup",
@@ -95,7 +95,7 @@
         "triggers": 0,
         "actions": 0
       },
-      "timestamp": "2025-09-11T07:16:40.566Z"
+      "timestamp": "2025-09-11T07:51:37.627Z"
     }
   ],
   "categories": {

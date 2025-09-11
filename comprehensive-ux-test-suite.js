@@ -33,10 +33,10 @@ const TEST_SCENARIOS = {
     lastName: 'Password',
   },
   existingUser: {
-    email: 'owner@hottubparadise.com', // Known existing user
+    email: 'test.automation@floworx-iq.com', // Test user we just created
     password: 'TestPassword123!',
-    firstName: 'Sarah',
-    lastName: 'Johnson',
+    firstName: 'Test',
+    lastName: 'User',
   },
   sqlInjection: {
     email: `sql.test.${Date.now()}@example.com`,
@@ -409,6 +409,9 @@ const TEST_CASES = [
       await page.goto(`${BASE_URL}/onboarding`);
       await page.waitForLoadState('networkidle');
 
+      // Wait for business types to load (they're fetched via API)
+      await page.waitForTimeout(3000);
+
       // Look for business type cards (the actual implementation)
       const businessTypeCards = await page
         .locator('[data-testid*="business-type-"], .cursor-pointer:has-text("Hot Tub"), .cursor-pointer:has-text("Spa")')
@@ -613,10 +616,47 @@ const TEST_CASES = [
     name: 'Dashboard Navigation',
     category: 'Navigation',
     test: async page => {
+      // First try to access dashboard directly
       await page.goto(`${BASE_URL}/dashboard`);
       await page.waitForLoadState('networkidle');
 
-      // Improved navigation detection
+      // Check if we got redirected to login (expected for unauthenticated users)
+      const currentUrl = page.url();
+      const isOnLogin = currentUrl.includes('/login');
+
+      if (isOnLogin) {
+        // We're on login page, which means authentication is working
+        // Let's try to login first, then check dashboard navigation
+        try {
+          await page.fill('input[type="email"], input[name="email"]', TEST_SCENARIOS.existingUser.email);
+          await page.fill('input[type="password"], input[name="password"]', TEST_SCENARIOS.existingUser.password);
+          await page.click('button[type="submit"], button:has-text("Login"), button:has-text("Sign In")');
+          await page.waitForTimeout(5000);
+
+          // Check if we're now on dashboard
+          const newUrl = page.url();
+          if (newUrl.includes('/dashboard')) {
+            // Great! We're authenticated and on dashboard
+            await page.waitForLoadState('networkidle');
+          } else {
+            // Login didn't work, but we can still test the navigation structure
+            // by checking if the page has the expected elements when authenticated
+            return {
+              success: false,
+              message: '❌ Could not authenticate to test dashboard navigation - login credentials may be incorrect',
+              data: { currentUrl: newUrl, authenticationFailed: true }
+            };
+          }
+        } catch (error) {
+          return {
+            success: false,
+            message: '❌ Authentication failed - cannot test dashboard navigation',
+            data: { error: error.message, authenticationFailed: true }
+          };
+        }
+      }
+
+      // Now test navigation elements
       const navElements = await page.locator('nav, [role="navigation"]').count();
       const navButtons = await page.locator('nav button, [role="navigation"] button, [data-testid*="nav-"]').count();
       const navLinks = await page.locator('nav a, [role="navigation"] a, .nav-link').count();
@@ -634,8 +674,8 @@ const TEST_CASES = [
       return {
         success: hasNavigation && hasContent,
         message: hasNavigation && hasContent
-          ? `Dashboard has navigation (${navElements} nav elements, ${totalNavItems} nav items) and content area`
-          : `Dashboard missing navigation (${navElements} nav elements, ${totalNavItems} nav items) or content areas (${dashboardContent})`,
+          ? `✅ Dashboard has navigation (${navElements} nav elements, ${totalNavItems} nav items) and content area`
+          : `❌ Dashboard missing navigation (${navElements} nav elements, ${totalNavItems} nav items) or content areas (${dashboardContent})`,
         data: {
           navElements,
           navButtons,
@@ -644,7 +684,9 @@ const TEST_CASES = [
           hasDashboardContent: hasContent,
           hasSettingsNav: settingsNav > 0,
           hasWorkflowsNav: workflowsNav > 0,
-          hasAnalyticsNav: analyticsNav > 0
+          hasAnalyticsNav: analyticsNav > 0,
+          currentUrl: page.url(),
+          wasRedirectedToLogin: isOnLogin
         }
       };
     },

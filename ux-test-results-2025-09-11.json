@@ -1,6 +1,6 @@
 {
-  "passed": 15,
-  "failed": 7,
+  "passed": 16,
+  "failed": 6,
   "warnings": 0,
   "total": 22,
   "tests": [
@@ -8,11 +8,11 @@
       "name": "Homepage Load Performance",
       "category": "Performance",
       "success": true,
-      "message": "Page loaded in 1406ms",
+      "message": "Page loaded in 1399ms",
       "data": {
-        "loadTime": 1406
+        "loadTime": 1399
       },
-      "timestamp": "2025-09-11T07:34:23.452Z"
+      "timestamp": "2025-09-11T07:49:29.843Z"
     },
     {
       "name": "SEO Meta Tags Validation",
@@ -24,22 +24,22 @@
         "description": "Floworx - Secure automation platform for your workflows",
         "viewport": "width=device-width,initial-scale=1"
       },
-      "timestamp": "2025-09-11T07:34:25.008Z"
+      "timestamp": "2025-09-11T07:49:31.382Z"
     },
     {
       "name": "Valid User Registration",
       "category": "Authentication",
-      "success": false,
-      "message": "Registration submitted but no clear success indicator",
+      "success": true,
+      "message": "✅ Registration successful - redirected to login",
       "data": {
         "currentUrl": "https://app.floworx-iq.com/login",
         "hasError": false,
-        "uniqueEmail": "test1757576066691@example.com",
+        "uniqueEmail": "test1757576973067@example.com",
         "hasSuccessMessage": false,
         "hasToastSuccess": false,
         "hasSuccessCard": false
       },
-      "timestamp": "2025-09-11T07:34:38.317Z"
+      "timestamp": "2025-09-11T07:49:44.721Z"
     },
     {
       "name": "Invalid Email Format Validation",
@@ -49,7 +49,7 @@
       "data": {
         "hasValidationError": true
       },
-      "timestamp": "2025-09-11T07:34:43.491Z"
+      "timestamp": "2025-09-11T07:49:49.867Z"
     },
     {
       "name": "Weak Password Validation",
@@ -59,7 +59,7 @@
       "data": {
         "hasPasswordError": true
       },
-      "timestamp": "2025-09-11T07:34:48.606Z"
+      "timestamp": "2025-09-11T07:49:54.979Z"
     },
     {
       "name": "SQL Injection Protection",
@@ -70,18 +70,21 @@
         "pageTitle": "Floworx - Secure Workflow Automation",
         "isPageBroken": false
       },
-      "timestamp": "2025-09-11T07:34:55.320Z"
+      "timestamp": "2025-09-11T07:50:01.688Z"
     },
     {
       "name": "Login with Valid Credentials",
       "category": "Authentication",
       "success": false,
-      "message": "Login attempt processed",
+      "message": "❌ Login attempt processed but stayed on login page",
       "data": {
         "currentUrl": "https://app.floworx-iq.com/login",
-        "hasError": false
+        "hasError": false,
+        "isOnDashboard": false,
+        "isOnOnboarding": false,
+        "leftLoginPage": false
       },
-      "timestamp": "2025-09-11T07:35:01.575Z"
+      "timestamp": "2025-09-11T07:50:07.903Z"
     },
     {
       "name": "Login with Invalid Credentials",
@@ -92,7 +95,7 @@
         "hasError": false,
         "stayedOnLogin": true
       },
-      "timestamp": "2025-09-11T07:35:07.740Z"
+      "timestamp": "2025-09-11T07:50:14.041Z"
     },
     {
       "name": "Password Reset Flow",
@@ -102,19 +105,21 @@
       "data": {
         "hasSuccess": false
       },
-      "timestamp": "2025-09-11T07:35:12.896Z"
+      "timestamp": "2025-09-11T07:50:19.226Z"
     },
     {
       "name": "Business Type Selection",
       "category": "Onboarding",
       "success": true,
-      "message": "Found 0 business type options, Hot Tub option: Yes",
+      "message": "Found 0 business type cards, Hot Tub card: No, Content: Yes",
       "data": {
-        "businessTypes": 0,
-        "hotTubOption": 0,
-        "hasHotTubInContent": true
+        "businessTypeCards": 0,
+        "hotTubCard": 0,
+        "hasHotTubInContent": true,
+        "isLoading": false,
+        "hasError": false
       },
-      "timestamp": "2025-09-11T07:35:14.582Z"
+      "timestamp": "2025-09-11T07:50:20.917Z"
     },
     {
       "name": "Google OAuth Button Presence",
@@ -124,7 +129,7 @@
       "data": {
         "googleButton": 1
       },
-      "timestamp": "2025-09-11T07:35:16.190Z"
+      "timestamp": "2025-09-11T07:50:22.513Z"
     },
     {
       "name": "Mobile Responsiveness",
@@ -136,7 +141,7 @@
         "viewportWidth": 375,
         "hasHorizontalScroll": false
       },
-      "timestamp": "2025-09-11T07:35:18.742Z"
+      "timestamp": "2025-09-11T07:50:25.057Z"
     },
     {
       "name": "Accessibility - Keyboard Navigation",
@@ -147,7 +152,7 @@
         "firstFocused": "INPUT",
         "secondFocused": "INPUT"
       },
-      "timestamp": "2025-09-11T07:35:21.292Z"
+      "timestamp": "2025-09-11T07:50:27.622Z"
     },
     {
       "name": "Form Validation Messages",
@@ -157,7 +162,7 @@
       "data": {
         "validationMessages": 11
       },
-      "timestamp": "2025-09-11T07:35:24.371Z"
+      "timestamp": "2025-09-11T07:50:30.700Z"
     },
     {
       "name": "HTTPS Security",
@@ -168,7 +173,7 @@
         "url": "https://app.floworx-iq.com/login",
         "isHTTPS": true
       },
-      "timestamp": "2025-09-11T07:35:25.892Z"
+      "timestamp": "2025-09-11T07:50:32.226Z"
     },
     {
       "name": "Console Errors Check",
@@ -178,7 +183,7 @@
       "data": {
         "consoleErrors": []
       },
-      "timestamp": "2025-09-11T07:35:27.466Z"
+      "timestamp": "2025-09-11T07:50:33.802Z"
     },
     {
       "name": "Email Verification Flow",
@@ -189,7 +194,7 @@
         "hasForm": true,
         "hasResendButton": true
       },
-      "timestamp": "2025-09-11T07:35:29.174Z"
+      "timestamp": "2025-09-11T07:50:35.512Z"
     },
     {
       "name": "Dashboard Navigation",
@@ -206,7 +211,7 @@
         "hasWorkflowsNav": false,
         "hasAnalyticsNav": false
       },
-      "timestamp": "2025-09-11T07:35:30.790Z"
+      "timestamp": "2025-09-11T07:50:37.138Z"
     },
     {
       "name": "Error Page Handling",
@@ -217,7 +222,7 @@
         "hasErrorMessage": true,
         "hasHomeLink": false
       },
-      "timestamp": "2025-09-11T07:35:32.473Z"
+      "timestamp": "2025-09-11T07:50:38.833Z"
     },
     {
       "name": "API Health Check",
@@ -228,16 +233,16 @@
         "status": 200,
         "responseData": {
           "status": "ok",
-          "timestamp": "2025-09-11T07:35:35.165Z",
+          "timestamp": "2025-09-11T07:50:41.552Z",
           "version": "1.0.1",
           "environment": "production",
           "deployment": {
-            "buildTime": "2025-09-11T07:35:35.165Z",
+            "buildTime": "2025-09-11T07:50:41.552Z",
             "nodeVersion": "v22.11.0"
           }
         }
       },
-      "timestamp": "2025-09-11T07:35:33.739Z"
+      "timestamp": "2025-09-11T07:50:40.119Z"
     },
     {
       "name": "Workflow Management Access",
@@ -248,7 +253,7 @@
         "workflowElements": 0,
         "hasCreateButton": false
       },
-      "timestamp": "2025-09-11T07:35:35.350Z"
+      "timestamp": "2025-09-11T07:50:41.738Z"
     },
     {
       "name": "Profile Settings Access",
@@ -259,7 +264,7 @@
         "hasProfileForm": false,
         "hasSaveButton": false
       },
-      "timestamp": "2025-09-11T07:35:36.973Z"
+      "timestamp": "2025-09-11T07:50:43.358Z"
     }
   ],
   "categories": {
@@ -274,8 +279,8 @@
       "total": 1
     },
     "Authentication": {
-      "passed": 0,
-      "failed": 3,
+      "passed": 1,
+      "failed": 2,
       "total": 3
     },
     "Validation": {

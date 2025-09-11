@@ -1,0 +1,16 @@
+{
+  "passwordTest": {
+    "success": false,
+    "needsVerification": false
+  },
+  "passwordReset": {
+    "success": false,
+    "error": "Internal server error"
+  },
+  "frontendTest": {
+    "success": true,
+    "finalUrl": "https://app.floworx-iq.com/forgot-password",
+    "manualTest": true
+  },
+  "timestamp": "2025-09-11T15:31:46.044Z"
+}

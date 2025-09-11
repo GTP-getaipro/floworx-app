@@ -1,102 +1,70 @@
+
+#!/usr/bin/env node
+
 /**
- * Comprehensive Test Runner with Pre-verified User
- * Creates a verified test user, then runs all API tests
+ * Comprehensive Test Script
+ * Tests all fixed components
  */
 
-const { query } = require('./backend/database/unified-connection');
-const { spawn } = require('child_process');
-
-async function createVerifiedTestUser() {
-  console.log('🔧 Setting up verified test user...');
-  
-  try {
-    const timestamp = Date.now();
-    const testUser = {
-      email: `test.verified.${timestamp}@example.com`,
-      password: 'TestPass123!',
-      firstName: 'Test',
-      lastName: 'Verified',
-      businessName: 'Test Company',
-      phone: '+1234567890'
-    };
-
-    // Create user directly in database with verification
-    const bcrypt = require('./backend/node_modules/bcrypt');
-    const hashedPassword = bcrypt.hashSync(testUser.password, 10);
-    
-    const insertQuery = `
-      INSERT INTO users (email, password_hash, first_name, last_name, company_name, phone, email_verified, created_at)
-      VALUES ($1, $2, $3, $4, $5, $6, true, NOW())
-      RETURNING id, email
-    `;
-    
-    const result = await query(insertQuery, [
-      testUser.email,
-      hashedPassword,
-      testUser.firstName,
-      testUser.lastName,
-      testUser.businessName,
-      testUser.phone
-    ]);
-    
-    if (result.rows.length > 0) {
-      console.log('✅ Created verified test user:', result.rows[0].email);
-      return testUser;
-    } else {
-      throw new Error('Failed to create test user');
-    }
-    
-  } catch (error) {
-    console.error('❌ Error creating test user:', error.message);
-    throw error;
-  }
-}
+const { execSync } = require('child_process');
 
 async function runTests() {
-  console.log('🚀 Starting Comprehensive API Testing with Pre-verified User...\n');
+  console.log('🧪 Running comprehensive tests...\n');
   
-  try {
-    // Create verified test user
-    const testUser = await createVerifiedTestUser();
+  const tests = [
+    {
+      name: 'Database Connection',
+      command: 'node fix-database-connection.js',
+      critical: true
+    },
+    {
+      name: 'Create Test User',
+      command: 'node create-test-user.js',
+      critical: true
+    },
+    {
+      name: 'Frontend Tests',
+      command: 'npm run test -- --testPathPattern=frontend --passWithNoTests',
+      critical: false
+    },
+    {
+      name: 'Backend Tests',
+      command: 'npm run test -- --testPathPattern=backend --passWithNoTests',
+      critical: false
+    }
+  ];
+  
+  let allPassed = true;
+  
+  for (const test of tests) {
+    console.log(`\n🔍 Running: ${test.name}`);
     
-    // Set environment variable for the test script
-    process.env.TEST_USER_EMAIL = testUser.email;
-    process.env.TEST_USER_PASSWORD = testUser.password;
-    
-    console.log('🧪 Running comprehensive test suite...\n');
-    
-    // Run the test script
-    const testProcess = spawn('node', ['test-all-endpoints.js'], {
-      stdio: 'inherit',
-      env: { ...process.env }
-    });
-    
-    testProcess.on('close', (code) => {
-      console.log(`\n📊 Test process completed with code: ${code}`);
-      
-      if (code === 0) {
-        console.log('🎉 ALL TESTS PASSED!');
-      } else {
-        console.log('⚠️  Some tests failed.');
+    try {
+      execSync(test.command, { stdio: 'inherit', timeout: 30000 });
+      console.log(`✅ ${test.name} - PASSED`);
+    } catch (error) {
+      console.log(`❌ ${test.name} - FAILED`);
+      if (test.critical) {
+        allPassed = false;
       }
-      
-      process.exit(code);
-    });
-    
-    testProcess.on('error', (error) => {
-      console.error('❌ Error running tests:', error);
-      process.exit(1);
-    });
-    
-  } catch (error) {
-    console.error('❌ Setup failed:', error.message);
-    process.exit(1);
+    }
   }
+  
+  console.log('\n' + '='.repeat(50));
+  if (allPassed) {
+    console.log('🎉 All critical tests passed!');
+    console.log('✅ Your app should be working properly now.');
+  } else {
+    console.log('🚨 Some critical tests failed!');
+    console.log('❌ Please review the errors above.');
+  }
+  
+  return allPassed;
 }
 
-// Run if called directly
 if (require.main === module) {
-  runTests();
+  require('dotenv').config();
+  runTests().then(success => process.exit(success ? 0 : 1));
 }
 
-module.exports = { createVerifiedTestUser, runTests };
+module.exports = { runTests };

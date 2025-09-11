@@ -1,112 +1,51 @@
+
 /**
  * Frontend Test Setup
- * Configures React Testing Library and component test environment
+ * Configures jsdom environment for React component tests
  */
 
-// Use require for better compatibility
-require('@testing-library/jest-dom');
-const { configure } = require('@testing-library/react');
+import '@testing-library/jest-dom';
 
-// Configure Testing Library
-configure({
-  testIdAttribute: 'data-cy', // Use Cypress data attributes for consistency
-});
-
-// Mock axios for frontend tests
-jest.mock('axios', () => ({
-  get: jest.fn(() => Promise.resolve({ data: {} })),
-  post: jest.fn(() => Promise.resolve({ data: {} })),
-  put: jest.fn(() => Promise.resolve({ data: {} })),
-  delete: jest.fn(() => Promise.resolve({ data: {} })),
-  create: jest.fn(() => ({
-    get: jest.fn(() => Promise.resolve({ data: {} })),
-    post: jest.fn(() => Promise.resolve({ data: {} })),
-    put: jest.fn(() => Promise.resolve({ data: {} })),
-    delete: jest.fn(() => Promise.resolve({ data: {} })),
+// Mock window.matchMedia
+Object.defineProperty(window, 'matchMedia', {
+  writable: true,
+  value: jest.fn().mockImplementation(query => ({
+    matches: false,
+    media: query,
+    onchange: null,
+    addListener: jest.fn(), // deprecated
+    removeListener: jest.fn(), // deprecated
+    addEventListener: jest.fn(),
+    removeEventListener: jest.fn(),
+    dispatchEvent: jest.fn(),
   })),
-}));
-
-// Mock React Router
-jest.mock('react-router-dom', () => ({
-  ...jest.requireActual('react-router-dom'),
-  useNavigate: () => jest.fn(),
-  useLocation: () => ({
-    pathname: '/',
-    search: '',
-    hash: '',
-    state: null,
-  }),
-  useSearchParams: () => [new URLSearchParams(), jest.fn()],
-}));
-
-// Mock AuthContext
-jest.mock('../../frontend/src/contexts/AuthContext', () => ({
-  useAuth: () => ({
-    user: null,
-    token: null,
-    login: jest.fn(),
-    logout: jest.fn(),
-    register: jest.fn(),
-    loading: false,
-    error: null
-  }),
-  AuthProvider: ({ children }) => children
-}));
-
-// Mock ToastContext
-jest.mock('../../frontend/src/contexts/ToastContext', () => ({
-  useToast: () => ({
-    showToast: jest.fn(),
-    hideToast: jest.fn(),
-    toasts: []
-  }),
-  ToastProvider: ({ children }) => children
-}));
-
-// Mock CSS imports
-jest.mock('*.css', () => ({}));
-jest.mock('*.scss', () => ({}));
-jest.mock('*.sass', () => ({}));
-
-// Mock image imports
-jest.mock('*.jpg', () => 'test-image.jpg');
-jest.mock('*.jpeg', () => 'test-image.jpeg');
-jest.mock('*.png', () => 'test-image.png');
-jest.mock('*.gif', () => 'test-image.gif');
-jest.mock('*.svg', () => 'test-image.svg');
-
-// Global setup for frontend tests
-beforeAll(() => {
-  // Mock window.scrollTo
-  window.scrollTo = jest.fn();
-  
-  // Mock window.alert
-  window.alert = jest.fn();
-  
-  // Mock window.confirm
-  window.confirm = jest.fn(() => true);
-  
-  console.log('⚛️ Frontend test environment configured');
 });
 
-// Clean up after each frontend test
-afterEach(() => {
-  // Clear all mocks
-  jest.clearAllMocks();
-  
-  // Clear localStorage
-  localStorage.clear();
-  sessionStorage.clear();
-});
+// Mock IntersectionObserver
+global.IntersectionObserver = class IntersectionObserver {
+  constructor() {}
+  disconnect() {}
+  observe() {}
+  unobserve() {}
+};
 
-// Export test utilities using module.exports for compatibility
-module.exports = {
-  mockAxios: require('axios'),
-  mockNavigate: jest.fn(),
-  mockLocation: {
-    pathname: '/',
-    search: '',
-    hash: '',
-    state: null,
+// Mock ResizeObserver
+global.ResizeObserver = class ResizeObserver {
+  constructor() {}
+  disconnect() {}
+  observe() {}
+  unobserve() {}
+};
+
+// Setup console error filtering
+const originalError = console.error;
+console.error = (...args) => {
+  // Filter out known React warnings in tests
+  if (
+    typeof args[0] === 'string' &&
+    args[0].includes('Warning: ReactDOM.render is deprecated')
+  ) {
+    return;
   }
+  originalError.call(console, ...args);
 };

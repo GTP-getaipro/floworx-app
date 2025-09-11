@@ -1,104 +1,42 @@
-#!/usr/bin/env node
 
-const axios = require('axios');
-
-const BASE_URL = 'https://app.floworx-iq.com';
-const API_URL = `${BASE_URL}/api`;
+const { query } = require('./backend/database/unified-connection');
+const bcrypt = require('bcryptjs');
 
 async function createTestUser() {
-  console.log('🔧 CREATING TEST USER FOR AUTOMATED TESTING');
-  console.log('===========================================');
+  console.log('Creating test user...');
   
-  const testUser = {
-    firstName: 'Test',
-    lastName: 'User',
-    email: 'test.automation@floworx-iq.com',
-    password: 'TestPassword123!',
-    businessName: 'Test Automation Company',
-    phone: '+1234567890',
-    agreeToTerms: true,
-    marketingConsent: false
-  };
-
   try {
-    console.log(`📧 Creating test user: ${testUser.email}`);
+    // Check if user already exists
+    const existingUser = await query('SELECT id FROM users WHERE email = $1', ['test.user@floworx-iq.com']);
     
-    const response = await axios.post(`${API_URL}/auth/register`, testUser, {
-      timeout: 15000,
-      headers: { 'Content-Type': 'application/json' }
-    });
+    if (existingUser.rows.length > 0) {
+      console.log('✅ Test user already exists');
+      return existingUser.rows[0].id;
+    }
     
-    console.log(`✅ Test user created successfully!`);
-    console.log(`📊 Response: ${JSON.stringify(response.data)}`);
+    // Hash password
+    const passwordHash = await bcrypt.hash('TestPassword123!', 12);
     
-    // Now try to login with the test user
-    console.log('\n🔐 TESTING LOGIN WITH NEW USER');
-    console.log('==============================');
+    // Create user
+    const result = await query(
+      `INSERT INTO users (email, password_hash, first_name, last_name, email_verified, created_at)
+       VALUES ($1, $2, $3, $4, $5, CURRENT_TIMESTAMP)
+       RETURNING id`,
+      ['test.user@floworx-iq.com', passwordHash, 'Test', 'User', true]
+    );
     
-    const loginResponse = await axios.post(`${API_URL}/auth/login`, {
-      email: testUser.email,
-      password: testUser.password
-    }, {
-      timeout: 15000,
-      headers: { 'Content-Type': 'application/json' }
-    });
-    
-    console.log(`✅ Login test successful!`);
-    console.log(`📊 Login Response: ${JSON.stringify(loginResponse.data)}`);
-    
-    console.log('\n🎯 TEST USER READY FOR AUTOMATION');
-    console.log('==================================');
-    console.log(`Email: ${testUser.email}`);
-    console.log(`Password: ${testUser.password}`);
-    console.log('✅ This user can now be used in automated tests');
+    console.log('✅ Test user created successfully');
+    return result.rows[0].id;
     
   } catch (error) {
-    if (error.response?.status === 409) {
-      console.log('ℹ️  Test user already exists, trying to login...');
-      
-      try {
-        const loginResponse = await axios.post(`${API_URL}/auth/login`, {
-          email: testUser.email,
-          password: testUser.password
-        }, {
-          timeout: 15000,
-          headers: { 'Content-Type': 'application/json' }
-        });
-        
-        console.log(`✅ Existing test user login successful!`);
-        console.log(`📊 Login Response: ${JSON.stringify(loginResponse.data)}`);
-        
-        console.log('\n🎯 EXISTING TEST USER CONFIRMED');
-        console.log('===============================');
-        console.log(`Email: ${testUser.email}`);
-        console.log(`Password: ${testUser.password}`);
-        console.log('✅ This user is ready for automated tests');
-        
-      } catch (loginError) {
-        console.error(`❌ Login failed for existing user: ${loginError.response?.data?.error || loginError.message}`);
-        console.log('\n🔧 RECOMMENDATION:');
-        console.log('==================');
-        console.log('The test user exists but login failed. This could mean:');
-        console.log('1. Password is incorrect');
-        console.log('2. Account needs verification');
-        console.log('3. Account is locked');
-        console.log('\nConsider using a different test user or checking the database.');
-      }
-    } else {
-      console.error(`❌ Test user creation failed: ${error.response?.data?.error || error.message}`);
-      console.log('\n🔧 RECOMMENDATION:');
-      console.log('==================');
-      console.log('Test user creation failed. Check:');
-      console.log('1. API endpoint is accessible');
-      console.log('2. Database connection is working');
-      console.log('3. Registration validation rules');
-    }
+    console.error('❌ Failed to create test user:', error.message);
+    throw error;
   }
 }
 
-// Run the test user creation
 if (require.main === module) {
-  createTestUser().catch(console.error);
+  require('dotenv').config();
+  createTestUser().then(() => process.exit(0)).catch(() => process.exit(1));
 }
 
 module.exports = { createTestUser };

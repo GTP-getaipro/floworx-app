@@ -1,8 +1,5 @@
 // Jest Configuration for Floworx Test Suite
 module.exports = {
-  // Test environment setup
-  testEnvironment: 'node',
-  
   // Test file patterns
   testMatch: [
     '**/tests/**/*.test.js',
@@ -90,35 +87,50 @@ module.exports = {
   // Projects for different test types
   projects: [
     {
-      displayName: 'Database Integration Tests',
-      testMatch: ['<rootDir>/tests/integration/database.test.js'],
+      displayName: 'Backend Tests',
+      testMatch: [
+        '<rootDir>/tests/backend/**/*.test.js',
+        '<rootDir>/tests/integration/**/*.test.js',
+        '<rootDir>/tests/security/**/*.test.js'
+      ],
       testEnvironment: 'node',
-      setupFilesAfterEnv: ['<rootDir>/tests/setup/database.setup.js']
+      setupFilesAfterEnv: ['<rootDir>/tests/setup/jest.setup.js'],
+      collectCoverageFrom: [
+        'backend/**/*.js',
+        '!**/node_modules/**',
+        '!**/coverage/**',
+        '!**/tests/**'
+      ]
     },
     {
-      displayName: 'API Integration Tests',
-      testMatch: ['<rootDir>/tests/integration/api.test.js'],
-      testEnvironment: 'node',
-      setupFilesAfterEnv: ['<rootDir>/tests/setup/api.setup.js']
-    },
-    {
-      displayName: 'Frontend Component Tests',
-      testMatch: ['<rootDir>/tests/frontend/**/*.test.js'],
+      displayName: 'Frontend Tests',
+      testMatch: [
+        '<rootDir>/tests/frontend/**/*.test.js',
+        '<rootDir>/frontend/src/**/*.test.js',
+        '<rootDir>/frontend/src/**/*.spec.js'
+      ],
       testEnvironment: 'jsdom',
       setupFilesAfterEnv: [
-        '<rootDir>/tests/setup/frontend.setup.js',
-        '@testing-library/jest-dom'
+        '@testing-library/jest-dom',
+        '<rootDir>/tests/setup/frontend.setup.js'
       ],
       moduleNameMapper: {
+        '^@/(.*)$': '<rootDir>/frontend/src/$1',
+        '^@components/(.*)$': '<rootDir>/frontend/src/components/$1',
+        '^@services/(.*)$': '<rootDir>/frontend/src/services/$1',
+        '^@utils/(.*)$': '<rootDir>/frontend/src/utils/$1',
         '\\.(css|less|scss|sass)$': 'identity-obj-proxy',
-        '\\.(jpg|jpeg|png|gif|eot|otf|webp|svg|ttf|woff|woff2|mp4|webm|wav|mp3|m4a|aac|oga)$': '<rootDir>/tests/mocks/fileMock.js'
-      }
-    },
-    {
-      displayName: 'Security Tests',
-      testMatch: ['<rootDir>/tests/security/**/*.test.js'],
-      testEnvironment: 'node',
-      setupFilesAfterEnv: ['<rootDir>/tests/setup/security.setup.js']
+        '\\.(jpg|jpeg|png|gif|eot|otf|webp|svg|ttf|woff2|mp4|webm|wav|mp3|m4a|aac|oga)$': '<rootDir>/tests/mocks/fileMock.js'
+      },
+      transform: {
+        '^.+\\.(js|jsx)$': 'babel-jest'
+      },
+      collectCoverageFrom: [
+        'frontend/src/**/*.{js,jsx}',
+        '!**/node_modules/**',
+        '!**/coverage/**',
+        '!**/tests/**'
+      ]
     }
   ],
   

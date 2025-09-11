@@ -151,23 +151,31 @@ const rateLimitConfigs = {
   // Authentication endpoints (stricter)
   auth: rateLimit({
     windowMs: 15 * 60 * 1000, // 15 minutes
-    max: process.env.NODE_ENV === 'production' ? 50 : 200, // Much higher for development/testing
+    max: process.env.NODE_ENV === 'production' ? 50 : 1000, // Very high for development/testing
     skipSuccessfulRequests: true,
     message: {
       error: 'Too many authentication attempts',
       message: 'Please wait before trying again.',
       retryAfter: '15 minutes'
+    },
+    skip: (req) => {
+      // Skip rate limiting for test environments
+      return process.env.NODE_ENV === 'test' || process.env.SKIP_RATE_LIMIT === 'true';
     }
   }),
 
   // Registration (more lenient for testing)
   registration: rateLimit({
     windowMs: 60 * 60 * 1000, // 1 hour
-    max: process.env.NODE_ENV === 'production' ? 20 : 100, // Much higher for development/testing
+    max: process.env.NODE_ENV === 'production' ? 20 : 1000, // Very high for development/testing
     message: {
       error: 'Too many registration attempts',
       message: 'Maximum registrations per hour exceeded.',
       retryAfter: '1 hour'
+    },
+    skip: (req) => {
+      // Skip rate limiting for test environments
+      return process.env.NODE_ENV === 'test' || process.env.SKIP_RATE_LIMIT === 'true';
     }
   }),
 

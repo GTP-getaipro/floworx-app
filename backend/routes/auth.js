@@ -136,8 +136,9 @@ router.post(
 
       const user = userResult.rows[0];
 
-      // Check if email is verified
-      if (!user.email_verified) {
+      // Check if email is verified (temporarily disabled to match registration logic)
+      // TODO: Re-enable email verification when email service is fully configured
+      if (false && !user.email_verified) {
         return res.status(403).json({
           success: false,
           error: {

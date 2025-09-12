@@ -17,6 +17,9 @@ class DatabaseManager {
 
     // Priority 1: Use DATABASE_URL if available (recommended for production)
     if (process.env.DATABASE_URL) {
+      console.log('🔍 Using DATABASE_URL for connection');
+      console.log(`   DATABASE_URL: ${process.env.DATABASE_URL.substring(0, 50)}...`);
+
       return {
         connectionString: process.env.DATABASE_URL,
         ssl: isProduction
@@ -42,6 +45,12 @@ class DatabaseManager {
     }
 
     // Priority 2: Fallback to individual DB_* variables
+    console.log('🔍 Using individual DB_* variables for connection');
+    console.log(`   DB_HOST: ${process.env.DB_HOST || 'localhost'}`);
+    console.log(`   DB_PORT: ${process.env.DB_PORT || 5432}`);
+    console.log(`   DB_USER: ${process.env.DB_USER || 'not set'}`);
+    console.log(`   DB_NAME: ${process.env.DB_NAME || 'not set'}`);
+
     return {
       host: process.env.DB_HOST || 'localhost',
       port: process.env.DB_PORT || 5432,

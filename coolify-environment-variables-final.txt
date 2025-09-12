@@ -1,0 +1,60 @@
+# =============================================================================
+# COOLIFY ENVIRONMENT VARIABLES - FINAL CONFIGURATION
+# Copy these EXACT values into your Coolify Dashboard
+# =============================================================================
+
+# === PRIMARY DATABASE CONNECTION (RECOMMENDED) ===
+DATABASE_URL=postgresql://postgres.enamhufwobytrfydarsz:-U9xNc*qP&zyRc4@aws-1-ca-central-1.pooler.supabase.com:6543/postgres
+
+# === ALTERNATIVE: INDIVIDUAL DATABASE VARIABLES ===
+# (Use these if DATABASE_URL doesn't work)
+DB_HOST=aws-1-ca-central-1.pooler.supabase.com
+DB_PORT=6543
+DB_USER=postgres.enamhufwobytrfydarsz
+DB_PASSWORD=-U9xNc*qP&zyRc4
+DB_NAME=postgres
+
+# === SUPABASE API CREDENTIALS ===
+SUPABASE_URL=https://enamhufwobytrfydarsz.supabase.co
+SUPABASE_ANON_KEY=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImVuYW1odWZ3b2J5dHJmeWRhcnN6Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTY5NDkyMDUsImV4cCI6MjA3MjUyNTIwNX0.9TQ163xUnnE2F0Q2zfO4kovfkBIk63p1FldrvjcHwSo
+SUPABASE_SERVICE_ROLE_KEY=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImVuYW1odWZ3b2J5dHJmeWRhcnN6Iiwicm9sZSI6InNlcnZpY2Vfcm9sZSIsImlhdCI6MTc1Njk0OTIwNSwiZXhwIjoyMDcyNTI1MjA1fQ.NVI17sMDYvb4ZqNG6ucQ_VdO6QqiElllFeC16GLTyE4
+
+# === ENVIRONMENT CONFIGURATION ===
+NODE_ENV=production
+PORT=5001
+
+# === DISABLE PROBLEMATIC SERVICES ===
+DISABLE_REDIS=true
+
+# === FRONTEND CONFIGURATION ===
+FRONTEND_URL=https://app.floworx-iq.com
+
+# === SECURITY (ADD YOUR OWN VALUES) ===
+JWT_SECRET=your-super-secure-jwt-secret-key-here-minimum-32-characters
+ENCRYPTION_KEY=your-32-character-encryption-key-here
+
+# =============================================================================
+# INSTRUCTIONS:
+# =============================================================================
+# 1. Copy ALL variables above into Coolify Dashboard
+# 2. Go to: app.floworx-iq → Configuration → Environment Variables
+# 3. Add each variable as a separate entry
+# 4. Click "Redeploy" after adding all variables
+# 5. Check logs for successful connection messages
+#
+# Expected success logs:
+# ✅ Database connection established
+# 🚀 Floworx backend server running on port 5001
+# ⚠️ KeyDB disabled - using memory cache only
+# =============================================================================
+
+# =============================================================================
+# SECURITY WARNING:
+# =============================================================================
+# These credentials are now exposed in this conversation.
+# IMMEDIATELY after successful deployment:
+# 1. Go to Supabase Dashboard → Settings → Database
+# 2. Reset database password
+# 3. Update DATABASE_URL with new password in Coolify
+# 4. Redeploy
+# =============================================================================

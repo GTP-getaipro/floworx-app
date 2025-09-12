@@ -47,9 +47,14 @@ class CacheService {
    */
   async initializeKeyDB() {
     // Skip KeyDB initialization if disabled or not configured
-    if (process.env.DISABLE_REDIS === 'true' || (!process.env.REDIS_HOST && !process.env.REDIS_URL)) {
-      console.log('⚠️ KeyDB disabled - using memory cache only');
-      console.log(`   DISABLE_REDIS: ${process.env.DISABLE_REDIS || 'not set'}`);
+    if (process.env.DISABLE_REDIS === 'true') {
+      console.log('⚠️ KeyDB disabled via DISABLE_REDIS - using memory cache only');
+      this.isRedisConnected = false;
+      return;
+    }
+
+    if (!process.env.REDIS_HOST && !process.env.REDIS_URL) {
+      console.log('⚠️ KeyDB disabled - no Redis configuration found - using memory cache only');
       console.log(`   REDIS_HOST: ${process.env.REDIS_HOST || 'not set'}`);
       console.log(`   REDIS_URL: ${process.env.REDIS_URL ? 'SET' : 'not set'}`);
       console.log(`   NODE_ENV: ${process.env.NODE_ENV || 'not set'}`);

@@ -21,18 +21,54 @@ class DatabaseManager {
       console.log(`   DATABASE_URL: ${process.env.DATABASE_URL.substring(0, 50)}...`);
 
       // Parse DATABASE_URL to extract components for debugging
+      let parsedUrl;
       try {
-        const url = new URL(process.env.DATABASE_URL);
+        parsedUrl = new URL(process.env.DATABASE_URL);
         console.log(`🔍 DATABASE_URL Components:`);
-        console.log(`   Protocol: ${url.protocol}`);
-        console.log(`   Hostname: ${url.hostname}`);
-        console.log(`   Port: ${url.port}`);
-        console.log(`   Database: ${url.pathname.substring(1)}`);
-        console.log(`   Username: ${url.username}`);
+        console.log(`   Protocol: ${parsedUrl.protocol}`);
+        console.log(`   Hostname: ${parsedUrl.hostname}`);
+        console.log(`   Port: ${parsedUrl.port}`);
+        console.log(`   Database: ${parsedUrl.pathname.substring(1)}`);
+        console.log(`   Username: ${parsedUrl.username}`);
       } catch (parseError) {
         console.error('❌ Failed to parse DATABASE_URL:', parseError.message);
       }
 
+      // AGGRESSIVE IPv4 FIX: Parse URL and use individual components
+      if (parsedUrl) {
+        console.log('🔧 Converting DATABASE_URL to individual components to force IPv4');
+        return {
+          host: parsedUrl.hostname,
+          port: parseInt(parsedUrl.port) || 5432,
+          database: parsedUrl.pathname.substring(1),
+          user: parsedUrl.username,
+          password: parsedUrl.password,
+          ssl: isProduction
+            ? {
+                rejectUnauthorized: false
+              }
+            : false,
+
+          // Force IPv4 connection
+          family: 4, // Force IPv4
+
+          // Optimized connection pooling
+          max: isProduction ? 1 : 10,
+          min: 0,
+          idleTimeoutMillis: isProduction ? 0 : 30000,
+          connectionTimeoutMillis: isProduction ? 0 : 2000,
+          acquireTimeoutMillis: 60000,
+          createTimeoutMillis: 30000,
+          destroyTimeoutMillis: 5000,
+          reapIntervalMillis: 1000,
+          createRetryIntervalMillis: 200,
+
+          // Enhanced error handling
+          allowExitOnIdle: true
+        };
+      }
+
+      // Fallback to connection string if parsing fails
       return {
         connectionString: process.env.DATABASE_URL,
         ssl: isProduction
@@ -45,7 +81,7 @@ class DatabaseManager {
         family: 4, // Force IPv4
 
         // Optimized connection pooling
-        max: isProduction ? 1 : 10, // Single connection for serverless, multiple for development
+        max: isProduction ? 1 : 10,
         min: 0,
         idleTimeoutMillis: isProduction ? 0 : 30000,
         connectionTimeoutMillis: isProduction ? 0 : 2000,

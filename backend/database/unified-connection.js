@@ -15,8 +15,35 @@ class DatabaseManager {
   getConnectionConfig() {
     const isProduction = process.env.NODE_ENV === 'production';
 
+    // Priority 1: Use DATABASE_URL if available (recommended for production)
+    if (process.env.DATABASE_URL) {
+      return {
+        connectionString: process.env.DATABASE_URL,
+        ssl: isProduction
+          ? {
+              rejectUnauthorized: false
+            }
+          : false,
+
+        // Optimized connection pooling
+        max: isProduction ? 1 : 10, // Single connection for serverless, multiple for development
+        min: 0,
+        idleTimeoutMillis: isProduction ? 0 : 30000,
+        connectionTimeoutMillis: isProduction ? 0 : 2000,
+        acquireTimeoutMillis: 60000,
+        createTimeoutMillis: 30000,
+        destroyTimeoutMillis: 5000,
+        reapIntervalMillis: 1000,
+        createRetryIntervalMillis: 200,
+
+        // Enhanced error handling
+        allowExitOnIdle: true
+      };
+    }
+
+    // Priority 2: Fallback to individual DB_* variables
     return {
-      host: process.env.DB_HOST,
+      host: process.env.DB_HOST || 'localhost',
       port: process.env.DB_PORT || 5432,
       database: process.env.DB_NAME,
       user: process.env.DB_USER,

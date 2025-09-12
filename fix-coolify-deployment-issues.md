@@ -44,7 +44,7 @@ REDIS_URL=redis://localhost:6379
 
 # === ENVIRONMENT ===
 NODE_ENV=production
-PORT=3000
+PORT=5001
 
 # === SECURITY ===
 JWT_SECRET=your-jwt-secret-here
@@ -121,7 +121,7 @@ SUPABASE_URL: SET
 ✅ Database connection established
    PostgreSQL version: PostgreSQL 17.4
 🗄️ KeyDB cache service initialized
-✅ Server started on port 3000
+✅ Server started on port 5001
 ```
 
 ## 🚨 **If Issues Persist:**

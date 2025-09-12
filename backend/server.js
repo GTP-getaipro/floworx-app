@@ -13,7 +13,7 @@ console.log('NODE_ENV:', process.env.NODE_ENV || '❌ NOT SET');
 console.log('SUPABASE_URL:', process.env.SUPABASE_URL ? 'SET' : '❌ NOT SET');
 console.log('DB_HOST:', process.env.DB_HOST || '❌ NOT SET (should be empty if using DATABASE_URL)');
 console.log('DB_PORT:', process.env.DB_PORT || '❌ NOT SET (should be empty if using DATABASE_URL)');
-console.log('PORT:', process.env.PORT || '❌ NOT SET');
+console.log('PORT:', process.env.PORT || '❌ NOT SET (should be 5001)');
 console.log('================================\n');
 
 // Enhanced security imports
@@ -52,7 +52,7 @@ const workflowRoutes = require('./routes/workflows');
 const { router: schedulerRoutes, scheduler } = require('./scheduler/n8nScheduler');
 
 const app = express();
-const PORT = process.env.PORT || 5000;
+const PORT = process.env.PORT || 5001;
 
 // Trust proxy for accurate IP addresses behind load balancers
 app.set('trust proxy', 1);

@@ -4,6 +4,18 @@ const morgan = require('morgan');
 
 require('dotenv').config();
 
+// 🔍 TEMPORARY DEBUG - Remove after fixing Coolify issues
+console.log('🔍 COOLIFY ENVIRONMENT DEBUG:');
+console.log('================================');
+console.log('DATABASE_URL:', process.env.DATABASE_URL ? `SET (${process.env.DATABASE_URL.substring(0, 30)}...)` : '❌ NOT SET');
+console.log('REDIS_URL:', process.env.REDIS_URL ? `SET (${process.env.REDIS_URL})` : '❌ NOT SET');
+console.log('NODE_ENV:', process.env.NODE_ENV || '❌ NOT SET');
+console.log('SUPABASE_URL:', process.env.SUPABASE_URL ? 'SET' : '❌ NOT SET');
+console.log('DB_HOST:', process.env.DB_HOST || '❌ NOT SET (should be empty if using DATABASE_URL)');
+console.log('DB_PORT:', process.env.DB_PORT || '❌ NOT SET (should be empty if using DATABASE_URL)');
+console.log('PORT:', process.env.PORT || '❌ NOT SET');
+console.log('================================\n');
+
 // Enhanced security imports
 const { initialize: initializeDatabase } = require('./database/unified-connection');
 const { errorHandler, notFoundHandler } = require('./middleware/errorHandler');

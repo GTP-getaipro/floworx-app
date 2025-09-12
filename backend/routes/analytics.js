@@ -10,7 +10,7 @@ const router = express.Router();
 
 // GET /api/analytics
 // Get user analytics overview
-router.get('/', authenticateToken, async (req, res) => {
+router.get('/', authenticateToken, (req, res) => {
   try {
     const _userId = req.user.id; // Prefixed with _ to indicate intentionally unused
 

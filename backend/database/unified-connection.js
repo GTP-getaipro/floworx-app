@@ -20,6 +20,19 @@ class DatabaseManager {
       console.log('🔍 Using DATABASE_URL for connection');
       console.log(`   DATABASE_URL: ${process.env.DATABASE_URL.substring(0, 50)}...`);
 
+      // Parse DATABASE_URL to extract components for debugging
+      try {
+        const url = new URL(process.env.DATABASE_URL);
+        console.log(`🔍 DATABASE_URL Components:`);
+        console.log(`   Protocol: ${url.protocol}`);
+        console.log(`   Hostname: ${url.hostname}`);
+        console.log(`   Port: ${url.port}`);
+        console.log(`   Database: ${url.pathname.substring(1)}`);
+        console.log(`   Username: ${url.username}`);
+      } catch (parseError) {
+        console.error('❌ Failed to parse DATABASE_URL:', parseError.message);
+      }
+
       return {
         connectionString: process.env.DATABASE_URL,
         ssl: isProduction
@@ -27,6 +40,9 @@ class DatabaseManager {
               rejectUnauthorized: false
             }
           : false,
+
+        // Force IPv4 connection
+        family: 4, // Force IPv4
 
         // Optimized connection pooling
         max: isProduction ? 1 : 10, // Single connection for serverless, multiple for development
@@ -62,6 +78,9 @@ class DatabaseManager {
             rejectUnauthorized: false
           }
         : false,
+
+      // Force IPv4 connection
+      family: 4, // Force IPv4
 
       // Optimized connection pooling
       max: isProduction ? 1 : 10, // Single connection for serverless, multiple for development

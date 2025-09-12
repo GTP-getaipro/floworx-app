@@ -10,7 +10,7 @@ const router = express.Router();
 
 // GET /api/recovery
 // Get recovery options
-router.get('/', async (req, res) => {
+router.get('/', (req, res) => {
   try {
     res.json({
       success: true,
@@ -31,7 +31,7 @@ router.get('/', async (req, res) => {
 
 // POST /api/recovery/initiate
 // Initiate account recovery
-router.post('/initiate', async (req, res) => {
+router.post('/initiate', (req, res) => {
   try {
     const { email } = req.body;
 

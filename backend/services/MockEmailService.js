@@ -9,7 +9,7 @@ class MockEmailService {
     this.enabled = process.env.NODE_ENV === 'development';
   }
   
-  async sendEmail(to, subject, htmlContent, textContent = null) {
+  sendEmail(to, subject, htmlContent, textContent = null) {
     if (!this.enabled) {
       throw new Error('Mock email service only available in development');
     }
@@ -26,14 +26,14 @@ class MockEmailService {
     };
   }
   
-  async sendVerificationEmail(email, firstName, token) {
+  sendVerificationEmail(email, firstName, token) {
     const subject = 'Verify Your Email Address';
     const content = `Hi ${firstName}, please verify your email with token: ${token}`;
     
     return this.sendEmail(email, subject, content);
   }
   
-  async sendPasswordResetEmail(email, firstName, token) {
+  sendPasswordResetEmail(email, firstName, token) {
     const subject = 'Password Reset Request';
     const content = `Hi ${firstName}, your password reset token is: ${token}`;
     

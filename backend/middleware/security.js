@@ -158,7 +158,7 @@ const rateLimitConfigs = {
       message: 'Please wait before trying again.',
       retryAfter: '15 minutes'
     },
-    skip: (req) => {
+    skip: (_req) => {
       // Skip rate limiting for test environments
       return process.env.NODE_ENV === 'test' || process.env.SKIP_RATE_LIMIT === 'true';
     }
@@ -173,7 +173,7 @@ const rateLimitConfigs = {
       message: 'Maximum registrations per hour exceeded.',
       retryAfter: '1 hour'
     },
-    skip: (req) => {
+    skip: (_req) => {
       // Skip rate limiting for test environments
       return process.env.NODE_ENV === 'test' || process.env.SKIP_RATE_LIMIT === 'true';
     }

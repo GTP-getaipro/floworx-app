@@ -13,7 +13,7 @@ const router = express.Router();
 
 // GET /api/password-reset
 // Get password reset information
-router.get('/', async (req, res) => {
+router.get('/', (req, res) => {
   try {
     res.json({
       success: true,

@@ -1,0 +1,417 @@
+/**
+ * Supabase REST API Client
+ * Replaces direct PostgreSQL connections with Supabase REST API calls
+ * This bypasses network connectivity issues by using HTTPS instead of PostgreSQL protocol
+ */
+
+const { createClient } = require('@supabase/supabase-js');
+const crypto = require('crypto');
+
+class SupabaseRestClient {
+  constructor() {
+    this.supabaseUrl = process.env.SUPABASE_URL;
+    this.supabaseAnonKey = process.env.SUPABASE_ANON_KEY;
+    this.supabaseServiceKey = process.env.SUPABASE_SERVICE_ROLE_KEY;
+    this.encryptionKey = process.env.ENCRYPTION_KEY;
+
+    if (!this.supabaseUrl) {
+      throw new Error('SUPABASE_URL environment variable is required');
+    }
+
+    if (!this.supabaseAnonKey) {
+      throw new Error('SUPABASE_ANON_KEY environment variable is required');
+    }
+
+    if (!this.encryptionKey) {
+      throw new Error('ENCRYPTION_KEY environment variable is required');
+    }
+
+    // Client for user operations (with RLS)
+    this.client = createClient(this.supabaseUrl, this.supabaseAnonKey);
+
+    // Admin client for service operations (bypasses RLS)
+    if (this.supabaseServiceKey) {
+      this.adminClient = createClient(this.supabaseUrl, this.supabaseServiceKey);
+    }
+
+    console.log('✅ Supabase REST API client initialized');
+    console.log(`   URL: ${this.supabaseUrl}`);
+    console.log(`   Using HTTPS REST API instead of direct PostgreSQL connection`);
+  }
+
+  // =====================================================
+  // ENCRYPTION UTILITIES (same as original)
+  // =====================================================
+
+  encrypt(text) {
+    if (!text) {
+      return null;
+    }
+    const algorithm = 'aes-256-gcm';
+    const iv = crypto.randomBytes(16);
+    const keyBuffer = Buffer.from(this.encryptionKey.slice(0, 32), 'utf8');
+    const cipher = crypto.createCipherGCM(algorithm, keyBuffer, iv);
+    cipher.setAAD(Buffer.from('floworx-supabase', 'utf8'));
+
+    let encrypted = cipher.update(text, 'utf8', 'hex');
+    encrypted += cipher.final('hex');
+
+    const authTag = cipher.getAuthTag();
+    return iv.toString('hex') + ':' + authTag.toString('hex') + ':' + encrypted;
+  }
+
+  decrypt(encryptedText) {
+    if (!encryptedText) {
+      return null;
+    }
+    const algorithm = 'aes-256-gcm';
+    const parts = encryptedText.split(':');
+
+    if (parts.length !== 3) {
+      throw new Error('Invalid encrypted text format');
+    }
+
+    const iv = Buffer.from(parts[0], 'hex');
+    const authTag = Buffer.from(parts[1], 'hex');
+    const encrypted = parts[2];
+    const keyBuffer = Buffer.from(this.encryptionKey.slice(0, 32), 'utf8');
+
+    const decipher = crypto.createDecipherGCM(algorithm, keyBuffer, iv);
+    decipher.setAAD(Buffer.from('floworx-supabase', 'utf8'));
+    decipher.setAuthTag(authTag);
+
+    let decrypted = decipher.update(encrypted, 'hex', 'utf8');
+    decrypted += decipher.final('utf8');
+
+    return decrypted;
+  }
+
+  /**
+   * Get client with user context (RLS enabled)
+   */
+  getUserClient(accessToken = null) {
+    if (accessToken) {
+      this.client.auth.setSession({ access_token: accessToken });
+    }
+    return this.client;
+  }
+
+  /**
+   * Get admin client (bypasses RLS)
+   */
+  getAdminClient() {
+    if (!this.adminClient) {
+      throw new Error('Service role key not configured - cannot use admin client');
+    }
+    return this.adminClient;
+  }
+
+  // =====================================================
+  // CREDENTIALS MANAGEMENT (converted to REST API)
+  // =====================================================
+
+  async storeCredentials(userId, serviceName, accessToken, refreshToken = null, expiryDate = null, scope = null) {
+    try {
+      const encryptedAccessToken = this.encrypt(accessToken);
+      const encryptedRefreshToken = refreshToken ? this.encrypt(refreshToken) : null;
+
+      const { data, error } = await this.getAdminClient()
+        .from('credentials')
+        .upsert({
+          user_id: userId,
+          service_name: serviceName,
+          access_token: encryptedAccessToken,
+          refresh_token: encryptedRefreshToken,
+          expiry_date: expiryDate,
+          scope: scope,
+          updated_at: new Date().toISOString()
+        }, { 
+          onConflict: 'user_id,service_name',
+          ignoreDuplicates: false 
+        })
+        .select('id, created_at, updated_at')
+        .single();
+
+      if (error) throw error;
+      return data;
+    } catch (error) {
+      console.error('❌ Store credentials error:', error.message);
+      throw error;
+    }
+  }
+
+  async getCredentials(userId, serviceName) {
+    try {
+      const { data, error } = await this.getAdminClient()
+        .from('credentials')
+        .select('access_token, refresh_token, expiry_date, scope, created_at, updated_at')
+        .eq('user_id', userId)
+        .eq('service_name', serviceName)
+        .single();
+
+      if (error) {
+        if (error.code === 'PGRST116') return null; // No rows found
+        throw error;
+      }
+
+      return {
+        accessToken: this.decrypt(data.access_token),
+        refreshToken: data.refresh_token ? this.decrypt(data.refresh_token) : null,
+        expiryDate: data.expiry_date,
+        scope: data.scope,
+        createdAt: data.created_at,
+        updatedAt: data.updated_at
+      };
+    } catch (error) {
+      console.error('❌ Get credentials error:', error.message);
+      throw error;
+    }
+  }
+
+  // =====================================================
+  // BUSINESS CONFIGURATION MANAGEMENT (converted to REST API)
+  // =====================================================
+
+  async storeBusinessConfig(userId, configData) {
+    try {
+      // First, deactivate previous configs
+      await this.getAdminClient()
+        .from('business_configs')
+        .update({ is_active: false })
+        .eq('user_id', userId);
+
+      // Insert new active config
+      const { data, error } = await this.getAdminClient()
+        .from('business_configs')
+        .insert({
+          user_id: userId,
+          config_json: configData,
+          is_active: true
+        })
+        .select('id, version, created_at')
+        .single();
+
+      if (error) throw error;
+      return data;
+    } catch (error) {
+      console.error('❌ Store business config error:', error.message);
+      throw error;
+    }
+  }
+
+  async getBusinessConfig(userId) {
+    try {
+      const { data, error } = await this.getAdminClient()
+        .from('business_configs')
+        .select('id, config_json, version, created_at, updated_at')
+        .eq('user_id', userId)
+        .eq('is_active', true)
+        .order('created_at', { ascending: false })
+        .limit(1)
+        .single();
+
+      if (error) {
+        if (error.code === 'PGRST116') return null; // No rows found
+        throw error;
+      }
+
+      return {
+        id: data.id,
+        config: data.config_json,
+        version: data.version,
+        createdAt: data.created_at,
+        updatedAt: data.updated_at
+      };
+    } catch (error) {
+      console.error('❌ Get business config error:', error.message);
+      throw error;
+    }
+  }
+
+  // =====================================================
+  // WORKFLOW DEPLOYMENT TRACKING (converted to REST API)
+  // =====================================================
+
+  async storeWorkflowDeployment(userId, businessConfigId, n8nWorkflowId, workflowName, webhookUrl, deploymentData) {
+    try {
+      const { data, error } = await this.getAdminClient()
+        .from('workflow_deployments')
+        .insert({
+          user_id: userId,
+          business_config_id: businessConfigId,
+          n8n_workflow_id: n8nWorkflowId,
+          workflow_name: workflowName,
+          webhook_url: webhookUrl,
+          deployment_data: deploymentData,
+          status: 'active'
+        })
+        .select('id, created_at')
+        .single();
+
+      if (error) throw error;
+      return data;
+    } catch (error) {
+      console.error('❌ Store workflow deployment error:', error.message);
+      throw error;
+    }
+  }
+
+  async getWorkflowDeployments(userId) {
+    try {
+      const { data, error } = await this.getAdminClient()
+        .from('workflow_deployments')
+        .select(`
+          id,
+          n8n_workflow_id,
+          workflow_name,
+          webhook_url,
+          status,
+          deployment_data,
+          last_execution,
+          execution_count,
+          created_at,
+          updated_at,
+          business_configs!inner(config_json)
+        `)
+        .eq('user_id', userId)
+        .order('created_at', { ascending: false });
+
+      if (error) throw error;
+
+      return data.map(row => ({
+        id: row.id,
+        n8nWorkflowId: row.n8n_workflow_id,
+        workflowName: row.workflow_name,
+        webhookUrl: row.webhook_url,
+        status: row.status,
+        deploymentData: row.deployment_data,
+        businessConfig: row.business_configs.config_json,
+        lastExecution: row.last_execution,
+        executionCount: row.execution_count,
+        createdAt: row.created_at,
+        updatedAt: row.updated_at
+      }));
+    } catch (error) {
+      console.error('❌ Get workflow deployments error:', error.message);
+      throw error;
+    }
+  }
+
+  // =====================================================
+  // ONBOARDING PROGRESS TRACKING (converted to REST API)
+  // =====================================================
+
+  async updateOnboardingProgress(userId, currentStep, completedSteps, stepData, googleConnected = false, workflowDeployed = false) {
+    try {
+      const { data, error } = await this.getAdminClient()
+        .from('onboarding_progress')
+        .upsert({
+          user_id: userId,
+          current_step: currentStep,
+          completed_steps: completedSteps,
+          step_data: stepData,
+          google_connected: googleConnected,
+          workflow_deployed: workflowDeployed,
+          onboarding_completed: workflowDeployed,
+          updated_at: new Date().toISOString()
+        }, { onConflict: 'user_id' })
+        .select()
+        .single();
+
+      if (error) throw error;
+      return data;
+    } catch (error) {
+      console.error('❌ Update onboarding progress error:', error.message);
+      throw error;
+    }
+  }
+
+  async getOnboardingProgress(userId) {
+    try {
+      const { data, error } = await this.getAdminClient()
+        .from('onboarding_progress')
+        .select('*')
+        .eq('user_id', userId)
+        .single();
+
+      if (error) {
+        if (error.code === 'PGRST116') return null; // No rows found
+        throw error;
+      }
+
+      return data;
+    } catch (error) {
+      console.error('❌ Get onboarding progress error:', error.message);
+      throw error;
+    }
+  }
+
+  // =====================================================
+  // ANALYTICS TRACKING (converted to REST API)
+  // =====================================================
+
+  async trackEvent(userId, eventType, eventData, sessionId = null, ipAddress = null, userAgent = null) {
+    try {
+      const { data, error } = await this.getAdminClient()
+        .from('user_analytics')
+        .insert({
+          user_id: userId,
+          event_type: eventType,
+          event_data: eventData,
+          session_id: sessionId,
+          ip_address: ipAddress,
+          user_agent: userAgent
+        })
+        .select('id, created_at')
+        .single();
+
+      if (error) throw error;
+      return data;
+    } catch (error) {
+      console.error('❌ Track event error:', error.message);
+      throw error;
+    }
+  }
+
+  // =====================================================
+  // CONNECTION MANAGEMENT (converted to REST API)
+  // =====================================================
+
+  async testConnection() {
+    try {
+      // Test with a simple query to users table
+      const { data, error } = await this.client
+        .from('users')
+        .select('count', { count: 'exact', head: true });
+
+      if (error) {
+        return {
+          success: false,
+          error: error.message,
+          method: 'REST API'
+        };
+      }
+
+      return {
+        success: true,
+        method: 'REST API',
+        message: 'Supabase REST API connection successful',
+        timestamp: new Date().toISOString()
+      };
+    } catch (error) {
+      return {
+        success: false,
+        error: error.message,
+        method: 'REST API'
+      };
+    }
+  }
+
+  // No need for close() method with REST API
+  async close() {
+    // REST API doesn't need connection cleanup
+    console.log('✅ Supabase REST API client closed (no cleanup needed)');
+  }
+}
+
+module.exports = SupabaseRestClient;

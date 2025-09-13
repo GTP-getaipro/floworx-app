@@ -6,7 +6,7 @@
 const express = require('express');
 const Redis = require('ioredis');
 
-const { query } = require('../database/unified-connection');
+const { databaseOperations } = require('../database/database-operations');
 const ContainerMemoryMonitor = require('../utils/ContainerMemoryMonitor');
 
 const router = express.Router();
@@ -41,31 +41,42 @@ router.get('/', (req, res) => {
 router.get('/database', async (req, res) => {
   try {
     const startTime = Date.now();
-    
-    // Test database connection with a simple query
-    const result = await query('SELECT 1 as health_check, NOW() as current_time');
-    
+
+    // Test database connection
+    const healthResult = await databaseOperations.healthCheck();
+    const connectionInfo = databaseOperations.getConnectionInfo();
+
     const responseTime = Date.now() - startTime;
     
-    res.status(200).json({
-      status: 'healthy',
-      service: 'database',
-      responseTime: `${responseTime}ms`,
-      connection: 'active',
-      timestamp: result.rows[0].current_time,
-      details: {
-        type: 'PostgreSQL',
-        pool: 'active',
-        query_test: 'passed'
-      }
-    });
+    if (healthResult.success) {
+      res.status(200).json({
+        status: 'healthy',
+        service: 'database',
+        responseTime: `${responseTime}ms`,
+        connection: 'active',
+        method: connectionInfo.connectionMethod,
+        timestamp: healthResult.timestamp || new Date().toISOString(),
+        details: {
+          type: connectionInfo.useRestApi ? 'Supabase REST API' : 'PostgreSQL',
+          connection_method: connectionInfo.connectionMethod,
+          initialized: connectionInfo.isInitialized,
+          test_result: 'passed'
+        }
+      });
+    } else {
+      throw new Error(healthResult.error || 'Database health check failed');
+    }
   } catch (error) {
+    const connectionInfo = databaseOperations.getConnectionInfo();
     res.status(503).json({
       status: 'unhealthy',
       service: 'database',
       error: error.message,
+      method: connectionInfo.connectionMethod,
       details: {
-        type: 'PostgreSQL',
+        type: connectionInfo.useRestApi ? 'Supabase REST API' : 'PostgreSQL',
+        connection_method: connectionInfo.connectionMethod,
+        initialized: connectionInfo.isInitialized,
         connection: 'failed'
       }
     });

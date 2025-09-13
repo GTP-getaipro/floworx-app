@@ -1,4 +1,5 @@
 const { Pool } = require('pg');
+const SupabaseRestClient = require('./supabase-rest-client');
 
 const { encrypt, decrypt } = require('../utils/encryption');
 // Load environment variables with proper path resolution
@@ -33,8 +34,21 @@ if (!envLoaded) {
 class DatabaseManager {
   constructor() {
     this.pool = null;
+    this.restClient = null;
+    this.useRestApi = true; // Default to REST API
     this.isInitialized = false;
     this.connectionConfig = this.getConnectionConfig();
+
+    // Initialize REST API client as primary method
+    try {
+      this.restClient = new SupabaseRestClient();
+      console.log('✅ Supabase REST API client initialized as PRIMARY connection method');
+      console.log('   Using HTTPS REST API instead of direct PostgreSQL connection');
+    } catch (error) {
+      console.error('❌ Could not initialize REST API client:', error.message);
+      console.log('   Falling back to PostgreSQL connection...');
+      this.useRestApi = false;
+    }
   }
 
   // Get optimized connection configuration
@@ -159,8 +173,35 @@ class DatabaseManager {
 
   // Initialize database connection with retry logic
   async initialize(retries = 3) {
-    if (this.isInitialized && this.pool) {
-      return this.pool;
+    if (this.isInitialized) {
+      return this.useRestApi ? 'REST_API' : this.pool;
+    }
+
+    // Try REST API first (primary method)
+    if (this.restClient && this.useRestApi) {
+      console.log('🔄 Initializing Supabase REST API connection...');
+      try {
+        const testResult = await this.restClient.testConnection();
+        if (testResult.success) {
+          console.log('✅ Supabase REST API connection successful');
+          console.log('   Using HTTPS REST API (bypasses network connectivity issues)');
+          this.isInitialized = true;
+          return 'REST_API';
+        } else {
+          console.error('❌ REST API connection failed:', testResult.error);
+          console.log('   Falling back to PostgreSQL connection...');
+          this.useRestApi = false;
+        }
+      } catch (restError) {
+        console.error('❌ REST API initialization failed:', restError.message);
+        console.log('   Falling back to PostgreSQL connection...');
+        this.useRestApi = false;
+      }
+    }
+
+    // Fallback to PostgreSQL if REST API fails
+    if (!this.useRestApi) {
+      console.log('🔄 Falling back to PostgreSQL connection...');
     }
 
     for (let attempt = 1; attempt <= retries; attempt++) {
@@ -193,7 +234,28 @@ class DatabaseManager {
         console.error(`❌ Database connection attempt ${attempt} failed:`, error.message);
 
         if (attempt === retries) {
-          console.error('❌ All database connection attempts failed');
+          console.error('❌ All PostgreSQL connection attempts failed');
+
+          // Try to fall back to REST API
+          if (this.restClient) {
+            console.log('🔄 Falling back to Supabase REST API...');
+            try {
+              const testResult = await this.restClient.testConnection();
+              if (testResult.success) {
+                console.log('✅ Supabase REST API connection successful');
+                console.log('   Using REST API instead of direct PostgreSQL connection');
+                this.useRestApi = true;
+                this.isInitialized = true;
+                return 'REST_API'; // Return indicator that we're using REST API
+              } else {
+                console.error('❌ REST API connection also failed:', testResult.error);
+              }
+            } catch (restError) {
+              console.error('❌ REST API fallback failed:', restError.message);
+            }
+          }
+
+          console.error('❌ All database connection methods failed');
           console.error('⚠️ Database not available - running in limited mode');
           console.error('Check DATABASE_URL and network connectivity to Supabase');
 
@@ -218,10 +280,21 @@ class DatabaseManager {
 
   // Execute query with automatic connection management and monitoring
   async query(text, params = []) {
-    const pool = await this.getPool();
     const start = Date.now();
     let _success = true;
     let _error = null;
+
+    // If using REST API, delegate to REST client
+    if (this.useRestApi && this.restClient) {
+      console.warn('⚠️ Direct SQL queries not supported with REST API');
+      console.warn('   Query:', text.substring(0, 100));
+      throw new Error('Direct SQL queries not supported with REST API. Use specific methods instead.');
+    }
+
+    const pool = await this.getPool();
+    if (!pool) {
+      throw new Error('Database not available');
+    }
 
     try {
       const result = await pool.query(text, params);

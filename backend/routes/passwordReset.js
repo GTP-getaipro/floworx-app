@@ -42,7 +42,7 @@ router.post('/request', passwordResetRateLimit, validationMiddleware.passwordRes
 
     // Check if user exists using REST API
     console.log(`🔍 Checking if user exists: ${email}`);
-    const userResult = await databaseOperations.getUserByEmail(email);
+    const userResult = await databaseOperations.getUserByEmailForPasswordReset(email);
 
     if (userResult.error || !userResult.data) {
       // Don't reveal if email exists - security best practice

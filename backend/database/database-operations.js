@@ -77,20 +77,20 @@ class DatabaseOperations {
 
   async getUserByEmail(email) {
     const { type, client } = await this.getClient();
-    
+
     if (type === 'REST_API') {
       return await client.getAdminClient()
         .from('users')
         .select('*')
-        .eq('email', email)
+        .eq('email', email.toLowerCase())
         .single();
     } else {
       // PostgreSQL implementation
       const query = 'SELECT * FROM users WHERE email = $1';
-      const result = await client.query(query, [email]);
-      return { 
-        data: result.rows[0] || null, 
-        error: result.rows.length === 0 ? { code: 'PGRST116', message: 'No rows found' } : null 
+      const result = await client.query(query, [email.toLowerCase()]);
+      return {
+        data: result.rows[0] || null,
+        error: result.rows.length === 0 ? { code: 'PGRST116', message: 'No rows found' } : null
       };
     }
   }
@@ -482,7 +482,7 @@ class DatabaseOperations {
   // PASSWORD RESET OPERATIONS
   // =====================================================
 
-  async getUserByEmail(email) {
+  async getUserByEmailForPasswordReset(email) {
     const { type, client } = await this.getClient();
 
     if (type === 'REST_API') {

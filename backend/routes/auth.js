@@ -757,4 +757,28 @@ router.post('/recovery', async (req, res) => {
   }
 });
 
+// POST /api/auth/logout
+// Logout user (client-side token invalidation)
+router.post('/logout', authenticateToken, async (req, res) => {
+  try {
+    console.log(`🚪 User logout: ${req.user.email}`);
+
+    // For JWT tokens, logout is primarily handled client-side by removing the token
+    // We could implement server-side token blacklisting here if needed
+
+    res.json({
+      success: true,
+      message: 'Logged out successfully'
+    });
+  } catch (error) {
+    console.error('Logout error:', error);
+    res.status(500).json({
+      success: false,
+      error: 'Internal server error',
+      message: 'Failed to logout',
+      details: error.message
+    });
+  }
+});
+
 module.exports = router;

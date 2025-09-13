@@ -704,6 +704,99 @@ class DatabaseOperations {
       return { data: result.rows[0] || null, error: null };
     }
   }
+
+  // USER PROFILE OPERATIONS
+  // =====================================================
+
+  async getUserProfile(userId) {
+    const { type, client } = await this.getClient();
+
+    if (type === 'REST_API') {
+      return await client.getAdminClient()
+        .from('users')
+        .select('id, email, first_name, last_name, company_name, created_at, last_login, email_verified')
+        .eq('id', userId)
+        .single();
+    } else {
+      // PostgreSQL implementation
+      const query = `
+        SELECT id, email, first_name, last_name, company_name, created_at, last_login, email_verified
+        FROM users
+        WHERE id = $1
+      `;
+      const result = await client.query(query, [userId]);
+      return {
+        data: result.rows[0] || null,
+        error: result.rows.length === 0 ? { code: 'PGRST116', message: 'No rows found' } : null
+      };
+    }
+  }
+
+  async updateUserProfile(userId, profileData) {
+    const { type, client } = await this.getClient();
+
+    if (type === 'REST_API') {
+      return await client.getAdminClient()
+        .from('users')
+        .update({
+          ...profileData,
+          updated_at: new Date().toISOString()
+        })
+        .eq('id', userId)
+        .select()
+        .single();
+    } else {
+      // PostgreSQL implementation
+      const fields = Object.keys(profileData);
+      const values = Object.values(profileData);
+      const setClause = fields.map((field, index) => `${field} = $${index + 2}`).join(', ');
+
+      const query = `
+        UPDATE users
+        SET ${setClause}, updated_at = NOW()
+        WHERE id = $1
+        RETURNING id, email, first_name, last_name, company_name, created_at, last_login, email_verified
+      `;
+      const result = await client.query(query, [userId, ...values]);
+      return { data: result.rows[0] || null, error: null };
+    }
+  }
+
+  async getUserConnectedServices(userId) {
+    const { type, client } = await this.getClient();
+
+    if (type === 'REST_API') {
+      // Try to get credentials - handle gracefully if table doesn't exist
+      try {
+        const result = await client.getAdminClient()
+          .from('credentials')
+          .select('service_name, created_at, expiry_date')
+          .eq('user_id', userId);
+
+        return {
+          data: result.data || [],
+          error: result.error
+        };
+      } catch (error) {
+        console.log('Credentials table not accessible, returning empty array');
+        return { data: [], error: null };
+      }
+    } else {
+      // PostgreSQL implementation
+      try {
+        const query = `
+          SELECT service_name, created_at, expiry_date
+          FROM credentials
+          WHERE user_id = $1
+        `;
+        const result = await client.query(query, [userId]);
+        return { data: result.rows, error: null };
+      } catch (error) {
+        console.log('Credentials table not found, returning empty array');
+        return { data: [], error: null };
+      }
+    }
+  }
 }
 
 // Create singleton instance

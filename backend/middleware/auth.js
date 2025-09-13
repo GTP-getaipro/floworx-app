@@ -1,6 +1,6 @@
 const jwt = require('jsonwebtoken');
 
-const { query } = require('../database/unified-connection');
+const { databaseOperations } = require('../database/database-operations');
 
 const { AuthenticationError, AuthorizationError } = require('./errorHandler');
 
@@ -22,14 +22,13 @@ const TOKEN_CACHE_TTL = 5 * 60 * 1000; // 5 minutes
  * @returns {Promise<Object>} User data
  */
 const verifyAndGetUser = async userId => {
-  const userQuery = 'SELECT id, email, first_name, last_name, email_verified, account_locked_until FROM users WHERE id = $1';
-  const userResult = await query(userQuery, [userId]);
+  const userResult = await databaseOperations.getUserById(userId);
 
-  if (userResult.rows.length === 0) {
+  if (userResult.error || !userResult.data) {
     throw new AuthenticationError('User no longer exists');
   }
 
-  const user = userResult.rows[0];
+  const user = userResult.data;
 
   // Check if account is locked
   if (user.account_locked_until && new Date(user.account_locked_until) > new Date()) {

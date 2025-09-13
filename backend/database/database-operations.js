@@ -609,6 +609,101 @@ class DatabaseOperations {
       return { data: result.rows[0] || null, error: null };
     }
   }
+
+  // EMAIL VERIFICATION OPERATIONS
+  // =====================================================
+
+  async getEmailVerificationToken(token) {
+    const { type, client } = await this.getClient();
+
+    if (type === 'REST_API') {
+      return await client.getAdminClient()
+        .from('email_verification_tokens')
+        .select(`
+          *,
+          users!inner(id, email, first_name)
+        `)
+        .eq('token', token)
+        .gt('expires_at', new Date().toISOString())
+        .single();
+    } else {
+      // PostgreSQL implementation
+      const query = `
+        SELECT evt.user_id, u.email, u.first_name
+        FROM email_verification_tokens evt
+        JOIN users u ON evt.user_id = u.id
+        WHERE evt.token = $1 AND evt.expires_at > CURRENT_TIMESTAMP
+      `;
+      const result = await client.query(query, [token]);
+      return {
+        data: result.rows[0] || null,
+        error: result.rows.length === 0 ? { code: 'PGRST116', message: 'No rows found' } : null
+      };
+    }
+  }
+
+  async markEmailAsVerified(userId) {
+    const { type, client } = await this.getClient();
+
+    if (type === 'REST_API') {
+      return await client.getAdminClient()
+        .from('users')
+        .update({
+          email_verified: true,
+          updated_at: new Date().toISOString()
+        })
+        .eq('id', userId)
+        .select()
+        .single();
+    } else {
+      // PostgreSQL implementation
+      const query = 'UPDATE users SET email_verified = true, updated_at = CURRENT_TIMESTAMP WHERE id = $1 RETURNING *';
+      const result = await client.query(query, [userId]);
+      return { data: result.rows[0] || null, error: null };
+    }
+  }
+
+  async deleteEmailVerificationToken(token) {
+    const { type, client } = await this.getClient();
+
+    if (type === 'REST_API') {
+      return await client.getAdminClient()
+        .from('email_verification_tokens')
+        .delete()
+        .eq('token', token);
+    } else {
+      // PostgreSQL implementation
+      const query = 'DELETE FROM email_verification_tokens WHERE token = $1';
+      const result = await client.query(query, [token]);
+      return { data: null, error: null };
+    }
+  }
+
+  async createEmailVerificationToken(userId, token, expiresAt) {
+    const { type, client } = await this.getClient();
+
+    if (type === 'REST_API') {
+      return await client.getAdminClient()
+        .from('email_verification_tokens')
+        .insert({
+          user_id: userId,
+          token: token,
+          expires_at: expiresAt,
+          created_at: new Date().toISOString()
+        })
+        .select()
+        .single();
+    } else {
+      // PostgreSQL implementation
+      const query = `
+        INSERT INTO email_verification_tokens (user_id, token, expires_at, created_at)
+        VALUES ($1, $2, $3, NOW())
+        RETURNING *
+      `;
+      const result = await client.query(query, [userId, token, expiresAt]);
+      return { data: result.rows[0] || null, error: null };
+    }
+  }
 }
 
 // Create singleton instance

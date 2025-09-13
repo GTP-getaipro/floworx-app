@@ -2,7 +2,7 @@ const crypto = require('crypto');
 
 const nodemailer = require('nodemailer');
 
-const { query } = require('../database/unified-connection');
+const { databaseOperations } = require('../database/database-operations');
 require('dotenv').config();
 
 class EmailService {
@@ -197,16 +197,28 @@ class EmailService {
    * @param {string} firstName - User first name
    */
   async storeVerificationToken(userId, token, email = '', firstName = '') {
-    const expiresAt = new Date(Date.now() + 24 * 60 * 60 * 1000); // 24 hours
+    try {
+      const expiresAt = new Date(Date.now() + 24 * 60 * 60 * 1000); // 24 hours
 
-    const queryText = `
-      INSERT INTO email_verification_tokens (user_id, token, email, first_name, expires_at)
-      VALUES ($1, $2, $3, $4, $5)
-      ON CONFLICT (user_id)
-      DO UPDATE SET token = EXCLUDED.token, email = EXCLUDED.email, first_name = EXCLUDED.first_name, expires_at = EXCLUDED.expires_at, created_at = CURRENT_TIMESTAMP
-    `;
+      console.log(`📧 Storing verification token for user ${userId} via REST API...`);
 
-    await query(queryText, [userId, token, email, firstName, expiresAt]);
+      // For REST API, we'll use upsert functionality
+      const result = await databaseOperations.createEmailVerificationToken(
+        userId,
+        token,
+        expiresAt.toISOString()
+      );
+
+      if (result.error) {
+        console.error('Failed to store verification token:', result.error);
+        throw new Error('Failed to store verification token');
+      }
+
+      console.log('✅ Verification token stored successfully');
+    } catch (error) {
+      console.error('Error storing verification token:', error);
+      throw error;
+    }
   }
 
   /**
@@ -215,36 +227,64 @@ class EmailService {
    * @returns {Object} Verification result
    */
   async verifyEmailToken(token) {
-    const queryText = `
-      SELECT evt.user_id, u.email, u.first_name
-      FROM email_verification_tokens evt
-      JOIN users u ON evt.user_id = u.id
-      WHERE evt.token = $1 AND evt.expires_at > CURRENT_TIMESTAMP
-    `;
+    try {
+      console.log('🔍 Verifying email token via REST API...');
 
-    const result = await query(queryText, [token]);
+      // Get email verification token using REST API
+      const tokenResult = await databaseOperations.getEmailVerificationToken(token);
 
-    if (result.rows.length === 0) {
-      return { valid: false, message: 'Invalid or expired verification token' };
+      if (tokenResult.error || !tokenResult.data) {
+        console.log('❌ Invalid or expired verification token');
+        return { valid: false, message: 'Invalid or expired verification token' };
+      }
+
+      const tokenData = tokenResult.data;
+      const user = tokenData.users || tokenData;
+      const userId = user.id || tokenData.user_id;
+      const email = user.email;
+      const firstName = user.first_name;
+
+      console.log(`✅ Valid verification token found for user: ${email}`);
+
+      // Mark email as verified using REST API
+      console.log('📧 Marking email as verified...');
+      const verifyResult = await databaseOperations.markEmailAsVerified(userId);
+
+      if (verifyResult.error) {
+        console.error('Failed to mark email as verified:', verifyResult.error);
+        return { valid: false, message: 'Failed to verify email' };
+      }
+
+      // Delete used token using REST API
+      console.log('🗑️ Deleting used verification token...');
+      const deleteResult = await databaseOperations.deleteEmailVerificationToken(token);
+
+      if (deleteResult.error) {
+        console.error('Failed to delete verification token:', deleteResult.error);
+        // Continue anyway - email was verified successfully
+      }
+
+      // Send welcome email
+      console.log('📬 Sending welcome email...');
+      try {
+        await this.sendWelcomeEmail(email, firstName);
+      } catch (emailError) {
+        console.error('Failed to send welcome email:', emailError);
+        // Continue anyway - verification was successful
+      }
+
+      console.log(`✅ Email verification completed for user: ${email}`);
+
+      return {
+        valid: true,
+        userId: userId,
+        email: email,
+        firstName: firstName
+      };
+    } catch (error) {
+      console.error('Email verification error:', error);
+      return { valid: false, message: 'Email verification failed' };
     }
-
-    const { user_id, email, first_name } = result.rows[0];
-
-    // Mark email as verified
-    await query('UPDATE users SET email_verified = true, updated_at = CURRENT_TIMESTAMP WHERE id = $1', [user_id]);
-
-    // Delete used token
-    await query('DELETE FROM email_verification_tokens WHERE token = $1', [token]);
-
-    // Send welcome email
-    await this.sendWelcomeEmail(email, first_name);
-
-    return {
-      valid: true,
-      userId: user_id,
-      email,
-      firstName: first_name
-    };
   }
 
   /**

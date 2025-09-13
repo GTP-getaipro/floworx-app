@@ -2,7 +2,34 @@ const cors = require('cors');
 const express = require('express');
 const morgan = require('morgan');
 
-require('dotenv').config();
+// Load environment variables with proper path resolution
+const path = require('path');
+const dotenv = require('dotenv');
+
+// Try different .env file locations based on execution context
+const envPaths = [
+  path.resolve(__dirname, '../.env'),      // Development: .env in root from backend
+  path.resolve(__dirname, '../../.env'),   // Container: .env in root from backend/config
+  path.resolve(process.cwd(), '.env')      // Fallback: current working directory
+];
+
+let envLoaded = false;
+for (const envPath of envPaths) {
+  try {
+    const result = dotenv.config({ path: envPath });
+    if (!result.error) {
+      console.log(`✅ Environment loaded from: ${envPath}`);
+      envLoaded = true;
+      break;
+    }
+  } catch (error) {
+    // Continue to next path
+  }
+}
+
+if (!envLoaded) {
+  console.warn('⚠️ No .env file found, using system environment variables only');
+}
 
 // 🔍 TEMPORARY DEBUG - Remove after fixing Coolify issues
 console.log('🔍 COOLIFY ENVIRONMENT DEBUG:');

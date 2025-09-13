@@ -1,7 +1,33 @@
 const { Pool } = require('pg');
 
 const { encrypt, decrypt } = require('../utils/encryption');
-require('dotenv').config();
+// Load environment variables with proper path resolution
+const path = require('path');
+const dotenv = require('dotenv');
+
+// Try different .env file locations
+const envPaths = [
+  path.resolve(__dirname, '../../.env'),   // Standard: .env in root from backend/database
+  path.resolve(__dirname, '../.env'),      // Alternative: .env in backend
+  path.resolve(process.cwd(), '.env')      // Fallback: current working directory
+];
+
+let envLoaded = false;
+for (const envPath of envPaths) {
+  try {
+    const result = dotenv.config({ path: envPath });
+    if (!result.error) {
+      envLoaded = true;
+      break;
+    }
+  } catch (error) {
+    // Continue to next path
+  }
+}
+
+if (!envLoaded) {
+  console.warn('⚠️ Database connection: No .env file found, using system environment variables');
+}
 
 // Unified Database Connection Manager
 class DatabaseManager {

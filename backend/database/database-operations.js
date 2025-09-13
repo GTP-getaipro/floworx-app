@@ -478,6 +478,137 @@ class DatabaseOperations {
       status: this.dbManager.isInitialized ? 'Connected' : 'Not Connected'
     };
   }
+
+  // PASSWORD RESET OPERATIONS
+  // =====================================================
+
+  async getUserByEmail(email) {
+    const { type, client } = await this.getClient();
+
+    if (type === 'REST_API') {
+      return await client.getAdminClient()
+        .from('users')
+        .select('id, email, first_name')
+        .eq('email', email.toLowerCase())
+        .single();
+    } else {
+      // PostgreSQL implementation
+      const query = 'SELECT id, email, first_name FROM users WHERE email = $1';
+      const result = await client.query(query, [email.toLowerCase()]);
+      return {
+        data: result.rows[0] || null,
+        error: result.rows.length === 0 ? { code: 'PGRST116', message: 'No rows found' } : null
+      };
+    }
+  }
+
+  async createPasswordResetToken(userId, token, expiresAt) {
+    const { type, client } = await this.getClient();
+
+    if (type === 'REST_API') {
+      return await client.getAdminClient()
+        .from('password_reset_tokens')
+        .insert({
+          user_id: userId,
+          token: token,
+          expires_at: expiresAt,
+          created_at: new Date().toISOString()
+        })
+        .select()
+        .single();
+    } else {
+      // PostgreSQL implementation
+      const query = `
+        INSERT INTO password_reset_tokens (user_id, token, expires_at, created_at)
+        VALUES ($1, $2, $3, NOW())
+        RETURNING *
+      `;
+      const result = await client.query(query, [userId, token, expiresAt]);
+      return { data: result.rows[0] || null, error: null };
+    }
+  }
+
+  async getPasswordResetToken(token) {
+    const { type, client } = await this.getClient();
+
+    if (type === 'REST_API') {
+      return await client.getAdminClient()
+        .from('password_reset_tokens')
+        .select(`
+          *,
+          users!inner(id, email, first_name)
+        `)
+        .eq('token', token)
+        .eq('used', false)
+        .gt('expires_at', new Date().toISOString())
+        .single();
+    } else {
+      // PostgreSQL implementation
+      const query = `
+        SELECT prt.*, u.id as user_id, u.email, u.first_name
+        FROM password_reset_tokens prt
+        JOIN users u ON prt.user_id = u.id
+        WHERE prt.token = $1 AND prt.used = false AND prt.expires_at > NOW()
+      `;
+      const result = await client.query(query, [token]);
+      return {
+        data: result.rows[0] || null,
+        error: result.rows.length === 0 ? { code: 'PGRST116', message: 'No rows found' } : null
+      };
+    }
+  }
+
+  async markPasswordResetTokenUsed(token) {
+    const { type, client } = await this.getClient();
+
+    if (type === 'REST_API') {
+      return await client.getAdminClient()
+        .from('password_reset_tokens')
+        .update({
+          used: true,
+          used_at: new Date().toISOString()
+        })
+        .eq('token', token)
+        .select()
+        .single();
+    } else {
+      // PostgreSQL implementation
+      const query = `
+        UPDATE password_reset_tokens
+        SET used = true, used_at = NOW()
+        WHERE token = $1
+        RETURNING *
+      `;
+      const result = await client.query(query, [token]);
+      return { data: result.rows[0] || null, error: null };
+    }
+  }
+
+  async updateUserPassword(userId, hashedPassword) {
+    const { type, client } = await this.getClient();
+
+    if (type === 'REST_API') {
+      return await client.getAdminClient()
+        .from('users')
+        .update({
+          password_hash: hashedPassword,
+          updated_at: new Date().toISOString()
+        })
+        .eq('id', userId)
+        .select()
+        .single();
+    } else {
+      // PostgreSQL implementation
+      const query = `
+        UPDATE users
+        SET password_hash = $1, updated_at = NOW()
+        WHERE id = $2
+        RETURNING id, email, first_name
+      `;
+      const result = await client.query(query, [hashedPassword, userId]);
+      return { data: result.rows[0] || null, error: null };
+    }
+  }
 }
 
 // Create singleton instance

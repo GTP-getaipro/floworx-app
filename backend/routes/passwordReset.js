@@ -4,7 +4,7 @@ const bcrypt = require('bcryptjs');
 const express = require('express');
 const { body, validationResult } = require('express-validator');
 
-const { query } = require('../database/unified-connection');
+const { databaseOperations } = require('../database/database-operations');
 const { passwordResetRateLimit, authRateLimit } = require('../middleware/rateLimiter');
 const { validationMiddleware } = require('../middleware/validation');
 const emailService = require('../services/emailService');
@@ -40,38 +40,53 @@ router.post('/request', passwordResetRateLimit, validationMiddleware.passwordRes
     const ipAddress = req.ip || req.connection.remoteAddress;
     const userAgent = req.get('User-Agent');
 
-    // Check if user exists
-    const userQuery = 'SELECT id, email, first_name FROM users WHERE email = $1';
-    const userResult = await query(userQuery, [email.toLowerCase()]);
+    // Check if user exists using REST API
+    console.log(`🔍 Checking if user exists: ${email}`);
+    const userResult = await databaseOperations.getUserByEmail(email);
 
-    if (userResult.rows.length === 0) {
+    if (userResult.error || !userResult.data) {
       // Don't reveal if email exists - security best practice
+      console.log('ℹ️ User not found, but returning success for security');
       return res.json({
         success: true,
         message: 'If an account with that email exists, a password reset link has been sent.'
       });
     }
 
-    const user = userResult.rows[0];
+    const user = userResult.data;
+    console.log(`✅ User found: ${user.email}`);
 
     // Generate reset token
     const token = crypto.randomBytes(32).toString('hex');
     const expiresAt = new Date(Date.now() + 60 * 60 * 1000); // 1 hour
 
-    // Create password reset token
-    const insertTokenQuery = `
-        INSERT INTO password_reset_tokens (user_id, token, expires_at, ip_address, user_agent, created_at)
-        VALUES ($1, $2, $3, $4, $5, NOW())
-        RETURNING id
-      `;
-
+    // Create password reset token using REST API
+    console.log('🔐 Creating password reset token...');
     try {
-      await query(insertTokenQuery, [user.id, token, expiresAt, ipAddress, userAgent]);
+      const tokenResult = await databaseOperations.createPasswordResetToken(
+        user.id,
+        token,
+        expiresAt.toISOString()
+      );
+
+      if (tokenResult.error) {
+        console.error('Failed to create reset token:', tokenResult.error);
+        return res.status(500).json({
+          success: false,
+          error: 'Internal server error',
+          message: 'Failed to process password reset request',
+          details: tokenResult.error.message
+        });
+      }
+
+      console.log('✅ Password reset token created');
     } catch (tokenError) {
       console.error('Failed to create reset token:', tokenError);
       return res.status(500).json({
+        success: false,
         error: 'Internal server error',
-        message: 'Failed to process password reset request'
+        message: 'Failed to process password reset request',
+        details: tokenError.message
       });
     }
 
@@ -109,30 +124,32 @@ router.post(
       const ipAddress = req.ip || req.connection.remoteAddress;
       const userAgent = req.get('User-Agent');
 
-      // Validate and use password reset token
-      const tokenQuery = `
-        SELECT user_id, expires_at, used_at
-        FROM password_reset_tokens
-        WHERE token = $1 AND expires_at > NOW() AND used_at IS NULL
-      `;
-      const tokenResult = await query(tokenQuery, [token]);
+      // Validate password reset token using REST API
+      console.log('🔍 Validating password reset token...');
+      const tokenResult = await databaseOperations.getPasswordResetToken(token);
 
-      if (tokenResult.rows.length === 0) {
+      if (tokenResult.error || !tokenResult.data) {
+        console.log('❌ Invalid or expired token');
         return res.status(400).json({
+          success: false,
           valid: false,
           message: 'Invalid or expired token'
         });
       }
 
-      const tokenData = tokenResult.rows[0];
+      const tokenData = tokenResult.data;
+      console.log('✅ Valid password reset token found');
 
-      // Mark token as used
-      const markUsedQuery = `
-        UPDATE password_reset_tokens
-        SET used_at = NOW(), used_ip = $1, used_user_agent = $2
-        WHERE token = $3
-      `;
-      await query(markUsedQuery, [ipAddress, userAgent, token]);
+      // Mark token as used using REST API
+      console.log('🔒 Marking token as used...');
+      const markUsedResult = await databaseOperations.markPasswordResetTokenUsed(token);
+
+      if (markUsedResult.error) {
+        console.error('Failed to mark token as used:', markUsedResult.error);
+        // Continue anyway - token validation was successful
+      } else {
+        console.log('✅ Token marked as used');
+      }
 
       res.json({
         valid: true,
@@ -157,60 +174,52 @@ router.post('/reset', authRateLimit, validationMiddleware.passwordReset, async (
     const ipAddress = req.ip || req.connection.remoteAddress;
     const userAgent = req.get('User-Agent');
 
-    // Validate token first
-    const tokenQuery = `
-        SELECT user_id, expires_at, used_at
-        FROM password_reset_tokens
-        WHERE token = $1 AND expires_at > NOW() AND used_at IS NULL
-      `;
-    const tokenResult = await query(tokenQuery, [token]);
+    // Validate token first using REST API
+    console.log('🔍 Validating password reset token for password update...');
+    const tokenResult = await databaseOperations.getPasswordResetToken(token);
 
-    if (tokenResult.rows.length === 0) {
+    if (tokenResult.error || !tokenResult.data) {
+      console.log('❌ Invalid or expired token for password reset');
       return res.status(400).json({
         success: false,
         message: 'Invalid or expired token'
       });
     }
 
-    const tokenData = tokenResult.rows[0];
+    const tokenData = tokenResult.data;
+    console.log('✅ Valid token found for password reset');
 
     // Hash new password
+    console.log('🔐 Hashing new password...');
     const saltRounds = 12;
     const passwordHash = await bcrypt.hash(password, saltRounds);
 
-    // Update user password and mark token as used
-    const updatePasswordQuery = `
-        UPDATE users
-        SET password_hash = $1,
-            last_password_reset = NOW(),
-            failed_login_attempts = 0,
-            account_locked_until = NULL,
-            updated_at = NOW()
-        WHERE id = $2
-        RETURNING id, email, first_name
-      `;
-    const updateResult = await query(updatePasswordQuery, [passwordHash, tokenData.user_id]);
+    // Update user password using REST API
+    console.log('💾 Updating user password...');
+    const userId = tokenData.users ? tokenData.users.id : tokenData.user_id;
+    const updateResult = await databaseOperations.updateUserPassword(userId, passwordHash);
 
-    // Mark token as used
-    const markTokenUsedQuery = `
-        UPDATE password_reset_tokens
-        SET used_at = NOW(), used_ip = $1, used_user_agent = $2
-        WHERE token = $3
-      `;
-    await query(markTokenUsedQuery, [ipAddress, userAgent, token]);
-
-    if (updateResult.rows.length === 0) {
-      console.error('Failed to update password: User not found');
+    if (updateResult.error) {
+      console.error('Failed to update password:', updateResult.error);
       return res.status(500).json({
         success: false,
-        message: 'Failed to reset password'
+        error: 'Internal server error',
+        message: 'Failed to update password',
+        details: updateResult.error.message
       });
     }
 
-    const updatedUser = updateResult.rows[0];
+    // Mark token as used using REST API
+    console.log('🔒 Marking password reset token as used...');
+    const markUsedResult = await databaseOperations.markPasswordResetTokenUsed(token);
 
-    // Log successful password reset (optional - can be implemented later)
-    console.log(`Password reset completed for user ${updatedUser.id} from IP ${ipAddress}`);
+    if (markUsedResult.error) {
+      console.error('Failed to mark token as used:', markUsedResult.error);
+      // Continue anyway - password was updated successfully
+    }
+
+    const updatedUser = updateResult.data;
+    console.log(`✅ Password reset completed for user ${updatedUser.id}`);
 
     res.json({
       success: true,

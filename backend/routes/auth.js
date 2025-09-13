@@ -3,7 +3,7 @@ const express = require('express');
 const jwt = require('jsonwebtoken');
 
 const { UserQueries } = require('../database/secureQueries');
-const { query } = require('../database/unified-connection');
+const { databaseOperations } = require('../database/database-operations');
 const { authenticateToken } = require('../middleware/auth');
 const { authRateLimit, authSlowDown, accountLockoutLimiter } = require('../middleware/security');
 const {
@@ -28,45 +28,38 @@ router.post(
   asyncWrapper(async (req, res) => {
     const { email, password, firstName, lastName, businessName } = req.body;
 
-    // Check if user already exists using secure query
-    const existingUser = await UserQueries.findByEmail(email);
+    // Check if user already exists
+    const existingUserResult = await databaseOperations.getUserByEmail(email);
 
-    if (existingUser) {
-      if (existingUser.email_verified) {
-        throw new ConflictError('An account with this email already exists');
-      } else {
-        // User exists but email not verified - resend verification
-        const verificationToken = emailService.generateVerificationToken();
-        await emailService.storeVerificationToken(existingUser.id, verificationToken, email, firstName);
-        await emailService.sendVerificationEmail(email, firstName, verificationToken);
-
-        return res.status(200).json({
-          message: 'Verification email resent. Please check your email to verify your account.',
-          requiresVerification: true
-        });
-      }
+    if (existingUserResult.data) {
+      throw new ConflictError('An account with this email already exists');
     }
 
     // Hash the password
     const saltRounds = 12;
     const passwordHash = await bcrypt.hash(password, saltRounds);
 
-    // Set trial period (14 days) - for future use
-    // const trialStartsAt = new Date();
-    // const trialEndsAt = new Date(Date.now() + 14 * 24 * 60 * 60 * 1000);
+    // Generate user ID
+    const userId = require('crypto').randomUUID();
 
-    // Create new user with basic fields only (for compatibility)
-    const insertUserQuery = `
-      INSERT INTO users (email, password_hash, created_at)
-      VALUES ($1, $2, CURRENT_TIMESTAMP)
-      RETURNING id, email, created_at
-    `;
-    const newUser = await query(insertUserQuery, [
-      email.toLowerCase(),
-      passwordHash
-    ]);
+    // Create new user
+    const userData = {
+      id: userId,
+      email: email.toLowerCase(),
+      password_hash: passwordHash,
+      first_name: firstName,
+      last_name: lastName,
+      company_name: businessName || null,
+      created_at: new Date().toISOString()
+    };
 
-    const user = newUser.rows[0];
+    const createUserResult = await databaseOperations.createUser(userData);
+
+    if (createUserResult.error) {
+      throw new Error(`Failed to create user: ${createUserResult.error.message}`);
+    }
+
+    const user = createUserResult.data;
 
     // Generate and store verification token (with error handling)
     let emailSent = false;
@@ -115,11 +108,10 @@ router.post(
     const { email, password } = req.body;
 
     try {
-      // Find user by email using direct optimized query
-      const userQuery = 'SELECT id, email, password_hash, email_verified, first_name, last_name, company_name, created_at FROM users WHERE email = $1';
-      const userResult = await query(userQuery, [email.toLowerCase()]);
+      // Find user by email
+      const userResult = await databaseOperations.getUserByEmail(email);
 
-      if (userResult.rows.length === 0) {
+      if (userResult.error || !userResult.data) {
         // Update lockout data for failed attempt
         if (req.updateLockoutData) {
           req.updateLockoutData(true);
@@ -134,7 +126,7 @@ router.post(
         });
       }
 
-      const user = userResult.rows[0];
+      const user = userResult.data;
 
       // Check if email is verified (temporarily disabled to match registration logic)
       // TODO: Re-enable email verification when email service is fully configured

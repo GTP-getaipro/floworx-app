@@ -6,6 +6,26 @@ const { authenticateToken } = require('../middleware/auth');
 
 const router = express.Router();
 
+// GET /api/business-types/test
+// Simple test endpoint
+router.get('/test', async (req, res) => {
+  try {
+    console.log('🧪 Business types test endpoint called');
+    res.json({
+      success: true,
+      message: 'Business types route is working',
+      timestamp: new Date().toISOString()
+    });
+  } catch (error) {
+    console.error('Test endpoint error:', error);
+    res.status(500).json({
+      success: false,
+      error: 'Test endpoint failed',
+      details: error.message
+    });
+  }
+});
+
 // GET /api/business-types
 // Get all active business types for selection UI
 router.get('/', async (req, res) => {

@@ -69,25 +69,24 @@ class DatabaseManager {
           database: parsedUrl.pathname.substring(1),
           user: parsedUrl.username,
           password: parsedUrl.password,
+          // Supabase requires SSL in production
           ssl: isProduction
             ? {
-                rejectUnauthorized: false
+                rejectUnauthorized: false,
+                require: true
               }
             : false,
 
-          // Force IPv4 connection
-          family: 4, // Force IPv4
-
-          // Optimized connection pooling
-          max: isProduction ? 1 : 10,
+          // Connection pooling optimized for Supabase
+          max: isProduction ? 3 : 10, // Increased for production reliability
           min: 0,
-          idleTimeoutMillis: isProduction ? 0 : 30000,
-          connectionTimeoutMillis: isProduction ? 0 : 2000,
+          idleTimeoutMillis: 30000,
+          connectionTimeoutMillis: 10000, // Increased timeout for Supabase
           acquireTimeoutMillis: 60000,
           createTimeoutMillis: 30000,
           destroyTimeoutMillis: 5000,
           reapIntervalMillis: 1000,
-          createRetryIntervalMillis: 200,
+          createRetryIntervalMillis: 500, // Increased retry interval
 
           // Enhanced error handling
           allowExitOnIdle: true
@@ -97,25 +96,24 @@ class DatabaseManager {
       // Fallback to connection string if parsing fails
       return {
         connectionString: process.env.DATABASE_URL,
+        // Supabase requires SSL in production
         ssl: isProduction
           ? {
-              rejectUnauthorized: false
+              rejectUnauthorized: false,
+              require: true
             }
           : false,
 
-        // Force IPv4 connection
-        family: 4, // Force IPv4
-
-        // Optimized connection pooling
-        max: isProduction ? 1 : 10,
+        // Connection pooling optimized for Supabase
+        max: isProduction ? 3 : 10, // Increased for production reliability
         min: 0,
-        idleTimeoutMillis: isProduction ? 0 : 30000,
-        connectionTimeoutMillis: isProduction ? 0 : 2000,
+        idleTimeoutMillis: 30000,
+        connectionTimeoutMillis: 10000, // Increased timeout for Supabase
         acquireTimeoutMillis: 60000,
         createTimeoutMillis: 30000,
         destroyTimeoutMillis: 5000,
         reapIntervalMillis: 1000,
-        createRetryIntervalMillis: 200,
+        createRetryIntervalMillis: 500, // Increased retry interval
 
         // Enhanced error handling
         allowExitOnIdle: true
@@ -135,19 +133,18 @@ class DatabaseManager {
       database: process.env.DB_NAME,
       user: process.env.DB_USER,
       password: process.env.DB_PASSWORD,
+      // Supabase requires SSL in production
       ssl: isProduction
         ? {
-            rejectUnauthorized: false
+            rejectUnauthorized: false,
+            require: true
           }
         : false,
 
-      // Force IPv4 connection
-      family: 4, // Force IPv4
-
-      // Optimized connection pooling
-      max: isProduction ? 1 : 10, // Single connection for serverless, multiple for development
+      // Connection pooling optimized for Supabase
+      max: isProduction ? 3 : 10, // Increased for production reliability
       min: 0,
-      idleTimeoutMillis: isProduction ? 0 : 30000,
+      idleTimeoutMillis: 30000,
       connectionTimeoutMillis: isProduction ? 0 : 2000,
       acquireTimeoutMillis: 60000,
       createTimeoutMillis: 30000,
@@ -160,38 +157,54 @@ class DatabaseManager {
     };
   }
 
-  // Initialize database connection
-  async initialize() {
+  // Initialize database connection with retry logic
+  async initialize(retries = 3) {
     if (this.isInitialized && this.pool) {
       return this.pool;
     }
 
-    try {
-      this.pool = new Pool(this.connectionConfig);
+    for (let attempt = 1; attempt <= retries; attempt++) {
+      try {
+        console.log(`🔄 Database connection attempt ${attempt}/${retries}`);
+        this.pool = new Pool(this.connectionConfig);
 
-      // Test connection
-      const client = await this.pool.connect();
-      const result = await client.query('SELECT NOW() as current_time, version() as pg_version');
-      client.release();
+        // Test connection with timeout
+        const client = await this.pool.connect();
+        const result = await client.query('SELECT NOW() as current_time, version() as pg_version');
+        client.release();
 
-      console.log('✅ Database connection established');
-      console.log(`   PostgreSQL version: ${result.rows[0].pg_version.split(' ')[0]}`);
+        console.log('✅ Database connection established');
+        console.log(`   PostgreSQL version: ${result.rows[0].pg_version.split(' ')[0]}`);
+        console.log(`   Connection successful on attempt ${attempt}`);
 
-      this.isInitialized = true;
+        this.isInitialized = true;
 
-      // Set up connection error handling
-      this.pool.on('error', err => {
-        console.error('❌ Database pool error:', err);
-      });
+        // Set up connection error handling
+        this.pool.on('error', err => {
+          console.error('❌ Database pool error:', err);
+        });
 
-      this.pool.on('connect', () => {
-        console.log('🔗 New database connection established');
-      });
+        this.pool.on('connect', () => {
+          console.log('🔗 New database connection established');
+        });
 
-      return this.pool;
-    } catch (error) {
-      console.error('❌ Database initialization failed:', error.message);
-      throw error;
+        return this.pool;
+      } catch (error) {
+        console.error(`❌ Database connection attempt ${attempt} failed:`, error.message);
+
+        if (attempt === retries) {
+          console.error('❌ All database connection attempts failed');
+          console.error('⚠️ Database not available - running in limited mode');
+          console.error('Check DATABASE_URL and network connectivity to Supabase');
+
+          // Don't throw error - allow app to run without database
+          this.isInitialized = false;
+          return null;
+        } else {
+          console.log(`⏳ Retrying in 2 seconds... (${retries - attempt} attempts remaining)`);
+          await new Promise(resolve => setTimeout(resolve, 2000));
+        }
+      }
     }
   }
 

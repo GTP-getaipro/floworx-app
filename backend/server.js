@@ -69,6 +69,7 @@ const businessTypesRoutes = require('./routes/businessTypes');
 const dashboardRoutes = require('./routes/dashboard');
 const healthRoutes = require('./routes/health'); // TEMPORARY - DELETE AFTER TESTING
 const diagnosticsRoutes = require('./routes/diagnostics');
+const envCheckRoutes = require('./routes/env-check'); // TEMPORARY - DELETE AFTER DEBUGGING
 const { router: oauthRoutes } = require('./routes/oauth');
 const onboardingRoutes = require('./routes/onboarding');
 const passwordResetRoutes = require('./routes/passwordReset');
@@ -308,6 +309,7 @@ app.use('/api/performance', performanceRoutes);
 app.use('/api/scheduler', schedulerRoutes);
 app.use('/api/health', healthRoutes); // Comprehensive health monitoring
 app.use('/api/diagnostics', diagnosticsRoutes); // Database connection diagnostics
+app.use('/api/env-check', envCheckRoutes); // TEMPORARY - Environment variables check
 app.use('/api', testKeydbRoutes); // TEMPORARY - DELETE AFTER TESTING
 
 // Serve static files from React build (production only)

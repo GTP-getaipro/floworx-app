@@ -1,26 +1,31 @@
 /**
  * Integration Tests for Authentication Flow
  * Tests complete user registration, login, and authentication workflows
+ * Updated to use REST API instead of direct SQL queries
  */
 
 const _bcrypt = require('bcrypt');
 const request = require('supertest');
 
 const app = require('../../server');
-const { query } = require('../../database/unified-connection');
+const { restApiTestHelpers } = require('../../../tests/utils/rest-api-test-helpers');
 
 describe('Authentication Flow Integration Tests', () => {
   let _testUser;
   let authToken;
 
   beforeAll(async () => {
-    // Clean up test data
-    await query('DELETE FROM users WHERE email LIKE $1', ['%test-integration%']);
+    // Verify database connection
+    const connection = await restApiTestHelpers.verifyConnection();
+    if (!connection.connected) {
+      throw new Error(`Database connection failed: ${connection.error}`);
+    }
+    console.log(`✅ Connected to database via ${connection.type}`);
   });
 
   afterAll(async () => {
-    // Clean up test data
-    await query('DELETE FROM users WHERE email LIKE $1', ['%test-integration%']);
+    // Clean up all test data
+    await restApiTestHelpers.cleanup();
   });
 
   describe('User Registration Flow', () => {
@@ -44,11 +49,11 @@ describe('Authentication Flow Integration Tests', () => {
       expect(response.body.user.firstName).toBe(userData.firstName);
       expect(response.body.token).toBeDefined();
 
-      // Verify user was created in database
-      const dbUser = await query('SELECT * FROM users WHERE email = $1', [userData.email]);
-      expect(dbUser.rows).toHaveLength(1);
-      expect(dbUser.rows[0].email).toBe(userData.email);
-      expect(dbUser.rows[0].email_verified).toBe(false);
+      // Verify user was created in database using REST API
+      const dbUser = await restApiTestHelpers.getTestUserByEmail(userData.email);
+      expect(dbUser).toBeTruthy();
+      expect(dbUser.email).toBe(userData.email);
+      expect(dbUser.email_verified).toBe(false);
 
       const _testUser = response.body.user;
       authToken = response.body.token;
@@ -247,16 +252,14 @@ describe('Authentication Flow Integration Tests', () => {
 
   describe('Email Verification Flow', () => {
     let verificationToken;
+    let testUser;
 
     beforeAll(async () => {
-      // Get verification token from database
-      const result = await query(
-        'SELECT verification_token FROM users WHERE email = $1',
-        ['test-integration-register@example.com']
-      );
-      
-      if (result.rows.length > 0) {
-        verificationToken = result.rows[0].verification_token;
+      // Get test user from database using REST API
+      testUser = await restApiTestHelpers.getTestUserByEmail('test-integration-register@example.com');
+
+      if (testUser && testUser.verification_token) {
+        verificationToken = testUser.verification_token;
       }
     });
 
@@ -264,10 +267,9 @@ describe('Authentication Flow Integration Tests', () => {
       if (!verificationToken) {
         // Create a mock verification token for testing
         verificationToken = 'test-verification-token';
-        await query(
-          'UPDATE users SET verification_token = $1 WHERE email = $2',
-          [verificationToken, 'test-integration-register@example.com']
-        );
+        await restApiTestHelpers.updateTestUser(testUser.id, {
+          verification_token: verificationToken
+        });
       }
 
       const response = await request(app)
@@ -278,12 +280,9 @@ describe('Authentication Flow Integration Tests', () => {
       expect(response.body.success).toBe(true);
       expect(response.body.message).toContain('verified');
 
-      // Verify email_verified flag was updated
-      const user = await query(
-        'SELECT email_verified FROM users WHERE email = $1',
-        ['test-integration-register@example.com']
-      );
-      expect(user.rows[0].email_verified).toBe(true);
+      // Verify email_verified flag was updated using REST API
+      const updatedUser = await restApiTestHelpers.getTestUserByEmail('test-integration-register@example.com');
+      expect(updatedUser.email_verified).toBe(true);
     });
 
     test('should reject invalid verification token', async () => {

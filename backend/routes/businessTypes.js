@@ -1,7 +1,7 @@
 const express = require('express');
 const { body, validationResult } = require('express-validator');
 
-const { query } = require('../database/unified-connection');
+const { databaseOperations } = require('../database/database-operations');
 const { authenticateToken } = require('../middleware/auth');
 
 const router = express.Router();
@@ -10,26 +10,34 @@ const router = express.Router();
 // Get all active business types for selection UI
 router.get('/', async (req, res) => {
   try {
-    const queryText = `
-      SELECT id, name, slug, description, default_categories,
-             created_at, updated_at
-      FROM business_types
-      WHERE is_active = true
-      ORDER BY name ASC
-    `;
+    console.log('🔍 Fetching business types via REST API...');
 
-    const result = await query(queryText);
-    const businessTypes = result.rows;
+    const result = await databaseOperations.getBusinessTypes();
+
+    if (result.error) {
+      console.error('Business types fetch error:', result.error);
+      return res.status(500).json({
+        success: false,
+        error: 'Database error',
+        message: 'Failed to fetch business types',
+        details: result.error.message
+      });
+    }
+
+    const businessTypes = result.data || [];
+    console.log(`✅ Retrieved ${businessTypes.length} business types`);
 
     res.json({
       success: true,
-      data: businessTypes || []
+      data: businessTypes
     });
   } catch (error) {
     console.error('Business types fetch error:', error);
     res.status(500).json({
+      success: false,
       error: 'Internal server error',
-      message: 'Failed to fetch business types'
+      message: 'Failed to fetch business types',
+      details: error.message
     });
   }
 });
@@ -39,31 +47,40 @@ router.get('/', async (req, res) => {
 router.get('/:slug', async (req, res) => {
   try {
     const { slug } = req.params;
+    console.log(`🔍 Fetching business type by slug: ${slug}`);
 
-    const queryText = `
-      SELECT id, name, description, slug, default_categories
-      FROM business_types
-      WHERE slug = $1 AND is_active = true
-    `;
+    const result = await databaseOperations.getBusinessTypeBySlug(slug);
 
-    const result = await query(queryText, [slug]);
+    if (result.error) {
+      if (result.error.code === 'PGRST116') {
+        return res.status(404).json({
+          success: false,
+          error: 'Business type not found',
+          message: 'The requested business type does not exist or is not available'
+        });
+      }
 
-    if (result.rows.length === 0) {
-      return res.status(404).json({
-        error: 'Business type not found',
-        message: 'The requested business type does not exist or is not available'
+      console.error('Business type fetch error:', result.error);
+      return res.status(500).json({
+        success: false,
+        error: 'Database error',
+        message: 'Failed to fetch business type',
+        details: result.error.message
       });
     }
 
+    console.log(`✅ Retrieved business type: ${result.data.name}`);
     res.json({
       success: true,
-      data: result.rows[0]
+      data: result.data
     });
   } catch (error) {
     console.error('Business type fetch error:', error);
     res.status(500).json({
+      success: false,
       error: 'Internal server error',
-      message: 'Failed to fetch business type'
+      message: 'Failed to fetch business type',
+      details: error.message
     });
   }
 });
@@ -87,56 +104,36 @@ router.post(
       const userId = req.user.id;
       const { businessTypeId } = req.body;
 
-      // Verify business type exists and is active
-      const businessTypeQuery = `
-        SELECT id, name, slug, default_categories
-        FROM business_types
-        WHERE id = $1 AND is_active = true
-      `;
+      console.log(`🔍 Selecting business type ${businessTypeId} for user ${userId}`);
 
-      const businessTypeResult = await query(businessTypeQuery, [businessTypeId]);
+      // Verify business type exists and is active using REST API
+      const businessTypeResult = await databaseOperations.getBusinessTypeById(businessTypeId);
 
-      if (businessTypeResult.rows.length === 0) {
+      if (businessTypeResult.error) {
+        console.error('Business type verification error:', businessTypeResult.error);
         return res.status(400).json({
+          success: false,
           error: 'Invalid business type',
           message: 'The selected business type is not available'
         });
       }
 
-      const businessType = businessTypeResult.rows[0];
+      const businessType = businessTypeResult.data;
 
-      // Update user's business type
-      const updateUserQuery = `
-        UPDATE users
-        SET business_type_id = $1, updated_at = NOW()
-        WHERE id = $2
-        RETURNING id
-      `;
+      // Update user's business type using REST API
+      const updateResult = await databaseOperations.updateUserBusinessType(userId, businessTypeId);
 
-      const updateResult = await query(updateUserQuery, [businessTypeId, userId]);
-
-      if (updateResult.rows.length === 0) {
-        console.error('Error updating user business type: User not found');
+      if (updateResult.error) {
+        console.error('Error updating user business type:', updateResult.error);
         return res.status(500).json({
+          success: false,
           error: 'Failed to update business type',
-          message: 'Unable to save your business type selection'
+          message: 'Unable to save your business type selection',
+          details: updateResult.error.message
         });
       }
 
-      // Update onboarding progress
-      const progressQuery = `
-        INSERT INTO onboarding_progress (user_id, step_data, updated_at)
-        VALUES ($1, $2, NOW())
-        ON CONFLICT (user_id)
-        DO UPDATE SET
-          step_data = jsonb_set(
-            COALESCE(onboarding_progress.step_data, '{}'::jsonb),
-            '{business-type}',
-            $2->'business-type'
-          ),
-          updated_at = NOW()
-      `;
-
+      // Update onboarding progress using REST API
       const stepData = {
         'business-type': {
           businessTypeId: businessTypeId,
@@ -147,30 +144,23 @@ router.post(
       };
 
       try {
-        await query(progressQuery, [userId, JSON.stringify(stepData)]);
+        await databaseOperations.updateOnboardingProgress(userId, stepData);
+        console.log('✅ Onboarding progress updated');
       } catch (progressError) {
         console.error('Error updating onboarding progress:', progressError);
         // Don't fail the request for progress tracking errors
       }
 
-      // Log analytics event
+      // Log analytics event (simplified for now)
       try {
-        const analyticsQuery = `
-          INSERT INTO user_analytics (user_id, event_type, event_data, created_at)
-          VALUES ($1, $2, $3, NOW())
-        `;
-
-        const eventData = {
-          business_type_id: businessTypeId,
-          business_type_name: businessType.name,
-          business_type_slug: businessType.slug
-        };
-
-        await query(analyticsQuery, [userId, 'business_type_selected', JSON.stringify(eventData)]);
+        console.log(`📊 Analytics: User ${userId} selected business type ${businessType.name}`);
+        // TODO: Implement proper analytics tracking with REST API
       } catch (analyticsError) {
         console.error('Analytics tracking error:', analyticsError);
         // Don't fail the request for analytics errors
       }
+
+      console.log(`✅ Business type ${businessType.name} selected successfully for user ${userId}`);
 
       res.json({
         success: true,
@@ -187,8 +177,10 @@ router.post(
     } catch (error) {
       console.error('Business type selection error:', error);
       res.status(500).json({
+        success: false,
         error: 'Internal server error',
-        message: 'Failed to select business type'
+        message: 'Failed to select business type',
+        details: error.message
       });
     }
   }

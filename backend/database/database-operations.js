@@ -267,6 +267,206 @@ class DatabaseOperations {
   }
 
   // =====================================================
+  // BUSINESS CONFIGURATION
+  // =====================================================
+
+  async getBusinessTypes() {
+    const { type, client } = await this.getClient();
+
+    if (type === 'REST_API') {
+      return await client.getAdminClient()
+        .from('business_types')
+        .select('*')
+        .eq('is_active', true)
+        .order('name');
+    } else {
+      // PostgreSQL implementation
+      const query = 'SELECT * FROM business_types WHERE is_active = true ORDER BY name';
+      const result = await client.query(query);
+      return { data: result.rows, error: null };
+    }
+  }
+
+  async getBusinessTypeBySlug(slug) {
+    const { type, client } = await this.getClient();
+
+    if (type === 'REST_API') {
+      return await client.getAdminClient()
+        .from('business_types')
+        .select('*')
+        .eq('slug', slug)
+        .eq('is_active', true)
+        .single();
+    } else {
+      // PostgreSQL implementation
+      const query = 'SELECT * FROM business_types WHERE slug = $1 AND is_active = true';
+      const result = await client.query(query, [slug]);
+      return {
+        data: result.rows[0] || null,
+        error: result.rows.length === 0 ? { code: 'PGRST116', message: 'No rows found' } : null
+      };
+    }
+  }
+
+  async getBusinessTypeById(id) {
+    const { type, client } = await this.getClient();
+
+    if (type === 'REST_API') {
+      return await client.getAdminClient()
+        .from('business_types')
+        .select('*')
+        .eq('id', id)
+        .eq('is_active', true)
+        .single();
+    } else {
+      // PostgreSQL implementation
+      const query = 'SELECT * FROM business_types WHERE id = $1 AND is_active = true';
+      const result = await client.query(query, [id]);
+      return {
+        data: result.rows[0] || null,
+        error: result.rows.length === 0 ? { code: 'PGRST116', message: 'No rows found' } : null
+      };
+    }
+  }
+
+  async createBusinessType(businessTypeData) {
+    const { type, client } = await this.getClient();
+
+    if (type === 'REST_API') {
+      return await client.getAdminClient()
+        .from('business_types')
+        .insert(businessTypeData)
+        .select()
+        .single();
+    } else {
+      // PostgreSQL implementation
+      const query = `
+        INSERT INTO business_types (id, name, description, slug, default_categories, workflow_template_id, created_at, updated_at)
+        VALUES ($1, $2, $3, $4, $5, $6, NOW(), NOW())
+        RETURNING *
+      `;
+      const values = [
+        businessTypeData.id,
+        businessTypeData.name,
+        businessTypeData.description,
+        businessTypeData.slug,
+        JSON.stringify(businessTypeData.default_categories),
+        businessTypeData.workflow_template_id
+      ];
+      const result = await client.query(query, values);
+      return { data: result.rows[0], error: null };
+    }
+  }
+
+  async deleteBusinessType(businessTypeId) {
+    const { type, client } = await this.getClient();
+
+    if (type === 'REST_API') {
+      return await client.getAdminClient()
+        .from('business_types')
+        .delete()
+        .eq('id', businessTypeId);
+    } else {
+      // PostgreSQL implementation
+      const query = 'DELETE FROM business_types WHERE id = $1';
+      const result = await client.query(query, [businessTypeId]);
+      return { data: null, error: null };
+    }
+  }
+
+  async deleteUser(userId) {
+    const { type, client } = await this.getClient();
+
+    if (type === 'REST_API') {
+      return await client.getAdminClient()
+        .from('users')
+        .delete()
+        .eq('id', userId);
+    } else {
+      // PostgreSQL implementation
+      const query = 'DELETE FROM users WHERE id = $1';
+      const result = await client.query(query, [userId]);
+      return { data: null, error: null };
+    }
+  }
+
+  async updateUserBusinessType(userId, businessTypeId) {
+    const { type, client } = await this.getClient();
+
+    if (type === 'REST_API') {
+      return await client.getAdminClient()
+        .from('users')
+        .update({
+          business_type_id: businessTypeId,
+          updated_at: new Date().toISOString()
+        })
+        .eq('id', userId)
+        .select()
+        .single();
+    } else {
+      // PostgreSQL implementation
+      const query = `
+        UPDATE users
+        SET business_type_id = $1, updated_at = NOW()
+        WHERE id = $2
+        RETURNING *
+      `;
+      const result = await client.query(query, [businessTypeId, userId]);
+      return {
+        data: result.rows[0] || null,
+        error: result.rows.length === 0 ? { message: 'User not found' } : null
+      };
+    }
+  }
+
+  async updateOnboardingProgress(userId, stepData) {
+    const { type, client } = await this.getClient();
+
+    if (type === 'REST_API') {
+      // First try to get existing progress
+      const existing = await client.getAdminClient()
+        .from('onboarding_progress')
+        .select('step_data')
+        .eq('user_id', userId)
+        .single();
+
+      let mergedData = stepData;
+      if (!existing.error && existing.data) {
+        // Merge with existing data
+        mergedData = { ...existing.data.step_data, ...stepData };
+      }
+
+      // Upsert the progress
+      return await client.getAdminClient()
+        .from('onboarding_progress')
+        .upsert({
+          user_id: userId,
+          step_data: mergedData,
+          updated_at: new Date().toISOString()
+        })
+        .select()
+        .single();
+    } else {
+      // PostgreSQL implementation
+      const query = `
+        INSERT INTO onboarding_progress (user_id, step_data, updated_at)
+        VALUES ($1, $2, NOW())
+        ON CONFLICT (user_id)
+        DO UPDATE SET
+          step_data = jsonb_set(
+            COALESCE(onboarding_progress.step_data, '{}'::jsonb),
+            '{business-type}',
+            $2->'business-type'
+          ),
+          updated_at = NOW()
+        RETURNING *
+      `;
+      const result = await client.query(query, [userId, JSON.stringify(stepData)]);
+      return { data: result.rows[0] || null, error: null };
+    }
+  }
+
+  // =====================================================
   // CONNECTION INFO
   // =====================================================
 

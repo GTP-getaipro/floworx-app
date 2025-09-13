@@ -31,8 +31,21 @@ router.get('/test', async (req, res) => {
 router.get('/', async (req, res) => {
   try {
     console.log('🔍 Fetching business types via REST API...');
+    console.log('🔍 databaseOperations object:', typeof databaseOperations);
+    console.log('🔍 getBusinessTypes method:', typeof databaseOperations.getBusinessTypes);
+
+    if (!databaseOperations || typeof databaseOperations.getBusinessTypes !== 'function') {
+      console.error('❌ databaseOperations.getBusinessTypes is not available');
+      return res.status(500).json({
+        success: false,
+        error: 'Configuration error',
+        message: 'Database operations not properly initialized',
+        details: 'getBusinessTypes method not available'
+      });
+    }
 
     const result = await databaseOperations.getBusinessTypes();
+    console.log('🔍 Database result:', result);
 
     if (result.error) {
       console.error('Business types fetch error:', result.error);
@@ -53,6 +66,7 @@ router.get('/', async (req, res) => {
     });
   } catch (error) {
     console.error('Business types fetch error:', error);
+    console.error('Error stack:', error.stack);
     res.status(500).json({
       success: false,
       error: 'Internal server error',

@@ -564,8 +564,15 @@ module.exports = {
   // User management methods
   getUserById: userId => databaseManager.getUserById(userId),
   getUserByEmail: email => databaseManager.getUserByEmail(email),
+  createUser: userData => databaseManager.restClient ? databaseManager.restClient.createUser(userData) : null,
   getRecentActivities: (userId, limit) => databaseManager.getRecentActivities(userId, limit),
   getOAuthConnections: userId => databaseManager.getOAuthConnections(userId),
   // Onboarding methods
-  getOnboardingStatus: userId => databaseManager.restClient ? databaseManager.restClient.getOnboardingStatus(userId) : null
+  getOnboardingStatus: userId => databaseManager.restClient ? databaseManager.restClient.getOnboardingStatus(userId) : null,
+  // Password reset methods
+  getUserByEmailForPasswordReset: email => databaseManager.restClient ? databaseManager.restClient.getUserByEmailForPasswordReset(email) : null,
+  createPasswordResetToken: (userId, token, expiresAt, ipAddress, userAgent) => databaseManager.restClient ? databaseManager.restClient.createPasswordResetToken(userId, token, expiresAt, ipAddress, userAgent) : null,
+  getPasswordResetToken: token => databaseManager.restClient ? databaseManager.restClient.getPasswordResetToken(token) : null,
+  updateUserPassword: (userId, passwordHash) => databaseManager.restClient ? databaseManager.restClient.updateUserPassword(userId, passwordHash) : null,
+  markPasswordResetTokenUsed: token => databaseManager.restClient ? databaseManager.restClient.markPasswordResetTokenUsed(token) : null
 };

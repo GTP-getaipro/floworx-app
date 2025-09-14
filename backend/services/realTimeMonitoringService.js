@@ -218,11 +218,29 @@ class RealTimeMonitoringService extends EventEmitter {
 
   /**
    * Get database statistics
+   * Compatible with both REST API and direct PostgreSQL connections
    */
   async getDatabaseStats() {
     try {
+      const { databaseManager } = require('../database/unified-connection');
+
+      // If using REST API, return mock stats since PostgreSQL stats aren't available
+      if (databaseManager.useRestApi && databaseManager.restClient) {
+        // For REST API, we can't get PostgreSQL connection stats
+        // Return basic health status instead
+        const healthCheck = await databaseManager.healthCheck();
+        return {
+          activeConnections: healthCheck.connected ? 1 : 0,
+          totalConnections: healthCheck.connected ? 1 : 0,
+          backendCount: healthCheck.connected ? 1 : 0,
+          connectionMethod: 'REST API',
+          status: healthCheck.connected ? 'healthy' : 'unhealthy'
+        };
+      }
+
+      // For direct PostgreSQL connections, get actual stats
       const stats = await query(`
-        SELECT 
+        SELECT
           (SELECT count(*) FROM pg_stat_activity WHERE state = 'active') as active_connections,
           (SELECT count(*) FROM pg_stat_activity) as total_connections,
           (SELECT sum(numbackends) FROM pg_stat_database) as backend_count
@@ -231,14 +249,19 @@ class RealTimeMonitoringService extends EventEmitter {
       return {
         activeConnections: parseInt(stats.rows[0].active_connections, 10) || 0,
         totalConnections: parseInt(stats.rows[0].total_connections, 10) || 0,
-        backendCount: parseInt(stats.rows[0].backend_count, 10) || 0
+        backendCount: parseInt(stats.rows[0].backend_count, 10) || 0,
+        connectionMethod: 'PostgreSQL',
+        status: 'healthy'
       };
     } catch (error) {
       logger.error('Failed to get database stats', { error: error.message });
       return {
         activeConnections: 0,
         totalConnections: 0,
-        backendCount: 0
+        backendCount: 0,
+        connectionMethod: 'unknown',
+        status: 'error',
+        error: error.message
       };
     }
   }

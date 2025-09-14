@@ -509,6 +509,24 @@ class SupabaseRestClient {
     }
   }
 
+  async createUser(userData) {
+    try {
+      const { data, error } = await this.getAdminClient()
+        .from('users')
+        .insert(userData)
+        .select()
+        .single();
+
+      if (error) {
+        return { success: false, data: null, error: error.message };
+      }
+
+      return { success: true, data, error: null };
+    } catch (error) {
+      return { success: false, data: null, error: error.message };
+    }
+  }
+
   async getRecentActivities(userId, limit = 5) {
     try {
       const { data, error } = await this.getAdminClient()
@@ -557,6 +575,132 @@ class SupabaseRestClient {
     } catch (error) {
       console.error('❌ Get OAuth connections error:', error.message);
       return { google: { connected: false } }; // Return default on error
+    }
+  }
+
+  // =====================================================
+  // PASSWORD RESET METHODS
+  // =====================================================
+
+  async getUserByEmailForPasswordReset(email) {
+    try {
+      const { data, error } = await this.getAdminClient()
+        .from('users')
+        .select('id, email, first_name, last_name, account_locked_until')
+        .eq('email', email.toLowerCase())
+        .single();
+
+      if (error && error.code === 'PGRST116') {
+        return { success: false, data: null, error: 'User not found' };
+      }
+
+      if (error) {
+        return { success: false, data: null, error: error.message };
+      }
+
+      return { success: true, data, error: null };
+    } catch (error) {
+      return { success: false, data: null, error: error.message };
+    }
+  }
+
+  async createPasswordResetToken(userId, token, expiresAt, ipAddress = null, userAgent = null) {
+    try {
+      const { data, error } = await this.getAdminClient()
+        .from('password_reset_tokens')
+        .insert({
+          user_id: userId,
+          token: token,
+          expires_at: expiresAt,
+          ip_address: ipAddress,
+          user_agent: userAgent,
+          created_at: new Date().toISOString()
+        })
+        .select()
+        .single();
+
+      if (error) {
+        return { success: false, data: null, error: error.message };
+      }
+
+      return { success: true, data, error: null };
+    } catch (error) {
+      return { success: false, data: null, error: error.message };
+    }
+  }
+
+  async getPasswordResetToken(token) {
+    try {
+      const { data, error } = await this.getAdminClient()
+        .from('password_reset_tokens')
+        .select(`
+          *,
+          users (
+            id,
+            email,
+            first_name,
+            last_name
+          )
+        `)
+        .eq('token', token)
+        .gt('expires_at', new Date().toISOString())
+        .is('used_at', null)
+        .single();
+
+      if (error && error.code === 'PGRST116') {
+        return { success: false, data: null, error: 'Token not found or expired' };
+      }
+
+      if (error) {
+        return { success: false, data: null, error: error.message };
+      }
+
+      return { success: true, data, error: null };
+    } catch (error) {
+      return { success: false, data: null, error: error.message };
+    }
+  }
+
+  async updateUserPassword(userId, passwordHash) {
+    try {
+      const { data, error } = await this.getAdminClient()
+        .from('users')
+        .update({
+          password_hash: passwordHash,
+          updated_at: new Date().toISOString()
+        })
+        .eq('id', userId)
+        .select()
+        .single();
+
+      if (error) {
+        return { success: false, data: null, error: error.message };
+      }
+
+      return { success: true, data, error: null };
+    } catch (error) {
+      return { success: false, data: null, error: error.message };
+    }
+  }
+
+  async markPasswordResetTokenUsed(token) {
+    try {
+      const { data, error } = await this.getAdminClient()
+        .from('password_reset_tokens')
+        .update({
+          used_at: new Date().toISOString()
+        })
+        .eq('token', token)
+        .select()
+        .single();
+
+      if (error) {
+        return { success: false, data: null, error: error.message };
+      }
+
+      return { success: true, data, error: null };
+    } catch (error) {
+      return { success: false, data: null, error: error.message };
     }
   }
 

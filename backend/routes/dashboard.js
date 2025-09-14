@@ -101,11 +101,10 @@ router.get('/status', authenticateToken, async (req, res) => {
   try {
     const userId = req.user.id;
 
-    // Get basic user info
-    const userQuery = 'SELECT id, email, first_name, last_name FROM users WHERE id = $1';
-    const userResult = await query(userQuery, [userId]);
+    // Get basic user info using REST API
+    const user = await getUserById(userId);
 
-    if (userResult.rows.length === 0) {
+    if (!user) {
       return res.status(404).json({
         error: 'User not found',
         message: 'User account not found'
@@ -115,7 +114,12 @@ router.get('/status', authenticateToken, async (req, res) => {
     res.json({
       success: true,
       status: 'active',
-      user: userResult.rows[0],
+      user: {
+        id: user.id,
+        email: user.email,
+        first_name: user.first_name,
+        last_name: user.last_name
+      },
       timestamp: new Date().toISOString()
     });
   } catch (error) {

@@ -7,22 +7,49 @@ const request = require('supertest');
 const app = require('../app');
 const { databaseOperations } = require('../database/database-operations');
 const jwt = require('jsonwebtoken');
+const { v4: uuidv4 } = require('uuid');
 
 describe('Email Provider and Business Type Selection', () => {
   let authToken;
   let userId;
 
   beforeAll(async () => {
-    // For testing, use a mock user ID and token to avoid authentication issues
-    userId = 'test-user-id-' + Date.now();
-    authToken = jwt.sign({ id: userId, email: 'test@example.com' }, process.env.JWT_SECRET, { expiresIn: '1h' });
+    // Create a real test user in the database
+    userId = uuidv4(); // Generate UUID first
+    const testEmail = `test-${Date.now()}@example.com`;
+
+    const createUserResult = await databaseOperations.createUser({
+      id: userId, // Provide the ID explicitly
+      email: testEmail,
+      password_hash: '$2b$10$test.hash.for.testing.purposes.only',
+      first_name: 'Test',
+      last_name: 'User',
+      email_verified: true
+    });
+
+    if (createUserResult.data && createUserResult.data.id) {
+      console.log('✅ Created test user in database:', userId);
+    } else {
+      console.log('⚠️ User creation failed:', createUserResult.error || 'Unknown error');
+      console.log('⚠️ Using generated UUID anyway:', userId);
+    }
+
+    authToken = jwt.sign({ userId: userId, email: testEmail }, process.env.JWT_SECRET, { expiresIn: '1h' });
 
     console.log('🧪 Using test user ID:', userId);
     console.log('🔑 Generated test token for authentication');
   });
 
   afterAll(async () => {
-    // No cleanup needed for mock test data
+    // Clean up test user if it was created in the database
+    if (userId && userId !== 'fallback-uuid') {
+      try {
+        await databaseOperations.deleteUser(userId);
+        console.log('🗑️ Cleaned up test user:', userId);
+      } catch (error) {
+        console.log('⚠️ Could not clean up test user:', error.message);
+      }
+    }
     console.log('🧹 Test cleanup completed');
   });
 
@@ -182,12 +209,24 @@ describe('Email Provider and Business Type Selection', () => {
             businessTypeId: businessTypes[0].id
           });
 
+        console.log('🔍 Business type selection response:', {
+          status: businessTypeResponse.status,
+          body: businessTypeResponse.body
+        });
+
         expect(businessTypeResponse.status).toBe(200);
 
         // Step 4: Check final status
         const finalStatusResponse = await request(app)
           .get('/api/onboarding/status')
           .set('Authorization', `Bearer ${authToken}`);
+
+        console.log('🔍 Final status response:', {
+          emailProvider: finalStatusResponse.body.emailProvider,
+          businessTypeId: finalStatusResponse.body.businessTypeId,
+          nextStep: finalStatusResponse.body.nextStep,
+          expectedBusinessTypeId: businessTypes[0].id
+        });
 
         expect(finalStatusResponse.body.emailProvider).toBe('gmail');
         expect(finalStatusResponse.body.businessTypeId).toBe(businessTypes[0].id);

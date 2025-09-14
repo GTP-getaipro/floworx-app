@@ -18,7 +18,7 @@ router.get('/status', authenticateToken, async (req, res) => {
 
     // Get user's basic info using database operations
     const userResult = await databaseOperations.getUserById(userId);
-    if (!userResult.success) {
+    if (userResult.error || !userResult.data) {
       return res.status(404).json({
         error: 'User not found',
         message: userResult.error
@@ -35,6 +35,30 @@ router.get('/status', authenticateToken, async (req, res) => {
     const completedSteps = [];
     const user = userResult.data;
 
+    // Handle migration-required case
+    if (userConfig.data?.migrationRequired) {
+      console.warn('⚠️  Database migration required for full email provider functionality');
+      return res.json({
+        user: {
+          emailVerified: user.email_verified,
+          onboardingCompleted: user.onboarding_completed,
+          firstName: user.first_name,
+          companyName: user.company_name
+        },
+        googleConnected: false,
+        emailProvider: null, // Migration required
+        businessTypeId: user.business_type_id || null, // Fallback to users table
+        businessTypes: businessTypes.data || [],
+        onboardingComplete: false,
+        customSettings: {},
+        completedSteps,
+        stepData: {},
+        nextStep: 'email-provider', // Start with email provider selection
+        migrationRequired: true,
+        warning: userConfig.warning || 'Database migration required for email provider functionality'
+      });
+    }
+
     res.json({
       user: {
         emailVerified: user.email_verified,
@@ -44,16 +68,19 @@ router.get('/status', authenticateToken, async (req, res) => {
       },
       googleConnected: false, // Mock for now - would need to check credentials table
       emailProvider: userConfig.data?.email_provider || user.email_provider || null,
-      businessTypeId: userConfig.data?.business_type_id || null,
+      businessTypeId: userConfig.data?.business_type_id || user.business_type_id || null,
       businessTypes: businessTypes.data || [],
       onboardingComplete: !!(
         (userConfig.data?.email_provider || user.email_provider) &&
-        userConfig.data?.business_type_id
+        (userConfig.data?.business_type_id || user.business_type_id)
       ),
       customSettings: userConfig.data?.custom_settings || {},
       completedSteps,
       stepData: {}, // Mock for now - would need user_onboarding_status table
-      nextStep: getNextStep(completedSteps, false, userConfig.data)
+      nextStep: getNextStep(completedSteps, false, {
+        email_provider: userConfig.data?.email_provider || user.email_provider,
+        business_type_id: userConfig.data?.business_type_id || user.business_type_id
+      })
     });
   } catch (error) {
     console.error('Onboarding status error:', error);
@@ -94,6 +121,20 @@ router.post('/email-provider', authenticateToken, [
         error: 'Failed to update email provider',
         message: 'Unable to save your email provider selection',
         details: updateResult.error.message
+      });
+    }
+
+    // Handle migration-required case
+    if (updateResult.data?.migrationRequired) {
+      console.warn('⚠️  Database migration required - email provider selection simulated');
+      return res.json({
+        success: true,
+        message: 'Email provider selected successfully (migration required)',
+        data: {
+          provider,
+          migrationRequired: true,
+          warning: updateResult.warning || 'Database migration required for full functionality'
+        }
       });
     }
 
@@ -140,6 +181,20 @@ router.post('/custom-settings', authenticateToken, [
         error: 'Failed to update custom settings',
         message: 'Unable to save your custom settings',
         details: updateResult.error.message
+      });
+    }
+
+    // Handle migration-required case
+    if (updateResult.data?.migrationRequired) {
+      console.warn('⚠️  Database migration required - custom settings update simulated');
+      return res.json({
+        success: true,
+        message: 'Custom settings updated successfully (migration required)',
+        data: {
+          settings,
+          migrationRequired: true,
+          warning: updateResult.warning || 'Database migration required for full functionality'
+        }
       });
     }
 

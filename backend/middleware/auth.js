@@ -22,11 +22,14 @@ const TOKEN_CACHE_TTL = 5 * 60 * 1000; // 5 minutes
  * @returns {Promise<Object>} User data
  */
 const verifyAndGetUser = async userId => {
-  const user = await databaseOperations.getUserById(userId);
+  const result = await databaseOperations.getUserById(userId);
 
-  if (!user) {
+  // Handle the result object from database operations
+  if (result.error || !result.data) {
     throw new AuthenticationError('User no longer exists');
   }
+
+  const user = result.data;
 
   // Check if account is locked
   if (user.account_locked_until && new Date(user.account_locked_until) > new Date()) {

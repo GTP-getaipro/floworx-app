@@ -179,22 +179,80 @@ router.post('/test-register', async (req, res) => {
 // POST /api/auth/register
 // Register a new user account - Using exact working pattern from test-register
 router.post('/register', async (req, res) => {
+  const { databaseCircuitBreaker } = require('../utils/circuitBreaker');
+
   try {
-    console.log('Registration called with body:', req.body);
+    console.log('Registration called with body:', { ...req.body, password: '[HIDDEN]' });
 
-    const { email, password, firstName, lastName, businessName } = req.body;
+    const { email, password, firstName, lastName, businessName, agreeToTerms } = req.body;
 
-    // Basic validation
+    // Input validation
     if (!email || !password || !firstName || !lastName) {
       return res.status(400).json({
         success: false,
-        error: 'Missing required fields'
+        error: 'Missing required fields: email, password, firstName, lastName'
       });
     }
-    // Check if user exists
+
+    // Email format validation
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    if (!emailRegex.test(email)) {
+      return res.status(400).json({
+        success: false,
+        error: 'Please provide a valid email address'
+      });
+    }
+
+    // Password strength validation
+    if (password.length < 8) {
+      return res.status(400).json({
+        success: false,
+        error: 'Password must be at least 8 characters long'
+      });
+    }
+
+    console.log('Input validation passed');
+
+    // Check database connection first
+    try {
+      const connectionTest = await databaseOperations.query('SELECT NOW() as current_time');
+      if (!connectionTest || !connectionTest.rows) {
+        throw new Error('Database connection test failed');
+      }
+      console.log('Database connection verified');
+    } catch (dbError) {
+      console.error('Database connection error:', dbError.message);
+      return res.status(503).json({
+        success: false,
+        error: 'Service temporarily unavailable. Please try again later.'
+      });
+    }
+
+    // Check if user exists with circuit breaker
     console.log('Checking if user exists...');
-    const existingUser = await databaseOperations.getUserByEmail(email);
-    console.log('Existing user check result:', existingUser.data ? 'User exists' : 'User not found');
+    const existingUser = await databaseCircuitBreaker.execute(
+      async () => {
+        const timeoutPromise = new Promise((_, reject) =>
+          setTimeout(() => reject(new Error('Database query timeout')), 10000)
+        );
+
+        const queryPromise = databaseOperations.getUserByEmail(email);
+        return await Promise.race([queryPromise, timeoutPromise]);
+      },
+      (error) => {
+        console.error('Database circuit breaker fallback for user check:', error.message);
+        return { error: 'Database temporarily unavailable' };
+      }
+    );
+
+    if (existingUser.error) {
+      return res.status(503).json({
+        success: false,
+        error: existingUser.error
+      });
+    }
+
+    console.log('User existence check result:', existingUser.data ? 'User exists' : 'User not found');
 
     if (existingUser.data) {
       return res.status(409).json({
@@ -203,44 +261,93 @@ router.post('/register', async (req, res) => {
       });
     }
 
-    // Hash password
+    // Hash password with timeout
     console.log('Hashing password...');
-    const passwordHash = await bcrypt.hash(password, 12);
-    console.log('Password hashed successfully');
+    let passwordHash;
+    try {
+      const hashPromise = bcrypt.hash(password, 12);
+      const timeoutPromise = new Promise((_, reject) =>
+        setTimeout(() => reject(new Error('Password hashing timeout')), 5000)
+      );
+
+      passwordHash = await Promise.race([hashPromise, timeoutPromise]);
+      console.log('Password hashed successfully');
+    } catch (hashError) {
+      console.error('Password hashing error:', hashError.message);
+      return res.status(500).json({
+        success: false,
+        error: 'Error processing registration'
+      });
+    }
 
     // Create user data
     const userData = {
       id: require('crypto').randomUUID(),
-      email: email.toLowerCase(),
+      email: email.toLowerCase().trim(),
       password_hash: passwordHash,
-      first_name: firstName,
-      last_name: lastName,
-      company_name: businessName || null,
+      first_name: firstName.trim(),
+      last_name: lastName.trim(),
+      company_name: businessName ? businessName.trim() : null,
       created_at: new Date().toISOString()
     };
 
     console.log('Creating user with data:', { ...userData, password_hash: '[HIDDEN]' });
 
-    // Create user
-    const createResult = await databaseOperations.createUser(userData);
-    console.log('User creation result:', createResult.error ? `Error: ${createResult.error.message}` : 'Success');
+    // Create user with circuit breaker
+    const createResult = await databaseCircuitBreaker.execute(
+      async () => {
+        const timeoutPromise = new Promise((_, reject) =>
+          setTimeout(() => reject(new Error('User creation timeout')), 15000)
+        );
+
+        const createPromise = databaseOperations.createUser(userData);
+        return await Promise.race([createPromise, timeoutPromise]);
+      },
+      (error) => {
+        console.error('Database circuit breaker fallback for user creation:', error.message);
+        return { error: 'Database temporarily unavailable during user creation' };
+      }
+    );
+
+    console.log('User creation result:', createResult.error ? `Error: ${createResult.error}` : 'Success');
 
     if (createResult.error) {
+      // Check for duplicate email constraint
+      if (createResult.error.includes && createResult.error.includes('duplicate') ||
+          createResult.error.includes && createResult.error.includes('unique')) {
+        return res.status(409).json({
+          success: false,
+          error: 'User already exists'
+        });
+      }
+
       return res.status(500).json({
         success: false,
-        error: 'Failed to create user',
-        details: createResult.error.message
+        error: 'Failed to create user account'
       });
     }
 
-    // Generate token
+    // Generate JWT token
     console.log('Generating JWT token...');
-    const token = jwt.sign(
-      { userId: userData.id, email: userData.email },
-      process.env.JWT_SECRET,
-      { expiresIn: '24h' }
-    );
-    console.log('Token generated successfully');
+    let token;
+    try {
+      if (!process.env.JWT_SECRET) {
+        throw new Error('JWT_SECRET not configured');
+      }
+
+      token = jwt.sign(
+        { userId: userData.id, email: userData.email },
+        process.env.JWT_SECRET,
+        { expiresIn: '24h' }
+      );
+      console.log('Token generated successfully');
+    } catch (tokenError) {
+      console.error('Token generation error:', tokenError.message);
+      return res.status(500).json({
+        success: false,
+        error: 'Registration completed but login token generation failed'
+      });
+    }
 
     console.log('Registration completed successfully');
 
@@ -251,7 +358,8 @@ router.post('/register', async (req, res) => {
           id: userData.id,
           email: userData.email,
           firstName: firstName,
-          lastName: lastName
+          lastName: lastName,
+          companyName: businessName || null
         },
         token: token
       },
@@ -260,24 +368,31 @@ router.post('/register', async (req, res) => {
 
   } catch (error) {
     console.error('Registration error:', error);
+    logger.error('Registration failed', {
+      error: error.message,
+      stack: error.stack,
+      email: req.body?.email
+    });
+
     res.status(500).json({
       success: false,
-      error: 'Registration failed',
-      details: error.message,
-      stack: process.env.NODE_ENV === 'development' ? error.stack : undefined
+      error: 'Registration failed due to server error',
+      details: process.env.NODE_ENV === 'development' ? error.message : undefined
     });
   }
 });
 
 // POST /api/auth/login
-// Authenticate user and return JWT - Fixed version
+// Authenticate user and return JWT - Fixed with comprehensive error handling
 router.post('/login', async (req, res) => {
+  const { databaseCircuitBreaker } = require('../utils/circuitBreaker');
+
   try {
-    console.log('Login called with body:', req.body);
+    console.log('Login called with body:', { ...req.body, password: '[HIDDEN]' });
 
     const { email, password } = req.body;
 
-    // Basic validation
+    // Input validation
     if (!email || !password) {
       return res.status(400).json({
         success: false,
@@ -285,7 +400,7 @@ router.post('/login', async (req, res) => {
       });
     }
 
-    // Email validation
+    // Email format validation
     const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
     if (!emailRegex.test(email)) {
       return res.status(400).json({
@@ -294,13 +409,50 @@ router.post('/login', async (req, res) => {
       });
     }
 
-    console.log('Login validation passed, checking user...');
+    console.log('Login validation passed');
 
-    // Find user by email
-    const userResult = await databaseOperations.getUserByEmail(email);
+    // Check database connection first
+    try {
+      const connectionTest = await databaseOperations.query('SELECT NOW() as current_time');
+      if (!connectionTest || !connectionTest.rows) {
+        throw new Error('Database connection test failed');
+      }
+      console.log('Database connection verified for login');
+    } catch (dbError) {
+      console.error('Database connection error during login:', dbError.message);
+      return res.status(503).json({
+        success: false,
+        error: 'Service temporarily unavailable. Please try again later.'
+      });
+    }
+
+    // Find user by email with circuit breaker
+    console.log('Looking up user...');
+    const userResult = await databaseCircuitBreaker.execute(
+      async () => {
+        const timeoutPromise = new Promise((_, reject) =>
+          setTimeout(() => reject(new Error('Database query timeout')), 10000)
+        );
+
+        const queryPromise = databaseOperations.getUserByEmail(email);
+        return await Promise.race([queryPromise, timeoutPromise]);
+      },
+      (error) => {
+        console.error('Database circuit breaker fallback for user lookup:', error.message);
+        return { error: 'Database temporarily unavailable' };
+      }
+    );
+
+    if (userResult.error) {
+      return res.status(503).json({
+        success: false,
+        error: userResult.error
+      });
+    }
+
     console.log('User lookup result:', userResult.data ? 'User found' : 'User not found');
 
-    if (userResult.error || !userResult.data) {
+    if (!userResult.data) {
       return res.status(401).json({
         success: false,
         error: 'Invalid credentials'
@@ -309,12 +461,24 @@ router.post('/login', async (req, res) => {
 
     const user = userResult.data;
 
-    // Skip email verification check for now to focus on core functionality
-    console.log('Checking password...');
+    // Verify password with timeout
+    console.log('Verifying password...');
+    let passwordMatch;
+    try {
+      const comparePromise = bcrypt.compare(password, user.password_hash);
+      const timeoutPromise = new Promise((_, reject) =>
+        setTimeout(() => reject(new Error('Password verification timeout')), 5000)
+      );
 
-    // Compare password with hash
-    const passwordMatch = await bcrypt.compare(password, user.password_hash);
-    console.log('Password match result:', passwordMatch ? 'Match' : 'No match');
+      passwordMatch = await Promise.race([comparePromise, timeoutPromise]);
+      console.log('Password verification result:', passwordMatch ? 'Match' : 'No match');
+    } catch (passwordError) {
+      console.error('Password verification error:', passwordError.message);
+      return res.status(500).json({
+        success: false,
+        error: 'Login failed due to server error'
+      });
+    }
 
     if (!passwordMatch) {
       return res.status(401).json({
@@ -323,14 +487,35 @@ router.post('/login', async (req, res) => {
       });
     }
 
-    // Generate JWT token
+    // Generate JWT token with error handling
     console.log('Generating JWT token...');
-    const token = jwt.sign(
-      { userId: user.id, email: user.email },
-      process.env.JWT_SECRET,
-      { expiresIn: '24h' }
-    );
-    console.log('Token generated successfully');
+    let token;
+    try {
+      if (!process.env.JWT_SECRET) {
+        throw new Error('JWT_SECRET not configured');
+      }
+
+      token = jwt.sign(
+        { userId: user.id, email: user.email },
+        process.env.JWT_SECRET,
+        { expiresIn: '24h' }
+      );
+      console.log('Token generated successfully');
+    } catch (tokenError) {
+      console.error('Token generation error:', tokenError.message);
+      return res.status(500).json({
+        success: false,
+        error: 'Login failed due to server error'
+      });
+    }
+
+    // Update last login time (non-blocking)
+    databaseOperations.query(
+      'UPDATE users SET last_login = NOW() WHERE id = $1',
+      [user.id]
+    ).catch(updateError => {
+      console.error('Failed to update last login time:', updateError.message);
+    });
 
     console.log('Login completed successfully');
 
@@ -351,11 +536,16 @@ router.post('/login', async (req, res) => {
 
   } catch (error) {
     console.error('Login error:', error);
+    logger.error('Login failed', {
+      error: error.message,
+      stack: error.stack,
+      email: req.body?.email
+    });
+
     res.status(500).json({
       success: false,
-      error: 'Login failed',
-      details: error.message,
-      stack: process.env.NODE_ENV === 'development' ? error.stack : undefined
+      error: 'Login failed due to server error',
+      details: process.env.NODE_ENV === 'development' ? error.message : undefined
     });
   }
 });

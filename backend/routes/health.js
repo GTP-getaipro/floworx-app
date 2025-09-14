@@ -8,6 +8,7 @@ const Redis = require('ioredis');
 
 const { databaseOperations } = require('../database/database-operations');
 const ContainerMemoryMonitor = require('../utils/ContainerMemoryMonitor');
+const { databaseCircuitBreaker, authCircuitBreaker } = require('../utils/circuitBreaker');
 
 const router = express.Router();
 
@@ -297,12 +298,8 @@ router.get('/system', async (req, res) => {
   try {
     // Database check
     try {
-      const healthResult = await databaseOperations.healthCheck();
-      if (healthResult.success) {
-        checks.push({ service: 'database', status: 'healthy' });
-      } else {
-        throw new Error(healthResult.error || 'Database health check failed');
-      }
+      await query('SELECT 1');
+      checks.push({ service: 'database', status: 'healthy' });
     } catch (error) {
       checks.push({ service: 'database', status: 'unhealthy', error: error.message });
       overallStatus = 'degraded';
@@ -396,6 +393,24 @@ router.get('/system', async (req, res) => {
       status: 'error',
       error: error.message,
       checks: checks
+    });
+  }
+});
+
+// Circuit breaker status endpoint
+router.get('/circuit-breakers', (req, res) => {
+  try {
+    res.json({
+      timestamp: new Date().toISOString(),
+      circuitBreakers: {
+        database: databaseCircuitBreaker.getStatus(),
+        authentication: authCircuitBreaker.getStatus()
+      }
+    });
+  } catch (error) {
+    res.status(500).json({
+      status: 'error',
+      error: error.message
     });
   }
 });

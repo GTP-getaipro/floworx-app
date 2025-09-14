@@ -1,0 +1,346 @@
+name: FloWorx CI/CD Pipeline
+
+on:
+  push:
+    branches: [ main, develop, staging ]
+  pull_request:
+    branches: [ main, develop ]
+
+env:
+  NODE_VERSION: '18.x'
+  REGISTRY: ghcr.io
+  IMAGE_NAME: ${{ github.repository }}
+
+jobs:
+  # ============================================================================
+  # AUTOMATED TESTING
+  # ============================================================================
+  test:
+    name: Automated Testing
+    runs-on: ubuntu-latest
+    
+    services:
+      postgres:
+        image: postgres:15
+        env:
+          POSTGRES_PASSWORD: test_password
+          POSTGRES_USER: test_user
+          POSTGRES_DB: floworx_test
+        options: >-
+          --health-cmd pg_isready
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
+        ports:
+          - 5432:5432
+      
+      redis:
+        image: redis:7-alpine
+        options: >-
+          --health-cmd "redis-cli ping"
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
+        ports:
+          - 6379:6379
+
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v4
+
+    - name: Setup Node.js
+      uses: actions/setup-node@v4
+      with:
+        node-version: ${{ env.NODE_VERSION }}
+        cache: 'npm'
+
+    - name: Install dependencies
+      run: |
+        npm ci
+        cd frontend && npm ci
+
+    - name: Setup test environment
+      run: |
+        cp .env.test.example .env.test
+        echo "DATABASE_URL=postgresql://test_user:test_password@localhost:5432/floworx_test" >> .env.test
+        echo "REDIS_URL=redis://localhost:6379" >> .env.test
+        echo "JWT_SECRET=test_jwt_secret_key_for_ci_testing_only" >> .env.test
+        echo "ENCRYPTION_KEY=test_encryption_key_32_characters" >> .env.test
+
+    - name: Run database migrations
+      run: |
+        npm run db:migrate:test
+      env:
+        NODE_ENV: test
+
+    - name: Run backend unit tests
+      run: |
+        npm run test:backend
+      env:
+        NODE_ENV: test
+
+    - name: Run frontend unit tests
+      run: |
+        cd frontend && npm run test -- --coverage --watchAll=false
+      env:
+        CI: true
+
+    - name: Run integration tests
+      run: |
+        npm run test:integration
+      env:
+        NODE_ENV: test
+
+    - name: Run security tests
+      run: |
+        npm run test:security
+      env:
+        NODE_ENV: test
+
+    - name: Upload test coverage
+      uses: codecov/codecov-action@v3
+      with:
+        files: ./coverage/lcov.info,./frontend/coverage/lcov.info
+        flags: unittests
+        name: codecov-umbrella
+
+  # ============================================================================
+  # SECURITY SCANNING
+  # ============================================================================
+  security:
+    name: Security Scanning
+    runs-on: ubuntu-latest
+    needs: test
+
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v4
+
+    - name: Setup Node.js
+      uses: actions/setup-node@v4
+      with:
+        node-version: ${{ env.NODE_VERSION }}
+        cache: 'npm'
+
+    - name: Install dependencies
+      run: npm ci
+
+    - name: Run npm audit
+      run: npm audit --audit-level=high
+
+    - name: Run Snyk security scan
+      uses: snyk/actions/node@master
+      env:
+        SNYK_TOKEN: ${{ secrets.SNYK_TOKEN }}
+      with:
+        args: --severity-threshold=high
+
+    - name: Run CodeQL analysis
+      uses: github/codeql-action/init@v2
+      with:
+        languages: javascript
+
+    - name: Perform CodeQL analysis
+      uses: github/codeql-action/analyze@v2
+
+  # ============================================================================
+  # BUILD AND CONTAINERIZE
+  # ============================================================================
+  build:
+    name: Build and Containerize
+    runs-on: ubuntu-latest
+    needs: [test, security]
+    if: github.ref == 'refs/heads/main' || github.ref == 'refs/heads/staging'
+
+    outputs:
+      image-tag: ${{ steps.meta.outputs.tags }}
+      image-digest: ${{ steps.build.outputs.digest }}
+
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v4
+
+    - name: Setup Docker Buildx
+      uses: docker/setup-buildx-action@v3
+
+    - name: Login to Container Registry
+      uses: docker/login-action@v3
+      with:
+        registry: ${{ env.REGISTRY }}
+        username: ${{ github.actor }}
+        password: ${{ secrets.GITHUB_TOKEN }}
+
+    - name: Extract metadata
+      id: meta
+      uses: docker/metadata-action@v5
+      with:
+        images: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}
+        tags: |
+          type=ref,event=branch
+          type=ref,event=pr
+          type=sha,prefix={{branch}}-
+          type=raw,value=latest,enable={{is_default_branch}}
+
+    - name: Build and push Docker image
+      id: build
+      uses: docker/build-push-action@v5
+      with:
+        context: .
+        platforms: linux/amd64,linux/arm64
+        push: true
+        tags: ${{ steps.meta.outputs.tags }}
+        labels: ${{ steps.meta.outputs.labels }}
+        cache-from: type=gha
+        cache-to: type=gha,mode=max
+        build-args: |
+          NODE_ENV=production
+          BUILD_DATE=${{ github.event.head_commit.timestamp }}
+          VCS_REF=${{ github.sha }}
+
+  # ============================================================================
+  # STAGING DEPLOYMENT
+  # ============================================================================
+  deploy-staging:
+    name: Deploy to Staging
+    runs-on: ubuntu-latest
+    needs: build
+    if: github.ref == 'refs/heads/staging'
+    environment: staging
+
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v4
+
+    - name: Deploy to staging environment
+      run: |
+        echo "Deploying to staging environment..."
+        # Add staging deployment commands here
+        curl -X POST "${{ secrets.STAGING_WEBHOOK_URL }}" \
+          -H "Authorization: Bearer ${{ secrets.STAGING_DEPLOY_TOKEN }}" \
+          -H "Content-Type: application/json" \
+          -d '{
+            "image": "${{ needs.build.outputs.image-tag }}",
+            "environment": "staging",
+            "commit": "${{ github.sha }}"
+          }'
+
+    - name: Wait for staging deployment
+      run: |
+        echo "Waiting for staging deployment to complete..."
+        sleep 60
+
+    - name: Run staging smoke tests
+      run: |
+        npm run test:staging
+      env:
+        STAGING_URL: ${{ secrets.STAGING_URL }}
+
+  # ============================================================================
+  # PRODUCTION DEPLOYMENT (Blue-Green)
+  # ============================================================================
+  deploy-production:
+    name: Deploy to Production
+    runs-on: ubuntu-latest
+    needs: [build, deploy-staging]
+    if: github.ref == 'refs/heads/main'
+    environment: production
+
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v4
+
+    - name: Setup deployment tools
+      run: |
+        # Install deployment tools
+        curl -LO "https://dl.k8s.io/release/$(curl -L -s https://dl.k8s.io/release/stable.txt)/bin/linux/amd64/kubectl"
+        chmod +x kubectl
+        sudo mv kubectl /usr/local/bin/
+
+    - name: Blue-Green Deployment
+      run: |
+        echo "Starting blue-green deployment..."
+        
+        # Deploy to green environment
+        ./scripts/deploy-blue-green.sh \
+          --image "${{ needs.build.outputs.image-tag }}" \
+          --environment "green" \
+          --commit "${{ github.sha }}"
+
+    - name: Health check green environment
+      run: |
+        echo "Performing health checks on green environment..."
+        ./scripts/health-check.sh --environment green
+
+    - name: Switch traffic to green
+      run: |
+        echo "Switching traffic to green environment..."
+        ./scripts/switch-traffic.sh --to green
+
+    - name: Final production validation
+      run: |
+        echo "Running final production validation..."
+        npm run test:production
+      env:
+        PRODUCTION_URL: ${{ secrets.PRODUCTION_URL }}
+
+    - name: Cleanup old blue environment
+      run: |
+        echo "Cleaning up old blue environment..."
+        ./scripts/cleanup-blue-green.sh --environment blue
+
+  # ============================================================================
+  # ROLLBACK CAPABILITY
+  # ============================================================================
+  rollback:
+    name: Rollback Production
+    runs-on: ubuntu-latest
+    if: failure() && github.ref == 'refs/heads/main'
+    needs: deploy-production
+    environment: production
+
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v4
+
+    - name: Automated rollback
+      run: |
+        echo "Performing automated rollback..."
+        ./scripts/rollback.sh \
+          --environment production \
+          --reason "Deployment failure detected"
+
+    - name: Notify team of rollback
+      uses: 8398a7/action-slack@v3
+      with:
+        status: failure
+        text: "🚨 Production rollback executed due to deployment failure"
+      env:
+        SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK_URL }}
+
+  # ============================================================================
+  # NOTIFICATION
+  # ============================================================================
+  notify:
+    name: Notify Deployment Status
+    runs-on: ubuntu-latest
+    needs: [deploy-production]
+    if: always()
+
+    steps:
+    - name: Notify success
+      if: needs.deploy-production.result == 'success'
+      uses: 8398a7/action-slack@v3
+      with:
+        status: success
+        text: "✅ FloWorx production deployment successful!"
+      env:
+        SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK_URL }}
+
+    - name: Notify failure
+      if: needs.deploy-production.result == 'failure'
+      uses: 8398a7/action-slack@v3
+      with:
+        status: failure
+        text: "❌ FloWorx production deployment failed!"
+      env:
+        SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK_URL }}

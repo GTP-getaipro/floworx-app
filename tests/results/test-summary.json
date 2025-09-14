@@ -1,0 +1,270 @@
+{
+  "timestamp": "2025-09-14T05:22:47.464Z",
+  "success": false,
+  "numTotalTests": 19,
+  "numPassedTests": 5,
+  "numFailedTests": 14,
+  "numPendingTests": 0,
+  "numTodoTests": 0,
+  "testResults": [
+    {
+      "testFilePath": "C:\\FloworxInvite\\tests\\integration\\oauth.test.js",
+      "numPassingTests": 5,
+      "numFailingTests": 14,
+      "numPendingTests": 0,
+      "numTodoTests": 0,
+      "perfStats": {
+        "end": 1757827364407,
+        "loadTestEnvironmentEnd": 1757827361107,
+        "loadTestEnvironmentStart": 1757827361073,
+        "runtime": 3299,
+        "setupAfterEnvEnd": 1757827361632,
+        "setupAfterEnvStart": 1757827361260,
+        "setupFilesEnd": 1757827361108,
+        "setupFilesStart": 1757827361108,
+        "slow": false,
+        "start": 1757827361108
+      },
+      "failureMessage": "\u001b[1m\u001b[31m  \u001b[1m● \u001b[22m\u001b[1mOAuth Integration Tests › OAuth Initiation › should initiate Google OAuth flow with valid token\u001b[39m\u001b[22m\n\n    \u001b[2mexpect(\u001b[22m\u001b[31mreceived\u001b[39m\u001b[2m).\u001b[22mtoBe\u001b[2m(\u001b[22m\u001b[32mexpected\u001b[39m\u001b[2m) // Object.is equality\u001b[22m\n\n    Expected: \u001b[32m\"https://accounts.google.com/oauth/auth\u001b[7morize?client_id=test\u001b[27m\"\u001b[39m\n    Received: \u001b[31m\"https://accounts.google.com/\u001b[7mo/\u001b[27moauth\u001b[7m2/v2\u001b[27m/auth\u001b[7m?access_type=offline&scope=https%3A%2F%2Fwww.googleapis.com%2Fauth%2Fuserinfo.email%20https%3A%2F%2Fwww.googleapis.com%2Fauth%2Fuserinfo.profile%20https%3A%2F%2Fwww.googleapis.com%2Fauth%2Fgmail.readonly%20https%3A%2F%2Fwww.googleapis.com%2Fauth%2Fgmail.modify%20https%3A%2F%2Fwww.googleapis.com%2Fauth%2Fcalendar.readonly&state=test-user-id&prompt=consent&include_granted_scopes=true&response_type=code&client_id=636568831348-komtul497r7lg9eacu09n1ghtso6revc.apps.googleusercontent.com&redirect_uri=https%3A%2F%2Fapp.floworx-iq.com%2Fapi%2Foauth%2Fgoogle%2Fcallback\u001b[27m\"\u001b[39m\n\u001b[2m\u001b[22m\n\u001b[2m    \u001b[0m \u001b[90m 102 |\u001b[39m\u001b[22m\n\u001b[2m     \u001b[90m 103 |\u001b[39m       expect(response\u001b[33m.\u001b[39mstatus)\u001b[33m.\u001b[39mtoBe(\u001b[35m302\u001b[39m)\u001b[33m;\u001b[39m\u001b[22m\n\u001b[2m    \u001b[31m\u001b[1m>\u001b[22m\u001b[2m\u001b[39m\u001b[90m 104 |\u001b[39m       expect(response\u001b[33m.\u001b[39mheaders\u001b[33m.\u001b[39mlocation)\u001b[33m.\u001b[39mtoBe(authUrl)\u001b[33m;\u001b[39m\u001b[22m\n\u001b[2m     \u001b[90m     |\u001b[39m                                         \u001b[31m\u001b[1m^\u001b[22m\u001b[2m\u001b[39m\u001b[22m\n\u001b[2m     \u001b[90m 105 |\u001b[39m       expect(mockOAuth2Client\u001b[33m.\u001b[39mgenerateAuthUrl)\u001b[33m.\u001b[39mtoHaveBeenCalledWith({\u001b[22m\n\u001b[2m     \u001b[90m 106 |\u001b[39m         access_type\u001b[33m:\u001b[39m \u001b[32m'offline'\u001b[39m\u001b[33m,\u001b[39m\u001b[22m\n\u001b[2m     \u001b[90m 107 |\u001b[39m         scope\u001b[33m:\u001b[39m expect\u001b[33m.\u001b[39marrayContaining([\u001b[0m\u001b[22m\n\u001b[2m\u001b[22m\n\u001b[2m      \u001b[2mat Object.toBe (\u001b[22m\u001b[2m\u001b[0m\u001b[36mtests/integration/oauth.test.js\u001b[39m\u001b[0m\u001b[2m:104:41)\u001b[22m\u001b[2m\u001b[22m\n\n\u001b[1m\u001b[31m  \u001b[1m● \u001b[22m\u001b[1mOAuth Integration Tests › OAuth Callback › should handle successful OAuth callback\u001b[39m\u001b[22m\n\n    \u001b[2mexpect(\u001b[22m\u001b[31mreceived\u001b[39m\u001b[2m).\u001b[22mtoContain\u001b[2m(\u001b[22m\u001b[32mexpected\u001b[39m\u001b[2m) // indexOf\u001b[22m\n\n    Expected substring: \u001b[32m\"connected=google\"\u001b[39m\n    Received string:    \u001b[31m\"https://app.floworx-iq.com/dashboard?error=connection_failed\"\u001b[39m\n\u001b[2m\u001b[22m\n\u001b[2m    \u001b[0m \u001b[90m 177 |\u001b[39m\u001b[22m\n\u001b[2m     \u001b[90m 178 |\u001b[39m       expect(response\u001b[33m.\u001b[39mstatus)\u001b[33m.\u001b[39mtoBe(\u001b[35m302\u001b[39m)\u001b[33m;\u001b[39m\u001b[22m\n\u001b[2m    \u001b[31m\u001b[1m>\u001b[22m\u001b[2m\u001b[39m\u001b[90m 179 |\u001b[39m       expect(response\u001b[33m.\u001b[39mheaders\u001b[33m.\u001b[39mlocation)\u001b[33m.\u001b[39mtoContain(\u001b[32m'connected=google'\u001b[39m)\u001b[33m;\u001b[39m\u001b[22m\n\u001b[2m     \u001b[90m     |\u001b[39m                                         \u001b[31m\u001b[1m^\u001b[22m\u001b[2m\u001b[39m\u001b[22m\n\u001b[2m     \u001b[90m 180 |\u001b[39m       expect(mockOAuth2Client\u001b[33m.\u001b[39mgetToken)\u001b[33m.\u001b[39mtoHaveBeenCalledWith(\u001b[32m'test-auth-code'\u001b[39m)\u001b[33m;\u001b[39m\u001b[22m\n\u001b[2m     \u001b[90m 181 |\u001b[39m       expect(databaseOperations\u001b[33m.\u001b[39mstoreCredentials)\u001b[33m.\u001b[39mtoHaveBeenCalledWith(\u001b[22m\n\u001b[2m     \u001b[90m 182 |\u001b[39m         mockUser\u001b[33m.\u001b[39mid\u001b[33m,\u001b[39m\u001b[0m\u001b[22m\n\u001b[2m\u001b[22m\n\u001b[2m      \u001b[2mat Object.toContain (\u001b[22m\u001b[2m\u001b[0m\u001b[36mtests/integration/oauth.test.js\u001b[39m\u001b[0m\u001b[2m:179:41)\u001b[22m\u001b[2m\u001b[22m\n\n\u001b[1m\u001b[31m  \u001b[1m● \u001b[22m\u001b[1mOAuth Integration Tests › OAuth Callback › should handle token exchange failure\u001b[39m\u001b[22m\n\n    \u001b[2mexpect(\u001b[22m\u001b[31mreceived\u001b[39m\u001b[2m).\u001b[22mtoContain\u001b[2m(\u001b[22m\u001b[32mexpected\u001b[39m\u001b[2m) // indexOf\u001b[22m\n\n    Expected substring: \u001b[32m\"error=token_exchange_failed\"\u001b[39m\n    Received string:    \u001b[31m\"https://app.floworx-iq.com/dashboard?error=connection_failed\"\u001b[39m\n\u001b[2m\u001b[22m\n\u001b[2m    \u001b[0m \u001b[90m 223 |\u001b[39m\u001b[22m\n\u001b[2m     \u001b[90m 224 |\u001b[39m       expect(response\u001b[33m.\u001b[39mstatus)\u001b[33m.\u001b[39mtoBe(\u001b[35m302\u001b[39m)\u001b[33m;\u001b[39m\u001b[22m\n\u001b[2m    \u001b[31m\u001b[1m>\u001b[22m\u001b[2m\u001b[39m\u001b[90m 225 |\u001b[39m       expect(response\u001b[33m.\u001b[39mheaders\u001b[33m.\u001b[39mlocation)\u001b[33m.\u001b[39mtoContain(\u001b[32m'error=token_exchange_failed'\u001b[39m)\u001b[33m;\u001b[39m\u001b[22m\n\u001b[2m     \u001b[90m     |\u001b[39m                                         \u001b[31m\u001b[1m^\u001b[22m\u001b[2m\u001b[39m\u001b[22m\n\u001b[2m     \u001b[90m 226 |\u001b[39m     })\u001b[33m;\u001b[39m\u001b[22m\n\u001b[2m     \u001b[90m 227 |\u001b[39m   })\u001b[33m;\u001b[39m\u001b[22m\n\u001b[2m     \u001b[90m 228 |\u001b[39m\u001b[0m\u001b[22m\n\u001b[2m\u001b[22m\n\u001b[2m      \u001b[2mat Object.toContain (\u001b[22m\u001b[2m\u001b[0m\u001b[36mtests/integration/oauth.test.js\u001b[39m\u001b[0m\u001b[2m:225:41)\u001b[22m\u001b[2m\u001b[22m\n\n\u001b[1m\u001b[31m  \u001b[1m● \u001b[22m\u001b[1mOAuth Integration Tests › Token Refresh › should refresh access token successfully\u001b[39m\u001b[22m\n\n    \u001b[2mexpect(\u001b[22m\u001b[31mreceived\u001b[39m\u001b[2m).\u001b[22mtoBe\u001b[2m(\u001b[22m\u001b[32mexpected\u001b[39m\u001b[2m) // Object.is equality\u001b[22m\n\n    Expected: \u001b[32m200\u001b[39m\n    Received: \u001b[31m500\u001b[39m\n\u001b[2m\u001b[22m\n\u001b[2m    \u001b[0m \u001b[90m 263 |\u001b[39m         \u001b[33m.\u001b[39msend({ provider\u001b[33m:\u001b[39m \u001b[32m'google'\u001b[39m })\u001b[33m;\u001b[39m\u001b[22m\n\u001b[2m     \u001b[90m 264 |\u001b[39m\u001b[22m\n\u001b[2m    \u001b[31m\u001b[1m>\u001b[22m\u001b[2m\u001b[39m\u001b[90m 265 |\u001b[39m       expect(response\u001b[33m.\u001b[39mstatus)\u001b[33m.\u001b[39mtoBe(\u001b[35m200\u001b[39m)\u001b[33m;\u001b[39m\u001b[22m\n\u001b[2m     \u001b[90m     |\u001b[39m                               \u001b[31m\u001b[1m^\u001b[22m\u001b[2m\u001b[39m\u001b[22m\n\u001b[2m     \u001b[90m 266 |\u001b[39m       expect(response\u001b[33m.\u001b[39mbody\u001b[33m.\u001b[39msuccess)\u001b[33m.\u001b[39mtoBe(\u001b[36mtrue\u001b[39m)\u001b[33m;\u001b[39m\u001b[22m\n\u001b[2m     \u001b[90m 267 |\u001b[39m       expect(response\u001b[33m.\u001b[39mbody\u001b[33m.\u001b[39mdata\u001b[33m.\u001b[39mrefreshed)\u001b[33m.\u001b[39mtoBe(\u001b[36mtrue\u001b[39m)\u001b[33m;\u001b[39m\u001b[22m\n\u001b[2m     \u001b[90m 268 |\u001b[39m       expect(mockOAuth2Client\u001b[33m.\u001b[39mrefreshAccessToken)\u001b[33m.\u001b[39mtoHaveBeenCalled()\u001b[33m;\u001b[39m\u001b[0m\u001b[22m\n\u001b[2m\u001b[22m\n\u001b[2m      \u001b[2mat Object.toBe (\u001b[22m\u001b[2m\u001b[0m\u001b[36mtests/integration/oauth.test.js\u001b[39m\u001b[0m\u001b[2m:265:31)\u001b[22m\u001b[2m\u001b[22m\n\n\u001b[1m\u001b[31m  \u001b[1m● \u001b[22m\u001b[1mOAuth Integration Tests › Token Refresh › should handle missing refresh token\u001b[39m\u001b[22m\n\n    \u001b[2mexpect(\u001b[22m\u001b[31mreceived\u001b[39m\u001b[2m).\u001b[22mtoBe\u001b[2m(\u001b[22m\u001b[32mexpected\u001b[39m\u001b[2m) // Object.is equality\u001b[22m\n\n    Expected: \u001b[32m401\u001b[39m\n    Received: \u001b[31m500\u001b[39m\n\u001b[2m\u001b[22m\n\u001b[2m    \u001b[0m \u001b[90m 280 |\u001b[39m         \u001b[33m.\u001b[39msend({ provider\u001b[33m:\u001b[39m \u001b[32m'google'\u001b[39m })\u001b[33m;\u001b[39m\u001b[22m\n\u001b[2m     \u001b[90m 281 |\u001b[39m\u001b[22m\n\u001b[2m    \u001b[31m\u001b[1m>\u001b[22m\u001b[2m\u001b[39m\u001b[90m 282 |\u001b[39m       expect(response\u001b[33m.\u001b[39mstatus)\u001b[33m.\u001b[39mtoBe(\u001b[35m401\u001b[39m)\u001b[33m;\u001b[39m\u001b[22m\n\u001b[2m     \u001b[90m     |\u001b[39m                               \u001b[31m\u001b[1m^\u001b[22m\u001b[2m\u001b[39m\u001b[22m\n\u001b[2m     \u001b[90m 283 |\u001b[39m       expect(response\u001b[33m.\u001b[39mbody\u001b[33m.\u001b[39mrequiresReauth)\u001b[33m.\u001b[39mtoBe(\u001b[36mtrue\u001b[39m)\u001b[33m;\u001b[39m\u001b[22m\n\u001b[2m     \u001b[90m 284 |\u001b[39m     })\u001b[33m;\u001b[39m\u001b[22m\n\u001b[2m     \u001b[90m 285 |\u001b[39m\u001b[0m\u001b[22m\n\u001b[2m\u001b[22m\n\u001b[2m      \u001b[2mat Object.toBe (\u001b[22m\u001b[2m\u001b[0m\u001b[36mtests/integration/oauth.test.js\u001b[39m\u001b[0m\u001b[2m:282:31)\u001b[22m\u001b[2m\u001b[22m\n\n\u001b[1m\u001b[31m  \u001b[1m● \u001b[22m\u001b[1mOAuth Integration Tests › Token Refresh › should handle invalid refresh token\u001b[39m\u001b[22m\n\n    \u001b[2mexpect(\u001b[22m\u001b[31mreceived\u001b[39m\u001b[2m).\u001b[22mtoBe\u001b[2m(\u001b[22m\u001b[32mexpected\u001b[39m\u001b[2m) // Object.is equality\u001b[22m\n\n    Expected: \u001b[32m401\u001b[39m\n    Received: \u001b[31m500\u001b[39m\n\u001b[2m\u001b[22m\n\u001b[2m    \u001b[0m \u001b[90m 304 |\u001b[39m         \u001b[33m.\u001b[39msend({ provider\u001b[33m:\u001b[39m \u001b[32m'google'\u001b[39m })\u001b[33m;\u001b[39m\u001b[22m\n\u001b[2m     \u001b[90m 305 |\u001b[39m\u001b[22m\n\u001b[2m    \u001b[31m\u001b[1m>\u001b[22m\u001b[2m\u001b[39m\u001b[90m 306 |\u001b[39m       expect(response\u001b[33m.\u001b[39mstatus)\u001b[33m.\u001b[39mtoBe(\u001b[35m401\u001b[39m)\u001b[33m;\u001b[39m\u001b[22m\n\u001b[2m     \u001b[90m     |\u001b[39m                               \u001b[31m\u001b[1m^\u001b[22m\u001b[2m\u001b[39m\u001b[22m\n\u001b[2m     \u001b[90m 307 |\u001b[39m       expect(response\u001b[33m.\u001b[39mbody\u001b[33m.\u001b[39mrequiresReauth)\u001b[33m.\u001b[39mtoBe(\u001b[36mtrue\u001b[39m)\u001b[33m;\u001b[39m\u001b[22m\n\u001b[2m     \u001b[90m 308 |\u001b[39m       expect(response\u001b[33m.\u001b[39mbody\u001b[33m.\u001b[39merror)\u001b[33m.\u001b[39mtoBe(\u001b[32m'Re-authentication required'\u001b[39m)\u001b[33m;\u001b[39m\u001b[22m\n\u001b[2m     \u001b[90m 309 |\u001b[39m     })\u001b[33m;\u001b[39m\u001b[0m\u001b[22m\n\u001b[2m\u001b[22m\n\u001b[2m      \u001b[2mat Object.toBe (\u001b[22m\u001b[2m\u001b[0m\u001b[36mtests/integration/oauth.test.js\u001b[39m\u001b[0m\u001b[2m:306:31)\u001b[22m\u001b[2m\u001b[22m\n\n\u001b[1m\u001b[31m  \u001b[1m● \u001b[22m\u001b[1mOAuth Integration Tests › Token Refresh › should handle unsupported provider\u001b[39m\u001b[22m\n\n    \u001b[2mexpect(\u001b[22m\u001b[31mreceived\u001b[39m\u001b[2m).\u001b[22mtoBe\u001b[2m(\u001b[22m\u001b[32mexpected\u001b[39m\u001b[2m) // Object.is equality\u001b[22m\n\n    Expected: \u001b[32m400\u001b[39m\n    Received: \u001b[31m500\u001b[39m\n\u001b[2m\u001b[22m\n\u001b[2m    \u001b[0m \u001b[90m 315 |\u001b[39m         \u001b[33m.\u001b[39msend({ provider\u001b[33m:\u001b[39m \u001b[32m'unsupported'\u001b[39m })\u001b[33m;\u001b[39m\u001b[22m\n\u001b[2m     \u001b[90m 316 |\u001b[39m\u001b[22m\n\u001b[2m    \u001b[31m\u001b[1m>\u001b[22m\u001b[2m\u001b[39m\u001b[90m 317 |\u001b[39m       expect(response\u001b[33m.\u001b[39mstatus)\u001b[33m.\u001b[39mtoBe(\u001b[35m400\u001b[39m)\u001b[33m;\u001b[39m\u001b[22m\n\u001b[2m     \u001b[90m     |\u001b[39m                               \u001b[31m\u001b[1m^\u001b[22m\u001b[2m\u001b[39m\u001b[22m\n\u001b[2m     \u001b[90m 318 |\u001b[39m       expect(response\u001b[33m.\u001b[39mbody\u001b[33m.\u001b[39merror)\u001b[33m.\u001b[39mtoBe(\u001b[32m'Unsupported provider'\u001b[39m)\u001b[33m;\u001b[39m\u001b[22m\n\u001b[2m     \u001b[90m 319 |\u001b[39m     })\u001b[33m;\u001b[39m\u001b[22m\n\u001b[2m     \u001b[90m 320 |\u001b[39m   })\u001b[33m;\u001b[39m\u001b[0m\u001b[22m\n\u001b[2m\u001b[22m\n\u001b[2m      \u001b[2mat Object.toBe (\u001b[22m\u001b[2m\u001b[0m\u001b[36mtests/integration/oauth.test.js\u001b[39m\u001b[0m\u001b[2m:317:31)\u001b[22m\u001b[2m\u001b[22m\n\n\u001b[1m\u001b[31m  \u001b[1m● \u001b[22m\u001b[1mOAuth Integration Tests › OAuth Status › should return OAuth connection status\u001b[39m\u001b[22m\n\n    \u001b[2mexpect(\u001b[22m\u001b[31mreceived\u001b[39m\u001b[2m).\u001b[22mtoBe\u001b[2m(\u001b[22m\u001b[32mexpected\u001b[39m\u001b[2m) // Object.is equality\u001b[22m\n\n    Expected: \u001b[32m200\u001b[39m\n    Received: \u001b[31m500\u001b[39m\n\u001b[2m\u001b[22m\n\u001b[2m    \u001b[0m \u001b[90m 347 |\u001b[39m         \u001b[33m.\u001b[39m\u001b[36mset\u001b[39m(\u001b[32m'Authorization'\u001b[39m\u001b[33m,\u001b[39m \u001b[32m`Bearer ${authToken}`\u001b[39m)\u001b[33m;\u001b[39m\u001b[22m\n\u001b[2m     \u001b[90m 348 |\u001b[39m\u001b[22m\n\u001b[2m    \u001b[31m\u001b[1m>\u001b[22m\u001b[2m\u001b[39m\u001b[90m 349 |\u001b[39m       expect(response\u001b[33m.\u001b[39mstatus)\u001b[33m.\u001b[39mtoBe(\u001b[35m200\u001b[39m)\u001b[33m;\u001b[39m\u001b[22m\n\u001b[2m     \u001b[90m     |\u001b[39m                               \u001b[31m\u001b[1m^\u001b[22m\u001b[2m\u001b[39m\u001b[22m\n\u001b[2m     \u001b[90m 350 |\u001b[39m       expect(response\u001b[33m.\u001b[39mbody\u001b[33m.\u001b[39msuccess)\u001b[33m.\u001b[39mtoBe(\u001b[36mtrue\u001b[39m)\u001b[33m;\u001b[39m\u001b[22m\n\u001b[2m     \u001b[90m 351 |\u001b[39m       expect(response\u001b[33m.\u001b[39mbody\u001b[33m.\u001b[39mdata\u001b[33m.\u001b[39mconnections)\u001b[33m.\u001b[39mtoEqual(mockConnections)\u001b[33m;\u001b[39m\u001b[22m\n\u001b[2m     \u001b[90m 352 |\u001b[39m       expect(response\u001b[33m.\u001b[39mbody\u001b[33m.\u001b[39mdata\u001b[33m.\u001b[39mtotal)\u001b[33m.\u001b[39mtoBe(\u001b[35m1\u001b[39m)\u001b[33m;\u001b[39m\u001b[0m\u001b[22m\n\u001b[2m\u001b[22m\n\u001b[2m      \u001b[2mat Object.toBe (\u001b[22m\u001b[2m\u001b[0m\u001b[36mtests/integration/oauth.test.js\u001b[39m\u001b[0m\u001b[2m:349:31)\u001b[22m\u001b[2m\u001b[22m\n\n\u001b[1m\u001b[31m  \u001b[1m● \u001b[22m\u001b[1mOAuth Integration Tests › OAuth Status › should handle OAuth status errors\u001b[39m\u001b[22m\n\n    \u001b[2mexpect(\u001b[22m\u001b[31mreceived\u001b[39m\u001b[2m).\u001b[22mtoBe\u001b[2m(\u001b[22m\u001b[32mexpected\u001b[39m\u001b[2m) // Object.is equality\u001b[22m\n\n    Expected: \u001b[32m\"Failed to get OAuth status\"\u001b[39m\n    Received: \u001b[31m{\"code\": 500, \"message\": \"Internal server error\", \"requestId\": \"GET:/api/oauth/status\", \"type\": \"INTERNAL_ERROR\"}\u001b[39m\n\u001b[2m\u001b[22m\n\u001b[2m    \u001b[0m \u001b[90m 365 |\u001b[39m       expect(response\u001b[33m.\u001b[39mstatus)\u001b[33m.\u001b[39mtoBe(\u001b[35m500\u001b[39m)\u001b[33m;\u001b[39m\u001b[22m\n\u001b[2m     \u001b[90m 366 |\u001b[39m       expect(response\u001b[33m.\u001b[39mbody\u001b[33m.\u001b[39msuccess)\u001b[33m.\u001b[39mtoBe(\u001b[36mfalse\u001b[39m)\u001b[33m;\u001b[39m\u001b[22m\n\u001b[2m    \u001b[31m\u001b[1m>\u001b[22m\u001b[2m\u001b[39m\u001b[90m 367 |\u001b[39m       expect(response\u001b[33m.\u001b[39mbody\u001b[33m.\u001b[39merror)\u001b[33m.\u001b[39mtoBe(\u001b[32m'Failed to get OAuth status'\u001b[39m)\u001b[33m;\u001b[39m\u001b[22m\n\u001b[2m     \u001b[90m     |\u001b[39m                                   \u001b[31m\u001b[1m^\u001b[22m\u001b[2m\u001b[39m\u001b[22m\n\u001b[2m     \u001b[90m 368 |\u001b[39m     })\u001b[33m;\u001b[39m\u001b[22m\n\u001b[2m     \u001b[90m 369 |\u001b[39m   })\u001b[33m;\u001b[39m\u001b[22m\n\u001b[2m     \u001b[90m 370 |\u001b[39m\u001b[0m\u001b[22m\n\u001b[2m\u001b[22m\n\u001b[2m      \u001b[2mat Object.toBe (\u001b[22m\u001b[2m\u001b[0m\u001b[36mtests/integration/oauth.test.js\u001b[39m\u001b[0m\u001b[2m:367:35)\u001b[22m\u001b[2m\u001b[22m\n\n\u001b[1m\u001b[31m  \u001b[1m● \u001b[22m\u001b[1mOAuth Integration Tests › Connection Management › should disconnect OAuth connection successfully\u001b[39m\u001b[22m\n\n    \u001b[2mexpect(\u001b[22m\u001b[31mreceived\u001b[39m\u001b[2m).\u001b[22mtoBe\u001b[2m(\u001b[22m\u001b[32mexpected\u001b[39m\u001b[2m) // Object.is equality\u001b[22m\n\n    Expected: \u001b[32m200\u001b[39m\n    Received: \u001b[31m500\u001b[39m\n\u001b[2m\u001b[22m\n\u001b[2m    \u001b[0m \u001b[90m 394 |\u001b[39m         \u001b[33m.\u001b[39m\u001b[36mset\u001b[39m(\u001b[32m'Authorization'\u001b[39m\u001b[33m,\u001b[39m \u001b[32m`Bearer ${authToken}`\u001b[39m)\u001b[33m;\u001b[39m\u001b[22m\n\u001b[2m     \u001b[90m 395 |\u001b[39m\u001b[22m\n\u001b[2m    \u001b[31m\u001b[1m>\u001b[22m\u001b[2m\u001b[39m\u001b[90m 396 |\u001b[39m       expect(response\u001b[33m.\u001b[39mstatus)\u001b[33m.\u001b[39mtoBe(\u001b[35m200\u001b[39m)\u001b[33m;\u001b[39m\u001b[22m\n\u001b[2m     \u001b[90m     |\u001b[39m                               \u001b[31m\u001b[1m^\u001b[22m\u001b[2m\u001b[39m\u001b[22m\n\u001b[2m     \u001b[90m 397 |\u001b[39m       expect(response\u001b[33m.\u001b[39mbody\u001b[33m.\u001b[39msuccess)\u001b[33m.\u001b[39mtoBe(\u001b[36mtrue\u001b[39m)\u001b[33m;\u001b[39m\u001b[22m\n\u001b[2m     \u001b[90m 398 |\u001b[39m       expect(mockOAuth2Client\u001b[33m.\u001b[39mrevokeToken)\u001b[33m.\u001b[39mtoHaveBeenCalledWith(\u001b[32m'test-access-token'\u001b[39m)\u001b[33m;\u001b[39m\u001b[22m\n\u001b[2m     \u001b[90m 399 |\u001b[39m     })\u001b[33m;\u001b[39m\u001b[0m\u001b[22m\n\u001b[2m\u001b[22m\n\u001b[2m      \u001b[2mat Object.toBe (\u001b[22m\u001b[2m\u001b[0m\u001b[36mtests/integration/oauth.test.js\u001b[39m\u001b[0m\u001b[2m:396:31)\u001b[22m\u001b[2m\u001b[22m\n\n\u001b[1m\u001b[31m  \u001b[1m● \u001b[22m\u001b[1mOAuth Integration Tests › Connection Management › should handle disconnect when no connection exists\u001b[39m\u001b[22m\n\n    \u001b[2mexpect(\u001b[22m\u001b[31mreceived\u001b[39m\u001b[2m).\u001b[22mtoBe\u001b[2m(\u001b[22m\u001b[32mexpected\u001b[39m\u001b[2m) // Object.is equality\u001b[22m\n\n    Expected: \u001b[32m200\u001b[39m\n    Received: \u001b[31m500\u001b[39m\n\u001b[2m\u001b[22m\n\u001b[2m    \u001b[0m \u001b[90m 409 |\u001b[39m         \u001b[33m.\u001b[39m\u001b[36mset\u001b[39m(\u001b[32m'Authorization'\u001b[39m\u001b[33m,\u001b[39m \u001b[32m`Bearer ${authToken}`\u001b[39m)\u001b[33m;\u001b[39m\u001b[22m\n\u001b[2m     \u001b[90m 410 |\u001b[39m\u001b[22m\n\u001b[2m    \u001b[31m\u001b[1m>\u001b[22m\u001b[2m\u001b[39m\u001b[90m 411 |\u001b[39m       expect(response\u001b[33m.\u001b[39mstatus)\u001b[33m.\u001b[39mtoBe(\u001b[35m200\u001b[39m)\u001b[33m;\u001b[39m\u001b[22m\n\u001b[2m     \u001b[90m     |\u001b[39m                               \u001b[31m\u001b[1m^\u001b[22m\u001b[2m\u001b[39m\u001b[22m\n\u001b[2m     \u001b[90m 412 |\u001b[39m       expect(response\u001b[33m.\u001b[39mbody\u001b[33m.\u001b[39msuccess)\u001b[33m.\u001b[39mtoBe(\u001b[36mtrue\u001b[39m)\u001b[33m;\u001b[39m\u001b[22m\n\u001b[2m     \u001b[90m 413 |\u001b[39m       expect(response\u001b[33m.\u001b[39mbody\u001b[33m.\u001b[39mmessage)\u001b[33m.\u001b[39mtoContain(\u001b[32m'No connection found'\u001b[39m)\u001b[33m;\u001b[39m\u001b[22m\n\u001b[2m     \u001b[90m 414 |\u001b[39m     })\u001b[33m;\u001b[39m\u001b[0m\u001b[22m\n\u001b[2m\u001b[22m\n\u001b[2m      \u001b[2mat Object.toBe (\u001b[22m\u001b[2m\u001b[0m\u001b[36mtests/integration/oauth.test.js\u001b[39m\u001b[0m\u001b[2m:411:31)\u001b[22m\u001b[2m\u001b[22m\n\n\u001b[1m\u001b[31m  \u001b[1m● \u001b[22m\u001b[1mOAuth Integration Tests › Connection Management › should handle provider revocation failure gracefully\u001b[39m\u001b[22m\n\n    \u001b[2mexpect(\u001b[22m\u001b[31mreceived\u001b[39m\u001b[2m).\u001b[22mtoBe\u001b[2m(\u001b[22m\u001b[32mexpected\u001b[39m\u001b[2m) // Object.is equality\u001b[22m\n\n    Expected: \u001b[32m200\u001b[39m\n    Received: \u001b[31m500\u001b[39m\n\u001b[2m\u001b[22m\n\u001b[2m    \u001b[0m \u001b[90m 431 |\u001b[39m         \u001b[33m.\u001b[39m\u001b[36mset\u001b[39m(\u001b[32m'Authorization'\u001b[39m\u001b[33m,\u001b[39m \u001b[32m`Bearer ${authToken}`\u001b[39m)\u001b[33m;\u001b[39m\u001b[22m\n\u001b[2m     \u001b[90m 432 |\u001b[39m\u001b[22m\n\u001b[2m    \u001b[31m\u001b[1m>\u001b[22m\u001b[2m\u001b[39m\u001b[90m 433 |\u001b[39m       expect(response\u001b[33m.\u001b[39mstatus)\u001b[33m.\u001b[39mtoBe(\u001b[35m200\u001b[39m)\u001b[33m;\u001b[39m\u001b[22m\n\u001b[2m     \u001b[90m     |\u001b[39m                               \u001b[31m\u001b[1m^\u001b[22m\u001b[2m\u001b[39m\u001b[22m\n\u001b[2m     \u001b[90m 434 |\u001b[39m       expect(response\u001b[33m.\u001b[39mbody\u001b[33m.\u001b[39msuccess)\u001b[33m.\u001b[39mtoBe(\u001b[36mtrue\u001b[39m)\u001b[33m;\u001b[39m\u001b[22m\n\u001b[2m     \u001b[90m 435 |\u001b[39m       \u001b[90m// Should still succeed even if provider revocation fails\u001b[39m\u001b[22m\n\u001b[2m     \u001b[90m 436 |\u001b[39m     })\u001b[33m;\u001b[39m\u001b[0m\u001b[22m\n\u001b[2m\u001b[22m\n\u001b[2m      \u001b[2mat Object.toBe (\u001b[22m\u001b[2m\u001b[0m\u001b[36mtests/integration/oauth.test.js\u001b[39m\u001b[0m\u001b[2m:433:31)\u001b[22m\u001b[2m\u001b[22m\n\n\u001b[1m\u001b[31m  \u001b[1m● \u001b[22m\u001b[1mOAuth Integration Tests › User Status with OAuth › should include OAuth connections in user status\u001b[39m\u001b[22m\n\n    \u001b[2mexpect(\u001b[22m\u001b[31mreceived\u001b[39m\u001b[2m).\u001b[22mtoBe\u001b[2m(\u001b[22m\u001b[32mexpected\u001b[39m\u001b[2m) // Object.is equality\u001b[22m\n\n    Expected: \u001b[32m200\u001b[39m\n    Received: \u001b[31m500\u001b[39m\n\u001b[2m\u001b[22m\n\u001b[2m    \u001b[0m \u001b[90m 465 |\u001b[39m         \u001b[33m.\u001b[39m\u001b[36mset\u001b[39m(\u001b[32m'Authorization'\u001b[39m\u001b[33m,\u001b[39m \u001b[32m`Bearer ${authToken}`\u001b[39m)\u001b[33m;\u001b[39m\u001b[22m\n\u001b[2m     \u001b[90m 466 |\u001b[39m\u001b[22m\n\u001b[2m    \u001b[31m\u001b[1m>\u001b[22m\u001b[2m\u001b[39m\u001b[90m 467 |\u001b[39m       expect(response\u001b[33m.\u001b[39mstatus)\u001b[33m.\u001b[39mtoBe(\u001b[35m200\u001b[39m)\u001b[33m;\u001b[39m\u001b[22m\n\u001b[2m     \u001b[90m     |\u001b[39m                               \u001b[31m\u001b[1m^\u001b[22m\u001b[2m\u001b[39m\u001b[22m\n\u001b[2m     \u001b[90m 468 |\u001b[39m       expect(response\u001b[33m.\u001b[39mbody\u001b[33m.\u001b[39msuccess)\u001b[33m.\u001b[39mtoBe(\u001b[36mtrue\u001b[39m)\u001b[33m;\u001b[39m\u001b[22m\n\u001b[2m     \u001b[90m 469 |\u001b[39m       expect(response\u001b[33m.\u001b[39mbody\u001b[33m.\u001b[39mdata\u001b[33m.\u001b[39moauth_connections)\u001b[33m.\u001b[39mtoEqual(mockOAuthConnections)\u001b[33m;\u001b[39m\u001b[22m\n\u001b[2m     \u001b[90m 470 |\u001b[39m       expect(response\u001b[33m.\u001b[39mbody\u001b[33m.\u001b[39mdata\u001b[33m.\u001b[39mhas_google_connection)\u001b[33m.\u001b[39mtoBe(\u001b[36mtrue\u001b[39m)\u001b[33m;\u001b[39m\u001b[0m\u001b[22m\n\u001b[2m\u001b[22m\n\u001b[2m      \u001b[2mat Object.toBe (\u001b[22m\u001b[2m\u001b[0m\u001b[36mtests/integration/oauth.test.js\u001b[39m\u001b[0m\u001b[2m:467:31)\u001b[22m\u001b[2m\u001b[22m\n\n\u001b[1m\u001b[31m  \u001b[1m● \u001b[22m\u001b[1mOAuth Integration Tests › User Status with OAuth › should handle OAuth service errors in user status\u001b[39m\u001b[22m\n\n    \u001b[2mexpect(\u001b[22m\u001b[31mreceived\u001b[39m\u001b[2m).\u001b[22mtoBe\u001b[2m(\u001b[22m\u001b[32mexpected\u001b[39m\u001b[2m) // Object.is equality\u001b[22m\n\n    Expected: \u001b[32m200\u001b[39m\n    Received: \u001b[31m500\u001b[39m\n\u001b[2m\u001b[22m\n\u001b[2m    \u001b[0m \u001b[90m 480 |\u001b[39m         \u001b[33m.\u001b[39m\u001b[36mset\u001b[39m(\u001b[32m'Authorization'\u001b[39m\u001b[33m,\u001b[39m \u001b[32m`Bearer ${authToken}`\u001b[39m)\u001b[33m;\u001b[39m\u001b[22m\n\u001b[2m     \u001b[90m 481 |\u001b[39m\u001b[22m\n\u001b[2m    \u001b[31m\u001b[1m>\u001b[22m\u001b[2m\u001b[39m\u001b[90m 482 |\u001b[39m       expect(response\u001b[33m.\u001b[39mstatus)\u001b[33m.\u001b[39mtoBe(\u001b[35m200\u001b[39m)\u001b[33m;\u001b[39m\u001b[22m\n\u001b[2m     \u001b[90m     |\u001b[39m                               \u001b[31m\u001b[1m^\u001b[22m\u001b[2m\u001b[39m\u001b[22m\n\u001b[2m     \u001b[90m 483 |\u001b[39m       expect(response\u001b[33m.\u001b[39mbody\u001b[33m.\u001b[39msuccess)\u001b[33m.\u001b[39mtoBe(\u001b[36mtrue\u001b[39m)\u001b[33m;\u001b[39m\u001b[22m\n\u001b[2m     \u001b[90m 484 |\u001b[39m       expect(response\u001b[33m.\u001b[39mbody\u001b[33m.\u001b[39mdata\u001b[33m.\u001b[39moauth_connections)\u001b[33m.\u001b[39mtoEqual([])\u001b[33m;\u001b[39m\u001b[22m\n\u001b[2m     \u001b[90m 485 |\u001b[39m       expect(response\u001b[33m.\u001b[39mbody\u001b[33m.\u001b[39mdata\u001b[33m.\u001b[39mhas_google_connection)\u001b[33m.\u001b[39mtoBe(\u001b[36mfalse\u001b[39m)\u001b[33m;\u001b[39m\u001b[0m\u001b[22m\n\u001b[2m\u001b[22m\n\u001b[2m      \u001b[2mat Object.toBe (\u001b[22m\u001b[2m\u001b[0m\u001b[36mtests/integration/oauth.test.js\u001b[39m\u001b[0m\u001b[2m:482:31)\u001b[22m\u001b[2m\u001b[22m\n",
+      "testResults": [
+        {
+          "title": "should initiate Google OAuth flow with valid token",
+          "fullName": "OAuth Integration Tests OAuth Initiation should initiate Google OAuth flow with valid token",
+          "status": "failed",
+          "duration": 128,
+          "failureMessages": [
+            "Error: \u001b[2mexpect(\u001b[22m\u001b[31mreceived\u001b[39m\u001b[2m).\u001b[22mtoBe\u001b[2m(\u001b[22m\u001b[32mexpected\u001b[39m\u001b[2m) // Object.is equality\u001b[22m\n\nExpected: \u001b[32m\"https://accounts.google.com/oauth/auth\u001b[7morize?client_id=test\u001b[27m\"\u001b[39m\nReceived: \u001b[31m\"https://accounts.google.com/\u001b[7mo/\u001b[27moauth\u001b[7m2/v2\u001b[27m/auth\u001b[7m?access_type=offline&scope=https%3A%2F%2Fwww.googleapis.com%2Fauth%2Fuserinfo.email%20https%3A%2F%2Fwww.googleapis.com%2Fauth%2Fuserinfo.profile%20https%3A%2F%2Fwww.googleapis.com%2Fauth%2Fgmail.readonly%20https%3A%2F%2Fwww.googleapis.com%2Fauth%2Fgmail.modify%20https%3A%2F%2Fwww.googleapis.com%2Fauth%2Fcalendar.readonly&state=test-user-id&prompt=consent&include_granted_scopes=true&response_type=code&client_id=636568831348-komtul497r7lg9eacu09n1ghtso6revc.apps.googleusercontent.com&redirect_uri=https%3A%2F%2Fapp.floworx-iq.com%2Fapi%2Foauth%2Fgoogle%2Fcallback\u001b[27m\"\u001b[39m\n    at Object.toBe (C:\\FloworxInvite\\tests\\integration\\oauth.test.js:104:41)\n    at processTicksAndRejections (node:internal/process/task_queues:105:5)"
+          ],
+          "ancestorTitles": [
+            "OAuth Integration Tests",
+            "OAuth Initiation"
+          ]
+        },
+        {
+          "title": "should redirect with error for missing token",
+          "fullName": "OAuth Integration Tests OAuth Initiation should redirect with error for missing token",
+          "status": "passed",
+          "duration": 12,
+          "failureMessages": [],
+          "ancestorTitles": [
+            "OAuth Integration Tests",
+            "OAuth Initiation"
+          ]
+        },
+        {
+          "title": "should redirect with error for invalid token",
+          "fullName": "OAuth Integration Tests OAuth Initiation should redirect with error for invalid token",
+          "status": "passed",
+          "duration": 17,
+          "failureMessages": [],
+          "ancestorTitles": [
+            "OAuth Integration Tests",
+            "OAuth Initiation"
+          ]
+        },
+        {
+          "title": "should handle OAuth configuration errors",
+          "fullName": "OAuth Integration Tests OAuth Initiation should handle OAuth configuration errors",
+          "status": "passed",
+          "duration": 36,
+          "failureMessages": [],
+          "ancestorTitles": [
+            "OAuth Integration Tests",
+            "OAuth Initiation"
+          ]
+        },
+        {
+          "title": "should handle successful OAuth callback",
+          "fullName": "OAuth Integration Tests OAuth Callback should handle successful OAuth callback",
+          "status": "failed",
+          "duration": 217,
+          "failureMessages": [
+            "Error: \u001b[2mexpect(\u001b[22m\u001b[31mreceived\u001b[39m\u001b[2m).\u001b[22mtoContain\u001b[2m(\u001b[22m\u001b[32mexpected\u001b[39m\u001b[2m) // indexOf\u001b[22m\n\nExpected substring: \u001b[32m\"connected=google\"\u001b[39m\nReceived string:    \u001b[31m\"https://app.floworx-iq.com/dashboard?error=connection_failed\"\u001b[39m\n    at Object.toContain (C:\\FloworxInvite\\tests\\integration\\oauth.test.js:179:41)\n    at processTicksAndRejections (node:internal/process/task_queues:105:5)"
+          ],
+          "ancestorTitles": [
+            "OAuth Integration Tests",
+            "OAuth Callback"
+          ]
+        },
+        {
+          "title": "should handle OAuth denial",
+          "fullName": "OAuth Integration Tests OAuth Callback should handle OAuth denial",
+          "status": "passed",
+          "duration": 15,
+          "failureMessages": [],
+          "ancestorTitles": [
+            "OAuth Integration Tests",
+            "OAuth Callback"
+          ]
+        },
+        {
+          "title": "should handle missing authorization code",
+          "fullName": "OAuth Integration Tests OAuth Callback should handle missing authorization code",
+          "status": "passed",
+          "duration": 10,
+          "failureMessages": [],
+          "ancestorTitles": [
+            "OAuth Integration Tests",
+            "OAuth Callback"
+          ]
+        },
+        {
+          "title": "should handle token exchange failure",
+          "fullName": "OAuth Integration Tests OAuth Callback should handle token exchange failure",
+          "status": "failed",
+          "duration": 83,
+          "failureMessages": [
+            "Error: \u001b[2mexpect(\u001b[22m\u001b[31mreceived\u001b[39m\u001b[2m).\u001b[22mtoContain\u001b[2m(\u001b[22m\u001b[32mexpected\u001b[39m\u001b[2m) // indexOf\u001b[22m\n\nExpected substring: \u001b[32m\"error=token_exchange_failed\"\u001b[39m\nReceived string:    \u001b[31m\"https://app.floworx-iq.com/dashboard?error=connection_failed\"\u001b[39m\n    at Object.toContain (C:\\FloworxInvite\\tests\\integration\\oauth.test.js:225:41)\n    at processTicksAndRejections (node:internal/process/task_queues:105:5)"
+          ],
+          "ancestorTitles": [
+            "OAuth Integration Tests",
+            "OAuth Callback"
+          ]
+        },
+        {
+          "title": "should refresh access token successfully",
+          "fullName": "OAuth Integration Tests Token Refresh should refresh access token successfully",
+          "status": "failed",
+          "duration": 39,
+          "failureMessages": [
+            "Error: \u001b[2mexpect(\u001b[22m\u001b[31mreceived\u001b[39m\u001b[2m).\u001b[22mtoBe\u001b[2m(\u001b[22m\u001b[32mexpected\u001b[39m\u001b[2m) // Object.is equality\u001b[22m\n\nExpected: \u001b[32m200\u001b[39m\nReceived: \u001b[31m500\u001b[39m\n    at Object.toBe (C:\\FloworxInvite\\tests\\integration\\oauth.test.js:265:31)\n    at processTicksAndRejections (node:internal/process/task_queues:105:5)"
+          ],
+          "ancestorTitles": [
+            "OAuth Integration Tests",
+            "Token Refresh"
+          ]
+        },
+        {
+          "title": "should handle missing refresh token",
+          "fullName": "OAuth Integration Tests Token Refresh should handle missing refresh token",
+          "status": "failed",
+          "duration": 23,
+          "failureMessages": [
+            "Error: \u001b[2mexpect(\u001b[22m\u001b[31mreceived\u001b[39m\u001b[2m).\u001b[22mtoBe\u001b[2m(\u001b[22m\u001b[32mexpected\u001b[39m\u001b[2m) // Object.is equality\u001b[22m\n\nExpected: \u001b[32m401\u001b[39m\nReceived: \u001b[31m500\u001b[39m\n    at Object.toBe (C:\\FloworxInvite\\tests\\integration\\oauth.test.js:282:31)\n    at processTicksAndRejections (node:internal/process/task_queues:105:5)"
+          ],
+          "ancestorTitles": [
+            "OAuth Integration Tests",
+            "Token Refresh"
+          ]
+        },
+        {
+          "title": "should handle invalid refresh token",
+          "fullName": "OAuth Integration Tests Token Refresh should handle invalid refresh token",
+          "status": "failed",
+          "duration": 15,
+          "failureMessages": [
+            "Error: \u001b[2mexpect(\u001b[22m\u001b[31mreceived\u001b[39m\u001b[2m).\u001b[22mtoBe\u001b[2m(\u001b[22m\u001b[32mexpected\u001b[39m\u001b[2m) // Object.is equality\u001b[22m\n\nExpected: \u001b[32m401\u001b[39m\nReceived: \u001b[31m500\u001b[39m\n    at Object.toBe (C:\\FloworxInvite\\tests\\integration\\oauth.test.js:306:31)\n    at processTicksAndRejections (node:internal/process/task_queues:105:5)"
+          ],
+          "ancestorTitles": [
+            "OAuth Integration Tests",
+            "Token Refresh"
+          ]
+        },
+        {
+          "title": "should handle unsupported provider",
+          "fullName": "OAuth Integration Tests Token Refresh should handle unsupported provider",
+          "status": "failed",
+          "duration": 26,
+          "failureMessages": [
+            "Error: \u001b[2mexpect(\u001b[22m\u001b[31mreceived\u001b[39m\u001b[2m).\u001b[22mtoBe\u001b[2m(\u001b[22m\u001b[32mexpected\u001b[39m\u001b[2m) // Object.is equality\u001b[22m\n\nExpected: \u001b[32m400\u001b[39m\nReceived: \u001b[31m500\u001b[39m\n    at Object.toBe (C:\\FloworxInvite\\tests\\integration\\oauth.test.js:317:31)\n    at processTicksAndRejections (node:internal/process/task_queues:105:5)"
+          ],
+          "ancestorTitles": [
+            "OAuth Integration Tests",
+            "Token Refresh"
+          ]
+        },
+        {
+          "title": "should return OAuth connection status",
+          "fullName": "OAuth Integration Tests OAuth Status should return OAuth connection status",
+          "status": "failed",
+          "duration": 14,
+          "failureMessages": [
+            "Error: \u001b[2mexpect(\u001b[22m\u001b[31mreceived\u001b[39m\u001b[2m).\u001b[22mtoBe\u001b[2m(\u001b[22m\u001b[32mexpected\u001b[39m\u001b[2m) // Object.is equality\u001b[22m\n\nExpected: \u001b[32m200\u001b[39m\nReceived: \u001b[31m500\u001b[39m\n    at Object.toBe (C:\\FloworxInvite\\tests\\integration\\oauth.test.js:349:31)\n    at processTicksAndRejections (node:internal/process/task_queues:105:5)"
+          ],
+          "ancestorTitles": [
+            "OAuth Integration Tests",
+            "OAuth Status"
+          ]
+        },
+        {
+          "title": "should handle OAuth status errors",
+          "fullName": "OAuth Integration Tests OAuth Status should handle OAuth status errors",
+          "status": "failed",
+          "duration": 15,
+          "failureMessages": [
+            "Error: \u001b[2mexpect(\u001b[22m\u001b[31mreceived\u001b[39m\u001b[2m).\u001b[22mtoBe\u001b[2m(\u001b[22m\u001b[32mexpected\u001b[39m\u001b[2m) // Object.is equality\u001b[22m\n\nExpected: \u001b[32m\"Failed to get OAuth status\"\u001b[39m\nReceived: \u001b[31m{\"code\": 500, \"message\": \"Internal server error\", \"requestId\": \"GET:/api/oauth/status\", \"type\": \"INTERNAL_ERROR\"}\u001b[39m\n    at Object.toBe (C:\\FloworxInvite\\tests\\integration\\oauth.test.js:367:35)\n    at processTicksAndRejections (node:internal/process/task_queues:105:5)"
+          ],
+          "ancestorTitles": [
+            "OAuth Integration Tests",
+            "OAuth Status"
+          ]
+        },
+        {
+          "title": "should disconnect OAuth connection successfully",
+          "fullName": "OAuth Integration Tests Connection Management should disconnect OAuth connection successfully",
+          "status": "failed",
+          "duration": 22,
+          "failureMessages": [
+            "Error: \u001b[2mexpect(\u001b[22m\u001b[31mreceived\u001b[39m\u001b[2m).\u001b[22mtoBe\u001b[2m(\u001b[22m\u001b[32mexpected\u001b[39m\u001b[2m) // Object.is equality\u001b[22m\n\nExpected: \u001b[32m200\u001b[39m\nReceived: \u001b[31m500\u001b[39m\n    at Object.toBe (C:\\FloworxInvite\\tests\\integration\\oauth.test.js:396:31)\n    at processTicksAndRejections (node:internal/process/task_queues:105:5)"
+          ],
+          "ancestorTitles": [
+            "OAuth Integration Tests",
+            "Connection Management"
+          ]
+        },
+        {
+          "title": "should handle disconnect when no connection exists",
+          "fullName": "OAuth Integration Tests Connection Management should handle disconnect when no connection exists",
+          "status": "failed",
+          "duration": 19,
+          "failureMessages": [
+            "Error: \u001b[2mexpect(\u001b[22m\u001b[31mreceived\u001b[39m\u001b[2m).\u001b[22mtoBe\u001b[2m(\u001b[22m\u001b[32mexpected\u001b[39m\u001b[2m) // Object.is equality\u001b[22m\n\nExpected: \u001b[32m200\u001b[39m\nReceived: \u001b[31m500\u001b[39m\n    at Object.toBe (C:\\FloworxInvite\\tests\\integration\\oauth.test.js:411:31)\n    at processTicksAndRejections (node:internal/process/task_queues:105:5)"
+          ],
+          "ancestorTitles": [
+            "OAuth Integration Tests",
+            "Connection Management"
+          ]
+        },
+        {
+          "title": "should handle provider revocation failure gracefully",
+          "fullName": "OAuth Integration Tests Connection Management should handle provider revocation failure gracefully",
+          "status": "failed",
+          "duration": 15,
+          "failureMessages": [
+            "Error: \u001b[2mexpect(\u001b[22m\u001b[31mreceived\u001b[39m\u001b[2m).\u001b[22mtoBe\u001b[2m(\u001b[22m\u001b[32mexpected\u001b[39m\u001b[2m) // Object.is equality\u001b[22m\n\nExpected: \u001b[32m200\u001b[39m\nReceived: \u001b[31m500\u001b[39m\n    at Object.toBe (C:\\FloworxInvite\\tests\\integration\\oauth.test.js:433:31)\n    at processTicksAndRejections (node:internal/process/task_queues:105:5)"
+          ],
+          "ancestorTitles": [
+            "OAuth Integration Tests",
+            "Connection Management"
+          ]
+        },
+        {
+          "title": "should include OAuth connections in user status",
+          "fullName": "OAuth Integration Tests User Status with OAuth should include OAuth connections in user status",
+          "status": "failed",
+          "duration": 16,
+          "failureMessages": [
+            "Error: \u001b[2mexpect(\u001b[22m\u001b[31mreceived\u001b[39m\u001b[2m).\u001b[22mtoBe\u001b[2m(\u001b[22m\u001b[32mexpected\u001b[39m\u001b[2m) // Object.is equality\u001b[22m\n\nExpected: \u001b[32m200\u001b[39m\nReceived: \u001b[31m500\u001b[39m\n    at Object.toBe (C:\\FloworxInvite\\tests\\integration\\oauth.test.js:467:31)\n    at processTicksAndRejections (node:internal/process/task_queues:105:5)"
+          ],
+          "ancestorTitles": [
+            "OAuth Integration Tests",
+            "User Status with OAuth"
+          ]
+        },
+        {
+          "title": "should handle OAuth service errors in user status",
+          "fullName": "OAuth Integration Tests User Status with OAuth should handle OAuth service errors in user status",
+          "status": "failed",
+          "duration": 27,
+          "failureMessages": [
+            "Error: \u001b[2mexpect(\u001b[22m\u001b[31mreceived\u001b[39m\u001b[2m).\u001b[22mtoBe\u001b[2m(\u001b[22m\u001b[32mexpected\u001b[39m\u001b[2m) // Object.is equality\u001b[22m\n\nExpected: \u001b[32m200\u001b[39m\nReceived: \u001b[31m500\u001b[39m\n    at Object.toBe (C:\\FloworxInvite\\tests\\integration\\oauth.test.js:482:31)\n    at processTicksAndRejections (node:internal/process/task_queues:105:5)"
+          ],
+          "ancestorTitles": [
+            "OAuth Integration Tests",
+            "User Status with OAuth"
+          ]
+        }
+      ]
+    }
+  ]
+}

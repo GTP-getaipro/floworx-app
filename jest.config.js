@@ -16,38 +16,26 @@ module.exports = {
     'json-summary'
   ],
   
-  // Coverage thresholds - Realistic targets for current development phase
+  // Coverage thresholds
   coverageThreshold: {
     global: {
-      branches: 15,
-      functions: 15,
-      lines: 20,
-      statements: 20
+      branches: 75,
+      functions: 85,
+      lines: 80,
+      statements: 80
     },
-    // Specific thresholds for critical services
-    './services/SecurityService.js': {
-      branches: 98,
-      functions: 98,
-      lines: 98,
-      statements: 98
-    },
-    './services/errorTrackingService.js': {
-      branches: 95,
-      functions: 95,
-      lines: 95,
-      statements: 95
-    },
-    './services/realTimeMonitoringService.js': {
-      branches: 95,
-      functions: 95,
-      lines: 95,
-      statements: 95
-    },
-    './middleware/errorHandler.js': {
+    // Specific thresholds for new business type functionality
+    './backend/routes/businessTypes.js': {
       branches: 90,
-      functions: 90,
+      functions: 95,
       lines: 90,
       statements: 90
+    },
+    './backend/routes/passwordReset.js': {
+      branches: 85,
+      functions: 90,
+      lines: 85,
+      statements: 85
     }
   },
   
@@ -92,21 +80,9 @@ module.exports = {
   
   // Test timeout
   testTimeout: 30000,
-
+  
   // Verbose output
   verbose: true,
-
-  // Force exit to prevent hanging
-  forceExit: true,
-
-  // Detect open handles
-  detectOpenHandles: true,
-
-  // Clear mocks between tests
-  clearMocks: true,
-
-  // Reset modules between tests
-  resetMocks: true,
   
   // Projects for different test types
   projects: [
@@ -115,7 +91,8 @@ module.exports = {
       testMatch: [
         '<rootDir>/tests/backend/**/*.test.js',
         '<rootDir>/tests/integration/**/*.test.js',
-        '<rootDir>/tests/security/**/*.test.js'
+        '<rootDir>/tests/security/**/*.test.js',
+        '<rootDir>/tests/unit/**/*.test.js'
       ],
       testEnvironment: 'node',
       setupFilesAfterEnv: ['<rootDir>/tests/setup/jest.setup.js'],
@@ -201,8 +178,8 @@ module.exports = {
     'jest-watch-typeahead/testname'
   ],
   
-  // Custom test results processor
-  testResultsProcessor: '<rootDir>/tests/processors/results.processor.js'
+  // Custom matchers - disabled for now
+  // testResultsProcessor: '<rootDir>/tests/processors/results.processor.js'
 };
 
 // Environment-specific configurations

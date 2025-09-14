@@ -5,6 +5,7 @@ const { query } = require('../database/unified-connection');
 const { authenticateToken } = require('../middleware/auth');
 const { NotFoundError, _ExternalServiceError, asyncHandler } = require('../middleware/errorHandler');
 const { encrypt, decrypt } = require('../utils/encryption');
+const { oauthService } = require('../services/OAuthService');
 
 const router = express.Router();
 
@@ -18,7 +19,7 @@ const getGoogleOAuth2Client = () => {
 };
 
 // GET /api/oauth/google
-// Initiate Google OAuth flow
+// Initiate Google OAuth flow using OAuth service
 router.get('/google', (req, res) => {
   try {
     // Handle token from query parameter (for frontend redirects) or Authorization header
@@ -45,42 +46,42 @@ router.get('/google', (req, res) => {
       return res.redirect(`${process.env.FRONTEND_URL || 'http://localhost:3000'}/dashboard?error=invalid_token`);
     }
 
-    const oauth2Client = getGoogleOAuth2Client();
+    // Use OAuth service to generate authorization URL
+    const authUrl = oauthService.generateAuthUrl('google', user.id);
 
-    // Generate the consent screen URL
-    const scopes = [
-      'https://www.googleapis.com/auth/userinfo.email',
-      'https://www.googleapis.com/auth/userinfo.profile',
-      // Add additional scopes as needed for your automation
-      'https://www.googleapis.com/auth/gmail.readonly',
-      'https://www.googleapis.com/auth/calendar.readonly'
-    ];
-
-    const authUrl = oauth2Client.generateAuthUrl({
-      access_type: 'offline', // Required to get refresh token
-      scope: scopes,
-      state: user.id, // Pass user ID to callback
-      prompt: 'consent' // Force consent screen to ensure refresh token
-    });
+    console.log(`🔗 Generated OAuth URL for user ${user.id}`);
 
     // Redirect user to Google consent screen
     res.redirect(authUrl);
   } catch (error) {
     console.error('OAuth initiation error:', error);
-    res.redirect(`${process.env.FRONTEND_URL || 'http://localhost:3000'}/dashboard?error=oauth_failed`);
+
+    // Enhanced error handling
+    const errorType = error.message.includes('configuration') ? 'config_error' : 'oauth_failed';
+    res.redirect(`${process.env.FRONTEND_URL || 'http://localhost:3000'}/dashboard?error=${errorType}`);
   }
 });
 
 // GET /api/oauth/google/callback
-// Handle Google OAuth callback
+// Handle Google OAuth callback using OAuth service
 router.get('/google/callback', async (req, res) => {
   try {
     const { code, state, error } = req.query;
 
-    // Handle OAuth errors
+    // Handle OAuth errors with enhanced error reporting
     if (error) {
       console.error('OAuth error from Google:', error);
-      return res.redirect(`${process.env.FRONTEND_URL}/dashboard?error=oauth_denied`);
+      const errorMap = {
+        'access_denied': 'oauth_denied',
+        'invalid_request': 'invalid_callback',
+        'unauthorized_client': 'config_error',
+        'unsupported_response_type': 'config_error',
+        'invalid_scope': 'scope_error',
+        'server_error': 'provider_error',
+        'temporarily_unavailable': 'provider_unavailable'
+      };
+      const mappedError = errorMap[error] || 'oauth_failed';
+      return res.redirect(`${process.env.FRONTEND_URL}/dashboard?error=${mappedError}`);
     }
 
     if (!code || !state) {
@@ -88,59 +89,58 @@ router.get('/google/callback', async (req, res) => {
     }
 
     const userId = state; // User ID passed in state parameter
-    const oauth2Client = getGoogleOAuth2Client();
 
-    // Exchange authorization code for tokens
-    const { tokens } = await oauth2Client.getToken(code);
+    // Use OAuth service to exchange code for tokens
+    const result = await oauthService.exchangeCodeForTokens('google', code, userId);
 
-    if (!tokens.access_token) {
-      throw new Error('No access token received from Google');
+    if (!result.success) {
+      throw new Error('Token exchange failed');
     }
 
-    // Encrypt the tokens before storing
-    const encryptedAccessToken = encrypt(tokens.access_token);
-    const encryptedRefreshToken = tokens.refresh_token ? encrypt(tokens.refresh_token) : null;
-
-    // Calculate expiry date
-    const expiryDate = tokens.expiry_date ? new Date(tokens.expiry_date) : null;
-
-    // Store or update credentials in database
-    const upsertCredentialQuery = `
-      INSERT INTO credentials (user_id, service_name, access_token, refresh_token, expiry_date)
-      VALUES ($1, $2, $3, $4, $5)
-      ON CONFLICT (user_id, service_name)
-      DO UPDATE SET 
-        access_token = EXCLUDED.access_token,
-        refresh_token = EXCLUDED.refresh_token,
-        expiry_date = EXCLUDED.expiry_date,
-        updated_at = CURRENT_TIMESTAMP
-      RETURNING id
-    `;
-
-    await query(upsertCredentialQuery, [userId, 'google', encryptedAccessToken, encryptedRefreshToken, expiryDate]);
+    console.log(`✅ OAuth connection successful for user ${userId}:`, {
+      email: result.userInfo.email,
+      name: result.userInfo.name,
+      hasRefreshToken: result.tokens.hasRefreshToken
+    });
 
     // Redirect back to frontend dashboard with success
     res.redirect(`${process.env.FRONTEND_URL}/dashboard?connected=google`);
   } catch (error) {
     console.error('OAuth callback error:', error);
-    res.redirect(`${process.env.FRONTEND_URL}/dashboard?error=connection_failed`);
+
+    // Enhanced error handling with specific error types
+    let errorType = 'connection_failed';
+    if (error.message.includes('configuration')) {
+      errorType = 'config_error';
+    } else if (error.message.includes('Token exchange')) {
+      errorType = 'token_exchange_failed';
+    } else if (error.message.includes('User info')) {
+      errorType = 'user_info_failed';
+    }
+
+    res.redirect(`${process.env.FRONTEND_URL}/dashboard?error=${errorType}`);
   }
 });
 
 // DELETE /api/oauth/google
-// Disconnect Google account
+// Disconnect Google account using OAuth service
 router.delete('/google', authenticateToken, asyncHandler(async (req, res) => {
-  const deleteQuery = 'DELETE FROM credentials WHERE user_id = $1 AND service_name = $2';
-  const result = await query(deleteQuery, [req.user.id, 'google']);
+  try {
+    // Use OAuth service to revoke connection
+    const result = await oauthService.revokeConnection(req.user.id, 'google');
 
-  if (result.rowCount === 0) {
-    throw new NotFoundError('No Google connection found for this user');
+    if (result.success) {
+      res.json({
+        success: true,
+        message: result.message
+      });
+    } else {
+      throw new Error(result.error || 'Failed to revoke connection');
+    }
+  } catch (error) {
+    console.error('OAuth disconnect error:', error);
+    throw new Error(`Failed to disconnect Google account: ${error.message}`);
   }
-
-  res.json({
-    success: true,
-    message: 'Google account disconnected successfully'
-  });
 }));
 
 // GET /api/oauth/google/refresh
@@ -188,7 +188,76 @@ const refreshGoogleToken = async userId => {
   }
 };
 
-module.exports = {
-  router,
-  refreshGoogleToken
-};
+// POST /api/oauth/refresh
+// Refresh access token for any provider
+router.post('/refresh', authenticateToken, asyncHandler(async (req, res) => {
+  const { provider = 'google' } = req.body;
+
+  if (!oauthService.supportedProviders.includes(provider)) {
+    return res.status(400).json({
+      success: false,
+      error: 'Unsupported provider',
+      message: `Provider '${provider}' is not supported`
+    });
+  }
+
+  try {
+    const result = await oauthService.refreshAccessToken(req.user.id, provider);
+
+    res.json({
+      success: true,
+      message: `${provider} token refreshed successfully`,
+      data: {
+        provider,
+        expiryDate: result.expiryDate,
+        refreshed: true
+      }
+    });
+  } catch (error) {
+    console.error(`Token refresh error for ${provider}:`, error);
+
+    // Check if re-authentication is required
+    if (error.message.includes('refresh token') || error.message.includes('invalid_grant')) {
+      return res.status(401).json({
+        success: false,
+        error: 'Re-authentication required',
+        message: `Please reconnect your ${provider} account`,
+        requiresReauth: true
+      });
+    }
+
+    res.status(500).json({
+      success: false,
+      error: 'Token refresh failed',
+      message: error.message
+    });
+  }
+}));
+
+// GET /api/oauth/status
+// Get OAuth connection status for user
+router.get('/status', authenticateToken, asyncHandler(async (req, res) => {
+  try {
+    const connections = await oauthService.getOAuthConnections(req.user.id);
+
+    res.json({
+      success: true,
+      data: {
+        connections,
+        total: connections.length,
+        active: connections.filter(conn => conn.status === 'active').length,
+        needsRefresh: connections.filter(conn => conn.status === 'needs_refresh').length,
+        expired: connections.filter(conn => conn.status === 'expired').length
+      }
+    });
+  } catch (error) {
+    console.error('OAuth status error:', error);
+    res.status(500).json({
+      success: false,
+      error: 'Failed to get OAuth status',
+      message: error.message
+    });
+  }
+}));
+
+module.exports = router;

@@ -2,6 +2,7 @@ const express = require('express');
 
 const { databaseOperations } = require('../database/database-operations');
 const { authenticateToken } = require('../middleware/auth');
+const { oauthService } = require('../services/OAuthService');
 
 const router = express.Router();
 
@@ -141,10 +142,9 @@ router.get('/status', authenticateToken, async (req, res) => {
       expires_at: cred.expiry_date
     }));
 
-    // Check OAuth connections (simplified for now)
-    const oauthServices = [];
-    console.log('🔍 OAuth services check - simplified implementation');
-    // TODO: Implement OAuth services check with REST API
+    // Check OAuth connections using OAuth service
+    console.log('🔍 Checking OAuth services...');
+    const oauthServices = await oauthService.getOAuthConnections(req.user.id);
 
     console.log(`✅ Retrieved status for user: ${userDetails.email}`);
 

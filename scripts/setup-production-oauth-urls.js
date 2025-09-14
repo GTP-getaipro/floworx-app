@@ -11,7 +11,7 @@ async function setupProductionOAuthUrls() {
   const currentRedirectUri = process.env.GOOGLE_REDIRECT_URI;
   console.log('📊 Current Configuration:');
   console.log(`   Current GOOGLE_REDIRECT_URI: ${currentRedirectUri}`);
-  console.log(`   Current FRONTEND_URL: ${process.env.FRONTEND_URL}`);
+  );
 
   // =====================================================
   // OPTION ANALYSIS
@@ -75,15 +75,15 @@ async function setupProductionOAuthUrls() {
   console.log('   ============================================');
   console.log('   Time required: ~10 minutes');
   console.log('');
-  console.log('   1️⃣ Verify Current Environment Variables:');
+  );
   console.log('   ```bash');
-  console.log('   vercel env ls');
+  );
   console.log('   # Should show: GOOGLE_REDIRECT_URI=https://floworx-app.vercel.app/api/oauth/google/callback');
   console.log('   # Should show: FRONTEND_URL=https://floworx-app.vercel.app');
   console.log('');
   console.log('   # If not set, add them:');
-  console.log('   vercel env add GOOGLE_REDIRECT_URI production');
-  console.log('   vercel env add FRONTEND_URL production');
+  );
+  );
   console.log('   vercel --prod');
   console.log('   ```');
   console.log('');
@@ -109,12 +109,12 @@ async function setupProductionOAuthUrls() {
   console.log('   TTL: 300');
   console.log('   ```');
   console.log('');
-  console.log('   3️⃣ Update Environment Variables:');
+  );
   console.log('   ```bash');
-  console.log('   vercel env add GOOGLE_REDIRECT_URI production');
+  );
   console.log('   # Enter: https://app.floworx-iq.com/api/oauth/google/callback');
   console.log('');
-  console.log('   vercel env add FRONTEND_URL production');
+  );
   console.log('   # Enter: https://app.floworx-iq.com');
   console.log('');
   console.log('   vercel --prod');
@@ -133,9 +133,9 @@ async function setupProductionOAuthUrls() {
 
   console.log('\n   After making changes, run these tests:');
   console.log('');
-  console.log('   1️⃣ Check Environment Variables:');
+  );
   console.log('   ```bash');
-  console.log('   vercel env ls');
+  );
   console.log('   ```');
   console.log('');
   console.log('   2️⃣ Test OAuth Flow:');
@@ -171,7 +171,7 @@ async function setupProductionOAuthUrls() {
   console.log('');
   console.log('   ❌ "Access token required" still appears:');
   console.log('   ✅ Check that API endpoints don\'t require auth for OAuth initiation');
-  console.log('   ✅ Verify environment variables are deployed');
+  );
 
   // =====================================================
   // SECURITY CONSIDERATIONS

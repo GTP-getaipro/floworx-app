@@ -2,49 +2,12 @@ const cors = require('cors');
 const express = require('express');
 const morgan = require('morgan');
 
-// Load environment variables with proper path resolution
-const path = require('path');
-const dotenv = require('dotenv');
+// Load centralized configuration
+const config = require('./config/config');
+const logger = require('./utils/logger');
 
-// Try different .env file locations based on execution context
-const envPaths = [
-  path.resolve(__dirname, '../.env'), // Development: .env in root from backend
-  path.resolve(__dirname, '../../.env'), // Container: .env in root from backend/config
-  path.resolve(process.cwd(), '.env') // Fallback: current working directory
-];
-
-let envLoaded = false;
-for (const envPath of envPaths) {
-  try {
-    const result = dotenv.config({ path: envPath });
-    if (!result.error) {
-      console.log(`✅ Environment loaded from: ${envPath}`);
-      envLoaded = true;
-      break;
-    }
-  } catch (_error) {
-    // Continue to next path
-  }
-}
-
-if (!envLoaded) {
-  console.warn('⚠️ No .env file found, using system environment variables only');
-}
-
-// 🔍 TEMPORARY DEBUG - Remove after fixing Coolify issues
-console.log('🔍 COOLIFY ENVIRONMENT DEBUG:');
-console.log('================================');
-console.log(
-  'DATABASE_URL:',
-  process.env.DATABASE_URL ? `SET (${process.env.DATABASE_URL.substring(0, 30)}...)` : '❌ NOT SET'
-);
-console.log('REDIS_URL:', process.env.REDIS_URL ? `SET (${process.env.REDIS_URL})` : '❌ NOT SET');
-console.log('NODE_ENV:', process.env.NODE_ENV || '❌ NOT SET');
-console.log('SUPABASE_URL:', process.env.SUPABASE_URL ? 'SET' : '❌ NOT SET');
-console.log('DB_HOST:', process.env.DB_HOST || '❌ NOT SET (should be empty if using DATABASE_URL)');
-console.log('DB_PORT:', process.env.DB_PORT || '❌ NOT SET (should be empty if using DATABASE_URL)');
-console.log('PORT:', process.env.PORT || '❌ NOT SET (should be 5001)');
-console.log('================================\n');
+// Import configuration validation middleware
+const { validateConfigurationOnStartup, addConfigContext, configHealthCheck, viewSafeConfig } = require('./middleware/configValidation');
 
 // Enhanced security imports
 const { initialize: initializeDatabase } = require('./database/unified-connection');
@@ -76,61 +39,7 @@ const analyticsRoutes = require('./routes/analytics');
 const authRoutes = require('./routes/auth');
 const businessTypesRoutes = require('./routes/businessTypes');
 const dashboardRoutes = require('./routes/dashboard');
-const healthRoutes = require('./routes/health'); // TEMPORARY - DELETE AFTER TESTING
-const diagnosticsRoutes = require('./routes/diagnostics');
-
-const { router: oauthRoutes } = require('./routes/oauth');
-const onboardingRoutes = require('./routes/onboarding');
-const passwordResetRoutes = require('./routes/passwordReset');
-const performanceRoutes = require('./routes/performance');
-const recoveryRoutes = require('./routes/recovery');
-const testKeydbRoutes = require('./routes/test-keydb');
-const userRoutes = require('./routes/user');
-const workflowRoutes = require('./routes/workflows');
-const { router: schedulerRoutes, scheduler } = require('./scheduler/n8nScheduler');
-
-const app = express();
-const PORT = process.env.PORT || 5001;
-
-// Trust proxy for accurate IP addresses behind load balancers
-app.set('trust proxy', 1);
-
-// Request ID middleware for tracing
-app.use((req, res, next) => {
-  req.id = req.get('X-Request-ID') || require('crypto').randomBytes(16).toString('hex');
-  res.setHeader('X-Request-ID', req.id);
-  next();
-});
-
-// Enhanced security middleware stack
-app.use(helmet); // Comprehensive security headers
-app.use(additionalSecurityHeaders); // Additional custom security headers
-// app.use(securityHeaders); // Duplicate - helmet already applied above
-app.use(sanitizeInput); // Input sanitization
-app.use(sanitizeRequest); // Enhanced request sanitization
-app.use(sanitizeResponse); // Response sanitization
-
-// Performance middleware stack
-app.use(smartCompression); // Response compression
-app.use(cacheHeaders); // Cache control headers
-app.use(...performanceMiddlewareStack); // Performance monitoring
-
-// Container-aware memory monitoring for auto-scaling decisions
-const ContainerMemoryMonitor = require('./utils/ContainerMemoryMonitor');
-
-// Initialize global memory monitor
-const globalMemoryMonitor = new ContainerMemoryMonitor({
-  warningThreshold: 70,
-  criticalThreshold: 85,
-  emergencyThreshold: 95,
-  monitorInterval: 30000, // 30 seconds
-  enableLogging: true
-});
-
-// Set up memory monitoring events
-globalMemoryMonitor.on('critical', ({ stats: _stats, relevantUsage }) => {
-  console.error(`🚨 CRITICAL: Memory usage at ${relevantUsage.description}`);
-  if (process.env.NODE_ENV === 'production') {
+const healthRoutes = require('./routes/health');   if (process.env.NODE_ENV === 'production') {
     console.error('🚨 Memory threshold exceeded - consider scaling');
     // TODO: Integrate with auto-scaling service
   }
@@ -244,7 +153,7 @@ app.get('/health', (req, res) => {
   res.json({
     status: 'healthy',
     timestamp: new Date().toISOString(),
-    version: '1.0.0'
+    version: config.get('deployment.version')
   });
 });
 
@@ -253,14 +162,23 @@ app.get('/api/health', (req, res) => {
   res.json({
     status: 'ok',
     timestamp: new Date().toISOString(),
-    version: '1.0.1',
-    environment: process.env.NODE_ENV || 'development',
+    version: config.get('deployment.version'),
+    environment: config.get('nodeEnv'),
     deployment: {
       buildTime: new Date().toISOString(),
-      nodeVersion: process.version
+      nodeVersion: process.version,
+      platform: config.get('deployment.platform')
     }
   });
 });
+
+// Configuration health check endpoint
+app.get('/api/health/config', configHealthCheck);
+
+// Development-only configuration view endpoint
+if (config.get('nodeEnv') !== 'production') {
+  app.get('/api/config/view', viewSafeConfig);
+}
 
 app.get('/api/health/db', async (req, res) => {
   try {
@@ -316,42 +234,7 @@ app.use('/api/scheduler', schedulerRoutes);
 app.use('/api/health', healthRoutes); // Comprehensive health monitoring
 app.use('/api/diagnostics', diagnosticsRoutes); // Database connection diagnostics
 
-app.use('/api', testKeydbRoutes); // TEMPORARY - DELETE AFTER TESTING
-
-// Serve static files from React build (production only)
-if (process.env.NODE_ENV === 'production') {
-  const path = require('path');
-
-  // Serve static files from the React build directory
-  app.use(express.static(path.join(__dirname, '../frontend/build')));
-
-  // Handle React Router - send all non-API requests to index.html
-  app.get('*', (req, res) => {
-    // Skip API routes
-    if (req.path.startsWith('/api/')) {
-      return res.status(404).json({ error: 'API endpoint not found' });
-    }
-
-    res.sendFile(path.join(__dirname, '../frontend/build', 'index.html'));
-  });
-}
-
-// Add request ID middleware for tracking
-app.use(requestIdMiddleware);
-
-// Add debug logging in development
-if (process.env.NODE_ENV === 'development') {
-  app.use(debugLogger);
-}
-
-// Use standardized error handlers
-app.use(standardNotFoundHandler);
-app.use(standardErrorHandler);
-
-// Graceful shutdown handler
-const gracefulShutdown = () => {
-  console.log('\n🛑 Received shutdown signal, closing server gracefully...');
-
+app.use('/api', testKeydbRoutes);
   // Stop the scheduler
   scheduler.stop();
 
@@ -378,17 +261,31 @@ const startServer = async () => {
     // Initialize database connection (skip if DB not available)
     try {
       await initializeDatabase();
-    } catch (_error) {
-      console.warn('⚠️ Database not available - running in limited mode');
-      console.warn('Install PostgreSQL and configure .env to enable full functionality');
+      logger.info('Database connection initialized successfully');
+    } catch (error) {
+      logger.warn('Database not available - running in limited mode', { error: error.message });
+      if (config.get('nodeEnv') !== 'production') {
+        logger.warn('Install PostgreSQL and configure environment variables to enable full functionality');
+      }
     }
 
     // Start the server
     const server = app.listen(PORT, '0.0.0.0', () => {
-      console.log(`🚀 Floworx backend server running on port ${PORT}`);
-      console.log(`📊 Environment: ${process.env.NODE_ENV || 'development'}`);
-      console.log(`🔗 Frontend URL: ${process.env.FRONTEND_URL || 'http://localhost:3000'}`);
-      console.log(`🌐 Server accessible on: 0.0.0.0:${PORT}`);
+      logger.info(`FloworxInvite backend server started`, {
+        port: PORT,
+        environment: config.get('nodeEnv'),
+        frontendUrl: config.get('app.frontendUrl'),
+        version: config.get('deployment.version'),
+        platform: config.get('deployment.platform')
+      });
+
+      // Only log detailed info in development
+      if (config.get('nodeEnv') !== 'production') {
+        console.log(`🚀 Floworx backend server running on port ${PORT}`);
+        );
+        console.log(`🔗 Frontend URL: ${config.get('app.frontendUrl')}`);
+        console.log(`🌐 Server accessible on: 0.0.0.0:${PORT}`);
+      }
     });
 
     // Start the n8n scheduler
@@ -396,16 +293,16 @@ const startServer = async () => {
 
     // Make server available for graceful shutdown
     global.server = server;
-  } catch (_error) {
-    console.error('❌ Failed to start server:', _error);
+  } catch (error) {
+    logger.error('Failed to start server', { error: error.message, stack: error.stack });
     process.exit(1);
   }
 };
 
 // For Vercel serverless deployment
-if (process.env.NODE_ENV === 'production' && process.env.VERCEL) {
+if (config.get('nodeEnv') === 'production' && process.env.VERCEL) {
   // Initialize database for serverless
-  initializeDatabase().catch(console.error);
+  initializeDatabase().catch(error => logger.error('Serverless database initialization failed', { error: error.message }));
   module.exports = app;
 } else {
   // Start server normally for development

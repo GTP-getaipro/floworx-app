@@ -5,11 +5,11 @@
  * Checks environment variables and configuration without requiring Redis connection
  */
 
-console.log('🔍 Testing Networking Configuration for Coolify Deployment...');
+);
 console.log('================================================================\n');
 
 // Check environment variables
-console.log('📋 Environment Variables Check:');
+);
 const envVars = [
   'NODE_ENV',
   'DATABASE_URL',
@@ -34,19 +34,19 @@ let setVars = [];
 envVars.forEach(varName => {
   if (process.env[varName]) {
     setVars.push(varName);
-    console.log(`  ✅ ${varName}: ${varName.includes('SECRET') || varName.includes('PASSWORD') || varName.includes('KEY') ? '[SET]' : process.env[varName]}`);
+    );
   } else {
     missingVars.push(varName);
     console.log(`  ❌ ${varName}: not set`);
   }
 });
 
-console.log(`\n📊 Environment Variables Summary:`);
-console.log(`  Set: ${setVars.length}/${envVars.length}`);
-console.log(`  Missing: ${missingVars.length}/${envVars.length}`);
+);
+);
+);
 
 if (missingVars.length > 0) {
-  console.log('\n⚠️  Missing Variables (will need to be set in Coolify):');
+  );
   missingVars.forEach(varName => console.log(`    - ${varName}`));
 }
 
@@ -57,7 +57,7 @@ const path = require('path');
 
 const composeFile = path.join(__dirname, '..', 'docker-compose.coolify.yml');
 if (fs.existsSync(composeFile)) {
-  console.log('  ✅ docker-compose.coolify.yml exists');
+  );
 
   try {
     const composeContent = fs.readFileSync(composeFile, 'utf8');
@@ -80,10 +80,10 @@ if (fs.existsSync(composeFile)) {
     });
 
   } catch (error) {
-    console.log('  ❌ Error reading docker-compose.coolify.yml:', error.message);
+    , error.message);
   }
 } else {
-  console.log('  ❌ docker-compose.coolify.yml not found');
+  );
 }
 
 // Check Dockerfile
@@ -182,17 +182,17 @@ if (fs.existsSync(cacheService)) {
 
 // Network configuration analysis
 console.log('\n🌐 Network Configuration Analysis:');
-console.log('  🔍 Potential Issues to Check in Coolify:');
-console.log('    1. Service names match between docker-compose and environment variables');
+);
+);
 console.log('    2. Database and Redis services are running and healthy');
 console.log('    3. Network connectivity between application and database containers');
 console.log('    4. Port configurations match service definitions');
-console.log('    5. Environment variables are properly set in Coolify dashboard');
+);
 
-console.log('\n📋 Recommended Coolify Service Names:');
+);
 console.log('  Database: floworx-db (PostgreSQL)');
 console.log('  Cache: floworx-cache (KeyDB/Redis)');
 console.log('  Application: floworx-app');
 
 console.log('\n✅ Networking configuration check completed!');
-console.log('   Review the results above and ensure all configurations are correct for Coolify deployment.');
+);

@@ -21,7 +21,7 @@ async function configureOAuthProduction() {
   // 1. ANALYZE CURRENT OAUTH CONFIGURATION
   // =====================================================
   console.log('1. Analyzing current OAuth configuration...');
-  
+
   const currentConfig = {
     clientId: process.env.GOOGLE_CLIENT_ID,
     clientSecret: process.env.GOOGLE_CLIENT_SECRET,
@@ -47,7 +47,7 @@ async function configureOAuthProduction() {
   // 2. DETERMINE PRODUCTION URLS
   // =====================================================
   console.log('\n2. Determining production URLs...');
-  
+
   const productionUrls = {
     // From vercel deployment
     vercelUrl: 'https://floworx-app.vercel.app',
@@ -68,15 +68,15 @@ async function configureOAuthProduction() {
   // 3. GOOGLE CLOUD CONSOLE SETUP GUIDE
   // =====================================================
   console.log('\n3. Google Cloud Console setup required...');
-  
+
   console.log('   🔗 Opening Google Cloud Console OAuth settings...');
-  
+
   const consoleUrl = 'https://console.cloud.google.com/apis/credentials';
-  
+
   // Open browser automatically
   let command;
   const platform = os.platform();
-  
+
   switch (platform) {
     case 'darwin': // macOS
       command = `open "${consoleUrl}"`;
@@ -133,7 +133,7 @@ async function configureOAuthProduction() {
   // 4. VERIFY OAUTH SCOPES
   // =====================================================
   console.log('4. Verifying OAuth scopes configuration...');
-  
+
   const requiredScopes = [
     'https://www.googleapis.com/auth/gmail.readonly',
     'https://www.googleapis.com/auth/gmail.modify',
@@ -157,21 +157,21 @@ async function configureOAuthProduction() {
   // =====================================================
   // 5. ENVIRONMENT CONFIGURATION UPDATE
   // =====================================================
-  console.log('5. Environment configuration for production...');
-  
-  console.log('   📋 Production environment variables ready:');
+  );
+
+  );
   console.log(`   GOOGLE_CLIENT_ID=${currentConfig.clientId}`);
   console.log(`   GOOGLE_CLIENT_SECRET=${currentConfig.clientSecret}`);
   console.log(`   GOOGLE_REDIRECT_URI=${productionUrls.vercelUrl}/api/oauth/google/callback`);
   console.log(`   FRONTEND_URL=${productionUrls.vercelUrl}`);
   console.log('');
-  console.log('   ✅ These are already configured in vercel-environment-variables.txt');
+  );
 
   // =====================================================
   // 6. TESTING INSTRUCTIONS
   // =====================================================
   console.log('\n6. Testing OAuth configuration...');
-  
+
   console.log('   🧪 Development Testing:');
   console.log('   1. Start backend: npm run dev (in backend directory)');
   console.log('   2. Visit: http://localhost:5001/api/oauth/google');
@@ -208,7 +208,7 @@ async function configureOAuthProduction() {
     console.log('   ✅ OAuth credentials properly configured');
     console.log('   ✅ Production redirect URIs identified');
     console.log('   ✅ Google Cloud Console setup guided');
-    console.log('   ✅ Environment variables ready for deployment');
+    );
     console.log('');
     console.log('📋 Manual Action Required:');
     console.log('   1. ⚠️  Complete Google Cloud Console redirect URI setup');

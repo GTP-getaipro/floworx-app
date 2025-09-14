@@ -50,12 +50,12 @@ class CacheService {
   async initializeKeyDB() {
     // Prevent multiple initialization attempts
     if (this.isInitializing) {
-      
+
       return this.initializationPromise;
     }
 
     if (this.isRedisConnected && this.redis) {
-      
+
       return;
     }
 
@@ -65,7 +65,7 @@ class CacheService {
     // Skip KeyDB initialization if disabled or not configured
     if (process.env.DISABLE_REDIS === 'true') {
       if (!isDevelopment) {
-        
+
       }
       this.isRedisConnected = false;
       return;
@@ -79,10 +79,10 @@ class CacheService {
 
     if (!process.env.REDIS_HOST && !process.env.REDIS_URL) {
       if (!isDevelopment) {
-        
-        console.log(`   REDIS_HOST: ${process.env.REDIS_HOST || 'not set'}`);
-        console.log(`   REDIS_URL: ${process.env.REDIS_URL ? 'SET' : 'not set'}`);
-        console.log(`   NODE_ENV: ${process.env.NODE_ENV || 'not set'}`);
+
+        );
+        );
+        );
       }
       this.isRedisConnected = false;
       return;
@@ -134,7 +134,7 @@ class CacheService {
           try {
             await this.redis.quit();
           } catch (error) {
-            
+
           }
           this.redis = null;
         }
@@ -143,7 +143,7 @@ class CacheService {
 
         // Set up event handlers
         this.redis.on('connect', () => {
-          
+
           this.isRedisConnected = true;
         });
 
@@ -201,9 +201,9 @@ class CacheService {
       ].filter(Boolean);
 
       if (!isDevelopment) {
-        
-        console.log(`   REDIS_HOST env var: ${process.env.REDIS_HOST || 'not set'}`);
-        console.log(`   REDIS_URL env var: ${process.env.REDIS_URL ? 'SET (hidden)' : 'not set'}`);
+
+        );
+        );
         console.log(`   Trying hosts: ${possibleHosts.slice(0, 3).join(', ')}... (${possibleHosts.length} total)`);
       }
 
@@ -213,7 +213,7 @@ class CacheService {
       for (const host of possibleHosts) {
         try {
           if (!isDevelopment) {
-            
+
           }
 
           const keydbConfig = {
@@ -244,7 +244,7 @@ class CacheService {
           // Set up event handlers
           this.redis.on('connect', () => {
             if (!isDevelopment) {
-              
+
             }
             this.isRedisConnected = true;
           });
@@ -272,7 +272,7 @@ class CacheService {
           ]);
 
           if (!isDevelopment) {
-            
+
           }
           connected = true;
           break;
@@ -309,7 +309,7 @@ class CacheService {
       // Don't let KeyDB failures crash the application
       // The app will continue with memory cache only
       if (!isDevelopment) {
-        
+
       }
     }
   }
@@ -330,7 +330,7 @@ class CacheService {
       try {
         await this.redis.quit();
       } catch (error) {
-        
+
       }
       this.redis = null;
     }
@@ -383,12 +383,7 @@ class CacheService {
         this.stats.misses++;
       }
 
-      // Log performance for debugging
-      const duration = performance.now() - startTime;
-      if (duration > 10) {
-        // Log slow cache operations
-        console.warn(`🐌 Slow cache get (${duration.toFixed(2)}ms): ${key} from ${source}`);
-      }
+            }
 
       return value;
     } catch (error) {
@@ -678,12 +673,12 @@ class CacheService {
    */
   async reconnect() {
     if (this.isInitializing) {
-      
+
       return false;
     }
 
     if (this.isRedisConnected) {
-      
+
       return true;
     }
 
@@ -749,7 +744,7 @@ class CacheService {
         await this.redis.quit();
       }
       this.memoryCache.close();
-      
+
     } catch (error) {
       console.error('Cache shutdown error:', error);
     }

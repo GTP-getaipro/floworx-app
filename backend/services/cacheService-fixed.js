@@ -48,9 +48,9 @@ class CacheService {
   async initializeKeyDB() {
     // Skip KeyDB initialization if not configured
     if (!process.env.REDIS_HOST) {
-      
-      console.log(`   REDIS_HOST: ${process.env.REDIS_HOST || 'not set'}`);
-      console.log(`   NODE_ENV: ${process.env.NODE_ENV || 'not set'}`);
+
+      );
+      );
       this.isRedisConnected = false;
       return;
     }
@@ -97,7 +97,7 @@ class CacheService {
 
           // Set up event handlers
           this.redis.on('connect', () => {
-            
+
             this.isRedisConnected = true;
           });
 
@@ -500,7 +500,7 @@ class CacheService {
         await this.redis.quit();
       }
       this.memoryCache.close();
-      
+
     } catch (error) {
       console.error('Cache shutdown error:', error);
     }

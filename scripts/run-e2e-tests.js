@@ -29,7 +29,7 @@ class E2ETestRunner {
   async runAllTests() {
     console.log('🧪 FloWorx E2E BDD Test Suite');
     console.log('='.repeat(60));
-    console.log(`Environment: ${this.results.environment}`);
+    );
     console.log(`Start Time: ${this.results.startTime.toISOString()}`);
     console.log('='.repeat(60));
 
@@ -127,7 +127,7 @@ class E2ETestRunner {
       } else {
         console.log(`❌ ${suite.name} failed`);
         console.log(`   Tests: ${result.passed}/${result.tests} passed, ${result.failed} failed`);
-        
+
         if (suite.critical) {
           console.log(`🚨 CRITICAL SUITE FAILED: ${suite.name}`);
         }
@@ -137,7 +137,7 @@ class E2ETestRunner {
 
     } catch (error) {
       console.log(`❌ ${suite.name} encountered an error: ${error.message}`);
-      
+
       this.results.testSuites.push({
         name: suite.name,
         pattern: suite.pattern,
@@ -246,13 +246,13 @@ class E2ETestRunner {
     // Test suite results
     console.log('\n📋 Test Suites:');
     this.results.testSuites.forEach(suite => {
-      const status = suite.status === 'passed' ? '✅' : 
+      const status = suite.status === 'passed' ? '✅' :
                     suite.status === 'failed' ? '❌' : '⚠️';
       const critical = suite.critical ? ' (CRITICAL)' : '';
       console.log(`   ${status} ${suite.name}${critical}`);
       console.log(`      Tests: ${suite.passed || 0}/${suite.tests || 0} passed`);
       console.log(`      Duration: ${Math.round((suite.duration || 0) / 1000)}s`);
-      
+
       if (suite.error) {
         console.log(`      Error: ${suite.error}`);
       }
@@ -277,10 +277,10 @@ class E2ETestRunner {
     }
 
     // Environment info
-    console.log('\n🌐 Test Environment:');
-    console.log(`   Target URL: ${this.results.environment}`);
+    );
+    );
     console.log(`   Test Time: ${this.results.startTime.toISOString()}`);
-    console.log(`   Browser: ${process.env.CYPRESS_BROWSER || 'Electron'}`);
+    );
 
     // Save detailed report
     this.saveDetailedReport();
@@ -291,7 +291,7 @@ class E2ETestRunner {
     // Exit with appropriate code
     const hasFailures = this.results.summary.failed > 0;
     const hasCriticalFailures = criticalFailures.length > 0;
-    
+
     if (hasCriticalFailures) {
       console.log('\n🚨 CRITICAL FAILURES DETECTED - Exiting with error code');
       process.exit(1);
@@ -306,7 +306,7 @@ class E2ETestRunner {
 
   saveDetailedReport() {
     const reportPath = path.join(__dirname, '../cypress/reports/e2e-report.json');
-    
+
     // Ensure reports directory exists
     const reportsDir = path.dirname(reportPath);
     if (!fs.existsSync(reportsDir)) {
@@ -334,7 +334,7 @@ class E2ETestRunner {
 
   generateRecommendations() {
     const recommendations = [];
-    
+
     const failedSuites = this.results.testSuites.filter(s => s.status === 'failed');
     if (failedSuites.length > 0) {
       recommendations.push('Review failed test suites and fix underlying issues');
@@ -354,7 +354,7 @@ class E2ETestRunner {
 
   identifyCriticalIssues() {
     const issues = [];
-    
+
     this.results.testSuites.forEach(suite => {
       if (suite.critical && suite.status !== 'passed') {
         issues.push(`Critical suite failed: ${suite.name}`);
@@ -368,7 +368,7 @@ class E2ETestRunner {
 // CLI interface
 async function main() {
   const args = process.argv.slice(2);
-  
+
   // Handle command line arguments
   if (args.includes('--help') || args.includes('-h')) {
     console.log('FloWorx E2E BDD Test Suite');
@@ -378,10 +378,10 @@ async function main() {
     console.log('Options:');
     console.log('  --browser <browser>    Browser to use (chrome, firefox, electron)');
     console.log('  --headed              Run tests in headed mode');
-    console.log('  --env <environment>   Target environment URL');
+    );
     console.log('  --help, -h           Show this help message');
     console.log('');
-    console.log('Environment Variables:');
+    );
     console.log('  CYPRESS_BASE_URL     Target application URL');
     console.log('  CYPRESS_BROWSER      Browser to use for tests');
     console.log('  CYPRESS_HEADED       Run in headed mode (true/false)');

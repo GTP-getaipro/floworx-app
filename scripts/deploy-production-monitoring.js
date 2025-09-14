@@ -23,8 +23,8 @@ class ProductionDeploymentScript {
     try {
       console.log('🚀 FloWorx Production Monitoring Deployment');
       console.log('==========================================');
-      console.log(`Environment: ${process.env.NODE_ENV || 'production'}`);
-      console.log(`Version: ${process.env.APP_VERSION || '1.0.0'}`);
+      );
+      );
       console.log(`Timestamp: ${new Date().toISOString()}`);
       console.log('');
 
@@ -57,7 +57,7 @@ class ProductionDeploymentScript {
     } catch (error) {
       console.error('');
       console.error('❌ Deployment failed:', error.message);
-      
+
       if (this.verbose) {
         console.error('Stack trace:', error.stack);
       }
@@ -118,7 +118,7 @@ class ProductionDeploymentScript {
       'N8N_BASE_URL'
     ];
 
-    console.log('  📋 Checking environment variables...');
+    );
 
     // Check required variables
     const missingRequired = requiredVars.filter(varName => !process.env[varName]);
@@ -132,7 +132,7 @@ class ProductionDeploymentScript {
       console.log(`  ⚠️  Optional variables not set: ${missingOptional.join(', ')}`);
     }
 
-    console.log(`  ✅ Environment variables validated (${requiredVars.length} required, ${optionalVars.length - missingOptional.length} optional)`);
+    );
   }
 
   /**
@@ -192,7 +192,7 @@ class ProductionDeploymentScript {
     try {
       const { query } = require('../backend/database/unified-connection');
       await query('SELECT 1 as health_check');
-      
+
       if (this.verbose) {
         console.log('  🗄️  Database connection verified');
       }
@@ -241,7 +241,7 @@ class ProductionDeploymentScript {
       });
 
       await transporter.verify();
-      
+
       if (this.verbose) {
         console.log('  📧 Email service connection verified');
       }
@@ -281,7 +281,7 @@ class ProductionDeploymentScript {
     console.log('📊 Post-deployment summary:');
     console.log(`  Services deployed: ${Object.keys(deploymentResult.services).length}`);
     console.log(`  Deployment duration: ${((deploymentResult.completionTime - deploymentResult.startTime) / 1000).toFixed(2)}s`);
-    
+
     if (deploymentResult.errors.length > 0) {
       console.log(`  Errors encountered: ${deploymentResult.errors.length}`);
       if (this.verbose) {
@@ -303,11 +303,11 @@ class ProductionDeploymentScript {
    */
   async generateDeploymentReport(deploymentResult) {
     const reportPath = `./reports/deployment-${Date.now()}.json`;
-    
+
     try {
       const fs = require('fs').promises;
       await fs.mkdir('./reports', { recursive: true });
-      
+
       const report = {
         timestamp: new Date().toISOString(),
         environment: process.env.NODE_ENV,
@@ -376,7 +376,7 @@ class ProductionDeploymentScript {
    */
   async cleanupOnFailure() {
     console.log('🧹 Attempting cleanup after failure...');
-    
+
     try {
       await productionDeploymentOrchestrator.shutdown();
       console.log('✅ Cleanup completed');
@@ -403,7 +403,7 @@ class ProductionDeploymentScript {
 // Handle script execution
 if (require.main === module) {
   const script = new ProductionDeploymentScript();
-  
+
   // Handle graceful shutdown
   process.on('SIGINT', async () => {
     console.log('\n🛑 Deployment interrupted by user');

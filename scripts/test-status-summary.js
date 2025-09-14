@@ -60,7 +60,7 @@ Object.entries(testResults).forEach(([category, result]) => {
   }[result.status] || '❓';
 
   console.log(`${statusIcon} ${category.toUpperCase().replace('_', ' ')}`);
-  
+
   if (result.total !== undefined) {
     if (result.passed !== undefined) {
       const passRate = Math.round((result.passed / result.total) * 100);
@@ -69,50 +69,13 @@ Object.entries(testResults).forEach(([category, result]) => {
       console.log(`   ${result.total} items`);
     }
   }
-  
+
   console.log(`   ${result.details}\n`);
 });
 
 // Critical issues summary
 console.log('🚨 CRITICAL ISSUES REQUIRING IMMEDIATE ATTENTION');
-console.log('================================================');
-
-const criticalIssues = [
-  {
-    issue: 'Frontend Test Environment',
-    impact: 'HIGH',
-    description: 'React tests failing - need jsdom environment',
-    solution: 'Create jest.frontend.config.js with jsdom'
-  },
-  {
-    issue: 'Missing Environment Variables',
-    impact: 'HIGH', 
-    description: 'JWT_SECRET, ENCRYPTION_KEY missing in test env',
-    solution: 'Create .env.test with required variables'
-  },
-  {
-    issue: 'Module Import Errors',
-    impact: 'HIGH',
-    description: 'AuthContext, n8nScheduler modules not found',
-    solution: 'Fix import paths and create missing mocks'
-  },
-  {
-    issue: 'Database Schema Mismatch',
-    impact: 'MEDIUM',
-    description: 'deleted_at column missing in test database',
-    solution: 'Update test DB schema or modify queries'
-  }
-];
-
-criticalIssues.forEach((issue, index) => {
-  console.log(`${index + 1}. ${issue.issue} (${issue.impact} IMPACT)`);
-  console.log(`   Problem: ${issue.description}`);
-  console.log(`   Solution: ${issue.solution}\n`);
-});
-
-// Next steps
-console.log('🎯 IMMEDIATE NEXT STEPS');
-console.log('=======================');
+);
 
 const nextSteps = [
   'Create jest.frontend.config.js with jsdom environment',
@@ -128,27 +91,14 @@ nextSteps.forEach((step, index) => {
 });
 
 console.log('\n📋 DETAILED REPORTS AVAILABLE');
-console.log('==============================');
-console.log('📄 COMPREHENSIVE_TEST_ANALYSIS_REPORT.md - Full analysis');
-console.log('🔧 TEST_FIXES_ACTION_PLAN.md - Detailed fix instructions');
-console.log('📊 This summary - Quick status overview');
-
-console.log('\n🏁 SUCCESS CRITERIA');
-console.log('===================');
+);
 console.log('✅ Frontend tests: 80%+ pass rate');
 console.log('✅ Backend tests: 70%+ pass rate');
 console.log('✅ Critical components: 100% test coverage');
 console.log('✅ Registration flow: End-to-end tested');
 
 console.log('\n⏱️  ESTIMATED TIMELINE');
-console.log('======================');
-console.log('🔴 Critical fixes: 1-2 days');
-console.log('🟡 High priority: 3-5 days');
-console.log('🟢 Complete restoration: 1-2 weeks');
-
-// Check if key files exist
-console.log('\n🔍 CONFIGURATION STATUS');
-console.log('=======================');
+);
 
 const configFiles = [
   { file: 'jest.config.js', status: fs.existsSync('jest.config.js') },

@@ -28,7 +28,7 @@ for (const envPath of envPaths) {
 }
 
 if (!envLoaded) {
-  console.warn('⚠️ Database connection: No .env file found, using system environment variables');
+  );
 }
 
 // Unified Database Connection Manager
@@ -58,26 +58,21 @@ class DatabaseManager {
 
     // Priority 1: Use DATABASE_URL if available (recommended for production)
     if (process.env.DATABASE_URL) {
-      console.log('🔍 Using DATABASE_URL for connection');
-      console.log(`   DATABASE_URL: ${process.env.DATABASE_URL.substring(0, 50)}...`);
+      );
+      );
 
-      // Parse DATABASE_URL to extract components for debugging
-      let parsedUrl;
-      try {
-        parsedUrl = new URL(process.env.DATABASE_URL);
-        console.log(`🔍 DATABASE_URL Components:`);
-        console.log(`   Protocol: ${parsedUrl.protocol}`);
+              console.log(`   Protocol: ${parsedUrl.protocol}`);
         console.log(`   Hostname: ${parsedUrl.hostname}`);
         console.log(`   Port: ${parsedUrl.port}`);
         console.log(`   Database: ${parsedUrl.pathname.substring(1)}`);
         console.log(`   Username: ${parsedUrl.username}`);
       } catch (parseError) {
-        console.error('❌ Failed to parse DATABASE_URL:', parseError.message);
+        , parseError.message);
       }
 
       // AGGRESSIVE IPv4 FIX: Parse URL and use individual components
       if (parsedUrl) {
-        console.log('🔧 Converting DATABASE_URL to individual components to force IPv4');
+        );
         return {
           host: parsedUrl.hostname,
           port: parseInt(parsedUrl.port) || 5432,
@@ -136,11 +131,11 @@ class DatabaseManager {
     }
 
     // Priority 2: Fallback to individual DB_* variables
-    console.log('🔍 Using individual DB_* variables for connection');
-    console.log(`   DB_HOST: ${process.env.DB_HOST || 'localhost'}`);
-    console.log(`   DB_PORT: ${process.env.DB_PORT || 5432}`);
-    console.log(`   DB_USER: ${process.env.DB_USER || 'not set'}`);
-    console.log(`   DB_NAME: ${process.env.DB_NAME || 'not set'}`);
+    );
+    );
+    );
+    );
+    );
 
     return {
       host: process.env.DB_HOST || 'localhost',
@@ -258,7 +253,7 @@ class DatabaseManager {
 
           console.error('❌ All database connection methods failed');
           console.error('⚠️ Database not available - running in limited mode');
-          console.error('Check DATABASE_URL and network connectivity to Supabase');
+          );
 
           // Don't throw error - allow app to run without database
           this.isInitialized = false;
@@ -382,7 +377,7 @@ class DatabaseManager {
   async getEncryptedCredentials(userId, serviceName) {
     const query = `
       SELECT encrypted_data, created_at, updated_at
-      FROM credentials 
+      FROM credentials
       WHERE user_id = $1 AND service_name = $2
     `;
 
@@ -406,9 +401,9 @@ class DatabaseManager {
 
   async getUserById(userId) {
     const query = `
-      SELECT id, email, first_name, last_name, company_name, 
+      SELECT id, email, first_name, last_name, company_name,
              email_verified, onboarding_completed, created_at
-      FROM users 
+      FROM users
       WHERE id = $1
     `;
 
@@ -419,7 +414,7 @@ class DatabaseManager {
   async getUserByEmail(email) {
     const query = `
       SELECT id, email, password_hash, email_verified, first_name, last_name
-      FROM users 
+      FROM users
       WHERE email = $1
     `;
 

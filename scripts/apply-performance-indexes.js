@@ -12,38 +12,38 @@ const { query } = require('../backend/database/unified-connection');
 
 async function applyPerformanceIndexes() {
   console.log('🚀 Applying Performance Indexes Migration...');
-  console.log('📍 Database:', process.env.SUPABASE_URL);
-  
+  SUPABASE_URL);
+
   try {
     // Read the migration SQL file
     const migrationPath = path.join(__dirname, '../database/migrations/add-performance-indexes.sql');
     const migrationSQL = fs.readFileSync(migrationPath, 'utf8');
-    
+
     console.log('📄 Migration file loaded successfully');
-    
+
     // Split SQL into individual statements (excluding comments)
     const statements = migrationSQL
       .split(';')
       .map(stmt => stmt.trim())
       .filter(stmt => stmt.length > 0 && !stmt.startsWith('--') && !stmt.startsWith('/*'));
-    
+
     console.log(`📊 Found ${statements.length} SQL statements to execute`);
-    
+
     let successCount = 0;
     let skipCount = 0;
-    
+
     // Execute each statement
     for (let i = 0; i < statements.length; i++) {
       const statement = statements[i];
-      
+
       // Skip empty statements and comments
       if (!statement || statement.startsWith('--') || statement.startsWith('/*')) {
         continue;
       }
-      
+
       try {
         console.log(`⚙️  Executing statement ${i + 1}/${statements.length}...`);
-        
+
         // Log the type of operation
         const operation = statement.split(' ')[0].toUpperCase();
         if (operation === 'CREATE') {
@@ -52,10 +52,10 @@ async function applyPerformanceIndexes() {
             console.log(`   📝 Creating index: ${indexName[0]}`);
           }
         }
-        
+
         const result = await query(statement);
         successCount++;
-        
+
         if (operation === 'ANALYZE') {
           console.log('   📊 Table statistics updated');
         } else if (operation === 'CREATE' && statement.includes('VIEW')) {
@@ -65,7 +65,7 @@ async function applyPerformanceIndexes() {
         } else if (operation === 'COMMENT') {
           console.log('   💬 Documentation added');
         }
-        
+
       } catch (error) {
         if (error.message.includes('already exists')) {
           console.log(`   ⚠️  Skipped (already exists): ${statement.substring(0, 50)}...`);
@@ -77,17 +77,17 @@ async function applyPerformanceIndexes() {
         }
       }
     }
-    
+
     console.log('\n' + '='.repeat(50));
     console.log('📊 PERFORMANCE MIGRATION RESULTS');
     console.log('='.repeat(50));
     console.log(`✅ Successfully executed: ${successCount} statements`);
     console.log(`⚠️  Skipped (existing): ${skipCount} statements`);
     console.log(`📈 Total processed: ${successCount + skipCount} statements`);
-    
+
     // Test the performance improvement
     console.log('\n🔍 Testing index performance...');
-    
+
     try {
       const testQuery = `
         EXPLAIN (ANALYZE, BUFFERS)
@@ -95,10 +95,10 @@ async function applyPerformanceIndexes() {
         FROM users
         WHERE email = $1
       `;
-      
+
       const testResult = await query(testQuery, ['test@example.com']);
       console.log('✅ Performance test completed');
-      
+
       // Check if index is being used
       const planText = testResult.rows.map(row => row['QUERY PLAN']).join('\n');
       if (planText.includes('Index Scan') || planText.includes('idx_users_email')) {
@@ -106,19 +106,19 @@ async function applyPerformanceIndexes() {
       } else {
         console.log('⚠️  Index may not be optimal - check query plan');
       }
-      
+
     } catch (testError) {
       console.log('⚠️  Performance test skipped:', testError.message);
     }
-    
+
     console.log('\n🎉 Performance indexes migration completed successfully!');
     console.log('📈 Expected improvements:');
     console.log('   • Login queries: 10-100x faster');
     console.log('   • User lookups: 5-50x faster');
     console.log('   • Authentication: Sub-100ms response times');
-    
+
     process.exit(0);
-    
+
   } catch (error) {
     console.error('❌ Migration failed:', error.message);
     console.error('Stack trace:', error.stack);

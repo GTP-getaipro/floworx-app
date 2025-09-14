@@ -8,7 +8,7 @@ require('dotenv').config();
  */
 
 async function prepareProductionEnvironment() {
-  console.log('🚀 Preparing Production Environment Variables...\n');
+  );
 
   const results = {
     environmentAudit: false,
@@ -20,8 +20,8 @@ async function prepareProductionEnvironment() {
   // =====================================================
   // 1. ENVIRONMENT AUDIT
   // =====================================================
-  console.log('1. Auditing current environment configuration...');
-  
+  );
+
   const requiredVars = [
     'DB_HOST', 'DB_PORT', 'DB_NAME', 'DB_USER', 'DB_PASSWORD',
     'SUPABASE_URL', 'SUPABASE_ANON_KEY', 'SUPABASE_SERVICE_ROLE_KEY',
@@ -47,11 +47,11 @@ async function prepareProductionEnvironment() {
     }
   }
 
-  console.log(`\n📊 Environment Status: ${configuredVars.length}/${requiredVars.length} variables configured`);
+  );
 
   if (missingVars.length === 0) {
     results.environmentAudit = true;
-    console.log('✅ All required environment variables are configured\n');
+    );
   } else {
     console.log(`❌ Missing/placeholder variables: ${missingVars.join(', ')}\n`);
   }
@@ -59,22 +59,22 @@ async function prepareProductionEnvironment() {
   // =====================================================
   // 2. PRODUCTION FILE CHECK
   // =====================================================
-  console.log('2. Checking production environment files...');
-  
+  );
+
   const prodEnvFile = path.join(process.cwd(), 'backend', '.env.production');
-  
+
   if (fs.existsSync(prodEnvFile)) {
-    console.log('   ✅ backend/.env.production exists');
+    );
     results.productionFileCheck = true;
   } else {
-    console.log('   ❌ backend/.env.production missing');
+    );
   }
 
   // =====================================================
   // 3. CREATE VERCEL ENVIRONMENT CONFIG
   // =====================================================
-  console.log('\n3. Creating Vercel environment configuration...');
-  
+  );
+
   const vercelEnvConfig = {
     development: {},
     production: {}
@@ -88,26 +88,26 @@ async function prepareProductionEnvironment() {
     DB_NAME: process.env.DB_NAME,
     DB_USER: process.env.DB_USER,
     DB_PASSWORD: process.env.DB_PASSWORD,
-    
+
     // Supabase
     SUPABASE_URL: process.env.SUPABASE_URL,
     SUPABASE_ANON_KEY: process.env.SUPABASE_ANON_KEY,
     SUPABASE_SERVICE_ROLE_KEY: process.env.SUPABASE_SERVICE_ROLE_KEY,
-    
+
     // Security
     JWT_SECRET: process.env.JWT_SECRET,
     ENCRYPTION_KEY: process.env.ENCRYPTION_KEY,
-    
+
     // OAuth - Production URLs
     GOOGLE_CLIENT_ID: process.env.GOOGLE_CLIENT_ID,
     GOOGLE_CLIENT_SECRET: process.env.GOOGLE_CLIENT_SECRET,
     GOOGLE_REDIRECT_URI: 'https://floworx-app.vercel.app/api/oauth/google/callback',
-    
+
     // n8n
     N8N_WEBHOOK_URL: process.env.N8N_WEBHOOK_URL,
     N8N_API_KEY: process.env.N8N_API_KEY,
     N8N_BASE_URL: process.env.N8N_BASE_URL,
-    
+
     // Email
     SMTP_HOST: process.env.SMTP_HOST,
     SMTP_PORT: process.env.SMTP_PORT,
@@ -115,7 +115,7 @@ async function prepareProductionEnvironment() {
     SMTP_PASS: process.env.SMTP_PASS,
     FROM_EMAIL: process.env.FROM_EMAIL,
     FROM_NAME: process.env.FROM_NAME,
-    
+
     // Server
     NODE_ENV: 'production',
     PORT: '5001',
@@ -136,14 +136,14 @@ async function prepareProductionEnvironment() {
   }
 
   fs.writeFileSync(vercelEnvPath, vercelEnvContent);
-  console.log('   ✅ Created vercel-environment-variables.txt');
+  );
   results.vercelConfigCreated = true;
 
   // =====================================================
   // 4. CREATE DEPLOYMENT GUIDE
   // =====================================================
   console.log('\n4. Creating deployment guide...');
-  
+
   const deploymentGuide = `# 🚀 Floworx Production Deployment Guide
 
 ## **📋 Pre-Deployment Checklist**
@@ -272,7 +272,7 @@ When ready to use \`app.floworx-iq.com\`:
   // 5. SUMMARY
   // =====================================================
   console.log('\n📊 Production Preparation Summary:');
-  console.log(`   Environment Audit: ${results.environmentAudit ? '✅' : '❌'}`);
+  );
   console.log(`   Production Files: ${results.productionFileCheck ? '✅' : '❌'}`);
   console.log(`   Vercel Config: ${results.vercelConfigCreated ? '✅' : '❌'}`);
   console.log(`   Deployment Guide: ${results.deploymentGuideCreated ? '✅' : '❌'}`);
@@ -283,19 +283,19 @@ When ready to use \`app.floworx-iq.com\`:
   console.log(`\n🎯 Overall Score: ${passedTests}/${totalTests} preparation steps completed`);
 
   if (passedTests === totalTests && missingVars.length === 0) {
-    console.log('🎉 Production environment is fully prepared and ready for deployment!');
+    );
   } else if (passedTests >= 3) {
-    console.log('✅ Production environment mostly ready. Address remaining issues.');
+    );
   } else {
-    console.log('❌ Production environment needs more preparation.');
+    );
   }
 
   console.log('\n📋 Next Steps:');
   if (missingVars.length > 0) {
-    console.log('   1. ⚠️  Fix missing environment variables');
+    );
     console.log('   2. ⚠️  Re-run this preparation script');
   } else {
-    console.log('   1. ✅ Review vercel-environment-variables.txt');
+    );
     console.log('   2. ✅ Follow PRODUCTION_DEPLOYMENT_GUIDE.md');
     console.log('   3. ✅ Deploy to Vercel');
     console.log('   4. ✅ Test production deployment');

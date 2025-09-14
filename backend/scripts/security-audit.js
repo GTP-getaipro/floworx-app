@@ -372,34 +372,7 @@ class SecurityAudit {
  */
 function runSecurityAudit() {
   console.log('🔒 Starting FloWorx Security Audit...');
-  console.log('=====================================');
-
-  const audit = new SecurityAudit();
-
-  // Get all files to scan
-  const glob = require('glob');
-  const files = glob.sync('**/*.{js,json,sql}', {
-    ignore: SECURITY_CONFIG.excludePatterns
-  });
-
-  audit.results.summary.totalFiles = files.length;
-
-  console.log(`📁 Scanning ${files.length} files...`);
-
-  // Scan each file
-  files.forEach(file => {
-    audit.scanFile(file);
-  });
-
-  // Run dependency audit
-  audit.runDependencyAudit();
-
-  // Generate report
-  const reportFile = audit.generateReport();
-
-  // Display summary
-  console.log('\n📊 Security Audit Summary:');
-  console.log('==========================');
+  );
   console.log(`Files scanned: ${audit.results.summary.scannedFiles}`);
   console.log(`🚨 Critical/High: ${audit.results.summary.vulnerabilities}`);
   console.log(`⚠️  Medium: ${audit.results.summary.warnings}`);

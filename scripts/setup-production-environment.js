@@ -16,7 +16,7 @@ class ProductionEnvironmentSetup {
       input: process.stdin,
       output: process.stdout
     });
-    
+
     this.config = {};
     this.isInteractive = !process.argv.includes('--non-interactive');
   }
@@ -26,7 +26,7 @@ class ProductionEnvironmentSetup {
    */
   async run() {
     try {
-      console.log('🔧 FloWorx Production Environment Setup');
+      );
       console.log('=====================================');
       console.log('');
 
@@ -58,11 +58,11 @@ class ProductionEnvironmentSetup {
       await this.generateProductionConfig();
 
       console.log('');
-      console.log('✅ Production environment configuration completed!');
-      console.log('📄 Configuration saved to: .env.production');
+      );
+      );
       console.log('');
       console.log('Next steps:');
-      console.log('1. Review the generated .env.production file');
+      );
       console.log('2. Update any placeholder values with actual credentials');
       console.log('3. Run: node scripts/deploy-production-monitoring.js --dry-run');
 
@@ -81,7 +81,7 @@ class ProductionEnvironmentSetup {
     try {
       const templatePath = path.join(process.cwd(), '.env.production.template');
       const template = await fs.readFile(templatePath, 'utf8');
-      
+
       // Parse template to extract variable names and comments
       this.templateVars = this.parseTemplate(template);
       console.log(`📋 Loaded ${Object.keys(this.templateVars).length} configuration variables`);
@@ -100,7 +100,7 @@ class ProductionEnvironmentSetup {
 
     for (const line of lines) {
       const trimmed = line.trim();
-      
+
       if (trimmed.startsWith('#') && !trimmed.startsWith('# =====')) {
         currentComment = trimmed.substring(1).trim();
       } else if (trimmed.includes('=') && !trimmed.startsWith('#')) {
@@ -219,7 +219,7 @@ class ProductionEnvironmentSetup {
     // Slack configuration
     const slackEnabled = await this.promptBoolean('Enable Slack alerts?', true);
     this.config.SLACK_ALERTS_ENABLED = slackEnabled.toString();
-    
+
     if (slackEnabled && this.isInteractive) {
       this.config.SLACK_WEBHOOK_URL = await this.prompt('Slack Webhook URL', 'https://hooks.slack.com/services/YOUR/SLACK/WEBHOOK');
       this.config.SLACK_ALERT_CHANNEL = await this.prompt('Slack Alert Channel', '#floworx-alerts');
@@ -228,14 +228,14 @@ class ProductionEnvironmentSetup {
     // Email configuration
     const emailEnabled = await this.promptBoolean('Enable Email alerts?', true);
     this.config.EMAIL_ALERTS_ENABLED = emailEnabled.toString();
-    
+
     if (emailEnabled && this.isInteractive) {
       this.config.SMTP_HOST = await this.prompt('SMTP Host', 'smtp.gmail.com');
       this.config.SMTP_PORT = await this.prompt('SMTP Port', '587');
       this.config.SMTP_USER = await this.prompt('SMTP Username');
       this.config.SMTP_PASSWORD = await this.promptPassword('SMTP Password');
       this.config.ALERT_FROM_EMAIL = await this.prompt('Alert From Email', 'alerts@floworx-iq.com');
-      
+
       // Alert recipients
       this.config.CRITICAL_ALERT_EMAILS = await this.prompt('Critical Alert Recipients (comma-separated)', 'cto@floworx-iq.com');
       this.config.HIGH_ALERT_EMAILS = await this.prompt('High Alert Recipients (comma-separated)', 'engineering@floworx-iq.com');
@@ -244,7 +244,7 @@ class ProductionEnvironmentSetup {
     // PagerDuty configuration
     const pagerDutyEnabled = await this.promptBoolean('Enable PagerDuty integration?', false);
     this.config.PAGERDUTY_ENABLED = pagerDutyEnabled.toString();
-    
+
     if (pagerDutyEnabled && this.isInteractive) {
       this.config.PAGERDUTY_INTEGRATION_KEY = await this.prompt('PagerDuty Integration Key');
     }
@@ -327,7 +327,7 @@ class ProductionEnvironmentSetup {
 
     // Write to file
     await fs.writeFile('.env.production', configContent);
-    
+
     // Set secure permissions
     try {
       await fs.chmod('.env.production', 0o600);

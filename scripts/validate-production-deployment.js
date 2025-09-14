@@ -25,7 +25,7 @@ async function validateProductionDeployment() {
   // =====================================================
   console.log('1. 🌐 Frontend Validation');
   console.log('   =====================');
-  
+
   results.frontend.total = 4;
 
   // Test main pages accessibility
@@ -93,7 +93,7 @@ async function validateProductionDeployment() {
   // =====================================================
   console.log('\n2. 🔗 API Validation');
   console.log('   =================');
-  
+
   results.api.total = 3;
 
   // Test API health endpoint
@@ -157,14 +157,14 @@ async function validateProductionDeployment() {
   // =====================================================
   console.log('\n3. 🔑 OAuth Configuration Validation');
   console.log('   ==================================');
-  
+
   results.oauth.total = 3;
 
   // Check environment variables
-  console.log('   📋 Checking OAuth environment variables...');
+  );
   const oauthVars = ['GOOGLE_CLIENT_ID', 'GOOGLE_CLIENT_SECRET', 'GOOGLE_REDIRECT_URI'];
   let oauthVarsConfigured = 0;
-  
+
   for (const varName of oauthVars) {
     if (process.env[varName]) {
       console.log(`   ✅ ${varName}: Configured`);
@@ -173,7 +173,7 @@ async function validateProductionDeployment() {
       console.log(`   ❌ ${varName}: Missing`);
     }
   }
-  
+
   if (oauthVarsConfigured === oauthVars.length) {
     results.oauth.passed += 1;
     results.oauth.details.push('✅ OAuth environment variables configured');
@@ -185,7 +185,7 @@ async function validateProductionDeployment() {
   console.log('\n   🔗 Checking redirect URI configuration...');
   const redirectUri = process.env.GOOGLE_REDIRECT_URI;
   const expectedUri = `${PRODUCTION_URL}/api/oauth/google/callback`;
-  
+
   if (redirectUri === expectedUri) {
     console.log('   ✅ Redirect URI: Correctly configured for production');
     results.oauth.passed += 1;
@@ -211,15 +211,15 @@ async function validateProductionDeployment() {
   // =====================================================
   console.log('\n4. ⚙️  Configuration Validation');
   console.log('   =============================');
-  
+
   results.configuration.total = 4;
 
   // Check critical environment variables
-  console.log('   📋 Checking critical environment variables...');
+  );
   const criticalVars = [
     'SUPABASE_URL', 'SUPABASE_ANON_KEY', 'JWT_SECRET', 'FRONTEND_URL'
   ];
-  
+
   let criticalVarsConfigured = 0;
   for (const varName of criticalVars) {
     if (process.env[varName]) {
@@ -229,7 +229,7 @@ async function validateProductionDeployment() {
       console.log(`   ❌ ${varName}: Missing`);
     }
   }
-  
+
   results.configuration.passed += (criticalVarsConfigured / criticalVars.length);
   results.configuration.details.push(`✅ ${criticalVarsConfigured}/${criticalVars.length} critical variables configured`);
 
@@ -272,7 +272,7 @@ async function validateProductionDeployment() {
   // =====================================================
   console.log('\n5. 🎨 User Experience Validation');
   console.log('   ===============================');
-  
+
   results.userExperience.total = 4;
 
   // Check error handling components
@@ -320,16 +320,16 @@ async function validateProductionDeployment() {
   for (const [category, categoryResults] of Object.entries(results)) {
     const percentage = categoryResults.total > 0 ? Math.round((categoryResults.passed / categoryResults.total) * 100) : 0;
     const status = percentage === 100 ? '✅' : percentage >= 75 ? '⚠️' : '❌';
-    
+
     console.log(`\n${status} ${category.toUpperCase().replace(/([A-Z])/g, ' $1').trim()}: ${categoryResults.passed.toFixed(1)}/${categoryResults.total} (${percentage}%)`);
     categoryResults.details.forEach(detail => console.log(`   ${detail}`));
-    
+
     totalPassed += categoryResults.passed;
     totalTests += categoryResults.total;
   }
 
   const overallPercentage = totalTests > 0 ? Math.round((totalPassed / totalTests) * 100) : 0;
-  
+
   console.log('\n' + '='.repeat(60));
   console.log(`🎯 OVERALL DEPLOYMENT STATUS: ${totalPassed.toFixed(1)}/${totalTests} (${overallPercentage}%)`);
   console.log('='.repeat(60));
@@ -351,13 +351,13 @@ async function validateProductionDeployment() {
 
   console.log('\n🎯 IMMEDIATE NEXT STEPS:');
   if (results.oauth.passed < results.oauth.total) {
-    console.log('   1. ✅ Fix OAuth configuration (Google Cloud Console + Vercel env vars)');
+    );
   }
   if (results.api.passed < results.api.total) {
     console.log('   2. ✅ Fix API endpoint authentication issues');
   }
   if (results.configuration.passed < results.configuration.total) {
-    console.log('   3. ✅ Update production environment variables');
+    );
   }
   console.log('   4. ✅ Run end-to-end tests to verify fixes');
   console.log('   5. ✅ Monitor production deployment for issues');

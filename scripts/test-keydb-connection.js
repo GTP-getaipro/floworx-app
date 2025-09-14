@@ -8,11 +8,11 @@
 const Redis = require('ioredis');
 
 console.log('🔍 Testing KeyDB Connection...');
-console.log('Environment Variables:');
-console.log(`  REDIS_HOST: ${process.env.REDIS_HOST || 'not set'}`);
-console.log(`  REDIS_PORT: ${process.env.REDIS_PORT || '6379'}`);
-console.log(`  REDIS_PASSWORD: ${process.env.REDIS_PASSWORD ? 'set' : 'not set'}`);
-console.log(`  NODE_ENV: ${process.env.NODE_ENV || 'not set'}`);
+);
+);
+);
+);
+);
 console.log('');
 
 async function testConnection(host, port, password) {

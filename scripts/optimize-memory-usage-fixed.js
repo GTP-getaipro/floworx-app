@@ -135,7 +135,7 @@ function updateCacheSettings() {
 }
 
 function createEnvironmentOverrides() {
-  console.log('\n🌍 Creating memory-focused environment overrides...');
+  );
 
   const envContent = `# Memory Optimization Overrides
 NODE_OPTIONS=--optimize-for-size --max-old-space-size=256
@@ -149,7 +149,7 @@ RATE_LIMIT_MAX_REQUESTS=50
 
   const envPath = path.join(__dirname, '..', 'memory-optimizations.env');
   fs.writeFileSync(envPath, envContent);
-  console.log('✅ Created memory optimization environment file');
+  );
 
   return envPath;
 }
@@ -171,12 +171,12 @@ function main() {
   console.log('  ✅ Memory monitoring enabled');
   console.log('  ✅ Docker memory limits optimized');
   console.log('  ✅ Cache settings optimized');
-  console.log('  ✅ Environment overrides created');
+  );
 
   console.log('\n📋 Next Steps:');
   console.log('1. Commit and push these changes');
-  console.log('2. Redeploy in Coolify');
-  console.log('3. Monitor memory usage in Coolify logs');
+  );
+  );
   console.log('4. If issues persist, consider scaling up the instance');
 
   console.log('\n🔍 To monitor memory in production:');

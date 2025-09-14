@@ -30,7 +30,7 @@ beforeAll(async () => {
     console.log('✅ Test database initialized');
   } catch (_error) {
     console.warn('⚠️ Test database not available - some tests may fail');
-    console.warn('Configure TEST_DATABASE_URL environment variable for full testing');
+    );
   }
 });
 

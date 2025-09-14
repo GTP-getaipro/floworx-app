@@ -111,13 +111,13 @@ class ProductionBuildFixer {
    * Fix environment variable issues
    */
   fixEnvironmentVariables() {
-    console.log('3️⃣ Checking environment variables...');
+    );
 
     const envFiles = ['frontend/.env.production', '.env'];
 
     envFiles.forEach(envFile => {
       if (fs.existsSync(envFile)) {
-        console.log(`   ✅ ${envFile} exists`);
+        );
         const content = fs.readFileSync(envFile, 'utf8');
 
         // Check for required variables
@@ -127,11 +127,11 @@ class ProductionBuildFixer {
           if (content.includes(varName)) {
             console.log(`   ✅ ${varName} configured`);
           } else {
-            console.log(`   ⚠️  ${varName} missing from ${envFile}`);
+            );
           }
         });
       } else {
-        console.log(`   ❌ ${envFile} missing`);
+        );
       }
     });
 

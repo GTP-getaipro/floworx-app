@@ -1,8 +1,6 @@
 const nodemailer = require('nodemailer');
 require('dotenv').config();
 
-// Debug nodemailer import
-console.log('Nodemailer version:', nodemailer.version || 'unknown');
 console.log('createTransport available:', typeof nodemailer.createTransport);
 
 /**
@@ -23,8 +21,8 @@ async function testEmailService() {
   // =====================================================
   // 1. ENVIRONMENT VARIABLES CHECK
   // =====================================================
-  console.log('1. Checking email environment variables...');
-  
+  );
+
   const requiredEmailVars = {
     'SMTP_HOST': process.env.SMTP_HOST,
     'SMTP_PORT': process.env.SMTP_PORT,
@@ -59,14 +57,14 @@ async function testEmailService() {
     console.log('📖 See email setup guide below\n');
   } else {
     results.environmentCheck = true;
-    console.log('   ✅ All email environment variables configured\n');
+    );
   }
 
   // =====================================================
   // 2. SMTP CONNECTION TEST
   // =====================================================
   console.log('2. Testing SMTP connection...');
-  
+
   try {
     const transporter = nodemailer.createTransport({
       host: process.env.SMTP_HOST,
@@ -81,11 +79,11 @@ async function testEmailService() {
     // Verify SMTP connection
     await transporter.verify();
     console.log('   ✅ SMTP connection successful');
-    console.log(`   📧 Using: ${process.env.SMTP_USER} via ${process.env.SMTP_HOST}:${process.env.SMTP_PORT}`);
+    );
     results.smtpConnection = true;
   } catch (err) {
     console.log(`   ❌ SMTP connection failed: ${err.message}`);
-    
+
     // Provide specific error guidance
     if (err.message.includes('authentication')) {
       console.log('   💡 Authentication error - check username/password');
@@ -99,17 +97,17 @@ async function testEmailService() {
   // 3. EMAIL TEMPLATE RENDERING TEST
   // =====================================================
   console.log('\n3. Testing email template rendering...');
-  
+
   try {
     // Test if we can load the email service
     const emailService = require('../backend/services/emailService');
-    
+
     // Test template rendering
     const testTemplate = emailService.getVerificationEmailTemplate(
       'Test User',
       'https://example.com/verify?token=test123'
     );
-    
+
     if (testTemplate && testTemplate.includes('Test User') && testTemplate.includes('verify?token=test123')) {
       console.log('   ✅ Email templates rendering correctly');
       results.templateRendering = true;
@@ -124,7 +122,7 @@ async function testEmailService() {
   // 4. TEST EMAIL SENDING (Optional)
   // =====================================================
   console.log('\n4. Test email sending...');
-  
+
   if (results.smtpConnection && process.env.SMTP_USER && !process.env.SMTP_USER.includes('your-')) {
     try {
       const transporter = nodemailer.createTransport({
@@ -165,7 +163,7 @@ async function testEmailService() {
       const result = await transporter.sendMail(testEmail);
       console.log('   ✅ Test email sent successfully!');
       console.log(`   📧 Message ID: ${result.messageId}`);
-      console.log(`   📬 Check your inbox: ${process.env.SMTP_USER}`);
+      );
       results.testEmailSent = true;
     } catch (err) {
       console.log(`   ❌ Test email failed: ${err.message}`);
@@ -178,7 +176,7 @@ async function testEmailService() {
   // 5. SUMMARY
   // =====================================================
   console.log('\n📊 Email Service Test Summary:');
-  console.log(`   Environment Check: ${results.environmentCheck ? '✅' : '❌'}`);
+  );
   console.log(`   SMTP Connection: ${results.smtpConnection ? '✅' : '❌'}`);
   console.log(`   Template Rendering: ${results.templateRendering ? '✅' : '❌'}`);
   console.log(`   Test Email Sent: ${results.testEmailSent ? '✅' : '⚪'}`);
@@ -202,25 +200,25 @@ async function testEmailService() {
   if (!results.environmentCheck || !results.smtpConnection) {
     console.log('\n📋 Email Service Setup Guide:');
     console.log('');
-    
+
     if (process.env.SMTP_HOST === 'smtp.gmail.com') {
       console.log('🔧 Gmail SMTP Setup:');
       console.log('   1. Go to Google Account settings');
       console.log('   2. Enable 2-Factor Authentication');
       console.log('   3. Generate App Password for "Mail"');
       console.log('   4. Use App Password (not regular password) for SMTP_PASS');
-      console.log('   5. Update environment variables:');
+      );
       console.log('      SMTP_USER=your-gmail@gmail.com');
       console.log('      SMTP_PASS=your-16-character-app-password');
     } else {
       console.log('🔧 Custom SMTP Setup:');
       console.log('   1. Get SMTP credentials from your email provider');
-      console.log('   2. Update environment variables with correct values');
+      );
       console.log('   3. Test connection with: node scripts/test-email-service.js');
     }
-    
+
     console.log('');
-    console.log('📖 For detailed setup: ENVIRONMENT_SETUP_GUIDE.md');
+    );
   }
 
   return results;

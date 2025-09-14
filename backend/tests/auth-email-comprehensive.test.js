@@ -60,7 +60,7 @@ describe('Authentication and Email Comprehensive Tests', () => {
 
       const tokenQuery = `
         SELECT token, email, user_id, expires_at, created_at
-        FROM email_verification_tokens 
+        FROM email_verification_tokens
         WHERE user_id = $1 AND email = $2
       `;
       const result = await query(tokenQuery, [testUser.id, testUser.email]);
@@ -134,7 +134,7 @@ describe('Authentication and Email Comprehensive Tests', () => {
 
       const tokenQuery = `
         SELECT token, user_id, expires_at, created_at
-        FROM password_reset_tokens 
+        FROM password_reset_tokens
         WHERE user_id = $1 AND used_at IS NULL
         ORDER BY created_at DESC
         LIMIT 1
@@ -165,7 +165,7 @@ describe('Authentication and Email Comprehensive Tests', () => {
 
   describe('4. Email Service Configuration Tests', () => {
     test('should have all required email environment variables', () => {
-      console.log('🧪 Checking email environment variables...');
+      );
 
       const requiredVars = ['SMTP_HOST', 'SMTP_PORT', 'SMTP_USER', 'SMTP_PASS', 'FROM_EMAIL', 'FROM_NAME'];
 
@@ -174,7 +174,7 @@ describe('Authentication and Email Comprehensive Tests', () => {
         expect(process.env[varName]).not.toBe('');
       });
 
-      console.log('✅ All email environment variables present');
+      );
     });
 
     test('should generate valid verification tokens', () => {
@@ -237,7 +237,7 @@ describe('Authentication and Email Comprehensive Tests', () => {
           console.log('🔧 DIAGNOSIS: Gmail App Password issue');
           console.log('   - Check if 2FA is enabled on Gmail account');
           console.log('   - Generate new App Password in Google Account settings');
-          console.log('   - Update SMTP_PASS environment variable');
+          );
         } else if (error.message.includes('connection')) {
           console.log('🔧 DIAGNOSIS: Network/firewall issue');
           console.log('   - Check SMTP_HOST and SMTP_PORT settings');

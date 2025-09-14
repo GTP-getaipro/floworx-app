@@ -3,7 +3,7 @@ const { query } = require('./database/unified-connection');
 const emailService = require('./services/emailService');
 
 async function debugEmailVerification() {
-  console.log('🔍 Starting email verification debug...\n');
+  );
 
   try {
     // Step 1: Test database connection
@@ -15,8 +15,8 @@ async function debugEmailVerification() {
     console.log('\n2️⃣ Checking email_verification_tokens table...');
     const tableCheck = await query(`
       SELECT EXISTS (
-        SELECT FROM information_schema.tables 
-        WHERE table_schema = 'public' 
+        SELECT FROM information_schema.tables
+        WHERE table_schema = 'public'
         AND table_name = 'email_verification_tokens'
       );
     `);
@@ -25,8 +25,8 @@ async function debugEmailVerification() {
     if (tableCheck.rows[0].exists) {
       // Check table structure
       const structure = await query(`
-        SELECT column_name, data_type, is_nullable 
-        FROM information_schema.columns 
+        SELECT column_name, data_type, is_nullable
+        FROM information_schema.columns
         WHERE table_name = 'email_verification_tokens'
         ORDER BY ordinal_position;
       `);
@@ -131,9 +131,9 @@ async function debugEmailVerification() {
     console.log('📝 The issue must be in the registration endpoint error handling.');
 
   } catch (error) {
-    console.error('\n❌ Debug failed at step:', error.message);
+    , error.message);
     console.error('Full error:', error);
-    
+
     // Additional error details
     if (error.code) {
       console.error('Error code:', error.code);
@@ -150,10 +150,10 @@ async function debugEmailVerification() {
 // Run the debug
 debugEmailVerification()
   .then(() => {
-    console.log('\n✅ Debug completed');
+    );
     process.exit(0);
   })
   .catch((error) => {
-    console.error('\n❌ Debug script failed:', error);
+    , error);
     process.exit(1);
   });

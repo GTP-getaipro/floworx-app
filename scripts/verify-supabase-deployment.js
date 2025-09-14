@@ -26,12 +26,12 @@ const TEST_EMAIL = `test-${Date.now()}@floworx-verification.com`;
 const TEST_PASSWORD = 'TestPassword123!';
 
 async function verifyEnvironmentVariables() {
-  console.log('1. 🔧 Verifying Environment Variables');
+  );
   console.log('   ===================================');
-  
+
   const requiredVars = [
     'SUPABASE_URL',
-    'SUPABASE_ANON_KEY', 
+    'SUPABASE_ANON_KEY',
     'SUPABASE_SERVICE_ROLE_KEY',
     'JWT_SECRET',
     'ENCRYPTION_KEY'
@@ -41,7 +41,7 @@ async function verifyEnvironmentVariables() {
 
   requiredVars.forEach(varName => {
     if (process.env[varName]) {
-      console.log(`   ✅ ${varName}: Set (${process.env[varName].substring(0, 20)}...)`);
+      );
       results.environmentVariables.passed++;
     } else {
       console.log(`   ❌ ${varName}: Missing`);
@@ -53,14 +53,14 @@ async function verifyEnvironmentVariables() {
   if (process.env.SUPABASE_URL) {
     const urlPattern = /^https:\/\/[a-z0-9]+\.supabase\.co$/;
     if (urlPattern.test(process.env.SUPABASE_URL)) {
-      console.log('   ✅ SUPABASE_URL format is valid');
+      );
     } else {
-      console.log('   ⚠️  SUPABASE_URL format may be incorrect');
+      );
       results.environmentVariables.issues.push('SUPABASE_URL format validation failed');
     }
   }
 
-  console.log(`   📊 Environment Variables: ${results.environmentVariables.passed}/${results.environmentVariables.total} passed\n`);
+  );
 }
 
 async function testSupabaseConnection() {
@@ -199,7 +199,7 @@ async function testDatabaseOperations() {
     // Test table existence
     console.log('   🧪 Checking required tables...');
     const expectedTables = ['credentials', 'business_configs', 'workflow_deployments', 'onboarding_progress'];
-    
+
     for (const table of expectedTables) {
       const { data, error } = await supabaseAdmin
         .from(table)
@@ -245,7 +245,7 @@ async function testApplicationEndpoints() {
   try {
     console.log(`   🧪 Testing application availability at ${PRODUCTION_URL}...`);
     const response = await axios.get(PRODUCTION_URL, { timeout: 10000 });
-    
+
     if (response.status === 200) {
       console.log('   ✅ Application is accessible');
       results.applicationEndpoints.passed++;
@@ -262,7 +262,7 @@ async function testApplicationEndpoints() {
   try {
     console.log('   🧪 Testing API health endpoint...');
     const healthResponse = await axios.get(`${PRODUCTION_URL}/api/health`, { timeout: 5000 });
-    
+
     if (healthResponse.status === 200) {
       console.log('   ✅ API health endpoint responding');
       results.applicationEndpoints.passed++;
@@ -284,7 +284,7 @@ async function testApplicationEndpoints() {
       company_name: 'Test Company',
       phone: '+1234567890'
     }, { timeout: 10000 });
-    
+
     if (regResponse.status === 201) {
       console.log('   ✅ Registration endpoint working');
       results.applicationEndpoints.passed++;
@@ -319,9 +319,9 @@ async function generateReport() {
   Object.entries(results).forEach(([category, result]) => {
     const passRate = Math.round((result.passed / result.total) * 100);
     const status = passRate === 100 ? '✅' : passRate >= 75 ? '⚠️' : '❌';
-    
+
     console.log(`${status} ${category.replace(/([A-Z])/g, ' $1').toUpperCase()}: ${result.passed}/${result.total} (${passRate}%)`);
-    
+
     if (result.issues.length > 0) {
       result.issues.forEach(issue => {
         console.log(`   • ${issue}`);
@@ -330,30 +330,11 @@ async function generateReport() {
   });
 
   console.log('\n🎯 NEXT STEPS:');
-  console.log('==============');
-
-  if (overallPassRate === 100) {
-    console.log('🎉 All tests passed! Supabase integration is working correctly.');
-    console.log('✅ Your application is ready for production use.');
-  } else if (overallPassRate >= 75) {
-    console.log('⚠️  Most tests passed, but some issues need attention:');
-    console.log('1. Review the failed tests above');
-    console.log('2. Check Coolify deployment logs for errors');
-    console.log('3. Verify environment variables in Coolify dashboard');
-  } else {
-    console.log('❌ Critical issues detected. Immediate action required:');
-    console.log('1. Check all environment variables in Coolify');
-    console.log('2. Redeploy the application after fixing configuration');
-    console.log('3. Review Supabase project settings and API keys');
-    console.log('4. Check database schema initialization');
-  }
-
-  console.log('\n📞 SUPPORT:');
-  console.log('===========');
+  );
   console.log('If issues persist:');
-  console.log('1. Check Coolify application logs');
+  );
   console.log('2. Verify Supabase project is active');
-  console.log('3. Confirm all environment variables are correctly set');
+  );
   console.log('4. Run: node database/initialize-supabase.js (if database issues)');
 }
 

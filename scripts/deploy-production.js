@@ -22,12 +22,12 @@ try {
   console.log('✅ Build successful');
 
   // Check environment variables
-  console.log('✅ Checking environment configuration...');
+  );
   const envFile = path.join(__dirname, '..', 'vercel-environment-variables-PRODUCTION.txt');
   if (fs.existsSync(envFile)) {
-    console.log('✅ Production environment variables file found');
+    );
   } else {
-    console.log('⚠️  Production environment variables file not found');
+    );
   }
 
   // Check vercel.json
@@ -43,7 +43,7 @@ try {
   console.log('\n🎉 Pre-deployment checks passed!');
   console.log('\n📋 Next Steps:');
   console.log('1. Deploy to Vercel using: vercel --prod');
-  console.log('2. Configure environment variables in Vercel dashboard');
+  );
   console.log('3. Set up custom domain: app.floworx-iq.com');
   console.log('4. Update Google OAuth settings');
   console.log('5. Run post-deployment tests');

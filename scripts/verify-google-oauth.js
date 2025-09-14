@@ -18,8 +18,8 @@ async function verifyGoogleOAuth() {
   // =====================================================
   // 1. ENVIRONMENT VARIABLES CHECK
   // =====================================================
-  console.log('1. Checking OAuth environment variables...');
-  
+  );
+
   const oauthVars = {
     'GOOGLE_CLIENT_ID': process.env.GOOGLE_CLIENT_ID,
     'GOOGLE_CLIENT_SECRET': process.env.GOOGLE_CLIENT_SECRET,
@@ -42,13 +42,13 @@ async function verifyGoogleOAuth() {
   }
 
   results.environmentCheck = true;
-  console.log('   ✅ All OAuth environment variables configured\n');
+  );
 
   // =====================================================
   // 2. CREDENTIALS FORMAT VALIDATION
   // =====================================================
   console.log('2. Validating OAuth credentials format...');
-  
+
   // Validate Google Client ID format
   if (process.env.GOOGLE_CLIENT_ID.includes('googleusercontent.com')) {
     console.log('   ✅ GOOGLE_CLIENT_ID: Valid format');
@@ -72,19 +72,19 @@ async function verifyGoogleOAuth() {
   // 3. REDIRECT URI ANALYSIS
   // =====================================================
   console.log('3. Analyzing redirect URI configuration...');
-  
+
   const currentRedirectUri = process.env.GOOGLE_REDIRECT_URI;
   console.log(`   📍 Current redirect URI: ${currentRedirectUri}`);
 
   // Check if it's development or production
   if (currentRedirectUri.includes('localhost')) {
-    console.log('   🔧 Environment: Development');
+    );
     console.log('   ✅ Localhost redirect URI is appropriate for development');
-    
+
     // Check if production URI is commented in env files
     console.log('   ⚠️  Remember to update for production deployment');
   } else if (currentRedirectUri.includes('vercel.app') || currentRedirectUri.includes('floworx-iq.com')) {
-    console.log('   🚀 Environment: Production');
+    );
     console.log('   ✅ Production redirect URI configured');
     results.productionReadiness = true;
   } else {
@@ -99,7 +99,7 @@ async function verifyGoogleOAuth() {
   // 4. GOOGLE CLOUD CONSOLE VERIFICATION
   // =====================================================
   console.log('4. Google Cloud Console verification checklist...');
-  
+
   console.log('   📋 Required redirect URIs in Google Cloud Console:');
   console.log('   Development: http://localhost:5001/api/oauth/google/callback');
   console.log('   Production: https://floworx-app.vercel.app/api/oauth/google/callback');
@@ -110,7 +110,7 @@ async function verifyGoogleOAuth() {
   // 5. OAUTH SCOPES CHECK
   // =====================================================
   console.log('5. Checking OAuth scopes configuration...');
-  
+
   const requiredScopes = [
     'https://www.googleapis.com/auth/gmail.readonly',
     'https://www.googleapis.com/auth/gmail.modify',
@@ -128,20 +128,20 @@ async function verifyGoogleOAuth() {
   // 6. SECURITY RECOMMENDATIONS
   // =====================================================
   console.log('6. Security recommendations...');
-  
+
   console.log('   🔒 Security checklist:');
   console.log('   ✅ Client credentials are properly configured');
   console.log('   ✅ Redirect URIs are restricted to known domains');
-  
+
   if (process.env.NODE_ENV === 'production') {
-    console.log('   ✅ Production environment detected');
+    );
     if (!currentRedirectUri.includes('localhost')) {
       console.log('   ✅ No localhost URIs in production');
     } else {
-      console.log('   ❌ Localhost URI detected in production environment');
+      );
     }
   } else {
-    console.log('   🔧 Development environment detected');
+    );
     console.log('   ⚠️  Ensure production URIs are configured before deployment');
   }
   console.log('');
@@ -150,7 +150,7 @@ async function verifyGoogleOAuth() {
   // 7. OAUTH FLOW TEST PREPARATION
   // =====================================================
   console.log('7. OAuth flow test preparation...');
-  
+
   console.log('   🧪 To test OAuth flow:');
   console.log('   1. Start your backend server: npm run dev (in backend directory)');
   console.log('   2. Visit: http://localhost:5001/api/oauth/google');
@@ -162,7 +162,7 @@ async function verifyGoogleOAuth() {
   // 8. SUMMARY
   // =====================================================
   console.log('📊 OAuth Configuration Summary:');
-  console.log(`   Environment Check: ${results.environmentCheck ? '✅' : '❌'}`);
+  );
   console.log(`   Credentials Format: ${results.credentialsFormat ? '✅' : '❌'}`);
   console.log(`   Redirect URI Check: ${results.redirectUriCheck ? '✅' : '❌'}`);
   console.log(`   Production Ready: ${results.productionReadiness ? '✅' : '🔧'}`);
@@ -182,7 +182,7 @@ async function verifyGoogleOAuth() {
   // 9. NEXT STEPS
   // =====================================================
   console.log('\n📋 Next Steps:');
-  
+
   if (results.environmentCheck && results.credentialsFormat && results.redirectUriCheck) {
     console.log('   1. ✅ Verify redirect URIs in Google Cloud Console');
     console.log('   2. ✅ Test OAuth flow in development');

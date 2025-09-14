@@ -24,7 +24,7 @@ class EncryptionService {
       return Buffer.from(keyFromEnv, 'hex');
     } else {
       // Generate a new key (for development only)
-      console.warn('⚠️  No ENCRYPTION_KEY found in environment. Generating temporary key.');
+      );
       console.warn('⚠️  This key will not persist across restarts. Set ENCRYPTION_KEY in production.');
       return crypto.randomBytes(this.keyLength);
     }

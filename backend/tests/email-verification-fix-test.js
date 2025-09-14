@@ -40,14 +40,14 @@ async function testEmailVerificationFixes() {
     // Test 4: Store verification token
     console.log('4. Testing verification token storage...');
     const expiresAt = new Date(Date.now() + 24 * 60 * 60 * 1000).toISOString();
-    
+
     try {
       const tokenResult = await databaseOperations.createEmailVerificationToken(
         testUserData.id,
         token,
         expiresAt
       );
-      
+
       if (tokenResult.error) {
         console.log(`   ❌ Token storage failed: ${tokenResult.error.message}`);
         console.log(`   Error details:`, tokenResult.error);
@@ -61,16 +61,16 @@ async function testEmailVerificationFixes() {
 
     // Test 5: Email service configuration
     console.log('5. Testing email service configuration...');
-    console.log(`   SMTP_HOST: ${process.env.SMTP_HOST || 'not set'}`);
-    console.log(`   SMTP_USER: ${process.env.SMTP_USER ? 'set' : 'not set'}`);
-    console.log(`   SMTP_PASS: ${process.env.SMTP_PASS ? 'set' : 'not set'}`);
-    console.log(`   FRONTEND_URL: ${process.env.FRONTEND_URL || 'not set'}`);
+    );
+    );
+    );
+    );
 
     // Test 6: Email template generation
     console.log('6. Testing email template generation...');
     const verificationUrl = `${process.env.FRONTEND_URL || 'https://app.floworx-iq.com'}/verify-email?token=${token}`;
     const template = emailService.getVerificationEmailTemplate('Test', verificationUrl);
-    
+
     if (template && template.includes('Test') && template.includes(verificationUrl)) {
       console.log(`   ✅ Email template generated successfully`);
     } else {

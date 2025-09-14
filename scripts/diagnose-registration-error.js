@@ -15,10 +15,10 @@ async function diagnoseRegistrationError() {
     // Test 1: Check if API health is working
     console.log('\n1️⃣ Testing API Health...');
     const healthResponse = await makeRequest('https://app.floworx-iq.com/api/health');
-    
+
     if (healthResponse.status === 200) {
       console.log('✅ API is responding');
-      console.log(`   Environment: ${healthResponse.data.environment}`);
+      );
       console.log(`   Node Version: ${healthResponse.data.deployment?.nodeVersion}`);
     } else {
       console.log('❌ API health check failed');
@@ -28,7 +28,7 @@ async function diagnoseRegistrationError() {
     // Test 2: Check database connectivity
     console.log('\n2️⃣ Testing Database Connectivity...');
     const dbResponse = await makeRequest('https://app.floworx-iq.com/api/health/db');
-    
+
     if (dbResponse.status === 200) {
       console.log('✅ Database is connected');
       console.log(`   Status: ${dbResponse.data.status}`);
@@ -52,7 +52,7 @@ async function diagnoseRegistrationError() {
     };
 
     const regResponse = await makePostRequest('https://app.floworx-iq.com/api/auth/register', registrationData);
-    
+
     console.log(`   Status: ${regResponse.status}`);
     console.log(`   Response:`, regResponse.data);
 
@@ -70,7 +70,7 @@ async function diagnoseRegistrationError() {
       console.log('⚠️ Rate limited (too many attempts)');
     } else if (regResponse.status === 500) {
       console.log('❌ Server error - likely database schema issue');
-      
+
       // Test 4: Check if it's a schema issue
       console.log('\n4️⃣ Checking Database Schema...');
       console.log('   The error is likely due to missing database table or columns');
@@ -90,27 +90,27 @@ async function diagnoseRegistrationError() {
     }
 
     // Test 5: Check environment variables
-    console.log('\n5️⃣ Environment Variables Check...');
-    console.log('   Required environment variables in Coolify:');
-    console.log('   ✓ NODE_ENV=production');
+    );
+    );
+    );
     console.log('   ✓ PORT=5001');
-    console.log('   ✓ DATABASE_URL=postgresql://...');
+    );
     console.log('   ✓ JWT_SECRET=your_secret_key');
-    console.log('   ✓ REDIS_URL=redis://...');
+    );
     console.log('   ✓ FRONTEND_URL=https://app.floworx-iq.com');
 
     // Provide solutions
     console.log('\n🔧 SOLUTIONS:');
-    
+
     if (regResponse.status === 500) {
       console.log('\n📋 For 500 Server Error:');
-      console.log('1. Check Coolify logs for specific error details');
+      );
       console.log('2. Verify database schema exists (users table)');
-      console.log('3. Ensure all environment variables are set');
+      );
       console.log('4. Check JWT_SECRET is configured');
       console.log('5. Verify database permissions');
     }
-    
+
     if (regResponse.status === 400) {
       console.log('\n📋 For 400 Validation Error:');
       console.log('1. Ensure frontend sends all required fields');
@@ -134,7 +134,7 @@ async function diagnoseRegistrationError() {
 async function makeRequest(url) {
   return new Promise((resolve, reject) => {
     const startTime = Date.now();
-    
+
     https.get(url, { timeout: 10000 }, (res) => {
       let data = '';
       res.on('data', chunk => data += chunk);
@@ -164,7 +164,7 @@ async function makePostRequest(url, data) {
     const urlObj = new URL(url);
     const postData = JSON.stringify(data);
     const startTime = Date.now();
-    
+
     const options = {
       hostname: urlObj.hostname,
       port: urlObj.port || 443,

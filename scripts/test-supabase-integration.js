@@ -22,8 +22,8 @@ async function testSupabaseIntegration() {
   // =====================================================
   // 1. ENVIRONMENT VARIABLES CHECK
   // =====================================================
-  console.log('1. Checking environment variables...');
-  
+  );
+
   const requiredVars = ['SUPABASE_URL', 'SUPABASE_ANON_KEY', 'SUPABASE_SERVICE_ROLE_KEY'];
   const missingVars = [];
 
@@ -40,19 +40,19 @@ async function testSupabaseIntegration() {
   }
 
   if (missingVars.length > 0) {
-    console.log(`\n❌ Missing environment variables: ${missingVars.join(', ')}`);
+    );
     console.log('📖 See: scripts/get-supabase-keys-guide.md\n');
     return results;
   }
 
   results.environmentCheck = true;
-  console.log('   ✅ All environment variables configured\n');
+  );
 
   // =====================================================
   // 2. SUPABASE CLIENT CONNECTION TEST
   // =====================================================
   console.log('2. Testing Supabase client connection...');
-  
+
   try {
     const supabase = createClient(
       process.env.SUPABASE_URL,
@@ -79,10 +79,10 @@ async function testSupabaseIntegration() {
   // 3. CUSTOM SUPABASE CLIENT TEST
   // =====================================================
   console.log('\n3. Testing custom SupabaseClient...');
-  
+
   try {
     const customClient = new SupabaseClient();
-    
+
     // Test database connection through custom client
     const testQuery = await customClient.pool.query('SELECT NOW() as current_time');
     console.log('   ✅ Custom SupabaseClient connection successful');
@@ -96,7 +96,7 @@ async function testSupabaseIntegration() {
   // 4. AUTH INTEGRATION TEST
   // =====================================================
   console.log('\n4. Testing Supabase Auth integration...');
-  
+
   try {
     const supabaseAdmin = createClient(
       process.env.SUPABASE_URL,
@@ -105,7 +105,7 @@ async function testSupabaseIntegration() {
 
     // Test auth admin functions
     const { data: users, error } = await supabaseAdmin.auth.admin.listUsers();
-    
+
     if (error) {
       console.log(`   ❌ Auth test error: ${error.message}`);
     } else {
@@ -121,23 +121,23 @@ async function testSupabaseIntegration() {
   // 5. DATABASE SCHEMA TEST
   // =====================================================
   console.log('\n5. Testing database schema...');
-  
+
   try {
     const customClient = new SupabaseClient();
-    
+
     // Check if all required tables exist
     const tablesQuery = `
-      SELECT table_name 
-      FROM information_schema.tables 
-      WHERE table_schema = 'public' 
+      SELECT table_name
+      FROM information_schema.tables
+      WHERE table_schema = 'public'
       AND table_name IN ('credentials', 'business_configs', 'workflow_deployments', 'onboarding_progress', 'user_analytics')
       ORDER BY table_name
     `;
-    
+
     const tablesResult = await customClient.pool.query(tablesQuery);
     const expectedTables = ['credentials', 'business_configs', 'workflow_deployments', 'onboarding_progress', 'user_analytics'];
     const existingTables = tablesResult.rows.map(row => row.table_name);
-    
+
     if (existingTables.length === expectedTables.length) {
       console.log('   ✅ All required tables exist:');
       existingTables.forEach(table => console.log(`      - ${table}`));
@@ -155,7 +155,7 @@ async function testSupabaseIntegration() {
   // 6. ROW LEVEL SECURITY TEST
   // =====================================================
   console.log('\n6. Testing Row Level Security (RLS)...');
-  
+
   try {
     const supabase = createClient(
       process.env.SUPABASE_URL,
@@ -186,7 +186,7 @@ async function testSupabaseIntegration() {
   // 7. SUMMARY
   // =====================================================
   console.log('\n📊 Integration Test Summary:');
-  console.log(`   Environment Check: ${results.environmentCheck ? '✅' : '❌'}`);
+  );
   console.log(`   Supabase Client: ${results.supabaseClientConnection ? '✅' : '❌'}`);
   console.log(`   Custom Client: ${results.customClientConnection ? '✅' : '❌'}`);
   console.log(`   Auth Integration: ${results.authTest ? '✅' : '❌'}`);
@@ -210,15 +210,15 @@ async function testSupabaseIntegration() {
   // 8. NEXT STEPS
   // =====================================================
   console.log('\n📋 Next Steps:');
-  
+
   if (!results.environmentCheck) {
     console.log('   1. ⚠️  Get Supabase keys from dashboard (see scripts/get-supabase-keys-guide.md)');
   }
-  
+
   if (!results.databaseTest) {
     console.log('   2. ⚠️  Initialize database schema: node database/initialize-supabase.js');
   }
-  
+
   if (results.environmentCheck && results.customClientConnection) {
     console.log('   3. ✅ Configure email service (next task)');
     console.log('   4. ✅ Verify Google OAuth settings');

@@ -24,19 +24,19 @@ class SecurityConfigAudit {
 
     // Check for sensitive files in root
     this.checkSensitiveFilesInRoot();
-    
+
     // Check environment configurations
     this.checkEnvironmentConfigurations();
-    
+
     // Check file permissions
     this.checkFilePermissions();
-    
+
     // Check for hardcoded secrets
     this.checkHardcodedSecrets();
-    
+
     // Generate report
     this.generateSecurityReport();
-    
+
     console.log(`\n🔍 Security audit completed`);
     console.log(`📋 ${this.findings.length} findings identified`);
     console.log(`🔧 ${this.fixes.length} fixes recommended`);
@@ -47,7 +47,7 @@ class SecurityConfigAudit {
    */
   checkSensitiveFilesInRoot() {
     console.log('\n🔍 Checking for sensitive files in root...');
-    
+
     const sensitivePatterns = [
       /.*-ACTUAL\.txt$/,
       /.*credentials.*\.txt$/,
@@ -62,7 +62,7 @@ class SecurityConfigAudit {
     rootFiles.forEach(file => {
       sensitivePatterns.forEach(pattern => {
         if (pattern.test(file)) {
-          this.addFinding('SENSITIVE_FILE_IN_ROOT', 'HIGH', file, 
+          this.addFinding('SENSITIVE_FILE_IN_ROOT', 'HIGH', file,
             'Sensitive configuration file in root directory');
           this.addFix(`Move ${file} to secure location or add to .gitignore`);
         }
@@ -74,8 +74,8 @@ class SecurityConfigAudit {
    * Check environment configurations
    */
   checkEnvironmentConfigurations() {
-    console.log('\n🔍 Checking environment configurations...');
-    
+    );
+
     const envFiles = [
       'backend/.env.example',
       'vercel-environment-variables.txt',
@@ -97,20 +97,20 @@ class SecurityConfigAudit {
     try {
       const content = fs.readFileSync(filePath, 'utf8');
       const lines = content.split('\n');
-      
+
       lines.forEach((line, index) => {
         // Check for weak default values
         if (line.includes('password') && line.includes('password')) {
-          this.addFinding('WEAK_DEFAULT_PASSWORD', 'MEDIUM', filePath, 
+          this.addFinding('WEAK_DEFAULT_PASSWORD', 'MEDIUM', filePath,
             `Line ${index + 1}: Weak default password`);
         }
-        
+
         // Check for missing security variables
         if (line.includes('JWT_SECRET') && line.includes('your_')) {
           this.addFinding('MISSING_JWT_SECRET', 'HIGH', filePath,
             `Line ${index + 1}: JWT secret not configured`);
         }
-        
+
         // Check for HTTP URLs in production configs
         if (line.includes('http://') && !line.includes('localhost')) {
           this.addFinding('INSECURE_HTTP_URL', 'MEDIUM', filePath,
@@ -118,7 +118,7 @@ class SecurityConfigAudit {
         }
       });
     } catch (error) {
-      this.addFinding('ENV_FILE_READ_ERROR', 'LOW', filePath, 
+      this.addFinding('ENV_FILE_READ_ERROR', 'LOW', filePath,
         `Cannot read environment file: ${error.message}`);
     }
   }
@@ -128,7 +128,7 @@ class SecurityConfigAudit {
    */
   checkFilePermissions() {
     console.log('\n🔍 Checking file permissions...');
-    
+
     const sensitiveFiles = [
       'start.sh',
       'setup.js',
@@ -141,7 +141,7 @@ class SecurityConfigAudit {
         try {
           const stats = fs.statSync(fullPath);
           const mode = stats.mode;
-          
+
           // Check if file is world-readable (basic check)
           if (mode & 0o004) {
             this.addFinding('WORLD_READABLE_FILE', 'MEDIUM', file,
@@ -161,7 +161,7 @@ class SecurityConfigAudit {
    */
   checkHardcodedSecrets() {
     console.log('\n🔍 Checking for hardcoded secrets...');
-    
+
     const jsFiles = this.findJSFiles(this.rootDir);
     const secretPatterns = [
       /password\s*[:=]\s*['"]\w{8,}['"]/gi,
@@ -173,7 +173,7 @@ class SecurityConfigAudit {
       try {
         const content = fs.readFileSync(file, 'utf8');
         const lines = content.split('\n');
-        
+
         lines.forEach((line, index) => {
           secretPatterns.forEach(pattern => {
             if (pattern.test(line) && !line.includes('.env') && !line.includes('example')) {
@@ -193,18 +193,18 @@ class SecurityConfigAudit {
    */
   findJSFiles(dir, files = []) {
     const items = fs.readdirSync(dir);
-    
+
     items.forEach(item => {
       const fullPath = path.join(dir, item);
       const stat = fs.statSync(fullPath);
-      
+
       if (stat.isDirectory() && !item.includes('node_modules') && !item.includes('.git')) {
         this.findJSFiles(fullPath, files);
       } else if (stat.isFile() && item.endsWith('.js')) {
         files.push(fullPath);
       }
     });
-    
+
     return files;
   }
 
@@ -219,13 +219,13 @@ class SecurityConfigAudit {
       description,
       timestamp: new Date().toISOString()
     });
-    
+
     const severityColor = {
       'HIGH': '\x1b[31m',
       'MEDIUM': '\x1b[33m',
       'LOW': '\x1b[36m'
     };
-    
+
     console.log(`   ${severityColor[severity]}${severity}\x1b[0m: ${file} - ${description}`);
   }
 

@@ -12,16 +12,16 @@ const router = express.Router();
 
 router.get('/test-keydb', (req, res) => {
   try {
-    console.log('🧪 Running KeyDB test from deployed environment...');
-    
+    );
+
     // Run the KeyDB test script
     const testScript = path.join(__dirname, '..', '..', 'test-keydb-connection.js');
-    const result = execSync(`node "${testScript}"`, { 
+    const result = execSync(`node "${testScript}"`, {
       encoding: 'utf8',
       stdio: 'pipe',
       timeout: 30000
     });
-    
+
     res.json({
       success: true,
       message: 'KeyDB test completed',
@@ -33,7 +33,7 @@ router.get('/test-keydb', (req, res) => {
         NODE_ENV: process.env.NODE_ENV
       }
     });
-    
+
   } catch (error) {
 
     res.status(500).json({

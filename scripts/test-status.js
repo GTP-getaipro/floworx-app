@@ -41,7 +41,7 @@ class TestStatusChecker {
    */
   async run() {
     try {
-      console.log('🧪 FloWorx Test Environment Status');
+      );
       console.log('=================================');
       console.log('');
 
@@ -53,7 +53,7 @@ class TestStatusChecker {
       await this.showTestStatistics();
 
       console.log('');
-      console.log('✅ Test environment status check completed');
+      );
 
     } catch (error) {
       console.error('❌ Test status check failed:', error.message);
@@ -65,7 +65,7 @@ class TestStatusChecker {
    * Check test environment setup
    */
   async checkTestEnvironment() {
-    console.log('🔧 Test Environment');
+    );
     console.log('-------------------');
 
     // Check Node.js version
@@ -105,7 +105,7 @@ class TestStatusChecker {
       const packageJson = JSON.parse(await fs.readFile(packageJsonPath, 'utf8'));
       const testScripts = Object.keys(packageJson.scripts || {}).filter(script => script.startsWith('test'));
       console.log(`Test Scripts: ✅ ${testScripts.length} available`);
-      
+
       if (testScripts.length > 0) {
         testScripts.forEach(script => {
           console.log(`  - npm run ${script}`);
@@ -283,8 +283,8 @@ class TestStatusChecker {
   async countFilesInDirectory(dirPath, extension = '') {
     try {
       const files = await fs.readdir(dirPath, { withFileTypes: true });
-      return files.filter(file => 
-        file.isFile() && 
+      return files.filter(file =>
+        file.isFile() &&
         (extension === '' || file.name.endsWith(extension))
       ).length;
     } catch {

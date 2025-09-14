@@ -29,7 +29,7 @@ async function fixOAuthProduction() {
     'FRONTEND_URL'
   ];
 
-  console.log('   📋 Current Environment Variables:');
+  );
   for (const varName of requiredVars) {
     const value = process.env[varName];
     if (value) {
@@ -44,17 +44,17 @@ async function fixOAuthProduction() {
   // Check redirect URI configuration
   const currentRedirectUri = process.env.GOOGLE_REDIRECT_URI;
   const frontendUrl = process.env.FRONTEND_URL;
-  
+
   console.log('\n   🔗 OAuth Redirect URI Analysis:');
   console.log(`   Current GOOGLE_REDIRECT_URI: ${currentRedirectUri}`);
   console.log(`   Current FRONTEND_URL: ${frontendUrl}`);
-  
+
   // Determine production URLs
   const productionDomain = 'floworx-app.vercel.app'; // From screenshot
   const expectedRedirectUri = `https://${productionDomain}/api/oauth/google/callback`;
-  
+
   console.log(`   Expected production redirect URI: ${expectedRedirectUri}`);
-  
+
   if (currentRedirectUri !== expectedRedirectUri) {
     console.log('   ❌ Redirect URI mismatch - this is causing the OAuth error');
     results.requiredActions.push('Update GOOGLE_REDIRECT_URI for production');
@@ -87,21 +87,21 @@ async function fixOAuthProduction() {
   // =====================================================
   // 3. VERCEL ENVIRONMENT VARIABLES UPDATES
   // =====================================================
-  console.log('\n3. ⚡ Vercel Environment Variables Updates');
+  );
   console.log('   =======================================');
 
-  console.log('   📋 Required Vercel environment variable updates:');
+  );
   console.log('   Run these commands in your terminal:');
   console.log('');
-  console.log('   # Update production environment variables');
-  console.log(`   vercel env add GOOGLE_REDIRECT_URI production`);
+  );
+  );
   console.log(`   # Enter: ${expectedRedirectUri}`);
   console.log('');
-  console.log(`   vercel env add FRONTEND_URL production`);
+  );
   console.log(`   # Enter: https://${productionDomain}`);
   console.log('');
   console.log('   # Verify other OAuth variables are set');
-  console.log('   vercel env ls');
+  );
 
   results.vercelUpdates.push('Update GOOGLE_REDIRECT_URI');
   results.vercelUpdates.push('Update FRONTEND_URL');
@@ -181,7 +181,7 @@ async function fixOAuthProduction() {
 
   console.log('\n   🚨 CRITICAL (Do First - 15 minutes):');
   console.log('   1. Update Google Cloud Console OAuth redirect URIs');
-  console.log('   2. Update Vercel environment variables');
+  );
   console.log('   3. Redeploy the application');
 
   console.log('\n   ⚡ HIGH PRIORITY (Do Next - 30 minutes):');
@@ -200,17 +200,17 @@ async function fixOAuthProduction() {
   console.log('\n📋 STEP-BY-STEP COMMANDS TO RUN');
   console.log('   ==============================');
 
-  console.log('\n   1️⃣ Update Vercel Environment Variables:');
+  );
   console.log('   ```bash');
   console.log('   # Set production redirect URI');
-  console.log(`   vercel env add GOOGLE_REDIRECT_URI production`);
+  );
   console.log(`   # When prompted, enter: ${expectedRedirectUri}`);
   console.log('');
   console.log('   # Set production frontend URL');
-  console.log(`   vercel env add FRONTEND_URL production`);
+  );
   console.log(`   # When prompted, enter: https://${productionDomain}`);
   console.log('');
-  console.log('   # Redeploy with new environment variables');
+  );
   console.log('   vercel --prod');
   console.log('   ```');
 
@@ -252,7 +252,7 @@ async function fixOAuthProduction() {
 
   console.log('\n🚀 NEXT STEPS:');
   console.log('   1. Update Google Cloud Console (5 min)');
-  console.log('   2. Update Vercel environment variables (5 min)');
+  );
   console.log('   3. Redeploy application (5 min)');
   console.log('   4. Test OAuth flow (10 min)');
   console.log('   5. Verify all user journeys work (15 min)');

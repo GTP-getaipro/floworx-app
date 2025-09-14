@@ -15,6 +15,7 @@ const { asyncHandler, successResponse } = require('../middleware/standardErrorHa
 const { ErrorResponse } = require('../utils/ErrorResponse');
 const { validateRequest } = require('../utils/validateRequest');
 const logger = require('../utils/logger');
+const { databaseCircuitBreaker, authCircuitBreaker } = require('../utils/circuitBreaker');
 
 const router = express.Router();
 
@@ -22,6 +23,73 @@ const router = express.Router();
 const query = async (sql, params) => {
   await databaseManager.initialize();
   return databaseManager.query(sql, params);
+};
+
+// Enhanced validation helper functions
+const validateRegistrationInput = async ({ email, password, firstName, lastName }) => {
+  const errors = [];
+
+  // Required fields validation
+  if (!email || !password || !firstName || !lastName) {
+    errors.push('Missing required fields: email, password, firstName, lastName');
+  }
+
+  // Email format validation
+  if (email) {
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    if (!emailRegex.test(email)) {
+      errors.push('Please provide a valid email address');
+    }
+    if (email.length > 255) {
+      errors.push('Email address is too long');
+    }
+  }
+
+  // Password strength validation
+  if (password) {
+    if (password.length < 8) {
+      errors.push('Password must be at least 8 characters long');
+    }
+    if (password.length > 128) {
+      errors.push('Password is too long');
+    }
+    if (!/(?=.*[a-z])(?=.*[A-Z])(?=.*\d)/.test(password)) {
+      errors.push('Password must contain at least one uppercase letter, one lowercase letter, and one number');
+    }
+  }
+
+  // Name validation
+  if (firstName && firstName.length > 100) {
+    errors.push('First name is too long');
+  }
+  if (lastName && lastName.length > 100) {
+    errors.push('Last name is too long');
+  }
+
+  return {
+    isValid: errors.length === 0,
+    errors
+  };
+};
+
+const validateLoginInput = ({ email, password }) => {
+  const errors = [];
+
+  if (!email || !password) {
+    errors.push('Email and password are required');
+  }
+
+  if (email) {
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    if (!emailRegex.test(email)) {
+      errors.push('Please provide a valid email address');
+    }
+  }
+
+  return {
+    isValid: errors.length === 0,
+    errors
+  };
 };
 
 // Input validation is now handled by centralized validation middleware
@@ -177,58 +245,79 @@ router.post('/test-register', async (req, res) => {
 });
 
 // POST /api/auth/register
-// Register a new user account - Using exact working pattern from test-register
+// Register a new user account with enhanced security and error handling
 router.post('/register', async (req, res) => {
+  const startTime = Date.now();
+  const requestId = req.headers['x-request-id'] || require('crypto').randomUUID();
+
   try {
-    console.log('Registration called with body:', { ...req.body, password: '[HIDDEN]' });
+    logger.info('Registration attempt started', {
+      requestId,
+      email: req.body.email,
+      userAgent: req.get('User-Agent'),
+      ip: req.ip
+    });
 
     const { email, password, firstName, lastName, businessName } = req.body;
 
-    // Basic validation
-    if (!email || !password || !firstName || !lastName) {
+    // Enhanced input validation with timeout protection
+    const validationResult = await Promise.race([
+      validateRegistrationInput({ email, password, firstName, lastName }),
+      new Promise((_, reject) =>
+        setTimeout(() => reject(new Error('Validation timeout')), 5000)
+      )
+    ]);
+
+    if (!validationResult.isValid) {
+      logger.warn('Registration validation failed', {
+        requestId,
+        email,
+        errors: validationResult.errors
+      });
       return res.status(400).json({
         success: false,
-        error: 'Missing required fields'
+        error: validationResult.errors[0] || 'Invalid input data',
+        requestId
       });
     }
 
-    // Email format validation
-    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-    if (!emailRegex.test(email)) {
-      return res.status(400).json({
-        success: false,
-        error: 'Please provide a valid email address'
-      });
-    }
+    // Check if user exists with circuit breaker protection
+    const existingUserResult = await databaseCircuitBreaker.execute(
+      async () => {
+        const result = await Promise.race([
+          databaseOperations.getUserByEmail(email),
+          new Promise((_, reject) =>
+            setTimeout(() => reject(new Error('Database query timeout')), 10000)
+          )
+        ]);
+        return result;
+      },
+      () => {
+        logger.error('Database circuit breaker open for user existence check', { requestId, email });
+        throw new Error('Service temporarily unavailable');
+      }
+    );
 
-    // Password strength validation
-    if (password.length < 8) {
-      return res.status(400).json({
-        success: false,
-        error: 'Password must be at least 8 characters long'
-      });
-    }
-
-    console.log('Input validation passed');
-
-    // Check if user exists
-    console.log('Checking if user exists...');
-    const existingUser = await databaseOperations.getUserByEmail(email);
-    console.log('User existence check result:', existingUser.data ? 'User exists' : 'User not found');
-
-    if (existingUser.data) {
+    if (existingUserResult.data) {
+      logger.warn('Registration attempt for existing user', { requestId, email });
       return res.status(409).json({
         success: false,
-        error: 'User already exists'
+        error: 'User already exists',
+        requestId
       });
     }
 
-    // Hash password
-    console.log('Hashing password...');
-    const passwordHash = await bcrypt.hash(password, 12);
-    console.log('Password hashed successfully');
+    // Hash password with timeout protection
+    const passwordHash = await Promise.race([
+      bcrypt.hash(password, 12),
+      new Promise((_, reject) =>
+        setTimeout(() => reject(new Error('Password hashing timeout')), 15000)
+      )
+    ]);
 
-    // Create user data
+    logger.info('Password hashed successfully', { requestId });
+
+    // Create user data with enhanced validation
     const userData = {
       id: require('crypto').randomUUID(),
       email: email.toLowerCase().trim(),
@@ -239,30 +328,69 @@ router.post('/register', async (req, res) => {
       created_at: new Date().toISOString()
     };
 
-    console.log('Creating user with data:', { ...userData, password_hash: '[HIDDEN]' });
+    logger.info('Creating user account', { requestId, userId: userData.id });
 
-    // Create user
-    const createResult = await databaseOperations.createUser(userData);
-    console.log('User creation result:', createResult.error ? `Error: ${createResult.error.message}` : 'Success');
+    // Create user with circuit breaker protection
+    const createResult = await databaseCircuitBreaker.execute(
+      async () => {
+        const result = await Promise.race([
+          databaseOperations.createUser(userData),
+          new Promise((_, reject) =>
+            setTimeout(() => reject(new Error('User creation timeout')), 15000)
+          )
+        ]);
+        return result;
+      },
+      () => {
+        logger.error('Database circuit breaker open for user creation', { requestId });
+        throw new Error('Service temporarily unavailable');
+      }
+    );
 
     if (createResult.error) {
+      logger.error('User creation failed', {
+        requestId,
+        error: createResult.error.message,
+        userId: userData.id
+      });
       return res.status(500).json({
         success: false,
         error: 'Failed to create user account',
-        details: createResult.error.message
+        requestId
       });
     }
 
-    // Generate JWT token
-    console.log('Generating JWT token...');
-    const token = jwt.sign(
-      { userId: userData.id, email: userData.email },
-      process.env.JWT_SECRET,
-      { expiresIn: '24h' }
-    );
-    console.log('Token generated successfully');
+    // Generate JWT token with circuit breaker protection
+    const token = await authCircuitBreaker.execute(
+      async () => {
+        if (!process.env.JWT_SECRET) {
+          throw new Error('JWT_SECRET not configured');
+        }
 
-    console.log('Registration completed successfully');
+        const tokenResult = await Promise.race([
+          Promise.resolve(jwt.sign(
+            { userId: userData.id, email: userData.email },
+            process.env.JWT_SECRET,
+            { expiresIn: '24h' }
+          )),
+          new Promise((_, reject) =>
+            setTimeout(() => reject(new Error('Token generation timeout')), 5000)
+          )
+        ]);
+        return tokenResult;
+      },
+      () => {
+        logger.error('Auth circuit breaker open for token generation', { requestId });
+        throw new Error('Authentication service temporarily unavailable');
+      }
+    );
+
+    const duration = Date.now() - startTime;
+    logger.info('Registration completed successfully', {
+      requestId,
+      userId: userData.id,
+      duration: `${duration}ms`
+    });
 
     res.status(201).json({
       success: true,
@@ -276,20 +404,48 @@ router.post('/register', async (req, res) => {
         },
         token: token
       },
-      message: 'Registration successful'
+      message: 'Registration successful',
+      requestId
     });
 
   } catch (error) {
-    console.error('Registration error:', error);
+    const duration = Date.now() - startTime;
+
     logger.error('Registration failed', {
+      requestId,
       error: error.message,
       stack: error.stack,
-      email: req.body?.email
+      email: req.body?.email,
+      duration: `${duration}ms`,
+      userAgent: req.get('User-Agent'),
+      ip: req.ip
     });
 
-    res.status(500).json({
+    // Determine appropriate error response based on error type
+    let statusCode = 500;
+    let errorMessage = 'Registration failed due to server error';
+
+    if (error.message.includes('timeout')) {
+      statusCode = 504;
+      errorMessage = 'Request timeout - please try again';
+    } else if (error.message.includes('temporarily unavailable')) {
+      statusCode = 503;
+      errorMessage = 'Service temporarily unavailable - please try again later';
+    } else if (error.message.includes('Circuit breaker')) {
+      statusCode = 503;
+      errorMessage = 'Service temporarily unavailable due to high load';
+    } else if (error.message.includes('validation')) {
+      statusCode = 400;
+      errorMessage = 'Invalid input data';
+    } else if (error.message.includes('already exists')) {
+      statusCode = 409;
+      errorMessage = 'User already exists';
+    }
+
+    res.status(statusCode).json({
       success: false,
-      error: 'Registration failed due to server error',
+      error: errorMessage,
+      requestId
       details: process.env.NODE_ENV === 'development' ? error.message : undefined
     });
   }

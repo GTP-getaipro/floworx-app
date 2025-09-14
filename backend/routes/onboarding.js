@@ -15,6 +15,7 @@ const router = express.Router();
 router.get('/status', authenticateToken, async (req, res) => {
   try {
     const userId = req.user.id;
+    console.log('🔍 Migration applied - testing email provider functionality for user:', userId);
 
     // Get user's basic info using database operations
     const userResult = await databaseOperations.getUserById(userId);

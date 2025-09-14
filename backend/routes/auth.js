@@ -125,8 +125,20 @@ router.post(
           type: emailError.constructor.name
         }
       })
+      title: emailSent ? 'Registration Successful!' : 'Registration Complete',
+      instructions: emailSent ? [
+        'Check your email inbox for a verification message',
+        'Click the verification link to activate your account',
+        'You cannot log in until your email is verified',
+        'If you don\'t see the email, check your spam folder'
+      ] : [
+        'Your account has been created successfully',
+        'Email verification is temporarily unavailable',
+        'Please contact support to activate your account'
+      ],
+      nextSteps: emailSent ? 'Please verify your email before attempting to log in' : 'Contact support for account activation'
     }, emailSent
-      ? 'User registered successfully. Please check your email to verify your account.'
+      ? `Welcome ${firstName}! We've sent a verification email to ${email}. Please click the link in that email to activate your account.`
       : 'User registered successfully. Email verification is temporarily unavailable - please contact support.',
     201);
   })
@@ -163,15 +175,32 @@ router.post(
       // Check if email is verified - ENABLED for proper security
       if (!user.email_verified) {
         logger.warn('Login blocked - email not verified', { email, userId: user.id });
+
+        // Enhanced user-friendly error response
         return res.status(403).json({
           success: false,
           error: {
             type: 'EMAIL_NOT_VERIFIED',
-            message: 'Please verify your email address before logging in. Check your inbox for the verification link.',
+            message: 'Email verification required',
             code: 403
           },
           requiresVerification: true,
-          email: user.email
+          email: user.email,
+          title: 'Please Verify Your Email',
+          instructions: [
+            'Check your email inbox for a verification message',
+            'Click the verification link in the email to activate your account',
+            'If you don\'t see the email, check your spam folder',
+            'You can request a new verification email below'
+          ],
+          actions: {
+            resendVerification: {
+              endpoint: '/api/auth/resend-verification',
+              method: 'POST',
+              body: { email: user.email }
+            }
+          },
+          userFriendlyMessage: `Hi ${user.first_name || 'there'}! We sent a verification email to ${user.email}. Please click the link in that email to activate your account and log in.`
         });
       }
 
@@ -839,6 +868,117 @@ router.get('/generate-verification-link/:email', async (req, res) => {
     res.status(500).json({
       success: false,
       error: 'Failed to generate verification link',
+      message: error.message
+    });
+  }
+});
+
+// GET /api/auth/check-verification-status/:email
+// Check email verification status for testing
+router.get('/check-verification-status/:email', async (req, res) => {
+  try {
+    const { email } = req.params;
+
+    if (!email) {
+      return res.status(400).json({
+        success: false,
+        error: 'Email is required'
+      });
+    }
+
+    // Find user by email
+    const userResult = await databaseOperations.getUserByEmail(email.toLowerCase());
+
+    if (!userResult || !userResult.data) {
+      return res.status(404).json({
+        success: false,
+        error: 'User not found',
+        email: email
+      });
+    }
+
+    const user = userResult.data;
+
+    res.json({
+      success: true,
+      user: {
+        id: user.id,
+        email: user.email,
+        firstName: user.first_name,
+        lastName: user.last_name,
+        emailVerified: user.email_verified || false,
+        emailVerifiedAt: user.email_verified_at || null,
+        createdAt: user.created_at
+      },
+      canLogin: user.email_verified || false,
+      message: user.email_verified
+        ? 'Email is verified - user can log in'
+        : 'Email is not verified - login will be blocked'
+    });
+  } catch (error) {
+    console.error('Check verification status error:', error);
+    res.status(500).json({
+      success: false,
+      error: 'Failed to check verification status',
+      message: error.message
+    });
+  }
+});
+
+// POST /api/auth/manual-verify-email
+// Manually verify email for testing (DEVELOPMENT ONLY)
+router.post('/manual-verify-email', async (req, res) => {
+  try {
+    const { email } = req.body;
+
+    if (!email) {
+      return res.status(400).json({
+        success: false,
+        error: 'Email is required'
+      });
+    }
+
+    // Find user by email
+    const userResult = await databaseOperations.getUserByEmail(email.toLowerCase());
+
+    if (!userResult || !userResult.data) {
+      return res.status(404).json({
+        success: false,
+        error: 'User not found'
+      });
+    }
+
+    const user = userResult.data;
+
+    // Manually set email as verified
+    const updateResult = await databaseOperations.updateUser(user.id, {
+      email_verified: true,
+      email_verified_at: new Date().toISOString()
+    });
+
+    if (updateResult.error) {
+      return res.status(500).json({
+        success: false,
+        error: 'Failed to verify email',
+        details: updateResult.error
+      });
+    }
+
+    res.json({
+      success: true,
+      message: 'Email verified successfully (manual verification for testing)',
+      user: {
+        id: user.id,
+        email: user.email,
+        firstName: user.first_name,
+        emailVerified: true
+      }
+    });
+  } catch (error) {
+    console.error('Manual email verification error:', error);
+    res.status(500).json({
+      success: false,
+      error: 'Failed to verify email',
       message: error.message
     });
   }

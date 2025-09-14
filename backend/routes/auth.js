@@ -179,18 +179,16 @@ router.post('/test-register', async (req, res) => {
 // POST /api/auth/register
 // Register a new user account - Using exact working pattern from test-register
 router.post('/register', async (req, res) => {
-  const { databaseCircuitBreaker } = require('../utils/circuitBreaker');
-
   try {
     console.log('Registration called with body:', { ...req.body, password: '[HIDDEN]' });
 
-    const { email, password, firstName, lastName, businessName, agreeToTerms } = req.body;
+    const { email, password, firstName, lastName, businessName } = req.body;
 
-    // Input validation
+    // Basic validation
     if (!email || !password || !firstName || !lastName) {
       return res.status(400).json({
         success: false,
-        error: 'Missing required fields: email, password, firstName, lastName'
+        error: 'Missing required fields'
       });
     }
 
@@ -213,45 +211,9 @@ router.post('/register', async (req, res) => {
 
     console.log('Input validation passed');
 
-    // Check database connection first
-    try {
-      const connectionTest = await databaseOperations.query('SELECT NOW() as current_time');
-      if (!connectionTest || !connectionTest.rows) {
-        throw new Error('Database connection test failed');
-      }
-      console.log('Database connection verified');
-    } catch (dbError) {
-      console.error('Database connection error:', dbError.message);
-      return res.status(503).json({
-        success: false,
-        error: 'Service temporarily unavailable. Please try again later.'
-      });
-    }
-
-    // Check if user exists with circuit breaker
+    // Check if user exists
     console.log('Checking if user exists...');
-    const existingUser = await databaseCircuitBreaker.execute(
-      async () => {
-        const timeoutPromise = new Promise((_, reject) =>
-          setTimeout(() => reject(new Error('Database query timeout')), 10000)
-        );
-
-        const queryPromise = databaseOperations.getUserByEmail(email);
-        return await Promise.race([queryPromise, timeoutPromise]);
-      },
-      (error) => {
-        console.error('Database circuit breaker fallback for user check:', error.message);
-        return { error: 'Database temporarily unavailable' };
-      }
-    );
-
-    if (existingUser.error) {
-      return res.status(503).json({
-        success: false,
-        error: existingUser.error
-      });
-    }
-
+    const existingUser = await databaseOperations.getUserByEmail(email);
     console.log('User existence check result:', existingUser.data ? 'User exists' : 'User not found');
 
     if (existingUser.data) {
@@ -261,24 +223,10 @@ router.post('/register', async (req, res) => {
       });
     }
 
-    // Hash password with timeout
+    // Hash password
     console.log('Hashing password...');
-    let passwordHash;
-    try {
-      const hashPromise = bcrypt.hash(password, 12);
-      const timeoutPromise = new Promise((_, reject) =>
-        setTimeout(() => reject(new Error('Password hashing timeout')), 5000)
-      );
-
-      passwordHash = await Promise.race([hashPromise, timeoutPromise]);
-      console.log('Password hashed successfully');
-    } catch (hashError) {
-      console.error('Password hashing error:', hashError.message);
-      return res.status(500).json({
-        success: false,
-        error: 'Error processing registration'
-      });
-    }
+    const passwordHash = await bcrypt.hash(password, 12);
+    console.log('Password hashed successfully');
 
     // Create user data
     const userData = {
@@ -293,61 +241,26 @@ router.post('/register', async (req, res) => {
 
     console.log('Creating user with data:', { ...userData, password_hash: '[HIDDEN]' });
 
-    // Create user with circuit breaker
-    const createResult = await databaseCircuitBreaker.execute(
-      async () => {
-        const timeoutPromise = new Promise((_, reject) =>
-          setTimeout(() => reject(new Error('User creation timeout')), 15000)
-        );
-
-        const createPromise = databaseOperations.createUser(userData);
-        return await Promise.race([createPromise, timeoutPromise]);
-      },
-      (error) => {
-        console.error('Database circuit breaker fallback for user creation:', error.message);
-        return { error: 'Database temporarily unavailable during user creation' };
-      }
-    );
-
-    console.log('User creation result:', createResult.error ? `Error: ${createResult.error}` : 'Success');
+    // Create user
+    const createResult = await databaseOperations.createUser(userData);
+    console.log('User creation result:', createResult.error ? `Error: ${createResult.error.message}` : 'Success');
 
     if (createResult.error) {
-      // Check for duplicate email constraint
-      if (createResult.error.includes && createResult.error.includes('duplicate') ||
-          createResult.error.includes && createResult.error.includes('unique')) {
-        return res.status(409).json({
-          success: false,
-          error: 'User already exists'
-        });
-      }
-
       return res.status(500).json({
         success: false,
-        error: 'Failed to create user account'
+        error: 'Failed to create user account',
+        details: createResult.error.message
       });
     }
 
     // Generate JWT token
     console.log('Generating JWT token...');
-    let token;
-    try {
-      if (!process.env.JWT_SECRET) {
-        throw new Error('JWT_SECRET not configured');
-      }
-
-      token = jwt.sign(
-        { userId: userData.id, email: userData.email },
-        process.env.JWT_SECRET,
-        { expiresIn: '24h' }
-      );
-      console.log('Token generated successfully');
-    } catch (tokenError) {
-      console.error('Token generation error:', tokenError.message);
-      return res.status(500).json({
-        success: false,
-        error: 'Registration completed but login token generation failed'
-      });
-    }
+    const token = jwt.sign(
+      { userId: userData.id, email: userData.email },
+      process.env.JWT_SECRET,
+      { expiresIn: '24h' }
+    );
+    console.log('Token generated successfully');
 
     console.log('Registration completed successfully');
 
@@ -383,16 +296,14 @@ router.post('/register', async (req, res) => {
 });
 
 // POST /api/auth/login
-// Authenticate user and return JWT - Fixed with comprehensive error handling
+// Authenticate user and return JWT - Simplified working version
 router.post('/login', async (req, res) => {
-  const { databaseCircuitBreaker } = require('../utils/circuitBreaker');
-
   try {
     console.log('Login called with body:', { ...req.body, password: '[HIDDEN]' });
 
     const { email, password } = req.body;
 
-    // Input validation
+    // Basic validation
     if (!email || !password) {
       return res.status(400).json({
         success: false,
@@ -411,48 +322,12 @@ router.post('/login', async (req, res) => {
 
     console.log('Login validation passed');
 
-    // Check database connection first
-    try {
-      const connectionTest = await databaseOperations.query('SELECT NOW() as current_time');
-      if (!connectionTest || !connectionTest.rows) {
-        throw new Error('Database connection test failed');
-      }
-      console.log('Database connection verified for login');
-    } catch (dbError) {
-      console.error('Database connection error during login:', dbError.message);
-      return res.status(503).json({
-        success: false,
-        error: 'Service temporarily unavailable. Please try again later.'
-      });
-    }
-
-    // Find user by email with circuit breaker
+    // Find user by email
     console.log('Looking up user...');
-    const userResult = await databaseCircuitBreaker.execute(
-      async () => {
-        const timeoutPromise = new Promise((_, reject) =>
-          setTimeout(() => reject(new Error('Database query timeout')), 10000)
-        );
-
-        const queryPromise = databaseOperations.getUserByEmail(email);
-        return await Promise.race([queryPromise, timeoutPromise]);
-      },
-      (error) => {
-        console.error('Database circuit breaker fallback for user lookup:', error.message);
-        return { error: 'Database temporarily unavailable' };
-      }
-    );
-
-    if (userResult.error) {
-      return res.status(503).json({
-        success: false,
-        error: userResult.error
-      });
-    }
-
+    const userResult = await databaseOperations.getUserByEmail(email);
     console.log('User lookup result:', userResult.data ? 'User found' : 'User not found');
 
-    if (!userResult.data) {
+    if (userResult.error || !userResult.data) {
       return res.status(401).json({
         success: false,
         error: 'Invalid credentials'
@@ -461,24 +336,10 @@ router.post('/login', async (req, res) => {
 
     const user = userResult.data;
 
-    // Verify password with timeout
+    // Verify password
     console.log('Verifying password...');
-    let passwordMatch;
-    try {
-      const comparePromise = bcrypt.compare(password, user.password_hash);
-      const timeoutPromise = new Promise((_, reject) =>
-        setTimeout(() => reject(new Error('Password verification timeout')), 5000)
-      );
-
-      passwordMatch = await Promise.race([comparePromise, timeoutPromise]);
-      console.log('Password verification result:', passwordMatch ? 'Match' : 'No match');
-    } catch (passwordError) {
-      console.error('Password verification error:', passwordError.message);
-      return res.status(500).json({
-        success: false,
-        error: 'Login failed due to server error'
-      });
-    }
+    const passwordMatch = await bcrypt.compare(password, user.password_hash);
+    console.log('Password verification result:', passwordMatch ? 'Match' : 'No match');
 
     if (!passwordMatch) {
       return res.status(401).json({
@@ -487,27 +348,14 @@ router.post('/login', async (req, res) => {
       });
     }
 
-    // Generate JWT token with error handling
+    // Generate JWT token
     console.log('Generating JWT token...');
-    let token;
-    try {
-      if (!process.env.JWT_SECRET) {
-        throw new Error('JWT_SECRET not configured');
-      }
-
-      token = jwt.sign(
-        { userId: user.id, email: user.email },
-        process.env.JWT_SECRET,
-        { expiresIn: '24h' }
-      );
-      console.log('Token generated successfully');
-    } catch (tokenError) {
-      console.error('Token generation error:', tokenError.message);
-      return res.status(500).json({
-        success: false,
-        error: 'Login failed due to server error'
-      });
-    }
+    const token = jwt.sign(
+      { userId: user.id, email: user.email },
+      process.env.JWT_SECRET,
+      { expiresIn: '24h' }
+    );
+    console.log('Token generated successfully');
 
     // Update last login time (non-blocking)
     databaseOperations.query(

@@ -13,7 +13,7 @@ const registerSchema = Joi.object({
   lastName: name,
   email: email,
   password: password,
-  phone: phone,
+  phone: phone.optional(), // Make phone optional for now
   businessName: Joi.string().trim().min(1).max(200).optional().messages({
     'string.min': 'Business name must be at least 1 character',
     'string.max': 'Business name must be less than 200 characters'

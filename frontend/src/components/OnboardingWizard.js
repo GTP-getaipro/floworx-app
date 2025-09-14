@@ -111,7 +111,7 @@ const OnboardingWizard = ({ onComplete }) => {
           setRecoveryInfo(recoveryResponse.data.recovery);
         }
       } catch (recoveryError) {
-        console.warn('Could not fetch recovery info:', recoveryError);
+        // Recovery info is optional, silently continue
       }
 
       let response;
@@ -120,7 +120,7 @@ const OnboardingWizard = ({ onComplete }) => {
           headers: { Authorization: `Bearer ${token}` },
         });
       } catch (onboardingError) {
-        console.warn('Onboarding status endpoint not available, using user status fallback');
+        // Onboarding status endpoint not available, using user status fallback
 
         // Fallback: Get user status instead
         const userResponse = await axios.get(`${process.env.REACT_APP_API_URL}/user/status`, {

@@ -35,8 +35,7 @@ const useFormPersistence = (formKey, initialValues = {}, options = {}) => {
         // Mark that persisted data was found
       }
     } catch (error) {
-      // Log warning for debugging
-      console.warn('Failed to load persisted form data:', error);
+      // Failed to load persisted form data - silently continue
     } finally {
       setIsLoaded(true);
     }
@@ -59,8 +58,7 @@ const useFormPersistence = (formKey, initialValues = {}, options = {}) => {
           // Form data persisted successfully
         }
       } catch (error) {
-        // Log warning for debugging
-        console.warn('Failed to persist form data:', error);
+        // Failed to persist form data - silently continue
       }
     }, debounceMs),
     [storageKey, excludeFields, debounceMs, storageAPI]
@@ -94,8 +92,7 @@ const useFormPersistence = (formKey, initialValues = {}, options = {}) => {
       setHasPersistedData(false);
       // Persisted form data cleared
     } catch (error) {
-      // Log warning for debugging
-      console.warn('Failed to clear persisted data:', error);
+      // Failed to clear persisted data - silently continue
     }
   }, [storageKey]);
 

@@ -170,7 +170,7 @@ class ApiService {
     try {
       await this.post('/api/auth/logout');
     } catch (error) {
-      console.warn('Logout request failed:', error.message);
+      // Logout request failed - continue with local cleanup
     } finally {
       this.clearToken();
     }

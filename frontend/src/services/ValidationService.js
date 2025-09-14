@@ -13,7 +13,7 @@ class ValidationService {
   static validateField(field, value, allValues = {}) {
     const validator = validationRules[field];
     if (!validator) {
-      console.warn(`No validation rules found for field: ${field}`);
+      // No validation rules found for field - assume valid
       return { isValid: true, error: null };
     }
 

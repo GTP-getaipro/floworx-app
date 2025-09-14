@@ -63,7 +63,7 @@ const Dashboard = () => {
         timeoutId = setTimeout(() => {
           if (!isMounted) return;
           // Log timeout warning for debugging
-          console.warn('Dashboard loading timeout - forcing completion');
+          // Dashboard loading timeout - forcing completion
           setLoading(false);
           setError('Loading took too long. Please refresh the page.');
         }, 5000); // Reduced to 5 second timeout

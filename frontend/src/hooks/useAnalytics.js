@@ -52,8 +52,7 @@ const useAnalytics = () => {
         getRequestConfig()
       );
     } catch (error) {
-      console.warn('Analytics tracking failed:', error);
-      // Don't throw error to avoid breaking user experience
+      // Analytics tracking failed - don't throw error to avoid breaking user experience
     }
   }, []);
 
@@ -75,7 +74,7 @@ const useAnalytics = () => {
         getRequestConfig()
       );
     } catch (error) {
-      console.warn('Failed to track onboarding start:', error);
+      // Failed to track onboarding start - silently continue
     }
   }, []);
 
@@ -113,7 +112,7 @@ const useAnalytics = () => {
         getRequestConfig()
       );
     } catch (error) {
-      console.warn('Failed to track step completion:', error);
+      // Failed to track step completion - silently continue
     }
   }, []);
 
@@ -145,7 +144,7 @@ const useAnalytics = () => {
         getRequestConfig()
       );
     } catch (error) {
-      console.warn('Failed to track step failure:', error);
+      // Failed to track step failure - silently continue
     }
   }, []);
 
@@ -170,7 +169,7 @@ const useAnalytics = () => {
         getRequestConfig()
       );
     } catch (error) {
-      console.warn('Failed to track onboarding completion:', error);
+      // Failed to track onboarding completion - silently continue
     }
   }, []);
 
@@ -193,7 +192,7 @@ const useAnalytics = () => {
         getRequestConfig()
       );
     } catch (error) {
-      console.warn('Failed to track drop-off:', error);
+      // Failed to track drop-off - silently continue
     }
   }, []);
 

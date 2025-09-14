@@ -15,7 +15,7 @@ class DatabaseOperations {
    */
   async getClient() {
     await this.dbManager.initialize();
-
+    
     if (this.dbManager.useRestApi && this.dbManager.restClient) {
       return {
         type: 'REST_API',
@@ -35,9 +35,13 @@ class DatabaseOperations {
 
   async createUser(userData) {
     const { type, client } = await this.getClient();
-
+    
     if (type === 'REST_API') {
-      return client.getAdminClient().from('users').insert(userData).select().single();
+      return await client.getAdminClient()
+        .from('users')
+        .insert(userData)
+        .select()
+        .single();
     } else {
       // PostgreSQL implementation
       const query = `
@@ -53,16 +57,20 @@ class DatabaseOperations {
 
   async getUserById(userId) {
     const { type, client } = await this.getClient();
-
+    
     if (type === 'REST_API') {
-      return client.getAdminClient().from('users').select('*').eq('id', userId).single();
+      return await client.getAdminClient()
+        .from('users')
+        .select('*')
+        .eq('id', userId)
+        .single();
     } else {
       // PostgreSQL implementation
       const query = 'SELECT * FROM users WHERE id = $1';
       const result = await client.query(query, [userId]);
-      return {
-        data: result.rows[0] || null,
-        error: result.rows.length === 0 ? { code: 'PGRST116', message: 'No rows found' } : null
+      return { 
+        data: result.rows[0] || null, 
+        error: result.rows.length === 0 ? { code: 'PGRST116', message: 'No rows found' } : null 
       };
     }
   }
@@ -71,7 +79,11 @@ class DatabaseOperations {
     const { type, client } = await this.getClient();
 
     if (type === 'REST_API') {
-      return client.getAdminClient().from('users').select('*').eq('email', email.toLowerCase()).single();
+      return await client.getAdminClient()
+        .from('users')
+        .select('*')
+        .eq('email', email.toLowerCase())
+        .single();
     } else {
       // PostgreSQL implementation
       const query = 'SELECT * FROM users WHERE email = $1';
@@ -85,14 +97,17 @@ class DatabaseOperations {
 
   async updateUser(userId, updates) {
     const { type, client } = await this.getClient();
-
+    
     if (type === 'REST_API') {
-      return client.getAdminClient().from('users').update(updates).eq('id', userId).select().single();
+      return await client.getAdminClient()
+        .from('users')
+        .update(updates)
+        .eq('id', userId)
+        .select()
+        .single();
     } else {
       // PostgreSQL implementation
-      const setClause = Object.keys(updates)
-        .map((key, index) => `${key} = $${index + 2}`)
-        .join(', ');
+      const setClause = Object.keys(updates).map((key, index) => `${key} = $${index + 2}`).join(', ');
       const query = `UPDATE users SET ${setClause}, updated_at = NOW() WHERE id = $1 RETURNING *`;
       const values = [userId, ...Object.values(updates)];
       const result = await client.query(query, values);
@@ -106,27 +121,27 @@ class DatabaseOperations {
 
   async storeCredentials(userId, serviceName, accessToken, refreshToken = null, expiryDate = null, scope = null) {
     const { type, client } = await this.getClient();
-
+    
     if (type === 'REST_API') {
-      return client.storeCredentials(userId, serviceName, accessToken, refreshToken, expiryDate, scope);
+      return await client.storeCredentials(userId, serviceName, accessToken, refreshToken, expiryDate, scope);
     } else {
       // Use the existing PostgreSQL method
       const supabaseClient = require('./supabase-client');
       const supabaseInstance = new supabaseClient();
-      return supabaseInstance.storeCredentials(userId, serviceName, accessToken, refreshToken, expiryDate, scope);
+      return await supabaseInstance.storeCredentials(userId, serviceName, accessToken, refreshToken, expiryDate, scope);
     }
   }
 
   async getCredentials(userId, serviceName) {
     const { type, client } = await this.getClient();
-
+    
     if (type === 'REST_API') {
-      return client.getCredentials(userId, serviceName);
+      return await client.getCredentials(userId, serviceName);
     } else {
       // Use the existing PostgreSQL method
       const supabaseClient = require('./supabase-client');
       const supabaseInstance = new supabaseClient();
-      return supabaseInstance.getCredentials(userId, serviceName);
+      return await supabaseInstance.getCredentials(userId, serviceName);
     }
   }
 
@@ -136,27 +151,27 @@ class DatabaseOperations {
 
   async storeBusinessConfig(userId, configData) {
     const { type, client } = await this.getClient();
-
+    
     if (type === 'REST_API') {
-      return client.storeBusinessConfig(userId, configData);
+      return await client.storeBusinessConfig(userId, configData);
     } else {
       // Use the existing PostgreSQL method
       const supabaseClient = require('./supabase-client');
       const supabaseInstance = new supabaseClient();
-      return supabaseInstance.storeBusinessConfig(userId, configData);
+      return await supabaseInstance.storeBusinessConfig(userId, configData);
     }
   }
 
   async getBusinessConfig(userId) {
     const { type, client } = await this.getClient();
-
+    
     if (type === 'REST_API') {
-      return client.getBusinessConfig(userId);
+      return await client.getBusinessConfig(userId);
     } else {
       // Use the existing PostgreSQL method
       const supabaseClient = require('./supabase-client');
       const supabaseInstance = new supabaseClient();
-      return supabaseInstance.getBusinessConfig(userId);
+      return await supabaseInstance.getBusinessConfig(userId);
     }
   }
 
@@ -164,50 +179,29 @@ class DatabaseOperations {
   // ONBOARDING PROGRESS
   // =====================================================
 
-  async updateOnboardingProgress(
-    userId,
-    currentStep,
-    completedSteps,
-    stepData,
-    googleConnected = false,
-    workflowDeployed = false
-  ) {
+  async updateOnboardingProgress(userId, currentStep, completedSteps, stepData, googleConnected = false, workflowDeployed = false) {
     const { type, client } = await this.getClient();
-
+    
     if (type === 'REST_API') {
-      return client.updateOnboardingProgress(
-        userId,
-        currentStep,
-        completedSteps,
-        stepData,
-        googleConnected,
-        workflowDeployed
-      );
+      return await client.updateOnboardingProgress(userId, currentStep, completedSteps, stepData, googleConnected, workflowDeployed);
     } else {
       // Use the existing PostgreSQL method
       const supabaseClient = require('./supabase-client');
       const supabaseInstance = new supabaseClient();
-      return supabaseInstance.updateOnboardingProgress(
-        userId,
-        currentStep,
-        completedSteps,
-        stepData,
-        googleConnected,
-        workflowDeployed
-      );
+      return await supabaseInstance.updateOnboardingProgress(userId, currentStep, completedSteps, stepData, googleConnected, workflowDeployed);
     }
   }
 
   async getOnboardingProgress(userId) {
     const { type, client } = await this.getClient();
-
+    
     if (type === 'REST_API') {
-      return client.getOnboardingProgress(userId);
+      return await client.getOnboardingProgress(userId);
     } else {
       // Use the existing PostgreSQL method
       const supabaseClient = require('./supabase-client');
       const supabaseInstance = new supabaseClient();
-      return supabaseInstance.getOnboardingProgress(userId);
+      return await supabaseInstance.getOnboardingProgress(userId);
     }
   }
 
@@ -217,14 +211,14 @@ class DatabaseOperations {
 
   async trackEvent(userId, eventType, eventData, sessionId = null, ipAddress = null, userAgent = null) {
     const { type, client } = await this.getClient();
-
+    
     if (type === 'REST_API') {
-      return client.trackEvent(userId, eventType, eventData, sessionId, ipAddress, userAgent);
+      return await client.trackEvent(userId, eventType, eventData, sessionId, ipAddress, userAgent);
     } else {
       // Use the existing PostgreSQL method
       const supabaseClient = require('./supabase-client');
       const supabaseInstance = new supabaseClient();
-      return supabaseInstance.trackEvent(userId, eventType, eventData, sessionId, ipAddress, userAgent);
+      return await supabaseInstance.trackEvent(userId, eventType, eventData, sessionId, ipAddress, userAgent);
     }
   }
 
@@ -234,41 +228,27 @@ class DatabaseOperations {
 
   async storeWorkflowDeployment(userId, businessConfigId, n8nWorkflowId, workflowName, webhookUrl, deploymentData) {
     const { type, client } = await this.getClient();
-
+    
     if (type === 'REST_API') {
-      return client.storeWorkflowDeployment(
-        userId,
-        businessConfigId,
-        n8nWorkflowId,
-        workflowName,
-        webhookUrl,
-        deploymentData
-      );
+      return await client.storeWorkflowDeployment(userId, businessConfigId, n8nWorkflowId, workflowName, webhookUrl, deploymentData);
     } else {
       // Use the existing PostgreSQL method
       const supabaseClient = require('./supabase-client');
       const supabaseInstance = new supabaseClient();
-      return supabaseInstance.storeWorkflowDeployment(
-        userId,
-        businessConfigId,
-        n8nWorkflowId,
-        workflowName,
-        webhookUrl,
-        deploymentData
-      );
+      return await supabaseInstance.storeWorkflowDeployment(userId, businessConfigId, n8nWorkflowId, workflowName, webhookUrl, deploymentData);
     }
   }
 
   async getWorkflowDeployments(userId) {
     const { type, client } = await this.getClient();
-
+    
     if (type === 'REST_API') {
-      return client.getWorkflowDeployments(userId);
+      return await client.getWorkflowDeployments(userId);
     } else {
       // Use the existing PostgreSQL method
       const supabaseClient = require('./supabase-client');
       const supabaseInstance = new supabaseClient();
-      return supabaseInstance.getWorkflowDeployments(userId);
+      return await supabaseInstance.getWorkflowDeployments(userId);
     }
   }
 
@@ -278,11 +258,11 @@ class DatabaseOperations {
 
   async healthCheck() {
     const { type, client } = await this.getClient();
-
+    
     if (type === 'REST_API') {
-      return client.testConnection();
+      return await client.testConnection();
     } else {
-      return client.testConnection();
+      return await client.testConnection();
     }
   }
 
@@ -294,7 +274,11 @@ class DatabaseOperations {
     const { type, client } = await this.getClient();
 
     if (type === 'REST_API') {
-      return client.getAdminClient().from('business_types').select('*').eq('is_active', true).order('name');
+      return await client.getAdminClient()
+        .from('business_types')
+        .select('*')
+        .eq('is_active', true)
+        .order('name');
     } else {
       // PostgreSQL implementation
       const query = 'SELECT * FROM business_types WHERE is_active = true ORDER BY name';
@@ -307,7 +291,12 @@ class DatabaseOperations {
     const { type, client } = await this.getClient();
 
     if (type === 'REST_API') {
-      return client.getAdminClient().from('business_types').select('*').eq('slug', slug).eq('is_active', true).single();
+      return await client.getAdminClient()
+        .from('business_types')
+        .select('*')
+        .eq('slug', slug)
+        .eq('is_active', true)
+        .single();
     } else {
       // PostgreSQL implementation
       const query = 'SELECT * FROM business_types WHERE slug = $1 AND is_active = true';
@@ -323,7 +312,12 @@ class DatabaseOperations {
     const { type, client } = await this.getClient();
 
     if (type === 'REST_API') {
-      return client.getAdminClient().from('business_types').select('*').eq('id', id).eq('is_active', true).single();
+      return await client.getAdminClient()
+        .from('business_types')
+        .select('*')
+        .eq('id', id)
+        .eq('is_active', true)
+        .single();
     } else {
       // PostgreSQL implementation
       const query = 'SELECT * FROM business_types WHERE id = $1 AND is_active = true';
@@ -339,7 +333,11 @@ class DatabaseOperations {
     const { type, client } = await this.getClient();
 
     if (type === 'REST_API') {
-      return client.getAdminClient().from('business_types').insert(businessTypeData).select().single();
+      return await client.getAdminClient()
+        .from('business_types')
+        .insert(businessTypeData)
+        .select()
+        .single();
     } else {
       // PostgreSQL implementation
       const query = `
@@ -364,11 +362,14 @@ class DatabaseOperations {
     const { type, client } = await this.getClient();
 
     if (type === 'REST_API') {
-      return client.getAdminClient().from('business_types').delete().eq('id', businessTypeId);
+      return await client.getAdminClient()
+        .from('business_types')
+        .delete()
+        .eq('id', businessTypeId);
     } else {
       // PostgreSQL implementation
       const query = 'DELETE FROM business_types WHERE id = $1';
-      const _result = await client.query(query, [businessTypeId]);
+      const result = await client.query(query, [businessTypeId]);
       return { data: null, error: null };
     }
   }
@@ -377,11 +378,14 @@ class DatabaseOperations {
     const { type, client } = await this.getClient();
 
     if (type === 'REST_API') {
-      return client.getAdminClient().from('users').delete().eq('id', userId);
+      return await client.getAdminClient()
+        .from('users')
+        .delete()
+        .eq('id', userId);
     } else {
       // PostgreSQL implementation
       const query = 'DELETE FROM users WHERE id = $1';
-      const _result = await client.query(query, [userId]);
+      const result = await client.query(query, [userId]);
       return { data: null, error: null };
     }
   }
@@ -390,8 +394,7 @@ class DatabaseOperations {
     const { type, client } = await this.getClient();
 
     if (type === 'REST_API') {
-      return client
-        .getAdminClient()
+      return await client.getAdminClient()
         .from('users')
         .update({
           business_type_id: businessTypeId,
@@ -416,13 +419,12 @@ class DatabaseOperations {
     }
   }
 
-  async updateOnboardingStepData(userId, stepData) {
+  async updateOnboardingProgress(userId, stepData) {
     const { type, client } = await this.getClient();
 
     if (type === 'REST_API') {
       // First try to get existing progress
-      const existing = await client
-        .getAdminClient()
+      const existing = await client.getAdminClient()
         .from('onboarding_progress')
         .select('step_data')
         .eq('user_id', userId)
@@ -435,8 +437,7 @@ class DatabaseOperations {
       }
 
       // Upsert the progress
-      return client
-        .getAdminClient()
+      return await client.getAdminClient()
         .from('onboarding_progress')
         .upsert({
           user_id: userId,
@@ -485,8 +486,7 @@ class DatabaseOperations {
     const { type, client } = await this.getClient();
 
     if (type === 'REST_API') {
-      return client
-        .getAdminClient()
+      return await client.getAdminClient()
         .from('users')
         .select('id, email, first_name')
         .eq('email', email.toLowerCase())
@@ -506,8 +506,7 @@ class DatabaseOperations {
     const { type, client } = await this.getClient();
 
     if (type === 'REST_API') {
-      return client
-        .getAdminClient()
+      return await client.getAdminClient()
         .from('password_reset_tokens')
         .insert({
           user_id: userId,
@@ -533,15 +532,12 @@ class DatabaseOperations {
     const { type, client } = await this.getClient();
 
     if (type === 'REST_API') {
-      return client
-        .getAdminClient()
+      return await client.getAdminClient()
         .from('password_reset_tokens')
-        .select(
-          `
+        .select(`
           *,
           users!inner(id, email, first_name)
-        `
-        )
+        `)
         .eq('token', token)
         .eq('used', false)
         .gt('expires_at', new Date().toISOString())
@@ -566,8 +562,7 @@ class DatabaseOperations {
     const { type, client } = await this.getClient();
 
     if (type === 'REST_API') {
-      return client
-        .getAdminClient()
+      return await client.getAdminClient()
         .from('password_reset_tokens')
         .update({
           used: true,
@@ -593,8 +588,7 @@ class DatabaseOperations {
     const { type, client } = await this.getClient();
 
     if (type === 'REST_API') {
-      return client
-        .getAdminClient()
+      return await client.getAdminClient()
         .from('users')
         .update({
           password_hash: hashedPassword,
@@ -623,15 +617,12 @@ class DatabaseOperations {
     const { type, client } = await this.getClient();
 
     if (type === 'REST_API') {
-      return client
-        .getAdminClient()
+      return await client.getAdminClient()
         .from('email_verification_tokens')
-        .select(
-          `
+        .select(`
           *,
           users!inner(id, email, first_name)
-        `
-        )
+        `)
         .eq('token', token)
         .gt('expires_at', new Date().toISOString())
         .single();
@@ -655,8 +646,7 @@ class DatabaseOperations {
     const { type, client } = await this.getClient();
 
     if (type === 'REST_API') {
-      return client
-        .getAdminClient()
+      return await client.getAdminClient()
         .from('users')
         .update({
           email_verified: true,
@@ -677,11 +667,14 @@ class DatabaseOperations {
     const { type, client } = await this.getClient();
 
     if (type === 'REST_API') {
-      return client.getAdminClient().from('email_verification_tokens').delete().eq('token', token);
+      return await client.getAdminClient()
+        .from('email_verification_tokens')
+        .delete()
+        .eq('token', token);
     } else {
       // PostgreSQL implementation
       const query = 'DELETE FROM email_verification_tokens WHERE token = $1';
-      const _result = await client.query(query, [token]);
+      const result = await client.query(query, [token]);
       return { data: null, error: null };
     }
   }
@@ -690,8 +683,7 @@ class DatabaseOperations {
     const { type, client } = await this.getClient();
 
     if (type === 'REST_API') {
-      return client
-        .getAdminClient()
+      return await client.getAdminClient()
         .from('email_verification_tokens')
         .insert({
           user_id: userId,
@@ -713,6 +705,148 @@ class DatabaseOperations {
     }
   }
 
+  // EMAIL VERIFICATION TOKEN OPERATIONS
+  // =====================================================
+
+  /**
+   * Store verification token in database
+   * @param {string} userId - User ID
+   * @param {string} token - Verification token
+   * @param {Date} expiresAt - Token expiration date
+   * @returns {Promise<Object>} Result object
+   */
+  async storeVerificationToken(userId, token, expiresAt) {
+    const { type, client } = await this.getClient();
+
+    if (type === 'REST_API') {
+      return await client.getAdminClient()
+        .from('verification_tokens')
+        .insert({
+          user_id: userId,
+          token: token,
+          expires_at: expiresAt,
+          created_at: new Date().toISOString()
+        })
+        .select()
+        .single();
+    } else {
+      // PostgreSQL implementation
+      const query = `
+        INSERT INTO verification_tokens (user_id, token, expires_at, created_at)
+        VALUES ($1, $2, $3, NOW())
+        RETURNING *
+      `;
+      const result = await client.query(query, [userId, token, expiresAt]);
+      return { data: result.rows[0] || null, error: null };
+    }
+  }
+
+  /**
+   * Get verification token from database
+   * @param {string} token - Verification token
+   * @returns {Promise<Object>} Result object with token data
+   */
+  async getVerificationToken(token) {
+    const { type, client } = await this.getClient();
+
+    if (type === 'REST_API') {
+      return await client.getAdminClient()
+        .from('verification_tokens')
+        .select('user_id, expires_at, created_at')
+        .eq('token', token)
+        .single();
+    } else {
+      // PostgreSQL implementation
+      const query = `
+        SELECT user_id, expires_at, created_at
+        FROM verification_tokens
+        WHERE token = $1
+      `;
+      const result = await client.query(query, [token]);
+      return {
+        data: result.rows.length > 0 ? result.rows[0] : null,
+        error: null
+      };
+    }
+  }
+
+  /**
+   * Update user's email verification status
+   * @param {string} userId - User ID
+   * @param {boolean} verified - Verification status
+   * @returns {Promise<Object>} Result object
+   */
+  async updateUserEmailVerification(userId, verified) {
+    const { type, client } = await this.getClient();
+
+    if (type === 'REST_API') {
+      return await client.getAdminClient()
+        .from('users')
+        .update({
+          email_verified: verified,
+          email_verified_at: verified ? new Date().toISOString() : null
+        })
+        .eq('id', userId)
+        .select()
+        .single();
+    } else {
+      // PostgreSQL implementation
+      const query = `
+        UPDATE users
+        SET email_verified = $1, email_verified_at = $2
+        WHERE id = $3
+        RETURNING *
+      `;
+      const result = await client.query(query, [
+        verified,
+        verified ? new Date().toISOString() : null,
+        userId
+      ]);
+      return { data: result.rows[0] || null, error: null };
+    }
+  }
+
+  /**
+   * Delete verification token from database
+   * @param {string} token - Verification token
+   * @returns {Promise<Object>} Result object
+   */
+  async deleteVerificationToken(token) {
+    const { type, client } = await this.getClient();
+
+    if (type === 'REST_API') {
+      return await client.getAdminClient()
+        .from('verification_tokens')
+        .delete()
+        .eq('token', token);
+    } else {
+      // PostgreSQL implementation
+      const query = `DELETE FROM verification_tokens WHERE token = $1`;
+      const result = await client.query(query, [token]);
+      return { data: null, error: null };
+    }
+  }
+
+  /**
+   * Clean up expired verification tokens
+   * @returns {Promise<Object>} Result object
+   */
+  async cleanupExpiredVerificationTokens() {
+    const { type, client } = await this.getClient();
+
+    if (type === 'REST_API') {
+      return await client.getAdminClient()
+        .from('verification_tokens')
+        .delete()
+        .lt('expires_at', new Date().toISOString());
+    } else {
+      // PostgreSQL implementation
+      const query = `DELETE FROM verification_tokens WHERE expires_at < NOW()`;
+      const result = await client.query(query);
+      return { data: { deletedCount: result.rowCount }, error: null };
+    }
+  }
+
   // USER PROFILE OPERATIONS
   // =====================================================
 
@@ -720,8 +854,7 @@ class DatabaseOperations {
     const { type, client } = await this.getClient();
 
     if (type === 'REST_API') {
-      return client
-        .getAdminClient()
+      return await client.getAdminClient()
         .from('users')
         .select('id, email, first_name, last_name, company_name, created_at, last_login, email_verified')
         .eq('id', userId)
@@ -745,8 +878,7 @@ class DatabaseOperations {
     const { type, client } = await this.getClient();
 
     if (type === 'REST_API') {
-      return client
-        .getAdminClient()
+      return await client.getAdminClient()
         .from('users')
         .update({
           ...profileData,
@@ -778,8 +910,7 @@ class DatabaseOperations {
     if (type === 'REST_API') {
       // Try to get credentials - handle gracefully if table doesn't exist
       try {
-        const result = await client
-          .getAdminClient()
+        const result = await client.getAdminClient()
           .from('credentials')
           .select('service_name, created_at, expiry_date')
           .eq('user_id', userId);
@@ -788,7 +919,7 @@ class DatabaseOperations {
           data: result.data || [],
           error: result.error
         };
-      } catch (_error) {
+      } catch (error) {
         console.log('Credentials table not accessible, returning empty array');
         return { data: [], error: null };
       }
@@ -802,7 +933,7 @@ class DatabaseOperations {
         `;
         const result = await client.query(query, [userId]);
         return { data: result.rows, error: null };
-      } catch (_error) {
+      } catch (error) {
         console.log('Credentials table not found, returning empty array');
         return { data: [], error: null };
       }

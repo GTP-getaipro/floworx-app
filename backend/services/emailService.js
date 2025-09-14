@@ -1,7 +1,10 @@
 const crypto = require('crypto');
+const fs = require('fs');
+const path = require('path');
 
 const nodemailer = require('nodemailer');
 
+const { generateVerificationToken, generatePasswordResetToken } = require('../utils/tokenGenerator');
 const { databaseOperations } = require('../database/database-operations');
 require('dotenv').config();
 
@@ -44,7 +47,55 @@ class EmailService {
    * @returns {string} Verification token
    */
   generateVerificationToken() {
-    return crypto.randomBytes(32).toString('hex');
+    return generateVerificationToken();
+  }
+
+  /**
+   * Load and process email template
+   * @param {string} templateName - Template file name
+   * @param {Object} replacements - Key-value pairs for replacements
+   * @returns {string} Processed template HTML
+   */
+  loadTemplate(templateName, replacements = {}) {
+    try {
+      const templatePath = path.join(__dirname, '../templates', templateName);
+      let template = fs.readFileSync(templatePath, 'utf8');
+
+      // Replace template placeholders
+      for (const [key, value] of Object.entries(replacements)) {
+        const regex = new RegExp(`{{${key}}}`, 'g');
+        template = template.replace(regex, value);
+      }
+
+      return template;
+    } catch (error) {
+      console.error('Failed to load email template:', error);
+      return this.getFallbackTemplate(replacements);
+    }
+  }
+
+  /**
+   * Get fallback template when main template fails to load
+   * @param {Object} replacements - Template replacements
+   * @returns {string} Fallback HTML template
+   */
+  getFallbackTemplate(replacements = {}) {
+    return `
+      <html>
+        <body style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto; padding: 20px;">
+          <h2 style="color: #2563eb;">FloworxInvite</h2>
+          <h3>Email Verification Required</h3>
+          <p>Please click the link below to verify your email address:</p>
+          <a href="${replacements.verification_url || '#'}"
+             style="background-color: #2563eb; color: white; padding: 12px 24px; text-decoration: none; border-radius: 4px; display: inline-block;">
+            Verify Email Address
+          </a>
+          <p>If the button doesn't work, copy and paste this link: ${replacements.verification_url || ''}</p>
+          <p>This link will expire in 24 hours.</p>
+          <p>Best regards,<br>The FloworxInvite Team</p>
+        </body>
+      </html>
+    `;
   }
 
   /**
@@ -54,25 +105,30 @@ class EmailService {
    * @param {string} token - Verification token
    */
   async sendVerificationEmail(email, firstName, token) {
-    const verificationUrl = `${process.env.FRONTEND_URL}/verify-email?token=${token}`;
+    const verificationUrl = `${process.env.FRONTEND_URL || 'https://app.floworx-iq.com'}/verify-email?token=${token}`;
 
-    const htmlContent = this.getVerificationEmailTemplate(firstName, verificationUrl);
+    // Use new template system
+    const htmlContent = this.loadTemplate('verification-email.html', {
+      verification_url: verificationUrl,
+      first_name: firstName || 'there',
+      current_year: new Date().getFullYear()
+    });
 
     const senderConfig = this.getSenderConfig();
 
     const mailOptions = {
       from: senderConfig.from,
       to: email,
-      subject: 'Welcome to Floworx - Please Verify Your Email',
+      subject: 'Verify Your Email Address - FloworxInvite',
       html: htmlContent
     };
 
     try {
       const result = await this.transporter.sendMail(mailOptions);
-      console.log('Verification email sent:', result.messageId);
+      console.log('✅ Verification email sent successfully:', result.messageId);
       return { success: true, messageId: result.messageId };
     } catch (error) {
-      console.error('Error sending verification email:', error);
+      console.error('❌ Error sending verification email:', error);
       throw new Error('Failed to send verification email');
     }
   }
@@ -220,18 +276,21 @@ class EmailService {
     try {
       const expiresAt = new Date(Date.now() + 24 * 60 * 60 * 1000); // 24 hours
 
-      console.log(`📧 Storing verification token for user ${userId} via REST API...`);
+      console.log(`📧 Storing verification token for user ${userId}...`);
 
-      // For REST API, we'll use upsert functionality
-      const result = await databaseOperations.createEmailVerificationToken(userId, token, expiresAt.toISOString());
+      // Use new database operations method
+      const result = await databaseOperations.storeVerificationToken(userId, token, expiresAt.toISOString());
 
       if (result.error) {
         console.error('Failed to store verification token:', result.error);
         throw new Error('Failed to store verification token');
       }
 
+      console.log('✅ Verification token stored successfully');
+      return result;
+
     } catch (error) {
-      console.error('Error storing verification token:', error);
+      console.error('❌ Error storing verification token:', error);
       throw error;
     }
   }

@@ -419,7 +419,7 @@ class DatabaseOperations {
     }
   }
 
-  async updateOnboardingProgress(userId, stepData) {
+  async updateOnboardingStepData(userId, stepData) {
     const { type, client } = await this.getClient();
 
     if (type === 'REST_API') {
@@ -502,32 +502,29 @@ class DatabaseOperations {
     }
   }
 
-  async createPasswordResetToken(userId, token, expiresAt, ipAddress = null, userAgent = null) {
+  async createPasswordResetToken(userId, token, expiresAt) {
     const { type, client } = await this.getClient();
 
     if (type === 'REST_API') {
-      const result = await client.getAdminClient()
+      return await client.getAdminClient()
         .from('password_reset_tokens')
         .insert({
           user_id: userId,
           token: token,
           expires_at: expiresAt,
-          ip_address: ipAddress,
-          user_agent: userAgent,
           created_at: new Date().toISOString()
         })
         .select()
         .single();
-      return { success: !result.error, data: result.data, error: result.error };
     } else {
       // PostgreSQL implementation
       const query = `
-        INSERT INTO password_reset_tokens (user_id, token, expires_at, ip_address, user_agent, created_at)
-        VALUES ($1, $2, $3, $4, $5, NOW())
+        INSERT INTO password_reset_tokens (user_id, token, expires_at, created_at)
+        VALUES ($1, $2, $3, NOW())
         RETURNING *
       `;
-      const result = await client.query(query, [userId, token, expiresAt, ipAddress, userAgent]);
-      return { success: true, data: result.rows[0] || null, error: null };
+      const result = await client.query(query, [userId, token, expiresAt]);
+      return { data: result.rows[0] || null, error: null };
     }
   }
 
@@ -565,7 +562,7 @@ class DatabaseOperations {
     const { type, client } = await this.getClient();
 
     if (type === 'REST_API') {
-      const result = await client.getAdminClient()
+      return await client.getAdminClient()
         .from('password_reset_tokens')
         .update({
           used: true,
@@ -574,7 +571,6 @@ class DatabaseOperations {
         .eq('token', token)
         .select()
         .single();
-      return { success: !result.error, data: result.data, error: result.error };
     } else {
       // PostgreSQL implementation
       const query = `
@@ -584,7 +580,7 @@ class DatabaseOperations {
         RETURNING *
       `;
       const result = await client.query(query, [token]);
-      return { success: true, data: result.rows[0] || null, error: null };
+      return { data: result.rows[0] || null, error: null };
     }
   }
 
@@ -592,33 +588,25 @@ class DatabaseOperations {
     const { type, client } = await this.getClient();
 
     if (type === 'REST_API') {
-      const result = await client.getAdminClient()
+      return await client.getAdminClient()
         .from('users')
         .update({
           password_hash: hashedPassword,
-          last_password_reset: new Date().toISOString(),
-          failed_login_attempts: 0,
-          account_locked_until: null,
           updated_at: new Date().toISOString()
         })
         .eq('id', userId)
         .select()
         .single();
-      return { success: !result.error, data: result.data, error: result.error };
     } else {
       // PostgreSQL implementation
       const query = `
         UPDATE users
-        SET password_hash = $1,
-            last_password_reset = NOW(),
-            failed_login_attempts = 0,
-            account_locked_until = NULL,
-            updated_at = NOW()
+        SET password_hash = $1, updated_at = NOW()
         WHERE id = $2
         RETURNING id, email, first_name
       `;
       const result = await client.query(query, [hashedPassword, userId]);
-      return { success: true, data: result.rows[0] || null, error: null };
+      return { data: result.rows[0] || null, error: null };
     }
   }
 
@@ -807,186 +795,6 @@ class DatabaseOperations {
         console.log('Credentials table not found, returning empty array');
         return { data: [], error: null };
       }
-    }
-  }
-
-  async getUserWithSecurityInfo(email) {
-    const { type, client } = await this.getClient();
-
-    if (type === 'REST_API') {
-      const result = await client.getAdminClient()
-        .from('users')
-        .select('id, email, first_name, failed_login_attempts, account_locked_until')
-        .eq('email', email)
-        .single();
-      return { success: !result.error, data: result.data, error: result.error };
-    } else {
-      // PostgreSQL implementation
-      const query = `
-        SELECT id, email, first_name, failed_login_attempts, account_locked_until
-        FROM users
-        WHERE email = $1
-      `;
-      const result = await client.query(query, [email]);
-      return { success: true, data: result.rows[0] || null, error: null };
-    }
-  }
-
-  async getPasswordResetAttemptCount(userId, maxAttempts) {
-    const { type, client } = await this.getClient();
-    const oneHourAgo = new Date(Date.now() - 60 * 60 * 1000).toISOString();
-
-    if (type === 'REST_API') {
-      const result = await client.getAdminClient()
-        .from('password_reset_tokens')
-        .select('id', { count: 'exact' })
-        .eq('user_id', userId)
-        .gt('created_at', oneHourAgo);
-
-      const count = result.count || 0;
-      return {
-        success: !result.error,
-        rateLimited: count >= maxAttempts,
-        count: count,
-        error: result.error
-      };
-    } else {
-      // PostgreSQL implementation
-      const query = `
-        SELECT COUNT(*) as attempt_count
-        FROM password_reset_tokens
-        WHERE user_id = $1 AND created_at > $2
-      `;
-      const result = await client.query(query, [userId, oneHourAgo]);
-      const count = parseInt(result.rows[0].attempt_count, 10);
-      return {
-        success: true,
-        rateLimited: count >= maxAttempts,
-        count: count,
-        error: null
-      };
-    }
-  }
-
-  async logSecurityEvent(userId, action, resourceType, resourceId, ipAddress, userAgent, success, details) {
-    const { type, client } = await this.getClient();
-
-    if (type === 'REST_API') {
-      const result = await client.getAdminClient()
-        .from('security_audit_log')
-        .insert({
-          user_id: userId,
-          action: action,
-          resource_type: resourceType,
-          resource_id: resourceId,
-          ip_address: ipAddress,
-          user_agent: userAgent,
-          success: success,
-          details: details,
-          created_at: new Date().toISOString()
-        })
-        .select()
-        .single();
-      return { success: !result.error, data: result.data, error: result.error };
-    } else {
-      // PostgreSQL implementation
-      const query = `
-        INSERT INTO security_audit_log (user_id, action, resource_type, resource_id, ip_address, user_agent, success, details, created_at)
-        VALUES ($1, $2, $3, $4, $5, $6, $7, $8, NOW())
-        RETURNING *
-      `;
-      const result = await client.query(query, [
-        userId, action, resourceType, resourceId, ipAddress, userAgent, success, JSON.stringify(details)
-      ]);
-      return { success: true, data: result.rows[0] || null, error: null };
-    }
-  }
-
-  async cleanupExpiredTokens() {
-    const { type, client } = await this.getClient();
-
-    if (type === 'REST_API') {
-      const result = await client.getAdminClient()
-        .from('password_reset_tokens')
-        .delete()
-        .lt('expires_at', new Date().toISOString());
-      return { success: !result.error, count: result.count || 0, error: result.error };
-    } else {
-      // PostgreSQL implementation
-      const query = 'SELECT cleanup_expired_tokens()';
-      const result = await client.query(query);
-      return { success: true, count: result.rows[0].cleanup_expired_tokens, error: null };
-    }
-  }
-
-  async updateUserSecurityInfo(userId, securityData) {
-    const { type, client } = await this.getClient();
-
-    if (type === 'REST_API') {
-      const updateData = {
-        ...securityData,
-        updated_at: new Date().toISOString()
-      };
-      const result = await client.getAdminClient()
-        .from('users')
-        .update(updateData)
-        .eq('id', userId)
-        .select()
-        .single();
-      return { success: !result.error, data: result.data, error: result.error };
-    } else {
-      // PostgreSQL implementation
-      const fields = Object.keys(securityData);
-      const values = Object.values(securityData);
-      const setClause = fields.map((field, index) => `${field} = $${index + 2}`).join(', ');
-
-      const query = `
-        UPDATE users
-        SET ${setClause}, updated_at = NOW()
-        WHERE id = $1
-        RETURNING id, email, first_name
-      `;
-      const result = await client.query(query, [userId, ...values]);
-      return { success: true, data: result.rows[0] || null, error: null };
-    }
-  }
-
-  async invalidateUserPasswordResetTokens(userId, excludeToken = null) {
-    const { type, client } = await this.getClient();
-
-    if (type === 'REST_API') {
-      let query = client.getAdminClient()
-        .from('password_reset_tokens')
-        .update({
-          used: true,
-          used_at: new Date().toISOString()
-        })
-        .eq('user_id', userId)
-        .eq('used', false);
-
-      if (excludeToken) {
-        query = query.neq('token', excludeToken);
-      }
-
-      const result = await query.select();
-      return { success: !result.error, data: result.data, error: result.error };
-    } else {
-      // PostgreSQL implementation
-      let query = `
-        UPDATE password_reset_tokens
-        SET used = true, used_at = NOW()
-        WHERE user_id = $1 AND used = false
-      `;
-      const params = [userId];
-
-      if (excludeToken) {
-        query += ' AND token != $2';
-        params.push(excludeToken);
-      }
-
-      query += ' RETURNING *';
-      const result = await client.query(query, params);
-      return { success: true, data: result.rows, error: null };
     }
   }
 }

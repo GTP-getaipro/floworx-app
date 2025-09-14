@@ -145,10 +145,9 @@ class OAuthService {
         scope
       );
 
-      console.log(`✅ Stored ${provider} tokens for user ${userId}`);
       return result;
     } catch (error) {
-      console.error(`❌ Failed to store ${provider} tokens:`, error);
+      
       throw new Error(`Token storage failed: ${error.message}`);
     }
   }
@@ -169,7 +168,7 @@ class OAuthService {
 
       return result.data;
     } catch (error) {
-      console.error(`❌ Failed to retrieve ${provider} tokens:`, error);
+      
       return null;
     }
   }
@@ -214,8 +213,6 @@ class OAuthService {
           scope: currentTokens.scope
         });
 
-        console.log(`✅ Refreshed ${provider} access token for user ${userId}`);
-        
         return {
           success: true,
           accessToken: credentials.access_token,
@@ -225,7 +222,7 @@ class OAuthService {
 
       throw new Error(`Token refresh not implemented for ${provider}`);
     } catch (error) {
-      console.error(`❌ Token refresh failed for ${provider}:`, error);
+      
       throw new Error(`Token refresh failed: ${error.message}`);
     }
   }
@@ -277,7 +274,7 @@ class OAuthService {
             refreshed: true
           };
         } catch (refreshError) {
-          console.error(`❌ Token refresh failed:`, refreshError);
+          
           return {
             success: false,
             error: 'Token refresh failed',
@@ -292,7 +289,7 @@ class OAuthService {
         refreshed: false
       };
     } catch (error) {
-      console.error(`❌ Error getting valid access token:`, error);
+      
       return {
         success: false,
         error: error.message,
@@ -334,7 +331,7 @@ class OAuthService {
 
       return connections;
     } catch (error) {
-      console.error('❌ Error getting OAuth connections:', error);
+      
       return [];
     }
   }
@@ -350,7 +347,7 @@ class OAuthService {
       const tokenResult = await this.getValidAccessToken(userId, provider);
       return tokenResult.success;
     } catch (error) {
-      console.error(`❌ Error checking ${provider} connection:`, error);
+      
       return false;
     }
   }
@@ -378,7 +375,7 @@ class OAuthService {
         try {
           const oauth2Client = this.getGoogleOAuth2Client();
           await oauth2Client.revokeToken(tokens.accessToken);
-          console.log(`✅ Revoked ${provider} tokens with provider`);
+          
         } catch (revokeError) {
           console.warn(`⚠️ Failed to revoke tokens with ${provider}:`, revokeError.message);
           // Continue with local deletion even if remote revocation fails
@@ -389,15 +386,13 @@ class OAuthService {
       // Note: This would need a deleteCredentials method in databaseOperations
       // For now, we'll update with null values
       await databaseOperations.storeCredentials(userId, provider, null, null, null, null);
-      
-      console.log(`✅ Removed ${provider} connection for user ${userId}`);
-      
+
       return { 
         success: true, 
         message: `${provider} connection revoked successfully` 
       };
     } catch (error) {
-      console.error(`❌ Error revoking ${provider} connection:`, error);
+      
       throw new Error(`Failed to revoke connection: ${error.message}`);
     }
   }

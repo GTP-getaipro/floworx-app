@@ -41,7 +41,7 @@ router.post('/request', passwordResetRateLimit, validationMiddleware.passwordRes
     const _userAgent = req.get('User-Agent');
 
     // Check if user exists using REST API
-    console.log(`🔍 Checking if user exists: ${email}`);
+    
     const userResult = await databaseOperations.getUserByEmailForPasswordReset(email);
 
     if (userResult.error || !userResult.data) {
@@ -54,7 +54,6 @@ router.post('/request', passwordResetRateLimit, validationMiddleware.passwordRes
     }
 
     const user = userResult.data;
-    console.log(`✅ User found: ${user.email}`);
 
     // Generate reset token
     const token = crypto.randomBytes(32).toString('hex');
@@ -75,7 +74,6 @@ router.post('/request', passwordResetRateLimit, validationMiddleware.passwordRes
         });
       }
 
-      console.log('✅ Password reset token created');
     } catch (tokenError) {
       console.error('Failed to create reset token:', tokenError);
       return res.status(500).json({
@@ -121,11 +119,11 @@ router.post(
       const _userAgent = req.get('User-Agent');
 
       // Validate password reset token using REST API
-      console.log('🔍 Validating password reset token...');
+      
       const tokenResult = await databaseOperations.getPasswordResetToken(token);
 
       if (tokenResult.error || !tokenResult.data) {
-        console.log('❌ Invalid or expired token');
+        
         return res.status(400).json({
           success: false,
           valid: false,
@@ -134,7 +132,6 @@ router.post(
       }
 
       const tokenData = tokenResult.data;
-      console.log('✅ Valid password reset token found');
 
       // Mark token as used using REST API
       console.log('🔒 Marking token as used...');
@@ -144,7 +141,7 @@ router.post(
         console.error('Failed to mark token as used:', markUsedResult.error);
         // Continue anyway - token validation was successful
       } else {
-        console.log('✅ Token marked as used');
+        
       }
 
       res.json({
@@ -171,11 +168,11 @@ router.post('/reset', authRateLimit, validationMiddleware.passwordReset, async (
     const _userAgent = req.get('User-Agent');
 
     // Validate token first using REST API
-    console.log('🔍 Validating password reset token for password update...');
+    
     const tokenResult = await databaseOperations.getPasswordResetToken(token);
 
     if (tokenResult.error || !tokenResult.data) {
-      console.log('❌ Invalid or expired token for password reset');
+      
       return res.status(400).json({
         success: false,
         message: 'Invalid or expired token'
@@ -183,7 +180,6 @@ router.post('/reset', authRateLimit, validationMiddleware.passwordReset, async (
     }
 
     const tokenData = tokenResult.data;
-    console.log('✅ Valid token found for password reset');
 
     // Hash new password
     console.log('🔐 Hashing new password...');
@@ -215,7 +211,6 @@ router.post('/reset', authRateLimit, validationMiddleware.passwordReset, async (
     }
 
     const updatedUser = updateResult.data;
-    console.log(`✅ Password reset completed for user ${updatedUser.id}`);
 
     res.json({
       success: true,

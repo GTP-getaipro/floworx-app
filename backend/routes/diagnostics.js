@@ -51,8 +51,7 @@ router.get('/database-test', async (req, res) => {
     const startTime = Date.now();
     
     try {
-      console.log(`🔍 Testing: ${config.name}`);
-      
+
       const client = new Client({
         connectionString: config.connectionString,
         ssl: { rejectUnauthorized: false },
@@ -60,7 +59,6 @@ router.get('/database-test', async (req, res) => {
       });
 
       await client.connect();
-      console.log(`✅ ${config.name}: Connected successfully`);
 
       // Test basic query
       const result = await client.query('SELECT NOW() as now, version() as pg_version');
@@ -78,11 +76,9 @@ router.get('/database-test', async (req, res) => {
       };
 
       await client.end();
-      console.log(`✅ ${config.name}: Connection closed`);
 
     } catch (error) {
-      console.log(`❌ ${config.name}: ${error.message}`);
-      
+
       testResult.error = {
         message: error.message,
         code: error.code,
@@ -139,14 +135,13 @@ router.get('/database-test', async (req, res) => {
       });
 
       networkResult.success = true;
-      console.log(`✅ Network test ${host}:${port}: Success`);
 
     } catch (error) {
       networkResult.error = {
         message: error.message,
         code: error.code
       };
-      console.log(`❌ Network test ${host}:${port}: ${error.message}`);
+      
     }
 
     networkResult.duration = Date.now() - startTime;

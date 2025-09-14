@@ -3,53 +3,45 @@ const express = require('express');
 const { databaseOperations } = require('../database/database-operations');
 const { authenticateToken } = require('../middleware/auth');
 const { oauthService } = require('../services/OAuthService');
+const { asyncHandler, successResponse } = require('../middleware/standardErrorHandler');
+const { ErrorResponse } = require('../utils/ErrorResponse');
+const logger = require('../utils/logger');
 
 const router = express.Router();
 
 // GET /api/user/profile
 // Get user's profile information
-router.get('/profile', authenticateToken, async (req, res) => {
-  try {
-    console.log('🔍 Getting user profile for user:', req.user?.id);
+router.get('/profile', authenticateToken, asyncHandler(async (req, res) => {
+  logger.debug('Getting user profile', { userId: req.user?.id });
 
-    // Get user's profile information using REST API
-    const userResult = await databaseOperations.getUserProfile(req.user.id);
+  // Get user's profile information using REST API
+  const userResult = await databaseOperations.getUserProfile(req.user.id);
 
-    if (userResult.error || !userResult.data) {
-      console.error('User profile fetch error:', userResult.error);
-      return res.status(404).json({
-        success: false,
-        error: 'User not found',
-        message: 'User account not found'
-      });
-    }
-
-    const userDetails = userResult.data;
-    console.log(`✅ Retrieved profile for user: ${userDetails.email}`);
-
-    res.json({
-      success: true,
-      data: {
-        id: userDetails.id,
-        email: userDetails.email,
-        firstName: userDetails.first_name,
-        lastName: userDetails.last_name,
-        companyName: userDetails.company_name,
-        emailVerified: userDetails.email_verified,
-        createdAt: userDetails.created_at,
-        lastLogin: userDetails.last_login
-      }
+  if (userResult.error || !userResult.data) {
+    logger.warn('User profile not found', {
+      userId: req.user.id,
+      error: userResult.error
     });
-  } catch (error) {
-    console.error('User profile error:', error);
-    res.status(500).json({
-      success: false,
-      error: 'Internal server error',
-      message: 'Failed to fetch user profile',
-      details: error.message
-    });
+    throw ErrorResponse.notFound('User account not found', req.requestId);
   }
-});
+
+  const userDetails = userResult.data;
+  logger.debug('User profile retrieved successfully', {
+    userId: userDetails.id,
+    email: userDetails.email
+  });
+
+  successResponse(res, {
+    id: userDetails.id,
+    email: userDetails.email,
+    firstName: userDetails.first_name,
+    lastName: userDetails.last_name,
+    companyName: userDetails.company_name,
+    emailVerified: userDetails.email_verified,
+    createdAt: userDetails.created_at,
+    lastLogin: userDetails.last_login
+  });
+}));
 
 // PUT /api/user/profile
 // Update user's profile information
@@ -88,7 +80,6 @@ router.put('/profile', authenticateToken, async (req, res) => {
     }
 
     const updatedUser = updateResult.data;
-    console.log(`✅ Profile updated for user: ${updatedUser.email}`);
 
     res.json({
       success: true,
@@ -115,66 +106,57 @@ router.put('/profile', authenticateToken, async (req, res) => {
 
 // GET /api/user/status
 // Get user's connection status for dashboard
-router.get('/status', authenticateToken, async (req, res) => {
-  try {
-    console.log('🔍 Getting user status for user:', req.user?.id);
+router.get('/status', authenticateToken, asyncHandler(async (req, res) => {
+  logger.debug('Getting user status', { userId: req.user?.id });
 
-    // Get user's profile information using REST API
-    const userResult = await databaseOperations.getUserProfile(req.user.id);
+  // Get user's profile information using REST API
+  const userResult = await databaseOperations.getUserProfile(req.user.id);
 
-    if (userResult.error || !userResult.data) {
-      console.error('User status fetch error:', userResult.error);
-      return res.status(404).json({
-        success: false,
-        error: 'User not found',
-        message: 'User account not found'
-      });
-    }
-
-    const userDetails = userResult.data;
-
-    // Check if user has any connected services using REST API
-    console.log('🔍 Checking connected services...');
-    const servicesResult = await databaseOperations.getUserConnectedServices(req.user.id);
-    const connectedServices = (servicesResult.data || []).map(cred => ({
-      service: cred.service_name,
-      connected_at: cred.created_at,
-      expires_at: cred.expiry_date
-    }));
-
-    // Check OAuth connections using OAuth service
-    console.log('🔍 Checking OAuth services...');
-    const oauthServices = await oauthService.getOAuthConnections(req.user.id);
-
-    console.log(`✅ Retrieved status for user: ${userDetails.email}`);
-
-    res.json({
-      success: true,
-      data: {
-        id: userDetails.id,
-        email: userDetails.email,
-        firstName: userDetails.first_name,
-        lastName: userDetails.last_name,
-        companyName: userDetails.company_name,
-        createdAt: userDetails.created_at,
-        lastLogin: userDetails.last_login,
-        emailVerified: userDetails.email_verified || false,
-        connected_services: connectedServices,
-        oauth_connections: oauthServices,
-        has_google_connection:
-          connectedServices.some(service => service.service === 'google') ||
-          oauthServices.some(service => service.service === 'google' && service.status === 'active')
-      }
+  if (userResult.error || !userResult.data) {
+    logger.warn('User status fetch failed', {
+      userId: req.user.id,
+      error: userResult.error
     });
-  } catch (error) {
-    console.error('User status error:', error);
-    res.status(500).json({
-      success: false,
-      error: 'Internal server error',
-      message: 'Failed to load user status',
-      details: error.message
-    });
+    throw ErrorResponse.notFound('User account not found', req.requestId);
   }
-});
+
+  const userDetails = userResult.data;
+
+  // Check if user has any connected services using REST API
+  logger.debug('Checking connected services', { userId: req.user.id });
+  const servicesResult = await databaseOperations.getUserConnectedServices(req.user.id);
+  const connectedServices = (servicesResult.data || []).map(cred => ({
+    service: cred.service_name,
+    connected_at: cred.created_at,
+    expires_at: cred.expiry_date
+  }));
+
+  // Check OAuth connections using OAuth service
+  logger.debug('Checking OAuth services', { userId: req.user.id });
+  const oauthServices = oauthService.getOAuthConnections(req.user.id);
+
+  logger.debug('User status retrieved successfully', {
+    userId: userDetails.id,
+    email: userDetails.email,
+    connectedServicesCount: connectedServices.length,
+    oauthServicesCount: oauthServices.length
+  });
+
+  successResponse(res, {
+    id: userDetails.id,
+    email: userDetails.email,
+    firstName: userDetails.first_name,
+    lastName: userDetails.last_name,
+    companyName: userDetails.company_name,
+    createdAt: userDetails.created_at,
+    lastLogin: userDetails.last_login,
+    emailVerified: userDetails.email_verified || false,
+    connected_services: connectedServices,
+    oauth_connections: oauthServices,
+    has_google_connection:
+      connectedServices.some(service => service.service === 'google') ||
+      oauthServices.some(service => service.service === 'google' && service.status === 'active')
+  });
+}));
 
 module.exports = router;

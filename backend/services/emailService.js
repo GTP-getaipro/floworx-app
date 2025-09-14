@@ -230,7 +230,6 @@ class EmailService {
         throw new Error('Failed to store verification token');
       }
 
-      console.log('✅ Verification token stored successfully');
     } catch (error) {
       console.error('Error storing verification token:', error);
       throw error;
@@ -244,13 +243,12 @@ class EmailService {
    */
   async verifyEmailToken(token) {
     try {
-      console.log('🔍 Verifying email token via REST API...');
 
       // Get email verification token using REST API
       const tokenResult = await databaseOperations.getEmailVerificationToken(token);
 
       if (tokenResult.error || !tokenResult.data) {
-        console.log('❌ Invalid or expired verification token');
+        
         return { valid: false, message: 'Invalid or expired verification token' };
       }
 
@@ -259,8 +257,6 @@ class EmailService {
       const userId = user.id || tokenData.user_id;
       const email = user.email;
       const firstName = user.first_name;
-
-      console.log(`✅ Valid verification token found for user: ${email}`);
 
       // Mark email as verified using REST API
       console.log('📧 Marking email as verified...');
@@ -288,8 +284,6 @@ class EmailService {
         console.error('Failed to send welcome email:', emailError);
         // Continue anyway - verification was successful
       }
-
-      console.log(`✅ Email verification completed for user: ${email}`);
 
       return {
         valid: true,

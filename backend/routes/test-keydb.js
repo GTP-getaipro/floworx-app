@@ -35,8 +35,7 @@ router.get('/test-keydb', (req, res) => {
     });
     
   } catch (error) {
-    console.error('❌ KeyDB test failed:', error.message);
-    
+
     res.status(500).json({
       success: false,
       message: 'KeyDB test failed',

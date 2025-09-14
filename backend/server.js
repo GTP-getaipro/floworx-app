@@ -49,6 +49,12 @@ console.log('================================\n');
 // Enhanced security imports
 const { initialize: initializeDatabase } = require('./database/unified-connection');
 const { errorHandler, notFoundHandler } = require('./middleware/errorHandler');
+const {
+  standardErrorHandler,
+  notFoundHandler: standardNotFoundHandler,
+  requestIdMiddleware,
+  debugLogger
+} = require('./middleware/standardErrorHandler');
 const { performanceMiddlewareStack, smartCompression, cacheHeaders } = require('./middleware/performance');
 const {
   helmet,
@@ -330,9 +336,17 @@ if (process.env.NODE_ENV === 'production') {
   });
 }
 
-// Use centralized error handlers
-app.use(notFoundHandler);
-app.use(errorHandler);
+// Add request ID middleware for tracking
+app.use(requestIdMiddleware);
+
+// Add debug logging in development
+if (process.env.NODE_ENV === 'development') {
+  app.use(debugLogger);
+}
+
+// Use standardized error handlers
+app.use(standardNotFoundHandler);
+app.use(standardErrorHandler);
 
 // Graceful shutdown handler
 const gracefulShutdown = () => {

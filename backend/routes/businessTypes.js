@@ -32,12 +32,9 @@ router.get('/test', (req, res) => {
 // Get all active business types for selection UI
 router.get('/', async (req, res) => {
   try {
-    console.log('🔍 Fetching business types via REST API...');
-    console.log('🔍 databaseOperations object:', typeof databaseOperations);
-    console.log('🔍 getBusinessTypes method:', typeof databaseOperations.getBusinessTypes);
 
     if (!databaseOperations || typeof databaseOperations.getBusinessTypes !== 'function') {
-      console.error('❌ databaseOperations.getBusinessTypes is not available');
+      
       return res.status(500).json({
         success: false,
         error: 'Configuration error',
@@ -47,7 +44,6 @@ router.get('/', async (req, res) => {
     }
 
     const result = await databaseOperations.getBusinessTypes();
-    console.log('🔍 Database result:', result);
 
     if (result.error) {
       console.error('Business types fetch error:', result.error);
@@ -60,7 +56,6 @@ router.get('/', async (req, res) => {
     }
 
     const businessTypes = result.data || [];
-    console.log(`✅ Retrieved ${businessTypes.length} business types`);
 
     res.json({
       success: true,
@@ -83,7 +78,6 @@ router.get('/', async (req, res) => {
 router.get('/:slug', async (req, res) => {
   try {
     const { slug } = req.params;
-    console.log(`🔍 Fetching business type by slug: ${slug}`);
 
     const result = await databaseOperations.getBusinessTypeBySlug(slug);
 
@@ -105,7 +99,6 @@ router.get('/:slug', async (req, res) => {
       });
     }
 
-    console.log(`✅ Retrieved business type: ${result.data.name}`);
     res.json({
       success: true,
       data: result.data
@@ -139,8 +132,6 @@ router.post(
 
       const userId = req.user.id;
       const { businessTypeId } = req.body;
-
-      console.log(`🔍 Selecting business type ${businessTypeId} for user ${userId}`);
 
       // Verify business type exists and is active using REST API
       const businessTypeResult = await databaseOperations.getBusinessTypeById(businessTypeId);
@@ -181,7 +172,7 @@ router.post(
 
       try {
         await databaseOperations.updateOnboardingProgress(userId, stepData);
-        console.log('✅ Onboarding progress updated');
+        
       } catch (progressError) {
         console.error('Error updating onboarding progress:', progressError);
         // Don't fail the request for progress tracking errors
@@ -195,8 +186,6 @@ router.post(
         console.error('Analytics tracking error:', analyticsError);
         // Don't fail the request for analytics errors
       }
-
-      console.log(`✅ Business type ${businessType.name} selected successfully for user ${userId}`);
 
       res.json({
         success: true,
@@ -227,7 +216,6 @@ router.post(
 router.get('/user/current', authenticateToken, async (req, res) => {
   try {
     const userId = req.user.id;
-    console.log(`🔍 Fetching current business type for user: ${userId}`);
 
     // Get user data using REST API
     const userResult = await databaseOperations.getUserById(userId);
@@ -265,8 +253,6 @@ router.get('/user/current', authenticateToken, async (req, res) => {
 
     const businessType = businessTypeResult.data;
 
-    console.log(`✅ Retrieved business type: ${businessType.name} for user: ${userId}`);
-
     res.json({
       success: true,
       data: {
@@ -295,7 +281,6 @@ router.get('/user/current', authenticateToken, async (req, res) => {
 router.get('/:businessTypeId/template', authenticateToken, async (req, res) => {
   try {
     const { businessTypeId } = req.params;
-    console.log(`🔍 Fetching workflow template for business type: ${businessTypeId}`);
 
     // Get business type using REST API
     const businessTypeResult = await databaseOperations.getBusinessTypeById(parseInt(businessTypeId, 10));
@@ -334,8 +319,6 @@ router.get('/:businessTypeId/template', authenticateToken, async (req, res) => {
         }
       ]
     };
-
-    console.log(`✅ Generated workflow template for: ${businessType.name}`);
 
     res.json({
       success: true,

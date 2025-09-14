@@ -264,11 +264,11 @@ const ErrorUtils = {
     };
 
     if (error.statusCode >= 500) {
-      console.error('🚨 Server Error:', JSON.stringify(logData, null, 2));
+      console.error('Server Error:', JSON.stringify(logData, null, 2));
     } else if (error.statusCode >= 400) {
-      console.warn('⚠️  Client Error:', JSON.stringify(logData, null, 2));
+      console.warn('Client Error:', JSON.stringify(logData, null, 2));
     } else {
-      console.info('ℹ️  Error Info:', JSON.stringify(logData, null, 2));
+      console.info('Error Info:', JSON.stringify(logData, null, 2));
     }
   }
 };

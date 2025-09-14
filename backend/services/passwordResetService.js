@@ -540,7 +540,6 @@ class PasswordResetService {
     }
   }
 
-
 }
 
 module.exports = new PasswordResetService();

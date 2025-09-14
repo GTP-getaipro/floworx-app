@@ -2,6 +2,9 @@ const express = require('express');
 
 const { query } = require('../database/unified-connection');
 const { authenticateToken } = require('../middleware/auth');
+const { asyncHandler, successResponse } = require('../middleware/standardErrorHandler');
+const { ErrorResponse } = require('../utils/ErrorResponse');
+const logger = require('../utils/logger');
 
 const router = express.Router();
 
@@ -108,17 +111,18 @@ router.get('/', authenticateToken, async (req, res) => {
 
     res.status(200).json(dashboardData);
   } catch (error) {
-    console.error('Dashboard error:', error);
-    console.error('Error details:', {
-      message: error.message,
+    logger.error('Dashboard error', {
+      error: error.message,
       stack: error.stack,
       userId: req.user?.id
     });
-    res.status(500).json({
-      error: 'Failed to load dashboard',
-      message: 'Something went wrong while loading dashboard data',
-      debug: process.env.NODE_ENV === 'development' ? error.message : undefined
-    });
+
+    const errorResponse = ErrorResponse.internal('Failed to load dashboard data', {
+      originalError: error.message,
+      userId: req.user?.id
+    }, req.requestId);
+
+    errorResponse.send(res, req);
   }
 });
 

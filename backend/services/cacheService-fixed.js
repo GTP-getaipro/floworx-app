@@ -48,7 +48,7 @@ class CacheService {
   async initializeKeyDB() {
     // Skip KeyDB initialization if not configured
     if (!process.env.REDIS_HOST) {
-      console.log('⚠️ KeyDB disabled - using memory cache only');
+      
       console.log(`   REDIS_HOST: ${process.env.REDIS_HOST || 'not set'}`);
       console.log(`   NODE_ENV: ${process.env.NODE_ENV || 'not set'}`);
       this.isRedisConnected = false;
@@ -71,7 +71,6 @@ class CacheService {
 
       for (const host of possibleHosts) {
         try {
-          console.log(`🔗 Trying KeyDB connection to: ${host}:${process.env.REDIS_PORT || 6379}`);
 
           const keydbConfig = {
             host: host,
@@ -98,7 +97,7 @@ class CacheService {
 
           // Set up event handlers
           this.redis.on('connect', () => {
-            console.log(`✅ KeyDB connected successfully to ${host}`);
+            
             this.isRedisConnected = true;
           });
 
@@ -121,7 +120,6 @@ class CacheService {
             )
           ]);
 
-          console.log(`✅ KeyDB ping successful on ${host}`);
           connected = true;
           break;
 
@@ -502,7 +500,7 @@ class CacheService {
         await this.redis.quit();
       }
       this.memoryCache.close();
-      console.log('✅ Cache service shutdown complete');
+      
     } catch (error) {
       console.error('Cache shutdown error:', error);
     }

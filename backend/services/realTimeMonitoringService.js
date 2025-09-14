@@ -46,7 +46,6 @@ class RealTimeMonitoringService extends EventEmitter {
     if (this.isMonitoring) {return;}
 
     this.isMonitoring = true;
-    console.log('🔍 Starting real-time query monitoring...');
 
     // Monitor every 30 seconds
     this.monitoringInterval = setInterval(() => {

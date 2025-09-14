@@ -10,9 +10,10 @@ const { authRateLimit, authSlowDown, accountLockoutLimiter } = require('../middl
 const { registerSchema, loginSchema } = require('../schemas/auth');
 const emailService = require('../services/emailService');
 const passwordResetService = require('../services/passwordResetService');
-const { asyncWrapper } = require('../utils/asyncWrapper');
-const { ConflictError } = require('../utils/errors');
+const { asyncHandler, successResponse } = require('../middleware/standardErrorHandler');
+const { ErrorResponse } = require('../utils/ErrorResponse');
 const { validateRequest } = require('../utils/validateRequest');
+const logger = require('../utils/logger');
 
 const router = express.Router();
 
@@ -29,14 +30,17 @@ const query = async (sql, params) => {
 router.post(
   '/register',
   validateRequest({ body: registerSchema }),
-  asyncWrapper(async (req, res) => {
+  asyncHandler(async (req, res) => {
     const { email, password, firstName, lastName, businessName } = req.body;
+
+    logger.info('Registration attempt', { email, businessName });
 
     // Check if user already exists
     const existingUserResult = await databaseOperations.getUserByEmail(email);
 
     if (existingUserResult.data) {
-      throw new ConflictError('An account with this email already exists');
+      logger.warn('Registration failed - user already exists', { email });
+      throw ErrorResponse.conflict('An account with this email already exists');
     }
 
     // Hash the password
@@ -60,7 +64,13 @@ router.post(
     const createUserResult = await databaseOperations.createUser(userData);
 
     if (createUserResult.error) {
-      throw new Error(`Failed to create user: ${createUserResult.error.message}`);
+      logger.error('User creation failed', {
+        email,
+        error: createUserResult.error.message
+      });
+      throw ErrorResponse.database('Failed to create user account', {
+        originalError: createUserResult.error.message
+      });
     }
 
     const user = createUserResult.data;
@@ -77,23 +87,25 @@ router.post(
       // Send verification email
       await emailService.sendVerificationEmail(email, firstName, verificationToken);
       emailSent = true;
-      console.log(`✅ Verification email sent successfully to ${email}`);
+      logger.info('Verification email sent successfully', { email });
     } catch (error) {
       emailError = error;
-      console.error('Failed to handle email verification:', error.message);
-      console.error('Full error details:', error);
+      logger.warn('Email verification failed', {
+        email,
+        error: error.message,
+        stack: error.stack
+      });
 
       // For now, continue with registration even if email verification fails
-      // But log the specific error for debugging
-      console.error('Email verification error stack:', error.stack);
     }
 
-    res.status(201).json({
-      message: emailSent
-        ? 'User registered successfully. Please check your email to verify your account.'
-        : 'User registered successfully. Email verification is temporarily unavailable - please contact support.',
-      requiresVerification: emailSent, // Only require verification if email was sent successfully
-      emailSent: emailSent,
+    logger.info('Registration successful', {
+      userId: user.id,
+      email: user.email,
+      emailSent
+    });
+
+    successResponse(res, {
       user: {
         id: user.id,
         email: user.email,
@@ -103,6 +115,8 @@ router.post(
         emailVerified: false, // Always false for new registrations
         created_at: user.created_at
       },
+      requiresVerification: emailSent,
+      emailSent: emailSent,
       // Include error details in development/testing
       ...(process.env.NODE_ENV !== 'production' && emailError && {
         emailError: {
@@ -110,7 +124,10 @@ router.post(
           type: emailError.constructor.name
         }
       })
-    });
+    }, emailSent
+      ? 'User registered successfully. Please check your email to verify your account.'
+      : 'User registered successfully. Email verification is temporarily unavailable - please contact support.',
+    201);
   })
 );
 
@@ -122,27 +139,23 @@ router.post(
   authSlowDown,
   accountLockoutLimiter,
   validateRequest({ body: loginSchema }),
-  asyncWrapper(async (req, res) => {
+  asyncHandler(async (req, res) => {
     const { email, password } = req.body;
 
-    try {
-      // Find user by email
-      const userResult = await databaseOperations.getUserByEmail(email);
+    logger.info('Login attempt', { email });
 
-      if (userResult.error || !userResult.data) {
-        // Update lockout data for failed attempt
-        if (req.updateLockoutData) {
-          req.updateLockoutData(true);
-        }
-        return res.status(401).json({
-          success: false,
-          error: {
-            type: 'AUTHENTICATION_ERROR',
-            message: 'Invalid credentials',
-            code: 401
-          }
-        });
+    // Find user by email
+    const userResult = await databaseOperations.getUserByEmail(email);
+
+    if (userResult.error || !userResult.data) {
+      // Update lockout data for failed attempt
+      if (req.updateLockoutData) {
+        req.updateLockoutData(true);
       }
+      logger.warn('Login failed - invalid credentials', { email });
+      const errorResponse = ErrorResponse.authentication('Invalid credentials', req.requestId);
+      return errorResponse.send(res, req);
+    }
 
       const user = userResult.data;
 
@@ -161,64 +174,45 @@ router.post(
         });
       }
 
-      // Compare password with hash
-      const passwordMatch = await bcrypt.compare(password, user.password_hash);
+    // Compare password with hash
+    const passwordMatch = await bcrypt.compare(password, user.password_hash);
 
-      if (!passwordMatch) {
-        // Update lockout data for failed attempt
-        if (req.updateLockoutData) {
-          req.updateLockoutData(true);
-        }
-        return res.status(401).json({
-          success: false,
-          error: {
-            type: 'AUTHENTICATION_ERROR',
-            message: 'Invalid credentials',
-            code: 401
-          }
-        });
-      }
-
-      // Generate JWT token
-      const token = jwt.sign({ userId: user.id, email: user.email }, process.env.JWT_SECRET, { expiresIn: '24h' });
-
-      // Update lockout data for successful attempt
-      if (req.updateLockoutData) {
-        req.updateLockoutData(false);
-      }
-
-      // Return success response
-      res.status(200).json({
-        success: true,
-        message: 'Login successful',
-        token,
-        user: {
-          id: user.id,
-          email: user.email,
-          firstName: user.first_name,
-          lastName: user.last_name,
-          companyName: user.company_name,
-          createdAt: user.created_at
-        },
-        expiresIn: '24h'
-      });
-    } catch (error) {
-      console.error('❌ Login error:', error.message);
-
+    if (!passwordMatch) {
       // Update lockout data for failed attempt
       if (req.updateLockoutData) {
         req.updateLockoutData(true);
       }
-
-      return res.status(500).json({
-        success: false,
-        error: {
-          type: 'INTERNAL_ERROR',
-          message: 'Login service temporarily unavailable',
-          code: 500
-        }
-      });
+      logger.warn('Login failed - password mismatch', { email });
+      const errorResponse = ErrorResponse.authentication('Invalid credentials', req.requestId);
+      return errorResponse.send(res, req);
     }
+
+    // Generate JWT token
+    const token = jwt.sign({ userId: user.id, email: user.email }, process.env.JWT_SECRET, { expiresIn: '24h' });
+
+    // Update lockout data for successful attempt
+    if (req.updateLockoutData) {
+      req.updateLockoutData(false);
+    }
+
+    logger.info('Login successful', {
+      userId: user.id,
+      email: user.email
+    });
+
+    // Return success response
+    successResponse(res, {
+      token,
+      user: {
+        id: user.id,
+        email: user.email,
+        firstName: user.first_name,
+        lastName: user.last_name,
+        companyName: user.company_name,
+        createdAt: user.created_at
+      },
+      expiresIn: '24h'
+    }, 'Login successful');
   })
 );
 

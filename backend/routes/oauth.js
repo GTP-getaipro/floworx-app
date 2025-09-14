@@ -6,6 +6,9 @@ const { authenticateToken } = require('../middleware/auth');
 const { NotFoundError, _ExternalServiceError, asyncHandler } = require('../middleware/errorHandler');
 const { encrypt, decrypt } = require('../utils/encryption');
 const { oauthService } = require('../services/OAuthService');
+const { successResponse } = require('../middleware/standardErrorHandler');
+const { ErrorResponse } = require('../utils/ErrorResponse');
+const logger = require('../utils/logger');
 
 const router = express.Router();
 
@@ -42,19 +45,27 @@ router.get('/google', (req, res) => {
       const decoded = jwt.verify(token, process.env.JWT_SECRET);
       user = { id: decoded.userId, email: decoded.email };
     } catch (jwtError) {
-      console.error('JWT verification failed:', jwtError);
+      logger.warn('JWT verification failed during OAuth initiation', {
+        error: jwtError.message
+      });
       return res.redirect(`${process.env.FRONTEND_URL || 'http://localhost:3000'}/dashboard?error=invalid_token`);
     }
 
     // Use OAuth service to generate authorization URL
     const authUrl = oauthService.generateAuthUrl('google', user.id);
 
-    console.log(`🔗 Generated OAuth URL for user ${user.id}`);
+    logger.info('OAuth URL generated successfully', {
+      userId: user.id,
+      provider: 'google'
+    });
 
     // Redirect user to Google consent screen
     res.redirect(authUrl);
   } catch (error) {
-    console.error('OAuth initiation error:', error);
+    logger.error('OAuth initiation error', {
+      error: error.message,
+      stack: error.stack
+    });
 
     // Enhanced error handling
     const errorType = error.message.includes('configuration') ? 'config_error' : 'oauth_failed';
@@ -70,7 +81,11 @@ router.get('/google/callback', async (req, res) => {
 
     // Handle OAuth errors with enhanced error reporting
     if (error) {
-      console.error('OAuth error from Google:', error);
+      logger.warn('OAuth error from Google', {
+        error,
+        state,
+        userAgent: req.get('User-Agent')
+      });
       const errorMap = {
         'access_denied': 'oauth_denied',
         'invalid_request': 'invalid_callback',

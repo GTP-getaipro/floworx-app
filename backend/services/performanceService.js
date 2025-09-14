@@ -6,6 +6,7 @@
 const { performance } = require('perf_hooks');
 
 const cacheService = require('./cacheService');
+const logger = require('../utils/logger');
 
 /**
  * Performance monitoring and optimization service
@@ -65,7 +66,7 @@ class PerformanceService {
 
       // Log critical requests
       if (duration > this.thresholds.criticalRequest) {
-        console.error(`🚨 Critical Slow Request (${duration.toFixed(2)}ms): ${req.method} ${req.path}`);
+        logger.warn(`Critical slow request (${duration.toFixed(2)}ms): ${req.method} ${req.path}`);
       }
 
       originalEnd.apply(res, args);

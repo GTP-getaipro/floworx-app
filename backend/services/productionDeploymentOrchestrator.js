@@ -14,7 +14,6 @@ const productionMonitoringService = require('./productionMonitoringService');
 const realTimeMonitoringService = require('./realTimeMonitoringService');
 const stakeholderReportingService = require('./stakeholderReportingService');
 
-
 class ProductionDeploymentOrchestrator extends EventEmitter {
   constructor() {
     super();

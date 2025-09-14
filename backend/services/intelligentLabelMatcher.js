@@ -518,10 +518,6 @@ class IntelligentLabelMatcher {
            label.type === 'system';
   }
 
-
-
-
-
   /**
    * Generate hot tub & spa business data collection form
    * @param {Object} analysisResult - Result from analyzeLabelsForAutomation

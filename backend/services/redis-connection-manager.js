@@ -4,6 +4,7 @@
  */
 
 const Redis = require('ioredis');
+const logger = require('../utils/logger');
 
 class RedisConnectionManager {
   constructor() {
@@ -97,7 +98,7 @@ class RedisConnectionManager {
 
     // Connection success
     this.client.on('connect', () => {
-      console.log('✅ Redis connected successfully!');
+      
       this.isConnected = true;
       resolve(this.client);
     });
@@ -109,8 +110,7 @@ class RedisConnectionManager {
 
     // Connection error
     this.client.on('error', (error) => {
-      console.log(`❌ Redis connection error: ${error.message}`);
-      
+
       if (this.connectionAttempts < this.maxRetries) {
         // Calculate exponential backoff delay
         const delay = Math.min(
@@ -125,7 +125,7 @@ class RedisConnectionManager {
           this.attemptConnection(config, resolve, reject);
         }, delay);
       } else {
-        console.log('❌ Max Redis connection attempts reached');
+        
         reject(new Error(`Redis connection failed after ${this.maxRetries} attempts: ${error.message}`));
       }
     });
@@ -138,7 +138,7 @@ class RedisConnectionManager {
 
     // Attempt to connect
     this.client.connect().catch((error) => {
-      console.log(`❌ Redis connect() failed: ${error.message}`);
+      logger.error(`Redis connection failed: ${error.message}`);
     });
   }
 
@@ -151,7 +151,7 @@ class RedisConnectionManager {
     }
     
     // Return a mock client if Redis is not available
-    console.log('⚠️  Redis not available, using fallback');
+    
     return this.createFallbackClient();
   }
 
@@ -183,10 +183,10 @@ class RedisConnectionManager {
     try {
       const client = this.getClient();
       const result = await client.ping();
-      console.log('✅ Redis ping successful:', result);
+      
       return true;
     } catch (error) {
-      console.log('❌ Redis ping failed:', error.message);
+      
       return false;
     }
   }

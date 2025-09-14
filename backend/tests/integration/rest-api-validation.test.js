@@ -12,7 +12,7 @@ const app = require('../../server');
 describe('REST API Validation Tests', () => {
   let testUser;
   let authToken;
-  let testBusinessType;
+  let _testBusinessType;
 
   beforeAll(async () => {
     // Verify database connection
@@ -42,10 +42,7 @@ describe('REST API Validation Tests', () => {
         email: 'new-user-test@floworx-test.com'
       });
 
-      const response = await request(app)
-        .post('/api/auth/register')
-        .send(userData)
-        .expect(201);
+      const response = await request(app).post('/api/auth/register').send(userData).expect(201);
 
       expect(response.body.success).toBe(true);
       expect(response.body.user).toBeDefined();
@@ -64,10 +61,7 @@ describe('REST API Validation Tests', () => {
         password: 'TestPassword123!'
       };
 
-      const response = await request(app)
-        .post('/api/auth/login')
-        .send(loginData)
-        .expect(200);
+      const response = await request(app).post('/api/auth/login').send(loginData).expect(200);
 
       expect(response.body.success).toBe(true);
       expect(response.body.user).toBeDefined();
@@ -101,9 +95,7 @@ describe('REST API Validation Tests', () => {
 
   describe('System Health Endpoints', () => {
     test('GET /api/health - should return system health', async () => {
-      const response = await request(app)
-        .get('/api/health')
-        .expect(200);
+      const response = await request(app).get('/api/health').expect(200);
 
       expect(response.body.status).toBe('healthy');
       expect(response.body.timestamp).toBeDefined();
@@ -111,9 +103,7 @@ describe('REST API Validation Tests', () => {
     });
 
     test('GET /api/health/database - should return database health', async () => {
-      const response = await request(app)
-        .get('/api/health/database')
-        .expect(200);
+      const response = await request(app).get('/api/health/database').expect(200);
 
       expect(response.body.status).toBe('healthy');
       expect(response.body.connection).toBeDefined();
@@ -123,9 +113,7 @@ describe('REST API Validation Tests', () => {
 
   describe('Protected Endpoints', () => {
     test('GET /api/dashboard/stats - should require authentication', async () => {
-      const response = await request(app)
-        .get('/api/dashboard/stats')
-        .expect(401);
+      const response = await request(app).get('/api/dashboard/stats').expect(401);
 
       expect(response.body.success).toBe(false);
     });
@@ -154,9 +142,7 @@ describe('REST API Validation Tests', () => {
 
   describe('Business Configuration Endpoints', () => {
     test('GET /api/business-types - should return business types', async () => {
-      const response = await request(app)
-        .get('/api/business-types')
-        .expect(200);
+      const response = await request(app).get('/api/business-types').expect(200);
 
       expect(response.body.success).toBe(true);
       expect(Array.isArray(response.body.data)).toBe(true);
@@ -175,15 +161,13 @@ describe('REST API Validation Tests', () => {
       expect(response.body.data).toBeDefined();
       expect(response.body.data.name).toBe(businessTypeData.name);
 
-      testBusinessType = response.body.data;
+      _testBusinessType = response.body.data;
     });
   });
 
   describe('OAuth Endpoints', () => {
     test('GET /api/oauth/google - should redirect to Google OAuth', async () => {
-      const response = await request(app)
-        .get('/api/oauth/google')
-        .expect(302);
+      const response = await request(app).get('/api/oauth/google').expect(302);
 
       expect(response.headers.location).toContain('accounts.google.com');
     });
@@ -191,9 +175,7 @@ describe('REST API Validation Tests', () => {
     test('GET /api/oauth/google/callback - should handle OAuth callback', async () => {
       // This test would require mocking Google OAuth response
       // For now, just verify the endpoint exists
-      const response = await request(app)
-        .get('/api/oauth/google/callback')
-        .expect(400); // Expected without proper OAuth code
+      const response = await request(app).get('/api/oauth/google/callback').expect(400); // Expected without proper OAuth code
 
       expect(response.body.success).toBe(false);
     });
@@ -201,9 +183,7 @@ describe('REST API Validation Tests', () => {
 
   describe('Performance and Monitoring', () => {
     test('GET /api/performance - should return performance metrics', async () => {
-      const response = await request(app)
-        .get('/api/performance')
-        .expect(200);
+      const response = await request(app).get('/api/performance').expect(200);
 
       expect(response.body.success).toBe(true);
       expect(response.body.metrics).toBeDefined();
@@ -213,9 +193,9 @@ describe('REST API Validation Tests', () => {
 
     test('Database operations should complete within reasonable time', async () => {
       const startTime = Date.now();
-      
+
       const user = await restApiTestHelpers.getTestUserByEmail(testUser.email);
-      
+
       const endTime = Date.now();
       const duration = endTime - startTime;
 
@@ -246,9 +226,7 @@ describe('REST API Validation Tests', () => {
     });
 
     test('Should handle non-existent endpoints', async () => {
-      const response = await request(app)
-        .get('/api/non-existent-endpoint')
-        .expect(404);
+      const response = await request(app).get('/api/non-existent-endpoint').expect(404);
 
       expect(response.body.success).toBe(false);
     });
@@ -260,10 +238,7 @@ describe('REST API Validation Tests', () => {
         email: 'invalid-email-format'
       });
 
-      const response = await request(app)
-        .post('/api/auth/register')
-        .send(userData)
-        .expect(400);
+      const response = await request(app).post('/api/auth/register').send(userData).expect(400);
 
       expect(response.body.success).toBe(false);
       expect(response.body.error.type).toBe('VALIDATION_ERROR');
@@ -274,10 +249,7 @@ describe('REST API Validation Tests', () => {
         password: '123' // Weak password
       });
 
-      const response = await request(app)
-        .post('/api/auth/register')
-        .send(userData)
-        .expect(400);
+      const response = await request(app).post('/api/auth/register').send(userData).expect(400);
 
       expect(response.body.success).toBe(false);
       expect(response.body.error.type).toBe('VALIDATION_ERROR');

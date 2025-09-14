@@ -8,9 +8,9 @@ const dotenv = require('dotenv');
 
 // Try different .env file locations based on execution context
 const envPaths = [
-  path.resolve(__dirname, '../.env'),      // Development: .env in root from backend
-  path.resolve(__dirname, '../../.env'),   // Container: .env in root from backend/config
-  path.resolve(process.cwd(), '.env')      // Fallback: current working directory
+  path.resolve(__dirname, '../.env'), // Development: .env in root from backend
+  path.resolve(__dirname, '../../.env'), // Container: .env in root from backend/config
+  path.resolve(process.cwd(), '.env') // Fallback: current working directory
 ];
 
 let envLoaded = false;
@@ -22,7 +22,7 @@ for (const envPath of envPaths) {
       envLoaded = true;
       break;
     }
-  } catch (error) {
+  } catch (_error) {
     // Continue to next path
   }
 }
@@ -34,7 +34,10 @@ if (!envLoaded) {
 // 🔍 TEMPORARY DEBUG - Remove after fixing Coolify issues
 console.log('🔍 COOLIFY ENVIRONMENT DEBUG:');
 console.log('================================');
-console.log('DATABASE_URL:', process.env.DATABASE_URL ? `SET (${process.env.DATABASE_URL.substring(0, 30)}...)` : '❌ NOT SET');
+console.log(
+  'DATABASE_URL:',
+  process.env.DATABASE_URL ? `SET (${process.env.DATABASE_URL.substring(0, 30)}...)` : '❌ NOT SET'
+);
 console.log('REDIS_URL:', process.env.REDIS_URL ? `SET (${process.env.REDIS_URL})` : '❌ NOT SET');
 console.log('NODE_ENV:', process.env.NODE_ENV || '❌ NOT SET');
 console.log('SUPABASE_URL:', process.env.SUPABASE_URL ? 'SET' : '❌ NOT SET');
@@ -156,10 +159,7 @@ app.use(
       const allowedOrigins = [
         process.env.FRONTEND_URL || 'https://app.floworx-iq.com',
         'https://app.floworx-iq.com',
-        ...(process.env.NODE_ENV === 'development' ? [
-          'http://localhost:3000',
-          'http://localhost:3001'
-        ] : [])
+        ...(process.env.NODE_ENV === 'development' ? ['http://localhost:3000', 'http://localhost:3001'] : [])
       ];
 
       if (allowedOrigins.includes(origin)) {

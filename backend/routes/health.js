@@ -47,7 +47,7 @@ router.get('/database', async (req, res) => {
     const connectionInfo = databaseOperations.getConnectionInfo();
 
     const responseTime = Date.now() - startTime;
-    
+
     if (healthResult.success) {
       res.status(200).json({
         status: 'healthy',
@@ -86,10 +86,10 @@ router.get('/database', async (req, res) => {
 // Redis/KeyDB health check
 router.get('/cache', async (req, res) => {
   let redis = null;
-  
+
   try {
     const startTime = Date.now();
-    
+
     // Try to connect to Redis/KeyDB
     const redisConfig = process.env.REDIS_URL || {
       host: process.env.REDIS_HOST || 'localhost',
@@ -100,20 +100,20 @@ router.get('/cache', async (req, res) => {
       lazyConnect: true,
       maxRetriesPerRequest: 1
     };
-    
+
     redis = new Redis(redisConfig);
     await redis.connect();
-    
+
     // Test basic operations
     const testKey = `health_check_${Date.now()}`;
     await redis.set(testKey, 'test_value', 'EX', 10);
     const testValue = await redis.get(testKey);
     await redis.del(testKey);
-    
+
     const responseTime = Date.now() - startTime;
-    
+
     await redis.disconnect();
-    
+
     res.status(200).json({
       status: 'healthy',
       service: 'cache',
@@ -133,7 +133,7 @@ router.get('/cache', async (req, res) => {
         // Ignore disconnect errors
       }
     }
-    
+
     res.status(503).json({
       status: 'unhealthy',
       service: 'cache',
@@ -153,7 +153,7 @@ router.get('/email', async (req, res) => {
   try {
     const nodemailer = require('nodemailer');
     const startTime = Date.now();
-    
+
     // Create transporter with current config
     const transporter = nodemailer.createTransport({
       host: process.env.SMTP_HOST || 'smtp.gmail.com',
@@ -164,12 +164,12 @@ router.get('/email', async (req, res) => {
         pass: process.env.SMTP_PASS
       }
     });
-    
+
     // Verify SMTP connection
     await transporter.verify();
-    
+
     const responseTime = Date.now() - startTime;
-    
+
     res.status(200).json({
       status: 'healthy',
       service: 'email',
@@ -202,8 +202,7 @@ router.get('/memory', (req, res) => {
     const summary = healthMemoryMonitor.getMemorySummary();
     const trend = healthMemoryMonitor.getMemoryTrend(5); // 5 minute trend
 
-    const statusCode = summary.status === 'healthy' ? 200 :
-                      summary.status === 'warning' ? 206 : 503;
+    const statusCode = summary.status === 'healthy' ? 200 : summary.status === 'warning' ? 206 : 503;
 
     res.status(statusCode).json({
       status: summary.status,
@@ -249,11 +248,10 @@ router.get('/oauth', (req, res) => {
       google_redirect_uri: process.env.GOOGLE_REDIRECT_URI,
       frontend_url: process.env.FRONTEND_URL
     };
-    
-    const isConfigured = oauthConfig.google_client_id && 
-                        oauthConfig.google_client_secret && 
-                        oauthConfig.google_redirect_uri;
-    
+
+    const isConfigured =
+      oauthConfig.google_client_id && oauthConfig.google_client_secret && oauthConfig.google_redirect_uri;
+
     if (isConfigured) {
       res.status(200).json({
         status: 'healthy',
@@ -293,17 +291,26 @@ router.get('/oauth', (req, res) => {
 router.get('/system', async (req, res) => {
   const checks = [];
   let overallStatus = 'healthy';
-  
+
   try {
-    // Database check
+    // Database check - Use databaseOperations instead of undefined query
     try {
-      await query('SELECT 1');
-      checks.push({ service: 'database', status: 'healthy' });
+      const healthResult = await databaseOperations.healthCheck();
+      if (healthResult.success) {
+        checks.push({ service: 'database', status: 'healthy' });
+      } else {
+        checks.push({
+          service: 'database',
+          status: 'unhealthy',
+          error: healthResult.error || 'Database health check failed'
+        });
+        overallStatus = 'degraded';
+      }
     } catch (error) {
       checks.push({ service: 'database', status: 'unhealthy', error: error.message });
       overallStatus = 'degraded';
     }
-    
+
     // Cache check
     let redis = null;
     try {
@@ -316,12 +323,12 @@ router.get('/system', async (req, res) => {
         lazyConnect: true,
         maxRetriesPerRequest: 1
       };
-      
+
       redis = new Redis(redisConfig);
       await redis.connect();
       await redis.ping();
       await redis.disconnect();
-      
+
       checks.push({ service: 'cache', status: 'healthy' });
     } catch (error) {
       if (redis) {
@@ -336,7 +343,7 @@ router.get('/system', async (req, res) => {
         overallStatus = 'degraded';
       }
     }
-    
+
     // Email check
     try {
       const nodemailer = require('nodemailer');
@@ -349,7 +356,7 @@ router.get('/system', async (req, res) => {
           pass: process.env.SMTP_PASS
         }
       });
-      
+
       await transporter.verify();
       checks.push({ service: 'email', status: 'healthy' });
     } catch (error) {
@@ -358,21 +365,20 @@ router.get('/system', async (req, res) => {
         overallStatus = 'degraded';
       }
     }
-    
+
     // OAuth check
-    const oauthConfigured = Boolean(process.env.GOOGLE_CLIENT_ID && 
-                              process.env.GOOGLE_CLIENT_SECRET && 
-                              process.env.GOOGLE_REDIRECT_URI);
-    
-    checks.push({ 
-      service: 'oauth', 
+    const oauthConfigured = Boolean(
+      process.env.GOOGLE_CLIENT_ID && process.env.GOOGLE_CLIENT_SECRET && process.env.GOOGLE_REDIRECT_URI
+    );
+
+    checks.push({
+      service: 'oauth',
       status: oauthConfigured ? 'healthy' : 'not_configured',
       configured: oauthConfigured
     });
-    
-    const statusCode = overallStatus === 'healthy' ? 200 : 
-                      overallStatus === 'degraded' ? 206 : 503;
-    
+
+    const statusCode = overallStatus === 'healthy' ? 200 : overallStatus === 'degraded' ? 206 : 503;
+
     res.status(statusCode).json({
       status: overallStatus,
       timestamp: new Date().toISOString(),
@@ -386,7 +392,6 @@ router.get('/system', async (req, res) => {
         unhealthy: checks.filter(c => c.status === 'unhealthy').length
       }
     });
-    
   } catch (error) {
     res.status(500).json({
       status: 'error',

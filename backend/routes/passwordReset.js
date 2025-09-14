@@ -37,8 +37,8 @@ router.post('/request', passwordResetRateLimit, validationMiddleware.passwordRes
   try {
     // Validation is now handled by validationMiddleware.passwordResetRequest
     const { email } = req.body;
-    const ipAddress = req.ip || req.connection.remoteAddress;
-    const userAgent = req.get('User-Agent');
+    const _ipAddress = req.ip || req.connection.remoteAddress;
+    const _userAgent = req.get('User-Agent');
 
     // Check if user exists using REST API
     console.log(`🔍 Checking if user exists: ${email}`);
@@ -63,11 +63,7 @@ router.post('/request', passwordResetRateLimit, validationMiddleware.passwordRes
     // Create password reset token using REST API
     console.log('🔐 Creating password reset token...');
     try {
-      const tokenResult = await databaseOperations.createPasswordResetToken(
-        user.id,
-        token,
-        expiresAt.toISOString()
-      );
+      const tokenResult = await databaseOperations.createPasswordResetToken(user.id, token, expiresAt.toISOString());
 
       if (tokenResult.error) {
         console.error('Failed to create reset token:', tokenResult.error);
@@ -121,8 +117,8 @@ router.post(
       }
 
       const { token } = req.body;
-      const ipAddress = req.ip || req.connection.remoteAddress;
-      const userAgent = req.get('User-Agent');
+      const _ipAddress = req.ip || req.connection.remoteAddress;
+      const _userAgent = req.get('User-Agent');
 
       // Validate password reset token using REST API
       console.log('🔍 Validating password reset token...');
@@ -171,8 +167,8 @@ router.post('/reset', authRateLimit, validationMiddleware.passwordReset, async (
   try {
     // Validation is now handled by validationMiddleware.passwordReset
     const { token, password } = req.body;
-    const ipAddress = req.ip || req.connection.remoteAddress;
-    const userAgent = req.get('User-Agent');
+    const _ipAddress = req.ip || req.connection.remoteAddress;
+    const _userAgent = req.get('User-Agent');
 
     // Validate token first using REST API
     console.log('🔍 Validating password reset token for password update...');

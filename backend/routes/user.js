@@ -142,7 +142,7 @@ router.get('/status', authenticateToken, async (req, res) => {
     }));
 
     // Check OAuth connections (simplified for now)
-    let oauthServices = [];
+    const oauthServices = [];
     console.log('🔍 OAuth services check - simplified implementation');
     // TODO: Implement OAuth services check with REST API
 
@@ -161,8 +161,9 @@ router.get('/status', authenticateToken, async (req, res) => {
         emailVerified: userDetails.email_verified || false,
         connected_services: connectedServices,
         oauth_connections: oauthServices,
-        has_google_connection: connectedServices.some(service => service.service === 'google') ||
-                              oauthServices.some(service => service.service === 'google' && service.status === 'active')
+        has_google_connection:
+          connectedServices.some(service => service.service === 'google') ||
+          oauthServices.some(service => service.service === 'google' && service.status === 'active')
       }
     });
   } catch (error) {
@@ -175,7 +176,5 @@ router.get('/status', authenticateToken, async (req, res) => {
     });
   }
 });
-
-
 
 module.exports = router;

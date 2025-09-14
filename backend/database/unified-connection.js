@@ -1,4 +1,5 @@
 const { Pool } = require('pg');
+const { URL } = require('url');
 const SupabaseRestClient = require('./supabase-rest-client');
 
 const { encrypt, decrypt } = require('../utils/encryption');
@@ -8,9 +9,9 @@ const dotenv = require('dotenv');
 
 // Try different .env file locations
 const envPaths = [
-  path.resolve(__dirname, '../../.env'),   // Standard: .env in root from backend/database
-  path.resolve(__dirname, '../.env'),      // Alternative: .env in backend
-  path.resolve(process.cwd(), '.env')      // Fallback: current working directory
+  path.resolve(__dirname, '../../.env'), // Standard: .env in root from backend/database
+  path.resolve(__dirname, '../.env'), // Alternative: .env in backend
+  path.resolve(process.cwd(), '.env') // Fallback: current working directory
 ];
 
 let envLoaded = false;
@@ -21,7 +22,7 @@ for (const envPath of envPaths) {
       envLoaded = true;
       break;
     }
-  } catch (error) {
+  } catch (_error) {
     // Continue to next path
   }
 }

@@ -2,14 +2,12 @@ const bcrypt = require('bcryptjs');
 const express = require('express');
 const jwt = require('jsonwebtoken');
 
-const { UserQueries } = require('../database/secureQueries');
+const { UserQueries: _UserQueries } = require('../database/secureQueries');
 const { databaseOperations } = require('../database/database-operations');
+const { databaseManager } = require('../database/unified-connection');
 const { authenticateToken } = require('../middleware/auth');
 const { authRateLimit, authSlowDown, accountLockoutLimiter } = require('../middleware/security');
-const {
-  registerSchema,
-  loginSchema
-} = require('../schemas/auth');
+const { registerSchema, loginSchema } = require('../schemas/auth');
 const emailService = require('../services/emailService');
 const passwordResetService = require('../services/passwordResetService');
 const { asyncWrapper } = require('../utils/asyncWrapper');
@@ -17,6 +15,12 @@ const { ConflictError } = require('../utils/errors');
 const { validateRequest } = require('../utils/validateRequest');
 
 const router = express.Router();
+
+// Helper function for database queries
+const query = async (sql, params) => {
+  await databaseManager.initialize();
+  return databaseManager.query(sql, params);
+};
 
 // Input validation is now handled by centralized validation middleware
 
@@ -231,8 +235,8 @@ router.get('/user/status', authenticateToken, async (req, res) => {
 
     // For now, return empty arrays for services to avoid complex queries
     // TODO: Update these to use databaseOperations methods
-    let connectedServices = [];
-    let oauthServices = [];
+    const connectedServices = [];
+    const oauthServices = [];
 
     res.status(200).json({
       id: userDetails.id,
@@ -745,7 +749,8 @@ router.post('/recovery', async (req, res) => {
     // For other recovery types, return a placeholder response
     res.json({
       success: true,
-      message: 'Recovery request received. If an account with this email exists, you will receive further instructions.',
+      message:
+        'Recovery request received. If an account with this email exists, you will receive further instructions.',
       emailSent: false
     });
   } catch (error) {
@@ -759,7 +764,7 @@ router.post('/recovery', async (req, res) => {
 
 // POST /api/auth/logout
 // Logout user (client-side token invalidation)
-router.post('/logout', authenticateToken, async (req, res) => {
+router.post('/logout', authenticateToken, (req, res) => {
   try {
     console.log(`🚪 User logout: ${req.user.email}`);
 

@@ -2,13 +2,20 @@ const express = require('express');
 const { body, validationResult } = require('express-validator');
 
 const { databaseOperations } = require('../database/database-operations');
+const { databaseManager } = require('../database/unified-connection');
 const { authenticateToken } = require('../middleware/auth');
 
 const router = express.Router();
 
+// Helper function for database queries
+const query = async (sql, params) => {
+  await databaseManager.initialize();
+  return databaseManager.query(sql, params);
+};
+
 // GET /api/business-types/test
 // Simple test endpoint
-router.get('/test', async (req, res) => {
+router.get('/test', (req, res) => {
   try {
     console.log('🧪 Business types test endpoint called');
     res.json({

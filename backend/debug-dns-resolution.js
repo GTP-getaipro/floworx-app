@@ -8,6 +8,7 @@
 const dns = require('dns');
 const { promisify } = require('util');
 const net = require('net');
+const { URL } = require('url');
 
 const lookup = promisify(dns.lookup);
 const resolve4 = promisify(dns.resolve4);
@@ -16,7 +17,7 @@ const resolve6 = promisify(dns.resolve6);
 async function debugDNSResolution() {
   console.log('🔍 DNS RESOLUTION DEBUGGING');
   console.log('================================');
-  
+
   const hostnames = [
     'db.enamhufwobytrfydarsz.supabase.co',
     'aws-1-ca-central-1.pooler.supabase.com',
@@ -39,11 +40,11 @@ async function debugDNSResolution() {
       try {
         const ipv4Result = await lookup(hostname, { family: 4 });
         console.log(`   IPv4 Address: ${ipv4Result.address}`);
-        
+
         // Test IPv4 connection
         const ipv4Reachable = await testConnection(ipv4Result.address, 5432);
         console.log(`   IPv4 Port 5432 reachable: ${ipv4Reachable ? '✅' : '❌'}`);
-        
+
         const ipv4Reachable6543 = await testConnection(ipv4Result.address, 6543);
         console.log(`   IPv4 Port 6543 reachable: ${ipv4Reachable6543 ? '✅' : '❌'}`);
       } catch (ipv4Error) {
@@ -55,11 +56,11 @@ async function debugDNSResolution() {
       try {
         const ipv6Result = await lookup(hostname, { family: 6 });
         console.log(`   IPv6 Address: ${ipv6Result.address}`);
-        
+
         // Test IPv6 connection
         const ipv6Reachable = await testConnection(ipv6Result.address, 5432);
         console.log(`   IPv6 Port 5432 reachable: ${ipv6Reachable ? '✅' : '❌'}`);
-        
+
         const ipv6Reachable6543 = await testConnection(ipv6Result.address, 6543);
         console.log(`   IPv6 Port 6543 reachable: ${ipv6Reachable6543 ? '✅' : '❌'}`);
       } catch (ipv6Error) {
@@ -83,7 +84,6 @@ async function debugDNSResolution() {
       } catch (aaaaError) {
         console.log(`   AAAA Records Error: ${aaaaError.message}`);
       }
-
     } catch (error) {
       console.error(`❌ DNS lookup failed for ${hostname}:`, error.message);
     }
@@ -92,7 +92,7 @@ async function debugDNSResolution() {
   // Test DATABASE_URL parsing
   console.log('\n🔍 DATABASE_URL PARSING');
   console.log('================================');
-  
+
   const databaseUrl = process.env.DATABASE_URL;
   if (databaseUrl) {
     try {
@@ -102,17 +102,16 @@ async function debugDNSResolution() {
       console.log(`Port: ${url.port}`);
       console.log(`Database: ${url.pathname.substring(1)}`);
       console.log(`Username: ${url.username}`);
-      
+
       // Test the hostname from DATABASE_URL
       console.log(`\n🌐 Testing DATABASE_URL hostname: ${url.hostname}`);
       const dbHostResult = await lookup(url.hostname);
       console.log(`   Resolved to: ${dbHostResult.address} (IPv${dbHostResult.family})`);
-      
+
       // Test connection to the resolved address
       const port = url.port || 5432;
       const reachable = await testConnection(dbHostResult.address, port);
       console.log(`   Port ${port} reachable: ${reachable ? '✅' : '❌'}`);
-      
     } catch (parseError) {
       console.error('❌ Failed to parse DATABASE_URL:', parseError.message);
     }
@@ -130,25 +129,25 @@ async function debugDNSResolution() {
 }
 
 function testConnection(address, port, timeout = 5000) {
-  return new Promise((resolve) => {
+  return new Promise(resolve => {
     const socket = new net.Socket();
-    
+
     const timer = setTimeout(() => {
       socket.destroy();
       resolve(false);
     }, timeout);
-    
+
     socket.on('connect', () => {
       clearTimeout(timer);
       socket.destroy();
       resolve(true);
     });
-    
+
     socket.on('error', () => {
       clearTimeout(timer);
       resolve(false);
     });
-    
+
     socket.connect(port, address);
   });
 }

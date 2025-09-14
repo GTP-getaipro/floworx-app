@@ -117,22 +117,27 @@ class SupabaseRestClient {
 
       const { data, error } = await this.getAdminClient()
         .from('credentials')
-        .upsert({
-          user_id: userId,
-          service_name: serviceName,
-          access_token: encryptedAccessToken,
-          refresh_token: encryptedRefreshToken,
-          expiry_date: expiryDate,
-          scope: scope,
-          updated_at: new Date().toISOString()
-        }, { 
-          onConflict: 'user_id,service_name',
-          ignoreDuplicates: false 
-        })
+        .upsert(
+          {
+            user_id: userId,
+            service_name: serviceName,
+            access_token: encryptedAccessToken,
+            refresh_token: encryptedRefreshToken,
+            expiry_date: expiryDate,
+            scope: scope,
+            updated_at: new Date().toISOString()
+          },
+          {
+            onConflict: 'user_id,service_name',
+            ignoreDuplicates: false
+          }
+        )
         .select('id, created_at, updated_at')
         .single();
 
-      if (error) throw error;
+      if (error) {
+        throw error;
+      }
       return data;
     } catch (error) {
       console.error('❌ Store credentials error:', error.message);
@@ -150,7 +155,9 @@ class SupabaseRestClient {
         .single();
 
       if (error) {
-        if (error.code === 'PGRST116') return null; // No rows found
+        if (error.code === 'PGRST116') {
+          return null;
+        } // No rows found
         throw error;
       }
 
@@ -175,10 +182,7 @@ class SupabaseRestClient {
   async storeBusinessConfig(userId, configData) {
     try {
       // First, deactivate previous configs
-      await this.getAdminClient()
-        .from('business_configs')
-        .update({ is_active: false })
-        .eq('user_id', userId);
+      await this.getAdminClient().from('business_configs').update({ is_active: false }).eq('user_id', userId);
 
       // Insert new active config
       const { data, error } = await this.getAdminClient()
@@ -191,7 +195,9 @@ class SupabaseRestClient {
         .select('id, version, created_at')
         .single();
 
-      if (error) throw error;
+      if (error) {
+        throw error;
+      }
       return data;
     } catch (error) {
       console.error('❌ Store business config error:', error.message);
@@ -211,7 +217,9 @@ class SupabaseRestClient {
         .single();
 
       if (error) {
-        if (error.code === 'PGRST116') return null; // No rows found
+        if (error.code === 'PGRST116') {
+          return null;
+        } // No rows found
         throw error;
       }
 
@@ -248,7 +256,9 @@ class SupabaseRestClient {
         .select('id, created_at')
         .single();
 
-      if (error) throw error;
+      if (error) {
+        throw error;
+      }
       return data;
     } catch (error) {
       console.error('❌ Store workflow deployment error:', error.message);
@@ -260,7 +270,8 @@ class SupabaseRestClient {
     try {
       const { data, error } = await this.getAdminClient()
         .from('workflow_deployments')
-        .select(`
+        .select(
+          `
           id,
           n8n_workflow_id,
           workflow_name,
@@ -272,11 +283,14 @@ class SupabaseRestClient {
           created_at,
           updated_at,
           business_configs!inner(config_json)
-        `)
+        `
+        )
         .eq('user_id', userId)
         .order('created_at', { ascending: false });
 
-      if (error) throw error;
+      if (error) {
+        throw error;
+      }
 
       return data.map(row => ({
         id: row.id,
@@ -301,24 +315,36 @@ class SupabaseRestClient {
   // ONBOARDING PROGRESS TRACKING (converted to REST API)
   // =====================================================
 
-  async updateOnboardingProgress(userId, currentStep, completedSteps, stepData, googleConnected = false, workflowDeployed = false) {
+  async updateOnboardingProgress(
+    userId,
+    currentStep,
+    completedSteps,
+    stepData,
+    googleConnected = false,
+    workflowDeployed = false
+  ) {
     try {
       const { data, error } = await this.getAdminClient()
         .from('onboarding_progress')
-        .upsert({
-          user_id: userId,
-          current_step: currentStep,
-          completed_steps: completedSteps,
-          step_data: stepData,
-          google_connected: googleConnected,
-          workflow_deployed: workflowDeployed,
-          onboarding_completed: workflowDeployed,
-          updated_at: new Date().toISOString()
-        }, { onConflict: 'user_id' })
+        .upsert(
+          {
+            user_id: userId,
+            current_step: currentStep,
+            completed_steps: completedSteps,
+            step_data: stepData,
+            google_connected: googleConnected,
+            workflow_deployed: workflowDeployed,
+            onboarding_completed: workflowDeployed,
+            updated_at: new Date().toISOString()
+          },
+          { onConflict: 'user_id' }
+        )
         .select()
         .single();
 
-      if (error) throw error;
+      if (error) {
+        throw error;
+      }
       return data;
     } catch (error) {
       console.error('❌ Update onboarding progress error:', error.message);
@@ -335,7 +361,9 @@ class SupabaseRestClient {
         .single();
 
       if (error) {
-        if (error.code === 'PGRST116') return null; // No rows found
+        if (error.code === 'PGRST116') {
+          return null;
+        } // No rows found
         throw error;
       }
 
@@ -365,7 +393,9 @@ class SupabaseRestClient {
         .select('id, created_at')
         .single();
 
-      if (error) throw error;
+      if (error) {
+        throw error;
+      }
       return data;
     } catch (error) {
       console.error('❌ Track event error:', error.message);
@@ -380,9 +410,7 @@ class SupabaseRestClient {
   async testConnection() {
     try {
       // Test with a simple query to users table
-      const { data, error } = await this.client
-        .from('users')
-        .select('count', { count: 'exact', head: true });
+      const { data: _data, error } = await this.client.from('users').select('count', { count: 'exact', head: true });
 
       if (error) {
         return {
@@ -408,7 +436,7 @@ class SupabaseRestClient {
   }
 
   // No need for close() method with REST API
-  async close() {
+  close() {
     // REST API doesn't need connection cleanup
     console.log('✅ Supabase REST API client closed (no cleanup needed)');
   }

@@ -196,18 +196,14 @@ class EmailService {
    * @param {string} email - User email
    * @param {string} firstName - User first name
    */
-  async storeVerificationToken(userId, token, email = '', firstName = '') {
+  async storeVerificationToken(userId, token, _email = '', _firstName = '') {
     try {
       const expiresAt = new Date(Date.now() + 24 * 60 * 60 * 1000); // 24 hours
 
       console.log(`📧 Storing verification token for user ${userId} via REST API...`);
 
       // For REST API, we'll use upsert functionality
-      const result = await databaseOperations.createEmailVerificationToken(
-        userId,
-        token,
-        expiresAt.toISOString()
-      );
+      const result = await databaseOperations.createEmailVerificationToken(userId, token, expiresAt.toISOString());
 
       if (result.error) {
         console.error('Failed to store verification token:', result.error);

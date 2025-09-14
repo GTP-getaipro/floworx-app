@@ -2,16 +2,11 @@ const express = require('express');
 const { body, validationResult } = require('express-validator');
 
 const { databaseOperations } = require('../database/database-operations');
-const { databaseManager } = require('../database/unified-connection');
 const { authenticateToken } = require('../middleware/auth');
 
 const router = express.Router();
 
-// Helper function for database queries
-const query = async (sql, params) => {
-  await databaseManager.initialize();
-  return databaseManager.query(sql, params);
-};
+// Note: Using REST API via databaseOperations instead of direct SQL queries
 
 // GET /api/business-types/test
 // Simple test endpoint
@@ -232,27 +227,23 @@ router.post(
 router.get('/user/current', authenticateToken, async (req, res) => {
   try {
     const userId = req.user.id;
+    console.log(`🔍 Fetching current business type for user: ${userId}`);
 
-    const queryText = `
-      SELECT u.business_type_id,
-             bt.id, bt.name, bt.description, bt.slug, bt.default_categories
-      FROM users u
-      LEFT JOIN business_types bt ON u.business_type_id = bt.id
-      WHERE u.id = $1
-    `;
+    // Get user data using REST API
+    const userResult = await databaseOperations.getUserById(userId);
 
-    const result = await query(queryText, [userId]);
-
-    if (result.rows.length === 0) {
+    if (userResult.error || !userResult.data) {
+      console.error('User fetch error:', userResult.error);
       return res.status(404).json({
+        success: false,
         error: 'User not found',
         message: 'Unable to find user account'
       });
     }
 
-    const user = result.rows[0];
+    const user = userResult.data;
 
-    if (!user.business_type_id || !user.id) {
+    if (!user.business_type_id) {
       return res.json({
         success: true,
         data: null,
@@ -260,23 +251,41 @@ router.get('/user/current', authenticateToken, async (req, res) => {
       });
     }
 
+    // Get business type data using REST API
+    const businessTypeResult = await databaseOperations.getBusinessTypeById(user.business_type_id);
+
+    if (businessTypeResult.error || !businessTypeResult.data) {
+      console.error('Business type fetch error:', businessTypeResult.error);
+      return res.status(500).json({
+        success: false,
+        error: 'Business type not found',
+        message: 'Selected business type is no longer available'
+      });
+    }
+
+    const businessType = businessTypeResult.data;
+
+    console.log(`✅ Retrieved business type: ${businessType.name} for user: ${userId}`);
+
     res.json({
       success: true,
       data: {
         businessType: {
-          id: user.id,
-          name: user.name,
-          description: user.description,
-          slug: user.slug,
-          default_categories: user.default_categories
+          id: businessType.id,
+          name: businessType.name,
+          description: businessType.description,
+          slug: businessType.slug,
+          default_categories: businessType.default_categories
         }
       }
     });
   } catch (error) {
     console.error('User business type fetch error:', error);
     res.status(500).json({
+      success: false,
       error: 'Internal server error',
-      message: 'Failed to fetch user business type'
+      message: 'Failed to fetch user business type',
+      details: error.message
     });
   }
 });
@@ -286,25 +295,21 @@ router.get('/user/current', authenticateToken, async (req, res) => {
 router.get('/:businessTypeId/template', authenticateToken, async (req, res) => {
   try {
     const { businessTypeId } = req.params;
+    console.log(`🔍 Fetching workflow template for business type: ${businessTypeId}`);
 
-    // For now, return a basic template structure
-    // This can be expanded when workflow templates are implemented
-    const queryText = `
-      SELECT id, name, slug, default_categories
-      FROM business_types
-      WHERE id = $1 AND is_active = true
-    `;
+    // Get business type using REST API
+    const businessTypeResult = await databaseOperations.getBusinessTypeById(parseInt(businessTypeId, 10));
 
-    const result = await query(queryText, [parseInt(businessTypeId, 10)]);
-
-    if (result.rows.length === 0) {
+    if (businessTypeResult.error || !businessTypeResult.data) {
+      console.error('Business type fetch error:', businessTypeResult.error);
       return res.status(404).json({
+        success: false,
         error: 'Business type not found',
         message: 'The requested business type does not exist'
       });
     }
 
-    const businessType = result.rows[0];
+    const businessType = businessTypeResult.data;
 
     // Return a basic template structure based on business type
     const template = {
@@ -330,6 +335,8 @@ router.get('/:businessTypeId/template', authenticateToken, async (req, res) => {
       ]
     };
 
+    console.log(`✅ Generated workflow template for: ${businessType.name}`);
+
     res.json({
       success: true,
       data: template
@@ -337,8 +344,10 @@ router.get('/:businessTypeId/template', authenticateToken, async (req, res) => {
   } catch (error) {
     console.error('Workflow template fetch error:', error);
     res.status(500).json({
+      success: false,
       error: 'Internal server error',
-      message: 'Failed to fetch workflow template'
+      message: 'Failed to fetch workflow template',
+      details: error.message
     });
   }
 });

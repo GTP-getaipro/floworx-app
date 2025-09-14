@@ -16,7 +16,7 @@ async function testEmailVerificationFixes() {
 
     // Test 2: Database connection
     console.log('2. Testing database connection...');
-    const testUser = await databaseOperations.getUserByEmail('test@example.com');
+    const _testUser = await databaseOperations.getUserByEmail('test@example.com');
     console.log(`   ✅ Database connection working`);
 
     // Test 3: Create a test user for verification

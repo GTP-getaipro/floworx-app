@@ -12,7 +12,7 @@ describe('Email Verification Validation', () => {
   let testUser = null;
   let verificationToken = null;
 
-  beforeAll(async () => {
+  beforeAll(() => {
     console.log('🧪 Starting Email Verification Validation Tests');
   });
 
@@ -58,8 +58,6 @@ describe('Email Verification Validation', () => {
     test('should create email verification token in database', async () => {
       console.log('🧪 Validating email verification token creation...');
 
-      const tokenResult = await databaseOperations.getEmailVerificationToken('dummy-token');
-      
       // Since we can't get the actual token easily, let's verify the user is not verified
       const userResult = await databaseOperations.getUserById(testUser.id);
       expect(userResult.data.email_verified).toBe(false);

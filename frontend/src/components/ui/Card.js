@@ -1,4 +1,3 @@
-import React from 'react';
 
 const Card = ({ children, className = '', padding = 'default', shadow = 'default', ...props }) => {
   const paddingClasses = {

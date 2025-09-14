@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import { useState } from 'react';
 
 import Alert from '../ui/Alert';
 import Button from '../ui/Button';

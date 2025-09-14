@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import { useState } from 'react';
 import './StepStyles.css';
 
 const WelcomeStep = ({ data, onComplete }) => {

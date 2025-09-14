@@ -1,5 +1,5 @@
 import axios from 'axios';
-import React, { useState, useEffect, useCallback } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 
 import { useErrorReporting } from './ErrorBoundary';
 import './WorkflowDeployment.css';

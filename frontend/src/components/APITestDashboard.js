@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import { useState, useEffect } from 'react';
 import APITester from '../test-api-endpoints';
 import './APITestDashboard.css';
 

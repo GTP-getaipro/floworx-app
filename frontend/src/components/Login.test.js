@@ -1,4 +1,3 @@
-import React from 'react';
 import { render, screen, waitFor } from '../setupTests';
 import userEvent from '@testing-library/user-event';
 import Login from './Login';

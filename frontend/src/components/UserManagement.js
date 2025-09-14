@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import { useState, useEffect } from 'react';
 import { Card, Button, Input, Alert } from './ui';
 import useApi from '../hooks/useApi';
 import './UserManagement.css';

@@ -1,5 +1,5 @@
 import axios from 'axios';
-import React, { useState, useEffect, useCallback } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import './StepStyles.css';
 
 const LabelMappingStep = ({ data, onComplete, onBack, canGoBack }) => {

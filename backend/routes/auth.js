@@ -180,7 +180,15 @@ router.post('/test-register', async (req, res) => {
 // Register a new user account - SECURED with rate limiting and validation
 router.post(
   '/register',
+  (req, res, next) => {
+    console.log('Registration request received:', req.body);
+    next();
+  },
   validateRequest({ body: registerSchema }),
+  (req, res, next) => {
+    console.log('Validation passed, proceeding to handler');
+    next();
+  },
   asyncHandler(async (req, res) => {
     const { email, password, firstName, lastName, businessName } = req.body;
 

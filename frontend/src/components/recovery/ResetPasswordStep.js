@@ -6,7 +6,7 @@ import Button from '../ui/Button';
 import Input from '../ui/Input';
 import ProgressBar from '../ui/ProgressBar';
 
-const ResetPasswordStep = ({ recoveryData, onComplete, onError }) => {
+const ResetPasswordStep = ({ recoveryData: _recoveryData, onComplete, onError }) => {
   const [formData, setFormData] = useState({
     newPassword: '',
     confirmPassword: '',

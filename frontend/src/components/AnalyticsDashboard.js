@@ -74,7 +74,7 @@ const AnalyticsDashboard = () => {
     <div className='funnel-chart'>
       <h3>Onboarding Funnel</h3>
       <div className='funnel-steps'>
-        {funnel.map((step, index) => {
+        {funnel.map((step, _index) => {
           const width = Math.max((step.completions / funnel[0]?.completions) * 100 || 0, 10);
           return (
             <div key={step.step} className='funnel-step'>

@@ -4,7 +4,7 @@ import Alert from '../ui/Alert';
 import Button from '../ui/Button';
 import Card from '../ui/Card';
 
-const EmergencyAccessStep = ({ recoveryData, onComplete }) => {
+const EmergencyAccessStep = ({ recoveryData: _recoveryData, onComplete }) => {
   const [acknowledged, setAcknowledged] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
 

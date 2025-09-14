@@ -4,9 +4,6 @@
  */
 
 import {
-  HTTP_STATUS,
-  createErrorResponse,
-  extractErrorMessage,
   isNetworkError,
   isAuthError,
   withRetry,

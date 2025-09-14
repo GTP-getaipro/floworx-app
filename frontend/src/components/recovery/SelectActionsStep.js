@@ -4,7 +4,7 @@ import Alert from '../ui/Alert';
 import Button from '../ui/Button';
 import Card from '../ui/Card';
 
-const SelectActionsStep = ({ recoveryData, onComplete }) => {
+const SelectActionsStep = ({ recoveryData: _recoveryData, onComplete }) => {
   const [selectedActions, setSelectedActions] = useState({
     resetPassword: false,
     regenerateBackupCodes: false,

@@ -131,7 +131,7 @@ const APITestDashboard = () => {
         >
           {isRunning ? (
             <>
-              <div className="spinner"></div>
+              <div className="spinner" />
               Running Tests...
             </>
           ) : (
@@ -207,7 +207,7 @@ const APITestDashboard = () => {
           {isRunning && (
             <div className="result-item result-info">
               <div className="result-icon">
-                <div className="spinner"></div>
+                <div className="spinner" />
               </div>
               <div className="result-content">
                 <div className="result-message">Running tests...</div>

@@ -25,6 +25,8 @@ class CacheService {
       enableLegacyCallbacks: false // Better performance
     });
     this.isRedisConnected = false;
+    this.isInitializing = false; // Track initialization state
+    this.initializationPromise = null; // Store initialization promise
     this.stats = {
       hits: 0,
       misses: 0,
@@ -46,6 +48,17 @@ class CacheService {
    * KeyDB is 100% Redis-compatible but faster and more efficient
    */
   async initializeKeyDB() {
+    // Prevent multiple initialization attempts
+    if (this.isInitializing) {
+      console.log('⚠️ KeyDB initialization already in progress, waiting...');
+      return this.initializationPromise;
+    }
+
+    if (this.isRedisConnected && this.redis) {
+      console.log('✅ KeyDB already connected, skipping initialization');
+      return;
+    }
+
     // Skip KeyDB initialization if disabled or not configured
     if (process.env.DISABLE_REDIS === 'true') {
       console.log('⚠️ KeyDB disabled via DISABLE_REDIS - using memory cache only');
@@ -62,6 +75,19 @@ class CacheService {
       return;
     }
 
+    // Set initialization state and create promise
+    this.isInitializing = true;
+    this.initializationPromise = this._performInitialization();
+
+    try {
+      await this.initializationPromise;
+    } finally {
+      this.isInitializing = false;
+      this.initializationPromise = null;
+    }
+  }
+
+  async _performInitialization() {
     try {
       // If REDIS_URL is provided, use it directly (Coolify style)
       if (process.env.REDIS_URL) {
@@ -87,6 +113,16 @@ class CacheService {
           }
         };
 
+        // Close existing connection if any
+        if (this.redis) {
+          try {
+            await this.redis.quit();
+          } catch (error) {
+            console.log('⚠️ Error closing existing Redis connection:', error.message);
+          }
+          this.redis = null;
+        }
+
         this.redis = new Redis(redisUrl, keydbConfig);
 
         // Set up event handlers
@@ -106,17 +142,23 @@ class CacheService {
           this.isRedisConnected = false;
         });
 
-        // Test connection
-        await Promise.race([
-          this.redis.ping(),
-          new Promise((_, reject) =>
-            setTimeout(() => reject(new Error('Connection timeout')), 5000)
-          )
-        ]);
+        // Test connection with timeout
+        try {
+          await Promise.race([
+            this.redis.ping(),
+            new Promise((_, reject) =>
+              setTimeout(() => reject(new Error('Connection timeout')), 5000)
+            )
+          ]);
 
-        console.log('✅ KeyDB connection test successful');
-        this.isRedisConnected = true;
-        return;
+          console.log('✅ KeyDB connection test successful');
+          this.isRedisConnected = true;
+          return;
+        } catch (error) {
+          console.warn('⚠️ KeyDB connection test failed:', error.message);
+          this.isRedisConnected = false;
+          // Don't throw - fall back to memory cache
+        }
       }
 
       // Fallback to host-based connection
@@ -216,6 +258,35 @@ class CacheService {
       // Don't let KeyDB failures crash the application
       // The app will continue with memory cache only
       console.log('✅ Application will continue with memory cache only');
+    }
+  }
+
+  /**
+   * Reset Redis connection state and attempt reconnection
+   */
+  async resetConnection() {
+    console.log('🔄 Resetting KeyDB connection...');
+
+    // Reset state
+    this.isRedisConnected = false;
+    this.isInitializing = false;
+    this.initializationPromise = null;
+
+    // Close existing connection
+    if (this.redis) {
+      try {
+        await this.redis.quit();
+      } catch (error) {
+        console.log('⚠️ Error closing Redis connection during reset:', error.message);
+      }
+      this.redis = null;
+    }
+
+    // Attempt reconnection
+    try {
+      await this.initializeKeyDB();
+    } catch (error) {
+      console.warn('⚠️ Failed to reconnect after reset:', error.message);
     }
   }
 
@@ -509,9 +580,17 @@ class CacheService {
         await this.redis.ping();
         health.redis.status = 'connected';
         health.redis.latency = performance.now() - start;
-      } catch (_error) {
+      } catch (error) {
+        console.warn('⚠️ Redis health check failed:', error.message);
         health.redis.status = 'error';
+        this.isRedisConnected = false;
+
+        // Don't auto-reset during health checks to avoid connection loops
+        // Let the application handle reconnection attempts separately
       }
+    } else if (process.env.REDIS_URL && !this.isInitializing) {
+      // Redis is configured but not connected and not currently initializing
+      health.redis.status = 'disconnected';
     }
 
     // Overall health

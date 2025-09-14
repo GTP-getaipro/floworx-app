@@ -2,7 +2,7 @@ const crypto = require('crypto');
 
 const bcrypt = require('bcryptjs');
 
-const { pool } = require('../database/connection');
+const { databaseOperations } = require('../database/database-operations');
 
 const emailService = require('./emailService');
 
@@ -34,11 +34,9 @@ class PasswordResetService {
   async initiatePasswordReset(email, ipAddress = null, userAgent = null) {
     try {
       // Find user by email
-      const userQuery =
-        'SELECT id, email, first_name, failed_login_attempts, account_locked_until FROM users WHERE email = $1';
-      const userResult = await pool.query(userQuery, [email.toLowerCase()]);
+      const userResult = await databaseOperations.getUserWithSecurityInfo(email.toLowerCase());
 
-      if (userResult.rows.length === 0) {
+      if (!userResult.success || !userResult.data) {
         // Don't reveal if email exists - return success for security
         return {
           success: true,
@@ -47,7 +45,7 @@ class PasswordResetService {
         };
       }
 
-      const user = userResult.rows[0];
+      const user = userResult.data;
 
       // Check if account is locked
       if (user.account_locked_until && new Date(user.account_locked_until) > new Date()) {
@@ -60,15 +58,13 @@ class PasswordResetService {
       }
 
       // Check rate limiting - max 5 reset attempts per hour
-      const recentAttemptsQuery = `
-        SELECT COUNT(*) as attempt_count 
-        FROM password_reset_tokens 
-        WHERE user_id = $1 AND created_at > $2
-      `;
-      const oneHourAgo = new Date(Date.now() - 60 * 60 * 1000);
-      const attemptsResult = await pool.query(recentAttemptsQuery, [user.id, oneHourAgo]);
+      const attemptsResult = await databaseOperations.getPasswordResetAttemptCount(user.id, this.maxResetAttempts);
 
-      if (parseInt(attemptsResult.rows[0].attempt_count, 10) >= this.maxResetAttempts) {
+      if (!attemptsResult.success) {
+        throw new Error('Failed to check reset attempt count');
+      }
+
+      if (attemptsResult.rateLimited) {
         return {
           success: false,
           error: 'Rate limit exceeded',
@@ -82,12 +78,17 @@ class PasswordResetService {
       const expiresAt = new Date(Date.now() + this.tokenExpiry);
 
       // Store reset token
-      const insertTokenQuery = `
-        INSERT INTO password_reset_tokens (user_id, token, expires_at, ip_address, user_agent)
-        VALUES ($1, $2, $3, $4, $5)
-        RETURNING id
-      `;
-      await pool.query(insertTokenQuery, [user.id, resetToken, expiresAt, ipAddress, userAgent]);
+      const tokenResult = await databaseOperations.createPasswordResetToken(
+        user.id,
+        resetToken,
+        expiresAt,
+        ipAddress,
+        userAgent
+      );
+
+      if (!tokenResult.success) {
+        throw new Error('Failed to create password reset token');
+      }
 
       // Send password reset email
       await this.sendPasswordResetEmail(user.email, user.first_name, resetToken);
@@ -117,15 +118,9 @@ class PasswordResetService {
    */
   async verifyResetToken(token) {
     try {
-      const tokenQuery = `
-        SELECT prt.*, u.email, u.first_name 
-        FROM password_reset_tokens prt
-        JOIN users u ON prt.user_id = u.id
-        WHERE prt.token = $1 AND prt.used = false AND prt.expires_at > CURRENT_TIMESTAMP
-      `;
-      const tokenResult = await pool.query(tokenQuery, [token]);
+      const tokenResult = await databaseOperations.getPasswordResetToken(token);
 
-      if (tokenResult.rows.length === 0) {
+      if (!tokenResult.data) {
         return {
           valid: false,
           error: 'Invalid or expired token',
@@ -133,13 +128,13 @@ class PasswordResetService {
         };
       }
 
-      const tokenData = tokenResult.rows[0];
+      const tokenData = tokenResult.data;
 
       return {
         valid: true,
         userId: tokenData.user_id,
-        email: tokenData.email,
-        firstName: tokenData.first_name,
+        email: tokenData.users?.email || tokenData.email,
+        firstName: tokenData.users?.first_name || tokenData.first_name,
         expiresAt: tokenData.expires_at
       };
     } catch (error) {
@@ -179,39 +174,23 @@ class PasswordResetService {
       const saltRounds = 12;
       const passwordHash = await bcrypt.hash(newPassword, saltRounds);
 
-      // Begin transaction
-      const client = await pool.connect();
-      try {
-        await client.query('BEGIN');
+      // Update user password
+      const passwordUpdateResult = await databaseOperations.updateUserPassword(tokenVerification.userId, passwordHash);
+      if (!passwordUpdateResult.success) {
+        throw new Error('Failed to update password');
+      }
 
-        // Update user password
-        const updatePasswordQuery = `
-          UPDATE users 
-          SET password_hash = $1, 
-              last_password_reset = CURRENT_TIMESTAMP,
-              failed_login_attempts = 0,
-              account_locked_until = NULL
-          WHERE id = $2
-        `;
-        await client.query(updatePasswordQuery, [passwordHash, tokenVerification.userId]);
+      // Mark token as used
+      const tokenUpdateResult = await databaseOperations.markPasswordResetTokenUsed(token);
+      if (!tokenUpdateResult.success) {
+        throw new Error('Failed to mark token as used');
+      }
 
-        // Mark token as used
-        const markTokenUsedQuery = `
-          UPDATE password_reset_tokens 
-          SET used = true, used_at = CURRENT_TIMESTAMP 
-          WHERE token = $1
-        `;
-        await client.query(markTokenUsedQuery, [token]);
-
-        // Invalidate all other reset tokens for this user
-        const invalidateTokensQuery = `
-          UPDATE password_reset_tokens 
-          SET used = true, used_at = CURRENT_TIMESTAMP 
-          WHERE user_id = $1 AND used = false AND token != $2
-        `;
-        await client.query(invalidateTokensQuery, [tokenVerification.userId, token]);
-
-        await client.query('COMMIT');
+      // Invalidate all other reset tokens for this user
+      const invalidateResult = await databaseOperations.invalidateUserPasswordResetTokens(tokenVerification.userId, token);
+      if (!invalidateResult.success) {
+        console.warn('Failed to invalidate other tokens, but continuing...');
+      }
 
         // Log security event
         await this.logSecurityEvent(
@@ -235,12 +214,6 @@ class PasswordResetService {
           message: 'Password reset successfully. You can now log in with your new password.',
           userId: tokenVerification.userId
         };
-      } catch (error) {
-        await client.query('ROLLBACK');
-        throw error;
-      } finally {
-        client.release();
-      }
     } catch (error) {
       console.error('Password reset error:', error);
 
@@ -348,11 +321,7 @@ class PasswordResetService {
    */
   async logSecurityEvent(userId, action, resourceType, resourceId, ipAddress, userAgent, success, details) {
     try {
-      const logQuery = `
-        INSERT INTO security_audit_log (user_id, action, resource_type, resource_id, ip_address, user_agent, success, details)
-        VALUES ($1, $2, $3, $4, $5, $6, $7, $8)
-      `;
-      await pool.query(logQuery, [
+      const result = await databaseOperations.logSecurityEvent(
         userId,
         action,
         resourceType,
@@ -360,8 +329,11 @@ class PasswordResetService {
         ipAddress,
         userAgent,
         success,
-        JSON.stringify(details)
-      ]);
+        details
+      );
+      if (!result.success) {
+        console.warn('Failed to log security event:', result.error);
+      }
     } catch (error) {
       console.error('Failed to log security event:', error);
       // Don't throw - logging failure shouldn't break the main flow
@@ -374,9 +346,8 @@ class PasswordResetService {
    */
   async cleanupExpiredTokens() {
     try {
-      const cleanupQuery = 'SELECT cleanup_expired_tokens()';
-      const result = await pool.query(cleanupQuery);
-      return result.rows[0].cleanup_expired_tokens;
+      const result = await databaseOperations.cleanupExpiredTokens();
+      return result.success ? result.count : 0;
     } catch (error) {
       console.error('Token cleanup error:', error);
       return 0;
@@ -392,86 +363,67 @@ class PasswordResetService {
    */
   async handleFailedLogin(email, ipAddress = null, userAgent = null) {
     try {
-      const client = await pool.connect();
-      try {
-        await client.query('BEGIN');
-
-        // Get current user data
-        const userQuery = `
-          SELECT id, email, failed_login_attempts, account_locked_until, last_failed_login
-          FROM users
-          WHERE email = $1
-        `;
-        const userResult = await client.query(userQuery, [email.toLowerCase()]);
-
-        if (userResult.rows.length === 0) {
-          return { success: true, accountLocked: false }; // Don't reveal if user exists
-        }
-
-        const user = userResult.rows[0];
-        const now = new Date();
-        let failedAttempts = (user.failed_login_attempts || 0) + 1;
-        let lockoutUntil = null;
-
-        // Check if we should reset failed attempts (after successful login or lockout expiry)
-        if (user.account_locked_until && new Date(user.account_locked_until) <= now) {
-          failedAttempts = 1; // Reset to 1 for this new failed attempt
-        }
-
-        // Calculate lockout duration with progressive increase
-        if (failedAttempts >= this.maxFailedLogins) {
-          const lockoutMultiplier = Math.pow(
-            this.progressiveLockoutMultiplier,
-            Math.floor(failedAttempts / this.maxFailedLogins) - 1
-          );
-          const lockoutDuration = this.accountLockoutDuration * lockoutMultiplier;
-          lockoutUntil = new Date(now.getTime() + lockoutDuration);
-        }
-
-        // Update user record
-        const updateQuery = `
-          UPDATE users
-          SET failed_login_attempts = $1,
-              account_locked_until = $2,
-              last_failed_login = $3,
-              updated_at = CURRENT_TIMESTAMP
-          WHERE id = $4
-        `;
-        await client.query(updateQuery, [failedAttempts, lockoutUntil, now, user.id]);
-
-        // Log security event
-        await this.logSecurityEvent(
-          client,
-          user.id,
-          'failed_login_attempt',
-          'user',
-          user.id,
-          ipAddress,
-          userAgent,
-          false,
-          {
-            email: user.email,
-            failedAttempts,
-            accountLocked: Boolean(lockoutUntil),
-            lockoutUntil
-          }
-        );
-
-        await client.query('COMMIT');
-
-        return {
-          success: true,
-          accountLocked: Boolean(lockoutUntil),
-          failedAttempts,
-          lockoutUntil,
-          remainingAttempts: Math.max(0, this.maxFailedLogins - failedAttempts)
-        };
-      } catch (error) {
-        await client.query('ROLLBACK');
-        throw error;
-      } finally {
-        client.release();
+      // Use database operations instead of direct pool connection
+      const userResult = await databaseOperations.getUserWithSecurityInfo(email.toLowerCase());
+      if (!userResult.success || !userResult.data) {
+        return { success: false, error: 'User not found' };
       }
+
+      const user = userResult.data;
+      const now = new Date();
+      let failedAttempts = (user.failed_login_attempts || 0) + 1;
+      let lockoutUntil = null;
+
+      // Check if we should reset failed attempts (after successful login or lockout expiry)
+      if (user.account_locked_until && new Date(user.account_locked_until) <= now) {
+        failedAttempts = 1; // Reset to 1 for this new failed attempt
+      }
+
+      // Calculate lockout duration with progressive increase
+      if (failedAttempts >= this.maxFailedLogins) {
+        const lockoutMultiplier = Math.pow(
+          this.progressiveLockoutMultiplier,
+          Math.floor(failedAttempts / this.maxFailedLogins) - 1
+        );
+        const lockoutDuration = this.accountLockoutDuration * lockoutMultiplier;
+        lockoutUntil = new Date(now.getTime() + lockoutDuration);
+      }
+
+      // Update user security info
+      const updateResult = await databaseOperations.updateUserSecurityInfo(user.id, {
+        failed_login_attempts: failedAttempts,
+        account_locked_until: lockoutUntil ? lockoutUntil.toISOString() : null,
+        last_failed_login: now.toISOString()
+      });
+
+      if (!updateResult.success) {
+        throw new Error('Failed to update user security info');
+      }
+
+      // Log security event
+      await databaseOperations.logSecurityEvent(
+        user.id,
+        'failed_login_attempt',
+        'user',
+        user.id,
+        ipAddress,
+        userAgent,
+        false,
+        {
+          email: user.email,
+          failedAttempts,
+          accountLocked: Boolean(lockoutUntil),
+          lockoutUntil
+        }
+      );
+
+      return {
+        success: true,
+        accountLocked: Boolean(lockoutUntil),
+        failedAttempts,
+        lockoutUntil,
+        remainingAttempts: Math.max(0, this.maxFailedLogins - failedAttempts)
+      };
     } catch (error) {
       console.error('Failed login handling error:', error);
       throw new Error('Failed to process login attempt');
@@ -485,18 +437,13 @@ class PasswordResetService {
    */
   async checkAccountLockout(email) {
     try {
-      const userQuery = `
-        SELECT id, email, failed_login_attempts, account_locked_until
-        FROM users
-        WHERE email = $1
-      `;
-      const userResult = await pool.query(userQuery, [email.toLowerCase()]);
+      const userResult = await databaseOperations.getUserWithSecurityInfo(email.toLowerCase());
 
-      if (userResult.rows.length === 0) {
+      if (!userResult.success || !userResult.data) {
         return { locked: false, exists: false };
       }
 
-      const user = userResult.rows[0];
+      const user = userResult.data;
       const now = new Date();
       const lockedUntil = user.account_locked_until ? new Date(user.account_locked_until) : null;
 
@@ -530,45 +477,43 @@ class PasswordResetService {
    */
   async unlockAccount(userId, reason = 'manual_unlock', adminId = null) {
     try {
-      const client = await pool.connect();
-      try {
-        await client.query('BEGIN');
+      // Reset failed login attempts and remove lockout
+      const updateResult = await databaseOperations.updateUserSecurityInfo(userId, {
+        failed_login_attempts: 0,
+        account_locked_until: null
+      });
 
-        // Reset failed login attempts and remove lockout
-        const updateQuery = `
-          UPDATE users
-          SET failed_login_attempts = 0,
-              account_locked_until = NULL,
-              updated_at = CURRENT_TIMESTAMP
-          WHERE id = $1
-          RETURNING email
-        `;
-        const result = await client.query(updateQuery, [userId]);
+      if (!updateResult.success) {
+        throw new Error('Failed to unlock account');
+      }
 
-        if (result.rows.length === 0) {
-          throw new Error('User not found');
-        }
+      // Get user email for logging
+      const userResult = await databaseOperations.getUserById(userId);
+      if (!userResult.data) {
+        throw new Error('User not found');
+      }
 
-        // Log security event
-        await this.logSecurityEvent(client, userId, 'account_unlocked', 'user', userId, null, null, true, {
+      // Log security event
+      await databaseOperations.logSecurityEvent(
+        userId,
+        'account_unlocked',
+        'user',
+        userId,
+        null,
+        null,
+        true,
+        {
           reason,
           adminId,
-          email: result.rows[0].email
-        });
+          email: userResult.data.email
+        }
+      );
 
-        await client.query('COMMIT');
-
-        return {
-          success: true,
-          message: 'Account unlocked successfully',
-          email: result.rows[0].email
-        };
-      } catch (error) {
-        await client.query('ROLLBACK');
-        throw error;
-      } finally {
-        client.release();
-      }
+      return {
+        success: true,
+        message: 'Account unlocked successfully',
+        email: userResult.data.email
+      };
     } catch (error) {
       console.error('Account unlock error:', error);
       throw new Error('Failed to unlock account');
@@ -582,17 +527,13 @@ class PasswordResetService {
    */
   async resetFailedLoginAttempts(userId) {
     try {
-      const updateQuery = `
-        UPDATE users
-        SET failed_login_attempts = 0,
-            account_locked_until = NULL,
-            last_successful_login = CURRENT_TIMESTAMP,
-            updated_at = CURRENT_TIMESTAMP
-        WHERE id = $1
-      `;
-      await pool.query(updateQuery, [userId]);
+      const result = await databaseOperations.updateUserSecurityInfo(userId, {
+        failed_login_attempts: 0,
+        account_locked_until: null,
+        last_successful_login: new Date().toISOString()
+      });
 
-      return { success: true };
+      return { success: result.success };
     } catch (error) {
       console.error('Reset failed login attempts error:', error);
       throw new Error('Failed to reset failed login attempts');

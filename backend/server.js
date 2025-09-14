@@ -247,6 +247,16 @@ app.get('/api/user/profile', (req, res) => {
   });
 });
 
+// Root health check route for Coolify/load balancer
+app.get('/', (req, res) => {
+  res.status(200).json({
+    status: 'healthy',
+    service: 'floworx-api',
+    timestamp: new Date().toISOString(),
+    version: config.get('deployment.version') || '1.0.0'
+  });
+});
+
 // API routes (rate limiting handled in middleware/index.js)
 app.use('/api/auth', authRoutes);
 app.use('/api/user', userRoutes);

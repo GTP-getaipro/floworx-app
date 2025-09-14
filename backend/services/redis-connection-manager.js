@@ -21,11 +21,18 @@ class RedisConnectionManager {
    */
   connect() {
     const redisConfig = this.getRedisConfig();
-    
+
+    // If Redis is disabled or no config, return resolved promise
+    if (!redisConfig) {
+      console.log('🔴 Redis connection skipped (disabled or no config)');
+      return Promise.resolve(null);
+    }
+
     console.log('🔴 Attempting Redis connection...');
     console.log(`   Host: ${redisConfig.host}`);
     console.log(`   Port: ${redisConfig.port}`);
-    
+    console.log(`   Password: ${redisConfig.password ? '[SET]' : '[NOT SET]'}`);
+
     return new Promise((resolve, reject) => {
       this.attemptConnection(redisConfig, resolve, reject);
     });
@@ -35,19 +42,59 @@ class RedisConnectionManager {
    * Get Redis configuration from environment
    */
   getRedisConfig() {
-    // Try multiple Redis host configurations
+    // Check if Redis is disabled
+    if (process.env.DISABLE_REDIS === 'true') {
+      console.log('🔴 Redis is disabled via DISABLE_REDIS environment variable');
+      return null;
+    }
+
+    // Try to use REDIS_URL first (Coolify format)
+    if (process.env.REDIS_URL) {
+      try {
+        const url = new URL(process.env.REDIS_URL);
+        const config = {
+          host: url.hostname,
+          port: parseInt(url.port, 10) || 6379,
+          password: url.password || undefined,
+          db: parseInt(url.pathname.slice(1), 10) || 0,
+          retryDelayOnFailover: 100,
+          retryDelayOnClusterDown: 300,
+          retryDelayOnFailoverAttempts: 3,
+          maxRetriesPerRequest: 3,
+          lazyConnect: true,
+          keepAlive: 30000,
+          connectTimeout: 10000,
+          commandTimeout: 5000,
+          // Retry strategy
+          retryStrategy: (times) => {
+            const delay = Math.min(times * 50, 2000);
+            console.log(`🔄 Redis retry attempt ${times}, waiting ${delay}ms`);
+            return delay;
+          }
+        };
+
+        console.log(`🔧 Using REDIS_URL configuration: ${url.hostname}:${config.port}`);
+        return config;
+      } catch (error) {
+        console.warn('⚠️ Failed to parse REDIS_URL, falling back to individual variables');
+      }
+    }
+
+    // Fallback to individual environment variables
     const possibleHosts = [
       process.env.REDIS_HOST,
+      process.env.KEYDB_HOST,
       'redis-database',
-      'redis-database-bgkgcogwgcksc0sccw48c8s0',
+      'keydb-database',
+      'sckck444cs4c88g0ws8kw0ss', // Coolify KeyDB hostname from docs
       '127.0.0.1',
       'localhost'
     ].filter(Boolean);
 
     const config = {
       host: possibleHosts[0] || 'localhost',
-      port: parseInt(process.env.REDIS_PORT, 10) || 6379,
-      password: process.env.REDIS_PASSWORD || undefined,
+      port: parseInt(process.env.REDIS_PORT || process.env.KEYDB_PORT, 10) || 6379,
+      password: process.env.REDIS_PASSWORD || process.env.KEYDB_PASSWORD || undefined,
       retryDelayOnFailover: 100,
       retryDelayOnClusterDown: 300,
       retryDelayOnFailoverAttempts: 3,
@@ -64,11 +111,7 @@ class RedisConnectionManager {
       }
     };
 
-    // Add authentication if password is provided
-    if (process.env.REDIS_PASSWORD) {
-      config.password = process.env.REDIS_PASSWORD;
-    }
-
+    console.log(`🔧 Using individual Redis config: ${config.host}:${config.port}`);
     return config;
   }
 
@@ -77,18 +120,22 @@ class RedisConnectionManager {
    */
   attemptConnection(config, resolve, reject) {
     this.connectionAttempts++;
-    
+
     console.log(`🔄 Redis connection attempt ${this.connectionAttempts}/${this.maxRetries}`);
-    
+
     // Try different hosts if previous attempts failed
     if (this.connectionAttempts > 1) {
       const possibleHosts = [
+        process.env.REDIS_HOST,
+        process.env.KEYDB_HOST,
+        'sckck444cs4c88g0ws8kw0ss', // Coolify KeyDB hostname
         'redis-database',
+        'keydb-database',
         'redis-database-bgkgcogwgcksc0sccw48c8s0',
         '127.0.0.1',
         'localhost'
-      ];
-      
+      ].filter(Boolean);
+
       const hostIndex = (this.connectionAttempts - 1) % possibleHosts.length;
       config.host = possibleHosts[hostIndex];
       console.log(`   Trying host: ${config.host}`);

@@ -10,6 +10,7 @@ const { authRateLimit, authSlowDown, accountLockoutLimiter } = require('../middl
 const { registerSchema, loginSchema } = require('../schemas/auth');
 const emailService = require('../services/emailService');
 const passwordResetService = require('../services/passwordResetService');
+const redisManager = require('../services/redis-connection-manager');
 const { asyncHandler, successResponse } = require('../middleware/standardErrorHandler');
 const { ErrorResponse } = require('../utils/ErrorResponse');
 const { validateRequest } = require('../utils/validateRequest');
@@ -782,6 +783,69 @@ router.post('/logout', authenticateToken, (req, res) => {
       error: 'Internal server error',
       message: 'Failed to logout',
       details: error.message
+    });
+  }
+});
+
+// GET /api/auth/test-keydb
+// Test KeyDB connection and credentials
+router.get('/test-keydb', async (req, res) => {
+  try {
+    console.log('🔧 Testing KeyDB connection...');
+
+    // Check environment variables
+    const envCheck = {
+      REDIS_URL: process.env.REDIS_URL ? '[SET]' : '[NOT SET]',
+      REDIS_HOST: process.env.REDIS_HOST || '[NOT SET]',
+      REDIS_PORT: process.env.REDIS_PORT || '[NOT SET]',
+      REDIS_PASSWORD: process.env.REDIS_PASSWORD ? '[SET]' : '[NOT SET]',
+      KEYDB_HOST: process.env.KEYDB_HOST || '[NOT SET]',
+      KEYDB_PASSWORD: process.env.KEYDB_PASSWORD ? '[SET]' : '[NOT SET]',
+      DISABLE_REDIS: process.env.DISABLE_REDIS || '[NOT SET]'
+    };
+
+    console.log('Environment Variables:', envCheck);
+
+    // Test Redis connection
+    let connectionTest = { connected: false, error: null };
+    try {
+      await redisManager.connect();
+      const client = redisManager.getClient();
+
+      if (client && typeof client.ping === 'function') {
+        const pingResult = await client.ping();
+        connectionTest = {
+          connected: true,
+          ping: pingResult,
+          clientType: client.constructor.name
+        };
+      } else {
+        connectionTest = {
+          connected: false,
+          error: 'Client not available or fallback client in use'
+        };
+      }
+    } catch (error) {
+      connectionTest = {
+        connected: false,
+        error: error.message
+      };
+    }
+
+    res.json({
+      success: true,
+      message: 'KeyDB connection test completed',
+      environment: envCheck,
+      connection: connectionTest,
+      timestamp: new Date().toISOString()
+    });
+  } catch (error) {
+    console.error('KeyDB test error:', error);
+    res.status(500).json({
+      success: false,
+      error: 'KeyDB test failed',
+      message: error.message,
+      timestamp: new Date().toISOString()
     });
   }
 });

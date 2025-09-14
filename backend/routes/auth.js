@@ -177,46 +177,20 @@ router.post('/test-register', async (req, res) => {
 });
 
 // POST /api/auth/register
-// Register a new user account - Fixed version using working pattern
+// Register a new user account - Using exact working pattern from test-register
 router.post('/register', async (req, res) => {
   try {
     console.log('Registration called with body:', req.body);
 
-    const { email, password, firstName, lastName, phone, businessName, agreeToTerms } = req.body;
+    const { email, password, firstName, lastName, businessName } = req.body;
 
     // Basic validation
     if (!email || !password || !firstName || !lastName) {
       return res.status(400).json({
         success: false,
-        error: 'Missing required fields: email, password, firstName, lastName'
+        error: 'Missing required fields'
       });
     }
-
-    if (agreeToTerms !== true) {
-      return res.status(400).json({
-        success: false,
-        error: 'You must agree to the terms and conditions'
-      });
-    }
-
-    // Email validation
-    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-    if (!emailRegex.test(email)) {
-      return res.status(400).json({
-        success: false,
-        error: 'Please provide a valid email address'
-      });
-    }
-
-    // Password validation
-    if (password.length < 8) {
-      return res.status(400).json({
-        success: false,
-        error: 'Password must be at least 8 characters long'
-      });
-    }
-
-    console.log('Validation passed, proceeding with registration');
     // Check if user exists
     console.log('Checking if user exists...');
     const existingUser = await databaseOperations.getUserByEmail(email);
@@ -242,7 +216,6 @@ router.post('/register', async (req, res) => {
       first_name: firstName,
       last_name: lastName,
       company_name: businessName || null,
-      phone: phone || null,
       created_at: new Date().toISOString()
     };
 
@@ -278,8 +251,7 @@ router.post('/register', async (req, res) => {
           id: userData.id,
           email: userData.email,
           firstName: firstName,
-          lastName: lastName,
-          companyName: businessName || null
+          lastName: lastName
         },
         token: token
       },

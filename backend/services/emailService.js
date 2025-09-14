@@ -51,6 +51,14 @@ class EmailService {
   }
 
   /**
+   * Generate secure password reset token
+   * @returns {string} Password reset token
+   */
+  generatePasswordResetToken() {
+    return generatePasswordResetToken();
+  }
+
+  /**
    * Load and process email template
    * @param {string} templateName - Template file name
    * @param {Object} replacements - Key-value pairs for replacements
@@ -130,6 +138,39 @@ class EmailService {
     } catch (error) {
       console.error('❌ Error sending verification email:', error);
       throw new Error('Failed to send verification email');
+    }
+  }
+
+  /**
+   * Send password reset email
+   * @param {string} email - User email
+   * @param {string} resetUrl - Password reset URL with token
+   * @returns {Promise<Object>} Result object
+   */
+  async sendPasswordResetEmail(email, resetUrl) {
+    // Use new template system
+    const htmlContent = this.loadTemplate('password-reset-email.html', {
+      reset_url: resetUrl,
+      current_year: new Date().getFullYear(),
+      expiry_hours: '1' // Token valid for 1 hour
+    });
+
+    const senderConfig = this.getSenderConfig();
+
+    const mailOptions = {
+      from: senderConfig.from,
+      to: email,
+      subject: 'Reset Your Password - FloworxInvite',
+      html: htmlContent
+    };
+
+    try {
+      const result = await this.transporter.sendMail(mailOptions);
+      console.log('✅ Password reset email sent successfully:', result.messageId);
+      return { success: true, messageId: result.messageId };
+    } catch (error) {
+      console.error('❌ Error sending password reset email:', error);
+      throw new Error('Failed to send password reset email');
     }
   }
 

@@ -7,6 +7,9 @@ const { body, validationResult } = require('express-validator');
 const { databaseOperations } = require('../database/database-operations');
 const { passwordResetRateLimit, authRateLimit } = require('../middleware/rateLimiter');
 const { validationMiddleware } = require('../middleware/validation');
+const { generatePasswordResetToken } = require('../utils/tokenGenerator');
+const { logAuthEvent } = require('../utils/activityLogger');
+const { logger } = require('../utils/logger');
 const emailService = require('../services/emailService');
 
 const router = express.Router();
@@ -41,12 +44,11 @@ router.post('/request', passwordResetRateLimit, validationMiddleware.passwordRes
     const _userAgent = req.get('User-Agent');
 
     // Check if user exists using REST API
-    
-    const userResult = await databaseOperations.getUserByEmailForPasswordReset(email);
+    const userResult = await databaseOperations.getUserByEmail(email);
 
     if (userResult.error || !userResult.data) {
       // Don't reveal if email exists - security best practice
-      console.log('ℹ️ User not found, but returning success for security');
+      logger.info('Password reset requested for non-existent email', { email });
       return res.json({
         success: true,
         message: 'If an account with that email exists, a password reset link has been sent.'
@@ -55,37 +57,49 @@ router.post('/request', passwordResetRateLimit, validationMiddleware.passwordRes
 
     const user = userResult.data;
 
-    // Generate reset token
-    const token = crypto.randomBytes(32).toString('hex');
+    // Generate reset token using secure token generator
+    const token = generatePasswordResetToken();
     const expiresAt = new Date(Date.now() + 60 * 60 * 1000); // 1 hour
 
-    // Create password reset token using REST API
-    console.log('🔐 Creating password reset token...');
+    // Store password reset token using new database operations
+    logger.info('Creating password reset token', { userId: user.id, email: user.email });
     try {
-      const tokenResult = await databaseOperations.createPasswordResetToken(user.id, token, expiresAt.toISOString());
+      const tokenResult = await databaseOperations.storePasswordResetToken(user.id, token, expiresAt.toISOString());
 
       if (tokenResult.error) {
-        console.error('Failed to create reset token:', tokenResult.error);
+        logger.error('Failed to store reset token', { error: tokenResult.error, userId: user.id });
         return res.status(500).json({
           success: false,
           error: 'Internal server error',
-          message: 'Failed to process password reset request',
-          details: tokenResult.error.message
+          message: 'Failed to process password reset request'
         });
       }
 
     } catch (tokenError) {
-      console.error('Failed to create reset token:', tokenError);
+      logger.error('Failed to store reset token', { error: tokenError, userId: user.id });
       return res.status(500).json({
         success: false,
         error: 'Internal server error',
-        message: 'Failed to process password reset request',
-        details: tokenError.message
+        message: 'Failed to process password reset request'
       });
     }
 
-    // Send password reset email
-    await emailService.sendPasswordResetEmail(user.email, user.first_name, token);
+    // Generate reset URL and send password reset email
+    const resetUrl = `${process.env.FRONTEND_URL || 'https://app.floworx-iq.com'}/reset-password?token=${token}`;
+
+    try {
+      await emailService.sendPasswordResetEmail(user.email, resetUrl);
+
+      // Log successful password reset request
+      await logAuthEvent(user.id, 'PASSWORD_RESET_REQUEST', { emailSent: true }, req);
+
+      logger.info('Password reset email sent successfully', { userId: user.id, email: user.email });
+    } catch (emailError) {
+      logger.error('Failed to send password reset email', { error: emailError, userId: user.id });
+
+      // Log failed email attempt
+      await logAuthEvent(user.id, 'PASSWORD_RESET_REQUEST', { emailSent: false, error: emailError.message }, req);
+    }
 
     res.json({
       success: true,

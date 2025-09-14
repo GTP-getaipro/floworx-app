@@ -705,22 +705,29 @@ class DatabaseOperations {
     }
   }
 
-  // EMAIL VERIFICATION TOKEN OPERATIONS
+  // PASSWORD RESET TOKEN OPERATIONS
   // =====================================================
 
   /**
-   * Store verification token in database
+   * Store password reset token in database
    * @param {string} userId - User ID
-   * @param {string} token - Verification token
+   * @param {string} token - Reset token
    * @param {Date} expiresAt - Token expiration date
    * @returns {Promise<Object>} Result object
    */
-  async storeVerificationToken(userId, token, expiresAt) {
+  async storePasswordResetToken(userId, token, expiresAt) {
     const { type, client } = await this.getClient();
 
     if (type === 'REST_API') {
+      // Delete any existing tokens for this user first
+      await client.getAdminClient()
+        .from('password_reset_tokens')
+        .delete()
+        .eq('user_id', userId);
+
+      // Insert new token
       return await client.getAdminClient()
-        .from('verification_tokens')
+        .from('password_reset_tokens')
         .insert({
           user_id: userId,
           token: token,
@@ -731,8 +738,12 @@ class DatabaseOperations {
         .single();
     } else {
       // PostgreSQL implementation
+      // Delete existing tokens first
+      await client.query('DELETE FROM password_reset_tokens WHERE user_id = $1', [userId]);
+
+      // Insert new token
       const query = `
-        INSERT INTO verification_tokens (user_id, token, expires_at, created_at)
+        INSERT INTO password_reset_tokens (user_id, token, expires_at, created_at)
         VALUES ($1, $2, $3, NOW())
         RETURNING *
       `;
@@ -742,16 +753,16 @@ class DatabaseOperations {
   }
 
   /**
-   * Get verification token from database
-   * @param {string} token - Verification token
+   * Get password reset token from database
+   * @param {string} token - Reset token
    * @returns {Promise<Object>} Result object with token data
    */
-  async getVerificationToken(token) {
+  async getPasswordResetToken(token) {
     const { type, client } = await this.getClient();
 
     if (type === 'REST_API') {
       return await client.getAdminClient()
-        .from('verification_tokens')
+        .from('password_reset_tokens')
         .select('user_id, expires_at, created_at')
         .eq('token', token)
         .single();
@@ -759,7 +770,7 @@ class DatabaseOperations {
       // PostgreSQL implementation
       const query = `
         SELECT user_id, expires_at, created_at
-        FROM verification_tokens
+        FROM password_reset_tokens
         WHERE token = $1
       `;
       const result = await client.query(query, [token]);
@@ -771,20 +782,41 @@ class DatabaseOperations {
   }
 
   /**
-   * Update user's email verification status
-   * @param {string} userId - User ID
-   * @param {boolean} verified - Verification status
+   * Delete password reset token from database
+   * @param {string} token - Reset token
    * @returns {Promise<Object>} Result object
    */
-  async updateUserEmailVerification(userId, verified) {
+  async deletePasswordResetToken(token) {
+    const { type, client } = await this.getClient();
+
+    if (type === 'REST_API') {
+      return await client.getAdminClient()
+        .from('password_reset_tokens')
+        .delete()
+        .eq('token', token);
+    } else {
+      // PostgreSQL implementation
+      const query = `DELETE FROM password_reset_tokens WHERE token = $1`;
+      const result = await client.query(query, [token]);
+      return { data: null, error: null };
+    }
+  }
+
+  /**
+   * Update user's password
+   * @param {string} userId - User ID
+   * @param {string} hashedPassword - Hashed password
+   * @returns {Promise<Object>} Result object
+   */
+  async updateUserPassword(userId, hashedPassword) {
     const { type, client } = await this.getClient();
 
     if (type === 'REST_API') {
       return await client.getAdminClient()
         .from('users')
         .update({
-          email_verified: verified,
-          email_verified_at: verified ? new Date().toISOString() : null
+          password_hash: hashedPassword,
+          updated_at: new Date().toISOString()
         })
         .eq('id', userId)
         .select()
@@ -793,57 +825,90 @@ class DatabaseOperations {
       // PostgreSQL implementation
       const query = `
         UPDATE users
-        SET email_verified = $1, email_verified_at = $2
-        WHERE id = $3
+        SET password_hash = $1, updated_at = NOW()
+        WHERE id = $2
+        RETURNING *
+      `;
+      const result = await client.query(query, [hashedPassword, userId]);
+      return { data: result.rows[0] || null, error: null };
+    }
+  }
+
+  // USER ACTIVITY LOGGING OPERATIONS
+  // =====================================================
+
+  /**
+   * Log user activity to database
+   * @param {string} userId - User ID
+   * @param {string} activityType - Type of activity
+   * @param {Object} details - Activity details
+   * @param {string} ipAddress - IP address
+   * @param {string} userAgent - User agent
+   * @returns {Promise<Object>} Result object
+   */
+  async logUserActivity(userId, activityType, details = {}, ipAddress = null, userAgent = null) {
+    const { type, client } = await this.getClient();
+
+    if (type === 'REST_API') {
+      return await client.getAdminClient()
+        .from('user_activity_logs')
+        .insert({
+          user_id: userId,
+          activity_type: activityType,
+          details: JSON.stringify(details),
+          ip_address: ipAddress,
+          user_agent: userAgent,
+          created_at: new Date().toISOString()
+        })
+        .select()
+        .single();
+    } else {
+      // PostgreSQL implementation
+      const query = `
+        INSERT INTO user_activity_logs
+        (user_id, activity_type, details, ip_address, user_agent, created_at)
+        VALUES ($1, $2, $3, $4, $5, NOW())
         RETURNING *
       `;
       const result = await client.query(query, [
-        verified,
-        verified ? new Date().toISOString() : null,
-        userId
+        userId,
+        activityType,
+        JSON.stringify(details),
+        ipAddress,
+        userAgent
       ]);
       return { data: result.rows[0] || null, error: null };
     }
   }
 
   /**
-   * Delete verification token from database
-   * @param {string} token - Verification token
-   * @returns {Promise<Object>} Result object
+   * Get user activity history
+   * @param {string} userId - User ID
+   * @param {number} limit - Maximum number of records to return
+   * @param {number} offset - Number of records to skip
+   * @returns {Promise<Object>} Result object with activity data
    */
-  async deleteVerificationToken(token) {
+  async getUserActivityHistory(userId, limit = 50, offset = 0) {
     const { type, client } = await this.getClient();
 
     if (type === 'REST_API') {
       return await client.getAdminClient()
-        .from('verification_tokens')
-        .delete()
-        .eq('token', token);
+        .from('user_activity_logs')
+        .select('id, activity_type, details, ip_address, user_agent, created_at')
+        .eq('user_id', userId)
+        .order('created_at', { ascending: false })
+        .range(offset, offset + limit - 1);
     } else {
       // PostgreSQL implementation
-      const query = `DELETE FROM verification_tokens WHERE token = $1`;
-      const result = await client.query(query, [token]);
-      return { data: null, error: null };
-    }
-  }
-
-  /**
-   * Clean up expired verification tokens
-   * @returns {Promise<Object>} Result object
-   */
-  async cleanupExpiredVerificationTokens() {
-    const { type, client } = await this.getClient();
-
-    if (type === 'REST_API') {
-      return await client.getAdminClient()
-        .from('verification_tokens')
-        .delete()
-        .lt('expires_at', new Date().toISOString());
-    } else {
-      // PostgreSQL implementation
-      const query = `DELETE FROM verification_tokens WHERE expires_at < NOW()`;
-      const result = await client.query(query);
-      return { data: { deletedCount: result.rowCount }, error: null };
+      const query = `
+        SELECT id, activity_type, details, ip_address, user_agent, created_at
+        FROM user_activity_logs
+        WHERE user_id = $1
+        ORDER BY created_at DESC
+        LIMIT $2 OFFSET $3
+      `;
+      const result = await client.query(query, [userId, limit, offset]);
+      return { data: result.rows, error: null };
     }
   }
 

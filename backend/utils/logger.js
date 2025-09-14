@@ -298,6 +298,89 @@ class Logger {
   }
 }
 
-// Export singleton instance
+// Create request logger middleware
+const requestLogger = (req, res, next) => {
+  // Add request ID if not exists
+  req.id = req.id || req.headers['x-request-id'] || require('crypto').randomBytes(16).toString('hex');
+
+  // Add timestamp to request
+  req.startTime = Date.now();
+
+  // Create child logger with request context
+  const loggerInstance = new Logger();
+  req.logger = {
+    ...loggerInstance,
+    info: (message, meta = {}) => loggerInstance.info(message, {
+      ...meta,
+      requestId: req.id,
+      method: req.method,
+      url: req.originalUrl,
+      ip: req.ip,
+      userAgent: req.headers['user-agent']
+    }),
+    error: (message, meta = {}) => loggerInstance.error(message, {
+      ...meta,
+      requestId: req.id,
+      method: req.method,
+      url: req.originalUrl,
+      ip: req.ip,
+      userAgent: req.headers['user-agent']
+    }),
+    warn: (message, meta = {}) => loggerInstance.warn(message, {
+      ...meta,
+      requestId: req.id,
+      method: req.method,
+      url: req.originalUrl,
+      ip: req.ip,
+      userAgent: req.headers['user-agent']
+    }),
+    debug: (message, meta = {}) => loggerInstance.debug(message, {
+      ...meta,
+      requestId: req.id,
+      method: req.method,
+      url: req.originalUrl,
+      ip: req.ip,
+      userAgent: req.headers['user-agent']
+    })
+  };
+
+  // Log request
+  req.logger.info(`Request received: ${req.method} ${req.originalUrl}`);
+
+  // Log response
+  const originalSend = res.send;
+  res.send = function(body) {
+    const responseTime = Date.now() - req.startTime;
+
+    req.logger.info(`Response sent: ${res.statusCode} (${responseTime}ms)`);
+
+    return originalSend.call(this, body);
+  };
+
+  next();
+};
+
+// Error logging middleware
+const errorLogger = (err, req, res, next) => {
+  const logger = req.logger || new Logger();
+
+  logger.error('Request error', {
+    error: err.message,
+    stack: process.env.NODE_ENV === 'development' ? err.stack : undefined,
+    url: req.originalUrl,
+    method: req.method,
+    ip: req.ip
+  });
+
+  next(err);
+};
+
+// Export singleton instance and middleware
 const logger = new Logger();
-module.exports = logger;
+
+module.exports = {
+  logger,
+  requestLogger,
+  errorLogger,
+  Logger
+};

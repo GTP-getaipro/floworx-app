@@ -84,6 +84,98 @@ router.get('/debug', async (req, res) => {
   }
 });
 
+// POST /api/auth/test-register - Simplified registration for debugging
+router.post('/test-register', async (req, res) => {
+  try {
+    console.log('🧪 Test registration called with body:', req.body);
+
+    const { email, password, firstName, lastName } = req.body;
+
+    // Basic validation
+    if (!email || !password || !firstName || !lastName) {
+      return res.status(400).json({
+        success: false,
+        error: 'Missing required fields'
+      });
+    }
+
+    // Check if user exists
+    console.log('🧪 Checking if user exists...');
+    const existingUser = await databaseOperations.getUserByEmail(email);
+    console.log('🧪 Existing user check result:', existingUser.data ? 'User exists' : 'User not found');
+
+    if (existingUser.data) {
+      return res.status(409).json({
+        success: false,
+        error: 'User already exists'
+      });
+    }
+
+    // Hash password
+    console.log('🧪 Hashing password...');
+    const passwordHash = await bcrypt.hash(password, 12);
+    console.log('🧪 Password hashed successfully');
+
+    // Create user data
+    const userData = {
+      id: require('crypto').randomUUID(),
+      email: email.toLowerCase(),
+      password_hash: passwordHash,
+      first_name: firstName,
+      last_name: lastName,
+      created_at: new Date().toISOString()
+    };
+
+    console.log('🧪 Creating user with data:', { ...userData, password_hash: '[HIDDEN]' });
+
+    // Create user
+    const createResult = await databaseOperations.createUser(userData);
+    console.log('🧪 User creation result:', createResult.error ? `Error: ${createResult.error.message}` : 'Success');
+
+    if (createResult.error) {
+      return res.status(500).json({
+        success: false,
+        error: 'Failed to create user',
+        details: createResult.error.message
+      });
+    }
+
+    // Generate token
+    console.log('🧪 Generating JWT token...');
+    const token = jwt.sign(
+      { userId: userData.id, email: userData.email },
+      process.env.JWT_SECRET,
+      { expiresIn: '24h' }
+    );
+    console.log('🧪 Token generated successfully');
+
+    console.log('🧪 Test registration completed successfully');
+
+    res.status(201).json({
+      success: true,
+      data: {
+        user: {
+          id: userData.id,
+          email: userData.email,
+          firstName: firstName,
+          lastName: lastName
+        },
+        token: token
+      },
+      message: 'Test registration successful'
+    });
+
+  } catch (error) {
+    console.error('🧪 Test registration error:', error);
+    res.status(500).json({
+      success: false,
+      error: 'Test registration failed',
+      details: error.message,
+      stack: process.env.NODE_ENV === 'development' ? error.stack : undefined
+    });
+  }
+});
+
 // POST /api/auth/register
 // Register a new user account - SECURED with rate limiting and validation
 router.post(

@@ -259,7 +259,7 @@ jobs:
     - name: Blue-Green Deployment
       run: |
         echo "Starting blue-green deployment..."
-        
+
         # Deploy to green environment
         ./scripts/deploy-blue-green.sh \
           --image "${{ needs.build.outputs.image-tag }}" \
@@ -287,6 +287,64 @@ jobs:
       run: |
         echo "Cleaning up old blue environment..."
         ./scripts/cleanup-blue-green.sh --environment blue
+
+  # ============================================================================
+  # USER ACCEPTANCE TESTING (UAT)
+  # ============================================================================
+  uat-validation:
+    name: User Acceptance Testing
+    runs-on: ubuntu-latest
+    needs: deploy-production
+    if: github.ref == 'refs/heads/main'
+    environment: production
+
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v4
+
+    - name: Setup Node.js
+      uses: actions/setup-node@v4
+      with:
+        node-version: ${{ env.NODE_VERSION }}
+        cache: 'npm'
+
+    - name: Install dependencies
+      run: |
+        npm ci
+        npx playwright install
+
+    - name: Run comprehensive UAT
+      run: |
+        echo "Starting comprehensive User Acceptance Testing..."
+        node uat/uat-runner.js
+      env:
+        UAT_BASE_URL: ${{ secrets.PRODUCTION_URL }}
+        UAT_ENVIRONMENT: production
+
+    - name: Upload UAT reports
+      uses: actions/upload-artifact@v3
+      if: always()
+      with:
+        name: uat-reports
+        path: uat-reports/
+        retention-days: 30
+
+    - name: UAT Sign-off validation
+      run: |
+        echo "Validating UAT sign-off requirements..."
+        # Check if UAT passed and create sign-off
+        if [ -f "uat-reports/*/comprehensive-uat-report.json" ]; then
+          UAT_STATUS=$(jq -r '.signOff.status' uat-reports/*/comprehensive-uat-report.json)
+          if [ "$UAT_STATUS" != "APPROVED" ]; then
+            echo "❌ UAT validation failed - production release blocked"
+            exit 1
+          else
+            echo "✅ UAT validation passed - production release approved"
+          fi
+        else
+          echo "❌ UAT report not found - production release blocked"
+          exit 1
+        fi
 
   # ============================================================================
   # ROLLBACK CAPABILITY

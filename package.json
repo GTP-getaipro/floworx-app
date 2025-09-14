@@ -86,7 +86,14 @@
     "db:migrate": "cd backend && npm run migrate",
     "db:migrate:test": "NODE_ENV=test cd backend && npm run migrate",
     "health:check": "curl -f $PRODUCTION_URL/api/health || exit 1",
-    "health:detailed": "curl -f $PRODUCTION_URL/api/health/detailed || exit 1"
+    "health:detailed": "curl -f $PRODUCTION_URL/api/health/detailed || exit 1",
+    "uat:run": "node uat/uat-runner.js",
+    "uat:framework": "node uat/uat-framework.js",
+    "uat:playwright": "playwright test uat/uat-automation.spec.js",
+    "uat:dashboard": "node uat/uat-dashboard.js",
+    "uat:full": "npm run uat:run && npm run uat:playwright",
+    "uat:production": "UAT_BASE_URL=https://app.floworx-iq.com npm run uat:full",
+    "uat:staging": "UAT_BASE_URL=$STAGING_URL npm run uat:full"
   },
   "keywords": [
     "saas",

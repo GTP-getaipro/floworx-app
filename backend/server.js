@@ -55,6 +55,9 @@ const workflowRoutes = require('./routes/workflows');
 // Initialize Express app
 const app = express();
 
+// Trust proxy for proper IP detection behind load balancers (Coolify/Docker)
+app.set('trust proxy', true);
+
 // Load configuration and get PORT
 const PORT = config.get('port');
 

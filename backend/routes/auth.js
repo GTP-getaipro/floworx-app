@@ -401,7 +401,7 @@ router.post('/verify-email', async (req, res) => {
     }
 
     // Generate JWT token for the verified user
-    const jwtToken = jwt.sign({ id: result.userId, email: result.email }, process.env.JWT_SECRET, { expiresIn: '7d' });
+    const jwtToken = jwt.sign({ userId: result.userId, email: result.email }, process.env.JWT_SECRET, { expiresIn: '7d' });
 
     res.json({
       message: 'Email verified successfully',

@@ -10,6 +10,45 @@ const transactionService = require('../services/transactionService');
 
 const router = express.Router();
 
+// GET /api/onboarding/debug - Diagnostic endpoint (remove after testing)
+router.get('/debug', async (req, res) => {
+  try {
+    console.log('🔍 Debug endpoint called');
+
+    // Test database connection
+    const businessTypesResult = await databaseOperations.getBusinessTypes();
+    console.log('📊 Business types result:', businessTypesResult.success);
+
+    // Test if user_configurations table exists
+    let userConfigTest = null;
+    try {
+      userConfigTest = await databaseOperations.getUserConfiguration('test-user-id');
+      console.log('📊 User config test result:', userConfigTest.success);
+    } catch (error) {
+      console.log('📊 User config test error:', error.message);
+      userConfigTest = { error: error.message };
+    }
+
+    res.json({
+      success: true,
+      debug: {
+        timestamp: new Date().toISOString(),
+        businessTypesWorking: businessTypesResult.success,
+        userConfigTableTest: userConfigTest,
+        environment: process.env.NODE_ENV,
+        databaseUrl: process.env.DATABASE_URL ? 'Present' : 'Missing'
+      }
+    });
+  } catch (error) {
+    console.error('🔍 Debug endpoint error:', error);
+    res.status(500).json({
+      success: false,
+      error: error.message,
+      stack: error.stack
+    });
+  }
+});
+
 // GET /api/onboarding/status
 // Get user's onboarding progress including email provider and business type
 router.get('/status', authenticateToken, async (req, res) => {

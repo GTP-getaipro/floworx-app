@@ -203,32 +203,7 @@ class EmailService {
     }
   }
 
-  /**
-   * Send password reset email
-   * @param {string} email - User email
-   * @param {string} firstName - User first name
-   * @param {string} resetToken - Password reset token
-   */
-  async sendPasswordResetEmail(email, firstName, resetToken) {
-    const resetUrl = `${process.env.FRONTEND_URL}/reset-password?token=${resetToken}`;
 
-    const htmlContent = this.getPasswordResetTemplate(firstName, resetUrl);
-
-    const mailOptions = {
-      from: `"${process.env.FROM_NAME || 'Floworx Security'}" <${process.env.FROM_EMAIL || process.env.SMTP_USER}>`,
-      to: email,
-      subject: 'Reset Your Floworx Password - Secure Your Hot Tub Business Account',
-      html: htmlContent
-    };
-
-    try {
-      await this.transporter.sendMail(mailOptions);
-      console.log(`Password reset email sent to: ${email}`);
-    } catch (error) {
-      console.error('Failed to send password reset email:', error);
-      throw new Error('Failed to send password reset email');
-    }
-  }
 
   /**
    * Send onboarding reminder email

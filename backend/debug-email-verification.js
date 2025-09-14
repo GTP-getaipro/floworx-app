@@ -3,7 +3,8 @@ const { query } = require('./database/unified-connection');
 const emailService = require('./services/emailService');
 
 async function debugEmailVerification() {
-  );
+  console.log('🔍 EMAIL VERIFICATION DEBUGGING');
+  console.log('================================');
 
   try {
     // Step 1: Test database connection

@@ -3,7 +3,7 @@
  * Provides consistent error formatting, logging, and response structure
  */
 
-const logger = require('./logger');
+const { logger } = require('./logger');
 
 /**
  * Standardized Error Codes

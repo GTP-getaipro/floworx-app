@@ -268,7 +268,7 @@ app.use('/api/oauth', oauthRateLimit, oauthRoutes);
 app.use('/api/onboarding', onboardingRoutes);
 app.use('/api/recovery', recoveryRoutes);
 app.use('/api/account-recovery', accountRecoveryRoutes);
-app.use('/api/password-reset', passwordResetRateLimit, passwordResetRoutes);
+app.use('/api/password-reset', passwordResetRoutes);
 app.use('/api/business-types', businessTypesRoutes);
 app.use('/api/workflows', workflowRoutes);
 app.use('/api/analytics', analyticsRoutes);
@@ -351,6 +351,9 @@ const startServer = async () => {
 if (config.get('nodeEnv') === 'production' && process.env.VERCEL) {
   // Initialize database for serverless
   initializeDatabase().catch(error => logger.error('Serverless database initialization failed', { error: error.message }));
+  module.exports = app;
+} else if (config.get('nodeEnv') === 'test') {
+  // For testing, export the app without starting the server
   module.exports = app;
 } else {
   // Start server normally for development

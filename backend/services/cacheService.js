@@ -66,7 +66,7 @@ class CacheService {
     // Skip KeyDB initialization if disabled or not configured
     if (process.env.DISABLE_REDIS === 'true') {
       if (!isDevelopment) {
-
+        console.log('⚠️ Redis disabled in production mode');
       }
       this.isRedisConnected = false;
       return;
@@ -151,7 +151,7 @@ class CacheService {
       try {
         await this.redis.quit();
       } catch (error) {
-
+        console.log('Error closing Redis connection:', error.message);
       }
       this.redis = null;
     }

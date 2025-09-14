@@ -6,9 +6,20 @@
 const request = require('supertest');
 const bcrypt = require('bcryptjs');
 
-// Set environment to test to ensure app is exported
-process.env.NODE_ENV = 'production';
-process.env.VERCEL = 'true';
+// Set test environment variables BEFORE importing server
+process.env.NODE_ENV = 'test';
+process.env.JWT_SECRET = 'test-jwt-secret-key-for-testing-only';
+process.env.ENCRYPTION_KEY = 'test-encryption-key-32-chars-lon';
+process.env.SMTP_HOST = 'smtp.ethereal.email';
+process.env.SMTP_PORT = '587';
+process.env.SMTP_USER = 'test@ethereal.email';
+process.env.SMTP_PASS = 'test-password';
+process.env.FROM_EMAIL = 'test@floworx-iq.com';
+process.env.FROM_NAME = 'FloWorx Test';
+process.env.N8N_BASE_URL = 'http://localhost:5678';
+process.env.N8N_API_KEY = 'test-api-key';
+process.env.DATABASE_URL = process.env.TEST_DATABASE_URL || 'postgresql://localhost:5432/floworx_test';
+process.env.DISABLE_RATE_LIMITING = 'true';
 
 const app = require('../../server');
 

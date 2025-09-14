@@ -4,6 +4,7 @@
  */
 
 const Redis = require('ioredis');
+const { URL } = require('url');
 const { logger } = require('../utils/logger');
 
 class RedisConnectionManager {

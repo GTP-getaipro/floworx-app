@@ -8,7 +8,19 @@ const { initialize: initializeDatabase } = require('../database/unified-connecti
 // Set test environment
 process.env.NODE_ENV = 'test';
 process.env.JWT_SECRET = 'test-jwt-secret-key-for-testing-only';
-process.env.ENCRYPTION_KEY = 'test-encryption-key-32-chars-long';
+process.env.ENCRYPTION_KEY = 'test-encryption-key-32-chars-lon';
+
+// Email configuration for tests
+process.env.SMTP_HOST = 'smtp.ethereal.email';
+process.env.SMTP_PORT = '587';
+process.env.SMTP_USER = 'test@ethereal.email';
+process.env.SMTP_PASS = 'test-password';
+process.env.FROM_EMAIL = 'test@floworx-iq.com';
+process.env.FROM_NAME = 'FloWorx Test';
+
+// n8n configuration for tests
+process.env.N8N_BASE_URL = 'http://localhost:5678';
+process.env.N8N_API_KEY = 'test-api-key';
 
 // Test database configuration (use separate test DB)
 process.env.DATABASE_URL = process.env.TEST_DATABASE_URL || 'postgresql://localhost:5432/floworx_test';

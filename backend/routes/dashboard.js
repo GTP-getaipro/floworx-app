@@ -1,97 +1,150 @@
 const express = require('express');
-
-const { getUserById, getRecentActivities, getOAuthConnections } = require('../database/unified-connection');
 const { authenticateToken } = require('../middleware/auth');
+const { databaseOperations } = require('../database/database-operations');
+const { scheduler } = require('../scheduler/n8nScheduler');
+const { logger } = require('../utils/logger');
+const { getUserById, getRecentActivities, getOAuthConnections } = require('../database/unified-connection');
 const { asyncHandler, successResponse } = require('../middleware/standardErrorHandler');
 const { ErrorResponse } = require('../utils/ErrorResponse');
-const logger = require('../utils/logger');
 
 const router = express.Router();
 
 // GET /api/dashboard
-// Get user dashboard data
+// Get dashboard data
 router.get('/', authenticateToken, async (req, res) => {
   try {
-    logger.info('Dashboard endpoint called', { userId: req.user?.id });
-
-    // Get user's full information using REST API
-    const userDetails = await getUserById(req.user.id);
-
-    if (!userDetails) {
+    const userId = req.user.id;
+    
+    // Get user profile
+    const userProfile = await databaseOperations.getUserProfile(userId);
+    
+    if (!userProfile.data) {
       return res.status(404).json({
         success: false,
-        error: {
-          code: 'USER_NOT_FOUND',
-          message: 'User account not found',
-          statusCode: 404,
-          timestamp: new Date().toISOString(),
-          requestId: req.id
+        message: 'User not found'
+      });
+    }
+    
+    // Get user configuration
+    const userConfig = await databaseOperations.getUserConfiguration(userId);
+    
+    // Get user workflow
+    const workflow = await databaseOperations.getUserWorkflow(userId);
+    
+    // Get workflow statistics if workflow exists
+    let workflowStats = null;
+    if (workflow.data) {
+      const stats = await scheduler.getWorkflowStatistics(workflow.data.workflow_id);
+      if (stats.success) {
+        workflowStats = stats.data;
+      }
+    }
+    
+    // Get user activity
+    const activity = await databaseOperations.getUserActivityHistory(userId, 10);
+    
+    return res.json({
+      success: true,
+      data: {
+        user: {
+          id: userProfile.data.id,
+          email: userProfile.data.email,
+          firstName: userProfile.data.first_name,
+          lastName: userProfile.data.last_name,
+          companyName: userProfile.data.company_name,
+          emailVerified: userProfile.data.email_verified
+        },
+        configuration: userConfig.data ? {
+          emailProvider: userConfig.data.email_provider,
+          businessType: {
+            id: userConfig.data.business_type_id,
+            name: userConfig.data.business_type_name,
+            description: userConfig.data.business_type_description
+          },
+          customSettings: userConfig.data.custom_settings || {}
+        } : null,
+        workflow: workflow.data ? {
+          id: workflow.data.workflow_id,
+          status: workflow.data.status,
+          createdAt: workflow.data.created_at,
+          updatedAt: workflow.data.updated_at,
+          statistics: workflowStats
+        } : null,
+        activity: activity.data || []
+      }
+    });
+  } catch (error) {
+    logger.error('Failed to get dashboard data', { error, userId: req.user.id });
+    return res.status(500).json({
+      success: false,
+      message: 'Failed to get dashboard data',
+      error: error.message
+    });
+  }
+});
+
+// GET /api/dashboard/statistics
+// Get workflow statistics
+router.get('/statistics', authenticateToken, async (req, res) => {
+  try {
+    const userId = req.user.id;
+    
+    // Get user workflow
+    const workflow = await databaseOperations.getUserWorkflow(userId);
+    
+    if (!workflow.data) {
+      return res.json({
+        success: true,
+        data: {
+          hasWorkflow: false,
+          statistics: null
         }
       });
     }
-
-    // Get recent activities using REST API (graceful handling)
-    const recentActivities = await getRecentActivities(req.user.id, 5);
-
-    // Get connection status using REST API (graceful handling)
-    const connections = await getOAuthConnections(req.user.id);
-
-    const dashboardData = {
-      user: {
-        id: userDetails.id,
-        email: userDetails.email,
-        firstName: userDetails.first_name,
-        lastName: userDetails.last_name,
-        companyName: userDetails.company_name,
-        createdAt: userDetails.created_at,
-        lastLogin: userDetails.last_login
-      },
-      connections: connections,
-      recentActivities: recentActivities,
-      quickActions: [
-        {
-          id: 'connect_google',
-          title: 'Connect Google Account',
-          description: 'Connect your Google account to start automating emails',
-          action: '/api/oauth/google',
-          enabled: !connections.google?.connected,
-          priority: 1
-        },
-        {
-          id: 'create_workflow',
-          title: 'Create First Workflow',
-          description: 'Set up your first email automation workflow',
-          action: '/workflows/create',
-          enabled: connections.google?.connected,
-          priority: 2
-        }
-      ],
-      systemStatus: {
-        apiHealthy: true,
-        databaseConnected: true,
-        lastUpdated: new Date().toISOString()
-      }
-    };
-
-    res.status(200).json({
+    
+    // Get workflow statistics
+    const statistics = await scheduler.getWorkflowStatistics(workflow.data.workflow_id);
+    
+    return res.json({
       success: true,
-      data: dashboardData,
-      timestamp: new Date().toISOString(),
-      requestId: req.id
+      data: {
+        hasWorkflow: true,
+        workflowId: workflow.data.workflow_id,
+        statistics: statistics.success ? statistics.data : null
+      }
     });
   } catch (error) {
-    logger.error('Dashboard error', {
-      error: error.message,
-      stack: error.stack,
-      userId: req.user?.id
+    logger.error('Failed to get workflow statistics', { error, userId: req.user.id });
+    return res.status(500).json({
+      success: false,
+      message: 'Failed to get workflow statistics',
+      error: error.message
     });
+  }
+});
 
-    const errorResponse = ErrorResponse.internal('Failed to load dashboard data', {
-      originalError: error.message,
-      userId: req.user?.id
-    }, req.requestId);
-
-    errorResponse.send(res, req);
+// GET /api/dashboard/activity
+// Get user activity
+router.get('/activity', authenticateToken, async (req, res) => {
+  try {
+    const userId = req.user.id;
+    const limit = parseInt(req.query.limit) || 20;
+    const offset = parseInt(req.query.offset) || 0;
+    
+    // Get user activity
+    const activity = await databaseOperations.getUserActivityHistory(userId, limit, offset);
+    
+    return res.json({
+      success: true,
+      data: activity.data || []
+    });
+  } catch (error) {
+    logger.error('Failed to get user activity', { error, userId: req.user.id });
+    return res.status(500).json({
+      success: false,
+      message: 'Failed to get user activity',
+      error: error.message
+    });
   }
 });
 

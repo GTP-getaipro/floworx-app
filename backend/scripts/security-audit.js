@@ -372,7 +372,7 @@ class SecurityAudit {
  */
 function runSecurityAudit() {
   console.log('🔒 Starting FloWorx Security Audit...');
-  );
+  const audit = performSecurityAudit();
   console.log(`Files scanned: ${audit.results.summary.scannedFiles}`);
   console.log(`🚨 Critical/High: ${audit.results.summary.vulnerabilities}`);
   console.log(`⚠️  Medium: ${audit.results.summary.warnings}`);

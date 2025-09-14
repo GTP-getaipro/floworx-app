@@ -61,10 +61,6 @@ async function testEmailVerificationFixes() {
 
     // Test 5: Email service configuration
     console.log('5. Testing email service configuration...');
-    );
-    );
-    );
-    );
 
     // Test 6: Email template generation
     console.log('6. Testing email template generation...');

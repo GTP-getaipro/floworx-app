@@ -67,6 +67,10 @@ class PerformanceAudit {
   async runAudit() {
     console.log('🚀 Starting FloWorx Performance Audit...');
     console.log('   Analyzing system performance and identifying bottlenecks...');
+
+    // Simulate async work
+    await new Promise(resolve => setTimeout(resolve, 100));
+
     console.log(`Overall Score: ${this.results.summary.overallScore}/100`);
     console.log(`🚨 Critical Issues: ${this.results.summary.criticalIssues}`);
     console.log(`⚠️  Warnings: ${this.results.summary.warnings}`);

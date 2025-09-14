@@ -1,15 +1,17 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<testsuites name="jest tests" tests="22" failures="7" errors="0" time="2.284">
-  <testsuite name="OAuthService Unit Tests" errors="0" failures="7" skipped="0" timestamp="2025-09-14T05:23:52" time="2.211" tests="22">
-    <testcase classname="OAuthService Unit Tests › Constructor and Configuration" name="should initialize with supported providers" time="0.002">
+<testsuites name="jest tests" tests="79" failures="65" errors="0" time="12.219">
+  <testsuite name="Frontend API Client Integration" errors="0" failures="33" skipped="0" timestamp="2025-09-14T17:13:48" time="3.547" tests="40">
+    <testcase classname="Frontend API Client Integration › HTTP Methods" name="should handle GET requests" time="0.007">
     </testcase>
-    <testcase classname="OAuthService Unit Tests › Constructor and Configuration" name="should create Google OAuth2 client with correct configuration" time="0.002">
-      <failure>Error: expect(jest.fn()).toHaveBeenCalledWith(...expected)
-
-Expected: &quot;test-client-id&quot;, &quot;test-client-secret&quot;, &quot;http://localhost:3000/callback&quot;
-
-Number of calls: 0
-    at Object.toHaveBeenCalledWith (C:\FloworxInvite\tests\unit\OAuthService.test.js:82:34)
+    <testcase classname="Frontend API Client Integration › HTTP Methods" name="should handle POST requests" time="0.001">
+    </testcase>
+    <testcase classname="Frontend API Client Integration › HTTP Methods" name="should handle PUT requests" time="0.001">
+    </testcase>
+    <testcase classname="Frontend API Client Integration › HTTP Methods" name="should handle DELETE requests" time="0.001">
+    </testcase>
+    <testcase classname="Frontend API Client Integration › Error Handling" name="should handle network errors" time="0">
+      <failure>ReferenceError: mockAxios is not defined
+    at Object.mockAxios (C:\FloworxInvite\tests\integration\frontend-api.test.js:185:7)
     at Promise.finally.completed (C:\FloworxInvite\node_modules\jest-circus\build\jestAdapterInit.js:1556:28)
     at new Promise (&lt;anonymous&gt;)
     at callAsyncCircusFn (C:\FloworxInvite\node_modules\jest-circus\build\jestAdapterInit.js:1496:10)
@@ -22,17 +24,771 @@ Number of calls: 0
     at run (C:\FloworxInvite\node_modules\jest-circus\build\jestAdapterInit.js:757:3)
     at runAndTransformResultsToJestFormat (C:\FloworxInvite\node_modules\jest-circus\build\jestAdapterInit.js:1917:21)
     at jestAdapter (C:\FloworxInvite\node_modules\jest-circus\build\runner.js:101:19)
-    at runTestInternal (C:\FloworxInvite\node_modules\jest-runner\build\index.js:275:16)
-    at runTest (C:\FloworxInvite\node_modules\jest-runner\build\index.js:343:7)</failure>
+    at runTestInternal (C:\FloworxInvite\node_modules\jest-runner\build\testWorker.js:275:16)
+    at runTest (C:\FloworxInvite\node_modules\jest-runner\build\testWorker.js:343:7)
+    at Object.worker (C:\FloworxInvite\node_modules\jest-runner\build\testWorker.js:497:12)</failure>
     </testcase>
-    <testcase classname="OAuthService Unit Tests › Constructor and Configuration" name="should throw error for missing Google configuration" time="0.01">
+    <testcase classname="Frontend API Client Integration › Error Handling" name="should handle 4xx client errors" time="0.001">
+      <failure>ReferenceError: mockAxios is not defined
+    at Object.mockAxios (C:\FloworxInvite\tests\integration\frontend-api.test.js:192:7)
+    at Promise.finally.completed (C:\FloworxInvite\node_modules\jest-circus\build\jestAdapterInit.js:1556:28)
+    at new Promise (&lt;anonymous&gt;)
+    at callAsyncCircusFn (C:\FloworxInvite\node_modules\jest-circus\build\jestAdapterInit.js:1496:10)
+    at _callCircusTest (C:\FloworxInvite\node_modules\jest-circus\build\jestAdapterInit.js:1006:40)
+    at processTicksAndRejections (node:internal/process/task_queues:105:5)
+    at _runTest (C:\FloworxInvite\node_modules\jest-circus\build\jestAdapterInit.js:946:3)
+    at _runTestsForDescribeBlock (C:\FloworxInvite\node_modules\jest-circus\build\jestAdapterInit.js:839:13)
+    at _runTestsForDescribeBlock (C:\FloworxInvite\node_modules\jest-circus\build\jestAdapterInit.js:829:11)
+    at _runTestsForDescribeBlock (C:\FloworxInvite\node_modules\jest-circus\build\jestAdapterInit.js:829:11)
+    at run (C:\FloworxInvite\node_modules\jest-circus\build\jestAdapterInit.js:757:3)
+    at runAndTransformResultsToJestFormat (C:\FloworxInvite\node_modules\jest-circus\build\jestAdapterInit.js:1917:21)
+    at jestAdapter (C:\FloworxInvite\node_modules\jest-circus\build\runner.js:101:19)
+    at runTestInternal (C:\FloworxInvite\node_modules\jest-runner\build\testWorker.js:275:16)
+    at runTest (C:\FloworxInvite\node_modules\jest-runner\build\testWorker.js:343:7)
+    at Object.worker (C:\FloworxInvite\node_modules\jest-runner\build\testWorker.js:497:12)</failure>
     </testcase>
-    <testcase classname="OAuthService Unit Tests › Authorization URL Generation" name="should generate Google authorization URL" time="0.005">
+    <testcase classname="Frontend API Client Integration › Error Handling" name="should handle 5xx server errors" time="0.001">
+      <failure>ReferenceError: mockAxios is not defined
+    at Object.mockAxios (C:\FloworxInvite\tests\integration\frontend-api.test.js:204:7)
+    at Promise.finally.completed (C:\FloworxInvite\node_modules\jest-circus\build\jestAdapterInit.js:1556:28)
+    at new Promise (&lt;anonymous&gt;)
+    at callAsyncCircusFn (C:\FloworxInvite\node_modules\jest-circus\build\jestAdapterInit.js:1496:10)
+    at _callCircusTest (C:\FloworxInvite\node_modules\jest-circus\build\jestAdapterInit.js:1006:40)
+    at processTicksAndRejections (node:internal/process/task_queues:105:5)
+    at _runTest (C:\FloworxInvite\node_modules\jest-circus\build\jestAdapterInit.js:946:3)
+    at _runTestsForDescribeBlock (C:\FloworxInvite\node_modules\jest-circus\build\jestAdapterInit.js:839:13)
+    at _runTestsForDescribeBlock (C:\FloworxInvite\node_modules\jest-circus\build\jestAdapterInit.js:829:11)
+    at _runTestsForDescribeBlock (C:\FloworxInvite\node_modules\jest-circus\build\jestAdapterInit.js:829:11)
+    at run (C:\FloworxInvite\node_modules\jest-circus\build\jestAdapterInit.js:757:3)
+    at runAndTransformResultsToJestFormat (C:\FloworxInvite\node_modules\jest-circus\build\jestAdapterInit.js:1917:21)
+    at jestAdapter (C:\FloworxInvite\node_modules\jest-circus\build\runner.js:101:19)
+    at runTestInternal (C:\FloworxInvite\node_modules\jest-runner\build\testWorker.js:275:16)
+    at runTest (C:\FloworxInvite\node_modules\jest-runner\build\testWorker.js:343:7)
+    at Object.worker (C:\FloworxInvite\node_modules\jest-runner\build\testWorker.js:497:12)</failure>
+    </testcase>
+    <testcase classname="Frontend API Client Integration › Error Handling" name="should handle timeout errors" time="0">
+      <failure>ReferenceError: mockAxios is not defined
+    at Object.mockAxios (C:\FloworxInvite\tests\integration\frontend-api.test.js:215:7)
+    at Promise.finally.completed (C:\FloworxInvite\node_modules\jest-circus\build\jestAdapterInit.js:1556:28)
+    at new Promise (&lt;anonymous&gt;)
+    at callAsyncCircusFn (C:\FloworxInvite\node_modules\jest-circus\build\jestAdapterInit.js:1496:10)
+    at _callCircusTest (C:\FloworxInvite\node_modules\jest-circus\build\jestAdapterInit.js:1006:40)
+    at processTicksAndRejections (node:internal/process/task_queues:105:5)
+    at _runTest (C:\FloworxInvite\node_modules\jest-circus\build\jestAdapterInit.js:946:3)
+    at _runTestsForDescribeBlock (C:\FloworxInvite\node_modules\jest-circus\build\jestAdapterInit.js:839:13)
+    at _runTestsForDescribeBlock (C:\FloworxInvite\node_modules\jest-circus\build\jestAdapterInit.js:829:11)
+    at _runTestsForDescribeBlock (C:\FloworxInvite\node_modules\jest-circus\build\jestAdapterInit.js:829:11)
+    at run (C:\FloworxInvite\node_modules\jest-circus\build\jestAdapterInit.js:757:3)
+    at runAndTransformResultsToJestFormat (C:\FloworxInvite\node_modules\jest-circus\build\jestAdapterInit.js:1917:21)
+    at jestAdapter (C:\FloworxInvite\node_modules\jest-circus\build\runner.js:101:19)
+    at runTestInternal (C:\FloworxInvite\node_modules\jest-runner\build\testWorker.js:275:16)
+    at runTest (C:\FloworxInvite\node_modules\jest-runner\build\testWorker.js:343:7)
+    at Object.worker (C:\FloworxInvite\node_modules\jest-runner\build\testWorker.js:497:12)</failure>
+    </testcase>
+    <testcase classname="Frontend API Client Integration › Error Handling" name="should handle 404 not found errors" time="0.001">
+      <failure>ReferenceError: mockAxios is not defined
+    at Object.mockAxios (C:\FloworxInvite\tests\integration\frontend-api.test.js:221:7)
+    at Promise.finally.completed (C:\FloworxInvite\node_modules\jest-circus\build\jestAdapterInit.js:1556:28)
+    at new Promise (&lt;anonymous&gt;)
+    at callAsyncCircusFn (C:\FloworxInvite\node_modules\jest-circus\build\jestAdapterInit.js:1496:10)
+    at _callCircusTest (C:\FloworxInvite\node_modules\jest-circus\build\jestAdapterInit.js:1006:40)
+    at processTicksAndRejections (node:internal/process/task_queues:105:5)
+    at _runTest (C:\FloworxInvite\node_modules\jest-circus\build\jestAdapterInit.js:946:3)
+    at _runTestsForDescribeBlock (C:\FloworxInvite\node_modules\jest-circus\build\jestAdapterInit.js:839:13)
+    at _runTestsForDescribeBlock (C:\FloworxInvite\node_modules\jest-circus\build\jestAdapterInit.js:829:11)
+    at _runTestsForDescribeBlock (C:\FloworxInvite\node_modules\jest-circus\build\jestAdapterInit.js:829:11)
+    at run (C:\FloworxInvite\node_modules\jest-circus\build\jestAdapterInit.js:757:3)
+    at runAndTransformResultsToJestFormat (C:\FloworxInvite\node_modules\jest-circus\build\jestAdapterInit.js:1917:21)
+    at jestAdapter (C:\FloworxInvite\node_modules\jest-circus\build\runner.js:101:19)
+    at runTestInternal (C:\FloworxInvite\node_modules\jest-runner\build\testWorker.js:275:16)
+    at runTest (C:\FloworxInvite\node_modules\jest-runner\build\testWorker.js:343:7)
+    at Object.worker (C:\FloworxInvite\node_modules\jest-runner\build\testWorker.js:497:12)</failure>
+    </testcase>
+    <testcase classname="Frontend API Client Integration › Authentication" name="should include JWT tokens in requests" time="0">
+      <failure>ReferenceError: mockAxios is not defined
+    at Object.mockAxios (C:\FloworxInvite\tests\integration\frontend-api.test.js:236:7)
+    at Promise.finally.completed (C:\FloworxInvite\node_modules\jest-circus\build\jestAdapterInit.js:1556:28)
+    at new Promise (&lt;anonymous&gt;)
+    at callAsyncCircusFn (C:\FloworxInvite\node_modules\jest-circus\build\jestAdapterInit.js:1496:10)
+    at _callCircusTest (C:\FloworxInvite\node_modules\jest-circus\build\jestAdapterInit.js:1006:40)
+    at processTicksAndRejections (node:internal/process/task_queues:105:5)
+    at _runTest (C:\FloworxInvite\node_modules\jest-circus\build\jestAdapterInit.js:946:3)
+    at _runTestsForDescribeBlock (C:\FloworxInvite\node_modules\jest-circus\build\jestAdapterInit.js:839:13)
+    at _runTestsForDescribeBlock (C:\FloworxInvite\node_modules\jest-circus\build\jestAdapterInit.js:829:11)
+    at _runTestsForDescribeBlock (C:\FloworxInvite\node_modules\jest-circus\build\jestAdapterInit.js:829:11)
+    at run (C:\FloworxInvite\node_modules\jest-circus\build\jestAdapterInit.js:757:3)
+    at runAndTransformResultsToJestFormat (C:\FloworxInvite\node_modules\jest-circus\build\jestAdapterInit.js:1917:21)
+    at jestAdapter (C:\FloworxInvite\node_modules\jest-circus\build\runner.js:101:19)
+    at runTestInternal (C:\FloworxInvite\node_modules\jest-runner\build\testWorker.js:275:16)
+    at runTest (C:\FloworxInvite\node_modules\jest-runner\build\testWorker.js:343:7)
+    at Object.worker (C:\FloworxInvite\node_modules\jest-runner\build\testWorker.js:497:12)</failure>
+    </testcase>
+    <testcase classname="Frontend API Client Integration › Authentication" name="should handle token expiration" time="0.001">
+      <failure>ReferenceError: mockAxios is not defined
+    at Object.mockAxios (C:\FloworxInvite\tests\integration\frontend-api.test.js:249:7)
+    at Promise.finally.completed (C:\FloworxInvite\node_modules\jest-circus\build\jestAdapterInit.js:1556:28)
+    at new Promise (&lt;anonymous&gt;)
+    at callAsyncCircusFn (C:\FloworxInvite\node_modules\jest-circus\build\jestAdapterInit.js:1496:10)
+    at _callCircusTest (C:\FloworxInvite\node_modules\jest-circus\build\jestAdapterInit.js:1006:40)
+    at processTicksAndRejections (node:internal/process/task_queues:105:5)
+    at _runTest (C:\FloworxInvite\node_modules\jest-circus\build\jestAdapterInit.js:946:3)
+    at _runTestsForDescribeBlock (C:\FloworxInvite\node_modules\jest-circus\build\jestAdapterInit.js:839:13)
+    at _runTestsForDescribeBlock (C:\FloworxInvite\node_modules\jest-circus\build\jestAdapterInit.js:829:11)
+    at _runTestsForDescribeBlock (C:\FloworxInvite\node_modules\jest-circus\build\jestAdapterInit.js:829:11)
+    at run (C:\FloworxInvite\node_modules\jest-circus\build\jestAdapterInit.js:757:3)
+    at runAndTransformResultsToJestFormat (C:\FloworxInvite\node_modules\jest-circus\build\jestAdapterInit.js:1917:21)
+    at jestAdapter (C:\FloworxInvite\node_modules\jest-circus\build\runner.js:101:19)
+    at runTestInternal (C:\FloworxInvite\node_modules\jest-runner\build\testWorker.js:275:16)
+    at runTest (C:\FloworxInvite\node_modules\jest-runner\build\testWorker.js:343:7)
+    at Object.worker (C:\FloworxInvite\node_modules\jest-runner\build\testWorker.js:497:12)</failure>
+    </testcase>
+    <testcase classname="Frontend API Client Integration › Authentication" name="should make requests without token when not authenticated" time="0.001">
+      <failure>ReferenceError: mockAxios is not defined
+    at Object.mockAxios (C:\FloworxInvite\tests\integration\frontend-api.test.js:260:7)
+    at Promise.finally.completed (C:\FloworxInvite\node_modules\jest-circus\build\jestAdapterInit.js:1556:28)
+    at new Promise (&lt;anonymous&gt;)
+    at callAsyncCircusFn (C:\FloworxInvite\node_modules\jest-circus\build\jestAdapterInit.js:1496:10)
+    at _callCircusTest (C:\FloworxInvite\node_modules\jest-circus\build\jestAdapterInit.js:1006:40)
+    at processTicksAndRejections (node:internal/process/task_queues:105:5)
+    at _runTest (C:\FloworxInvite\node_modules\jest-circus\build\jestAdapterInit.js:946:3)
+    at _runTestsForDescribeBlock (C:\FloworxInvite\node_modules\jest-circus\build\jestAdapterInit.js:839:13)
+    at _runTestsForDescribeBlock (C:\FloworxInvite\node_modules\jest-circus\build\jestAdapterInit.js:829:11)
+    at _runTestsForDescribeBlock (C:\FloworxInvite\node_modules\jest-circus\build\jestAdapterInit.js:829:11)
+    at run (C:\FloworxInvite\node_modules\jest-circus\build\jestAdapterInit.js:757:3)
+    at runAndTransformResultsToJestFormat (C:\FloworxInvite\node_modules\jest-circus\build\jestAdapterInit.js:1917:21)
+    at jestAdapter (C:\FloworxInvite\node_modules\jest-circus\build\runner.js:101:19)
+    at runTestInternal (C:\FloworxInvite\node_modules\jest-runner\build\testWorker.js:275:16)
+    at runTest (C:\FloworxInvite\node_modules\jest-runner\build\testWorker.js:343:7)
+    at Object.worker (C:\FloworxInvite\node_modules\jest-runner\build\testWorker.js:497:12)</failure>
+    </testcase>
+    <testcase classname="Frontend API Client Integration › Request Configuration" name="should use correct base URL" time="0.001">
+    </testcase>
+    <testcase classname="Frontend API Client Integration › Request Configuration" name="should set correct timeout" time="0">
+    </testcase>
+    <testcase classname="Frontend API Client Integration › Request Configuration" name="should set correct content type" time="0.001">
+    </testcase>
+    <testcase classname="Frontend API Client Integration › Request Configuration" name="should allow custom headers in requests" time="0">
+      <failure>ReferenceError: mockAxios is not defined
+    at Object.mockAxios (C:\FloworxInvite\tests\integration\frontend-api.test.js:286:7)
+    at Promise.finally.completed (C:\FloworxInvite\node_modules\jest-circus\build\jestAdapterInit.js:1556:28)
+    at new Promise (&lt;anonymous&gt;)
+    at callAsyncCircusFn (C:\FloworxInvite\node_modules\jest-circus\build\jestAdapterInit.js:1496:10)
+    at _callCircusTest (C:\FloworxInvite\node_modules\jest-circus\build\jestAdapterInit.js:1006:40)
+    at processTicksAndRejections (node:internal/process/task_queues:105:5)
+    at _runTest (C:\FloworxInvite\node_modules\jest-circus\build\jestAdapterInit.js:946:3)
+    at _runTestsForDescribeBlock (C:\FloworxInvite\node_modules\jest-circus\build\jestAdapterInit.js:839:13)
+    at _runTestsForDescribeBlock (C:\FloworxInvite\node_modules\jest-circus\build\jestAdapterInit.js:829:11)
+    at _runTestsForDescribeBlock (C:\FloworxInvite\node_modules\jest-circus\build\jestAdapterInit.js:829:11)
+    at run (C:\FloworxInvite\node_modules\jest-circus\build\jestAdapterInit.js:757:3)
+    at runAndTransformResultsToJestFormat (C:\FloworxInvite\node_modules\jest-circus\build\jestAdapterInit.js:1917:21)
+    at jestAdapter (C:\FloworxInvite\node_modules\jest-circus\build\runner.js:101:19)
+    at runTestInternal (C:\FloworxInvite\node_modules\jest-runner\build\testWorker.js:275:16)
+    at runTest (C:\FloworxInvite\node_modules\jest-runner\build\testWorker.js:343:7)
+    at Object.worker (C:\FloworxInvite\node_modules\jest-runner\build\testWorker.js:497:12)</failure>
+    </testcase>
+    <testcase classname="Frontend API Client Integration › Response Handling" name="should return response data correctly" time="0.001">
+      <failure>ReferenceError: mockAxios is not defined
+    at Object.mockAxios (C:\FloworxInvite\tests\integration\frontend-api.test.js:298:7)
+    at Promise.finally.completed (C:\FloworxInvite\node_modules\jest-circus\build\jestAdapterInit.js:1556:28)
+    at new Promise (&lt;anonymous&gt;)
+    at callAsyncCircusFn (C:\FloworxInvite\node_modules\jest-circus\build\jestAdapterInit.js:1496:10)
+    at _callCircusTest (C:\FloworxInvite\node_modules\jest-circus\build\jestAdapterInit.js:1006:40)
+    at processTicksAndRejections (node:internal/process/task_queues:105:5)
+    at _runTest (C:\FloworxInvite\node_modules\jest-circus\build\jestAdapterInit.js:946:3)
+    at _runTestsForDescribeBlock (C:\FloworxInvite\node_modules\jest-circus\build\jestAdapterInit.js:839:13)
+    at _runTestsForDescribeBlock (C:\FloworxInvite\node_modules\jest-circus\build\jestAdapterInit.js:829:11)
+    at _runTestsForDescribeBlock (C:\FloworxInvite\node_modules\jest-circus\build\jestAdapterInit.js:829:11)
+    at run (C:\FloworxInvite\node_modules\jest-circus\build\jestAdapterInit.js:757:3)
+    at runAndTransformResultsToJestFormat (C:\FloworxInvite\node_modules\jest-circus\build\jestAdapterInit.js:1917:21)
+    at jestAdapter (C:\FloworxInvite\node_modules\jest-circus\build\runner.js:101:19)
+    at runTestInternal (C:\FloworxInvite\node_modules\jest-runner\build\testWorker.js:275:16)
+    at runTest (C:\FloworxInvite\node_modules\jest-runner\build\testWorker.js:343:7)
+    at Object.worker (C:\FloworxInvite\node_modules\jest-runner\build\testWorker.js:497:12)</failure>
+    </testcase>
+    <testcase classname="Frontend API Client Integration › Response Handling" name="should handle empty responses" time="0">
+      <failure>ReferenceError: mockAxios is not defined
+    at Object.mockAxios (C:\FloworxInvite\tests\integration\frontend-api.test.js:307:7)
+    at Promise.finally.completed (C:\FloworxInvite\node_modules\jest-circus\build\jestAdapterInit.js:1556:28)
+    at new Promise (&lt;anonymous&gt;)
+    at callAsyncCircusFn (C:\FloworxInvite\node_modules\jest-circus\build\jestAdapterInit.js:1496:10)
+    at _callCircusTest (C:\FloworxInvite\node_modules\jest-circus\build\jestAdapterInit.js:1006:40)
+    at processTicksAndRejections (node:internal/process/task_queues:105:5)
+    at _runTest (C:\FloworxInvite\node_modules\jest-circus\build\jestAdapterInit.js:946:3)
+    at _runTestsForDescribeBlock (C:\FloworxInvite\node_modules\jest-circus\build\jestAdapterInit.js:839:13)
+    at _runTestsForDescribeBlock (C:\FloworxInvite\node_modules\jest-circus\build\jestAdapterInit.js:829:11)
+    at _runTestsForDescribeBlock (C:\FloworxInvite\node_modules\jest-circus\build\jestAdapterInit.js:829:11)
+    at run (C:\FloworxInvite\node_modules\jest-circus\build\jestAdapterInit.js:757:3)
+    at runAndTransformResultsToJestFormat (C:\FloworxInvite\node_modules\jest-circus\build\jestAdapterInit.js:1917:21)
+    at jestAdapter (C:\FloworxInvite\node_modules\jest-circus\build\runner.js:101:19)
+    at runTestInternal (C:\FloworxInvite\node_modules\jest-runner\build\testWorker.js:275:16)
+    at runTest (C:\FloworxInvite\node_modules\jest-runner\build\testWorker.js:343:7)
+    at Object.worker (C:\FloworxInvite\node_modules\jest-runner\build\testWorker.js:497:12)</failure>
+    </testcase>
+    <testcase classname="Frontend API Client Integration › Response Handling" name="should handle JSON parsing errors" time="0">
+      <failure>ReferenceError: mockAxios is not defined
+    at Object.mockAxios (C:\FloworxInvite\tests\integration\frontend-api.test.js:316:7)
+    at Promise.finally.completed (C:\FloworxInvite\node_modules\jest-circus\build\jestAdapterInit.js:1556:28)
+    at new Promise (&lt;anonymous&gt;)
+    at callAsyncCircusFn (C:\FloworxInvite\node_modules\jest-circus\build\jestAdapterInit.js:1496:10)
+    at _callCircusTest (C:\FloworxInvite\node_modules\jest-circus\build\jestAdapterInit.js:1006:40)
+    at processTicksAndRejections (node:internal/process/task_queues:105:5)
+    at _runTest (C:\FloworxInvite\node_modules\jest-circus\build\jestAdapterInit.js:946:3)
+    at _runTestsForDescribeBlock (C:\FloworxInvite\node_modules\jest-circus\build\jestAdapterInit.js:839:13)
+    at _runTestsForDescribeBlock (C:\FloworxInvite\node_modules\jest-circus\build\jestAdapterInit.js:829:11)
+    at _runTestsForDescribeBlock (C:\FloworxInvite\node_modules\jest-circus\build\jestAdapterInit.js:829:11)
+    at run (C:\FloworxInvite\node_modules\jest-circus\build\jestAdapterInit.js:757:3)
+    at runAndTransformResultsToJestFormat (C:\FloworxInvite\node_modules\jest-circus\build\jestAdapterInit.js:1917:21)
+    at jestAdapter (C:\FloworxInvite\node_modules\jest-circus\build\runner.js:101:19)
+    at runTestInternal (C:\FloworxInvite\node_modules\jest-runner\build\testWorker.js:275:16)
+    at runTest (C:\FloworxInvite\node_modules\jest-runner\build\testWorker.js:343:7)
+    at Object.worker (C:\FloworxInvite\node_modules\jest-runner\build\testWorker.js:497:12)</failure>
+    </testcase>
+    <testcase classname="Frontend API Client Integration › Real API Endpoints" name="should handle authentication endpoints" time="0.001">
+      <failure>ReferenceError: mockAxios is not defined
+    at Object.mockAxios (C:\FloworxInvite\tests\integration\frontend-api.test.js:331:7)
+    at Promise.finally.completed (C:\FloworxInvite\node_modules\jest-circus\build\jestAdapterInit.js:1556:28)
+    at new Promise (&lt;anonymous&gt;)
+    at callAsyncCircusFn (C:\FloworxInvite\node_modules\jest-circus\build\jestAdapterInit.js:1496:10)
+    at _callCircusTest (C:\FloworxInvite\node_modules\jest-circus\build\jestAdapterInit.js:1006:40)
+    at processTicksAndRejections (node:internal/process/task_queues:105:5)
+    at _runTest (C:\FloworxInvite\node_modules\jest-circus\build\jestAdapterInit.js:946:3)
+    at _runTestsForDescribeBlock (C:\FloworxInvite\node_modules\jest-circus\build\jestAdapterInit.js:839:13)
+    at _runTestsForDescribeBlock (C:\FloworxInvite\node_modules\jest-circus\build\jestAdapterInit.js:829:11)
+    at _runTestsForDescribeBlock (C:\FloworxInvite\node_modules\jest-circus\build\jestAdapterInit.js:829:11)
+    at run (C:\FloworxInvite\node_modules\jest-circus\build\jestAdapterInit.js:757:3)
+    at runAndTransformResultsToJestFormat (C:\FloworxInvite\node_modules\jest-circus\build\jestAdapterInit.js:1917:21)
+    at jestAdapter (C:\FloworxInvite\node_modules\jest-circus\build\runner.js:101:19)
+    at runTestInternal (C:\FloworxInvite\node_modules\jest-runner\build\testWorker.js:275:16)
+    at runTest (C:\FloworxInvite\node_modules\jest-runner\build\testWorker.js:343:7)
+    at Object.worker (C:\FloworxInvite\node_modules\jest-runner\build\testWorker.js:497:12)</failure>
+    </testcase>
+    <testcase classname="Frontend API Client Integration › Real API Endpoints" name="should handle registration endpoints" time="0.001">
+      <failure>ReferenceError: mockAxios is not defined
+    at Object.mockAxios (C:\FloworxInvite\tests\integration\frontend-api.test.js:352:7)
+    at Promise.finally.completed (C:\FloworxInvite\node_modules\jest-circus\build\jestAdapterInit.js:1556:28)
+    at new Promise (&lt;anonymous&gt;)
+    at callAsyncCircusFn (C:\FloworxInvite\node_modules\jest-circus\build\jestAdapterInit.js:1496:10)
+    at _callCircusTest (C:\FloworxInvite\node_modules\jest-circus\build\jestAdapterInit.js:1006:40)
+    at processTicksAndRejections (node:internal/process/task_queues:105:5)
+    at _runTest (C:\FloworxInvite\node_modules\jest-circus\build\jestAdapterInit.js:946:3)
+    at _runTestsForDescribeBlock (C:\FloworxInvite\node_modules\jest-circus\build\jestAdapterInit.js:839:13)
+    at _runTestsForDescribeBlock (C:\FloworxInvite\node_modules\jest-circus\build\jestAdapterInit.js:829:11)
+    at _runTestsForDescribeBlock (C:\FloworxInvite\node_modules\jest-circus\build\jestAdapterInit.js:829:11)
+    at run (C:\FloworxInvite\node_modules\jest-circus\build\jestAdapterInit.js:757:3)
+    at runAndTransformResultsToJestFormat (C:\FloworxInvite\node_modules\jest-circus\build\jestAdapterInit.js:1917:21)
+    at jestAdapter (C:\FloworxInvite\node_modules\jest-circus\build\runner.js:101:19)
+    at runTestInternal (C:\FloworxInvite\node_modules\jest-runner\build\testWorker.js:275:16)
+    at runTest (C:\FloworxInvite\node_modules\jest-runner\build\testWorker.js:343:7)
+    at Object.worker (C:\FloworxInvite\node_modules\jest-runner\build\testWorker.js:497:12)</failure>
+    </testcase>
+    <testcase classname="Frontend API Client Integration › Real API Endpoints" name="should handle dashboard data endpoints" time="0.001">
+      <failure>ReferenceError: mockAxios is not defined
+    at Object.mockAxios (C:\FloworxInvite\tests\integration\frontend-api.test.js:370:7)
+    at Promise.finally.completed (C:\FloworxInvite\node_modules\jest-circus\build\jestAdapterInit.js:1556:28)
+    at new Promise (&lt;anonymous&gt;)
+    at callAsyncCircusFn (C:\FloworxInvite\node_modules\jest-circus\build\jestAdapterInit.js:1496:10)
+    at _callCircusTest (C:\FloworxInvite\node_modules\jest-circus\build\jestAdapterInit.js:1006:40)
+    at processTicksAndRejections (node:internal/process/task_queues:105:5)
+    at _runTest (C:\FloworxInvite\node_modules\jest-circus\build\jestAdapterInit.js:946:3)
+    at _runTestsForDescribeBlock (C:\FloworxInvite\node_modules\jest-circus\build\jestAdapterInit.js:839:13)
+    at _runTestsForDescribeBlock (C:\FloworxInvite\node_modules\jest-circus\build\jestAdapterInit.js:829:11)
+    at _runTestsForDescribeBlock (C:\FloworxInvite\node_modules\jest-circus\build\jestAdapterInit.js:829:11)
+    at run (C:\FloworxInvite\node_modules\jest-circus\build\jestAdapterInit.js:757:3)
+    at runAndTransformResultsToJestFormat (C:\FloworxInvite\node_modules\jest-circus\build\jestAdapterInit.js:1917:21)
+    at jestAdapter (C:\FloworxInvite\node_modules\jest-circus\build\runner.js:101:19)
+    at runTestInternal (C:\FloworxInvite\node_modules\jest-runner\build\testWorker.js:275:16)
+    at runTest (C:\FloworxInvite\node_modules\jest-runner\build\testWorker.js:343:7)
+    at Object.worker (C:\FloworxInvite\node_modules\jest-runner\build\testWorker.js:497:12)</failure>
+    </testcase>
+    <testcase classname="Frontend API Client Integration › Real API Endpoints" name="should handle business configuration endpoints" time="0.001">
+      <failure>ReferenceError: mockAxios is not defined
+    at Object.mockAxios (C:\FloworxInvite\tests\integration\frontend-api.test.js:387:7)
+    at Promise.finally.completed (C:\FloworxInvite\node_modules\jest-circus\build\jestAdapterInit.js:1556:28)
+    at new Promise (&lt;anonymous&gt;)
+    at callAsyncCircusFn (C:\FloworxInvite\node_modules\jest-circus\build\jestAdapterInit.js:1496:10)
+    at _callCircusTest (C:\FloworxInvite\node_modules\jest-circus\build\jestAdapterInit.js:1006:40)
+    at processTicksAndRejections (node:internal/process/task_queues:105:5)
+    at _runTest (C:\FloworxInvite\node_modules\jest-circus\build\jestAdapterInit.js:946:3)
+    at _runTestsForDescribeBlock (C:\FloworxInvite\node_modules\jest-circus\build\jestAdapterInit.js:839:13)
+    at _runTestsForDescribeBlock (C:\FloworxInvite\node_modules\jest-circus\build\jestAdapterInit.js:829:11)
+    at _runTestsForDescribeBlock (C:\FloworxInvite\node_modules\jest-circus\build\jestAdapterInit.js:829:11)
+    at run (C:\FloworxInvite\node_modules\jest-circus\build\jestAdapterInit.js:757:3)
+    at runAndTransformResultsToJestFormat (C:\FloworxInvite\node_modules\jest-circus\build\jestAdapterInit.js:1917:21)
+    at jestAdapter (C:\FloworxInvite\node_modules\jest-circus\build\runner.js:101:19)
+    at runTestInternal (C:\FloworxInvite\node_modules\jest-runner\build\testWorker.js:275:16)
+    at runTest (C:\FloworxInvite\node_modules\jest-runner\build\testWorker.js:343:7)
+    at Object.worker (C:\FloworxInvite\node_modules\jest-runner\build\testWorker.js:497:12)</failure>
+    </testcase>
+    <testcase classname="Frontend API Client Integration › Error Recovery" name="should retry failed requests" time="0">
+      <failure>ReferenceError: mockAxios is not defined
+    at Object.mockAxios (C:\FloworxInvite\tests\integration\frontend-api.test.js:403:7)
+    at Promise.finally.completed (C:\FloworxInvite\node_modules\jest-circus\build\jestAdapterInit.js:1556:28)
+    at new Promise (&lt;anonymous&gt;)
+    at callAsyncCircusFn (C:\FloworxInvite\node_modules\jest-circus\build\jestAdapterInit.js:1496:10)
+    at _callCircusTest (C:\FloworxInvite\node_modules\jest-circus\build\jestAdapterInit.js:1006:40)
+    at processTicksAndRejections (node:internal/process/task_queues:105:5)
+    at _runTest (C:\FloworxInvite\node_modules\jest-circus\build\jestAdapterInit.js:946:3)
+    at _runTestsForDescribeBlock (C:\FloworxInvite\node_modules\jest-circus\build\jestAdapterInit.js:839:13)
+    at _runTestsForDescribeBlock (C:\FloworxInvite\node_modules\jest-circus\build\jestAdapterInit.js:829:11)
+    at _runTestsForDescribeBlock (C:\FloworxInvite\node_modules\jest-circus\build\jestAdapterInit.js:829:11)
+    at run (C:\FloworxInvite\node_modules\jest-circus\build\jestAdapterInit.js:757:3)
+    at runAndTransformResultsToJestFormat (C:\FloworxInvite\node_modules\jest-circus\build\jestAdapterInit.js:1917:21)
+    at jestAdapter (C:\FloworxInvite\node_modules\jest-circus\build\runner.js:101:19)
+    at runTestInternal (C:\FloworxInvite\node_modules\jest-runner\build\testWorker.js:275:16)
+    at runTest (C:\FloworxInvite\node_modules\jest-runner\build\testWorker.js:343:7)
+    at Object.worker (C:\FloworxInvite\node_modules\jest-runner\build\testWorker.js:497:12)</failure>
+    </testcase>
+    <testcase classname="Frontend API Client Integration › Error Recovery" name="should handle concurrent request failures" time="0">
+      <failure>ReferenceError: mockAxios is not defined
+    at Object.mockAxios (C:\FloworxInvite\tests\integration\frontend-api.test.js:423:7)
+    at Promise.finally.completed (C:\FloworxInvite\node_modules\jest-circus\build\jestAdapterInit.js:1556:28)
+    at new Promise (&lt;anonymous&gt;)
+    at callAsyncCircusFn (C:\FloworxInvite\node_modules\jest-circus\build\jestAdapterInit.js:1496:10)
+    at _callCircusTest (C:\FloworxInvite\node_modules\jest-circus\build\jestAdapterInit.js:1006:40)
+    at processTicksAndRejections (node:internal/process/task_queues:105:5)
+    at _runTest (C:\FloworxInvite\node_modules\jest-circus\build\jestAdapterInit.js:946:3)
+    at _runTestsForDescribeBlock (C:\FloworxInvite\node_modules\jest-circus\build\jestAdapterInit.js:839:13)
+    at _runTestsForDescribeBlock (C:\FloworxInvite\node_modules\jest-circus\build\jestAdapterInit.js:829:11)
+    at _runTestsForDescribeBlock (C:\FloworxInvite\node_modules\jest-circus\build\jestAdapterInit.js:829:11)
+    at run (C:\FloworxInvite\node_modules\jest-circus\build\jestAdapterInit.js:757:3)
+    at runAndTransformResultsToJestFormat (C:\FloworxInvite\node_modules\jest-circus\build\jestAdapterInit.js:1917:21)
+    at jestAdapter (C:\FloworxInvite\node_modules\jest-circus\build\runner.js:101:19)
+    at runTestInternal (C:\FloworxInvite\node_modules\jest-runner\build\testWorker.js:275:16)
+    at runTest (C:\FloworxInvite\node_modules\jest-runner\build\testWorker.js:343:7)
+    at Object.worker (C:\FloworxInvite\node_modules\jest-runner\build\testWorker.js:497:12)</failure>
+    </testcase>
+    <testcase classname="Frontend API Client Integration › Request Interceptors" name="should add authorization header when token is set" time="0">
+      <failure>ReferenceError: mockAxios is not defined
+    at Object.mockAxios (C:\FloworxInvite\tests\integration\frontend-api.test.js:446:7)
+    at Promise.finally.completed (C:\FloworxInvite\node_modules\jest-circus\build\jestAdapterInit.js:1556:28)
+    at new Promise (&lt;anonymous&gt;)
+    at callAsyncCircusFn (C:\FloworxInvite\node_modules\jest-circus\build\jestAdapterInit.js:1496:10)
+    at _callCircusTest (C:\FloworxInvite\node_modules\jest-circus\build\jestAdapterInit.js:1006:40)
+    at processTicksAndRejections (node:internal/process/task_queues:105:5)
+    at _runTest (C:\FloworxInvite\node_modules\jest-circus\build\jestAdapterInit.js:946:3)
+    at _runTestsForDescribeBlock (C:\FloworxInvite\node_modules\jest-circus\build\jestAdapterInit.js:839:13)
+    at _runTestsForDescribeBlock (C:\FloworxInvite\node_modules\jest-circus\build\jestAdapterInit.js:829:11)
+    at _runTestsForDescribeBlock (C:\FloworxInvite\node_modules\jest-circus\build\jestAdapterInit.js:829:11)
+    at run (C:\FloworxInvite\node_modules\jest-circus\build\jestAdapterInit.js:757:3)
+    at runAndTransformResultsToJestFormat (C:\FloworxInvite\node_modules\jest-circus\build\jestAdapterInit.js:1917:21)
+    at jestAdapter (C:\FloworxInvite\node_modules\jest-circus\build\runner.js:101:19)
+    at runTestInternal (C:\FloworxInvite\node_modules\jest-runner\build\testWorker.js:275:16)
+    at runTest (C:\FloworxInvite\node_modules\jest-runner\build\testWorker.js:343:7)
+    at Object.worker (C:\FloworxInvite\node_modules\jest-runner\build\testWorker.js:497:12)</failure>
+    </testcase>
+    <testcase classname="Frontend API Client Integration › Request Interceptors" name="should not add authorization header when token is null" time="0">
+      <failure>ReferenceError: mockAxios is not defined
+    at Object.mockAxios (C:\FloworxInvite\tests\integration\frontend-api.test.js:457:7)
+    at Promise.finally.completed (C:\FloworxInvite\node_modules\jest-circus\build\jestAdapterInit.js:1556:28)
+    at new Promise (&lt;anonymous&gt;)
+    at callAsyncCircusFn (C:\FloworxInvite\node_modules\jest-circus\build\jestAdapterInit.js:1496:10)
+    at _callCircusTest (C:\FloworxInvite\node_modules\jest-circus\build\jestAdapterInit.js:1006:40)
+    at processTicksAndRejections (node:internal/process/task_queues:105:5)
+    at _runTest (C:\FloworxInvite\node_modules\jest-circus\build\jestAdapterInit.js:946:3)
+    at _runTestsForDescribeBlock (C:\FloworxInvite\node_modules\jest-circus\build\jestAdapterInit.js:839:13)
+    at _runTestsForDescribeBlock (C:\FloworxInvite\node_modules\jest-circus\build\jestAdapterInit.js:829:11)
+    at _runTestsForDescribeBlock (C:\FloworxInvite\node_modules\jest-circus\build\jestAdapterInit.js:829:11)
+    at run (C:\FloworxInvite\node_modules\jest-circus\build\jestAdapterInit.js:757:3)
+    at runAndTransformResultsToJestFormat (C:\FloworxInvite\node_modules\jest-circus\build\jestAdapterInit.js:1917:21)
+    at jestAdapter (C:\FloworxInvite\node_modules\jest-circus\build\runner.js:101:19)
+    at runTestInternal (C:\FloworxInvite\node_modules\jest-runner\build\testWorker.js:275:16)
+    at runTest (C:\FloworxInvite\node_modules\jest-runner\build\testWorker.js:343:7)
+    at Object.worker (C:\FloworxInvite\node_modules\jest-runner\build\testWorker.js:497:12)</failure>
+    </testcase>
+    <testcase classname="Frontend API Client Integration › Request Interceptors" name="should preserve existing headers when adding authorization" time="0.001">
+      <failure>ReferenceError: mockAxios is not defined
+    at Object.mockAxios (C:\FloworxInvite\tests\integration\frontend-api.test.js:471:7)
+    at Promise.finally.completed (C:\FloworxInvite\node_modules\jest-circus\build\jestAdapterInit.js:1556:28)
+    at new Promise (&lt;anonymous&gt;)
+    at callAsyncCircusFn (C:\FloworxInvite\node_modules\jest-circus\build\jestAdapterInit.js:1496:10)
+    at _callCircusTest (C:\FloworxInvite\node_modules\jest-circus\build\jestAdapterInit.js:1006:40)
+    at processTicksAndRejections (node:internal/process/task_queues:105:5)
+    at _runTest (C:\FloworxInvite\node_modules\jest-circus\build\jestAdapterInit.js:946:3)
+    at _runTestsForDescribeBlock (C:\FloworxInvite\node_modules\jest-circus\build\jestAdapterInit.js:839:13)
+    at _runTestsForDescribeBlock (C:\FloworxInvite\node_modules\jest-circus\build\jestAdapterInit.js:829:11)
+    at _runTestsForDescribeBlock (C:\FloworxInvite\node_modules\jest-circus\build\jestAdapterInit.js:829:11)
+    at run (C:\FloworxInvite\node_modules\jest-circus\build\jestAdapterInit.js:757:3)
+    at runAndTransformResultsToJestFormat (C:\FloworxInvite\node_modules\jest-circus\build\jestAdapterInit.js:1917:21)
+    at jestAdapter (C:\FloworxInvite\node_modules\jest-circus\build\runner.js:101:19)
+    at runTestInternal (C:\FloworxInvite\node_modules\jest-runner\build\testWorker.js:275:16)
+    at runTest (C:\FloworxInvite\node_modules\jest-runner\build\testWorker.js:343:7)
+    at Object.worker (C:\FloworxInvite\node_modules\jest-runner\build\testWorker.js:497:12)</failure>
+    </testcase>
+    <testcase classname="Frontend API Client Integration › Request Interceptors" name="should handle request interceptor errors" time="0.001">
+      <failure>TypeError: Cannot set properties of undefined (setting &apos;rejected&apos;)
+    at Object.&lt;anonymous&gt; (C:\FloworxInvite\tests\integration\frontend-api.test.js:490:65)
+    at Promise.finally.completed (C:\FloworxInvite\node_modules\jest-circus\build\jestAdapterInit.js:1556:28)
+    at new Promise (&lt;anonymous&gt;)
+    at callAsyncCircusFn (C:\FloworxInvite\node_modules\jest-circus\build\jestAdapterInit.js:1496:10)
+    at _callCircusTest (C:\FloworxInvite\node_modules\jest-circus\build\jestAdapterInit.js:1006:40)
+    at processTicksAndRejections (node:internal/process/task_queues:105:5)
+    at _runTest (C:\FloworxInvite\node_modules\jest-circus\build\jestAdapterInit.js:946:3)
+    at _runTestsForDescribeBlock (C:\FloworxInvite\node_modules\jest-circus\build\jestAdapterInit.js:839:13)
+    at _runTestsForDescribeBlock (C:\FloworxInvite\node_modules\jest-circus\build\jestAdapterInit.js:829:11)
+    at _runTestsForDescribeBlock (C:\FloworxInvite\node_modules\jest-circus\build\jestAdapterInit.js:829:11)
+    at run (C:\FloworxInvite\node_modules\jest-circus\build\jestAdapterInit.js:757:3)
+    at runAndTransformResultsToJestFormat (C:\FloworxInvite\node_modules\jest-circus\build\jestAdapterInit.js:1917:21)
+    at jestAdapter (C:\FloworxInvite\node_modules\jest-circus\build\runner.js:101:19)
+    at runTestInternal (C:\FloworxInvite\node_modules\jest-runner\build\testWorker.js:275:16)
+    at runTest (C:\FloworxInvite\node_modules\jest-runner\build\testWorker.js:343:7)
+    at Object.worker (C:\FloworxInvite\node_modules\jest-runner\build\testWorker.js:497:12)</failure>
+    </testcase>
+    <testcase classname="Frontend API Client Integration › Response Interceptors" name="should clear token on 401 unauthorized response" time="0">
+      <failure>ReferenceError: mockAxios is not defined
+    at Object.mockAxios (C:\FloworxInvite\tests\integration\frontend-api.test.js:511:7)
+    at Promise.finally.completed (C:\FloworxInvite\node_modules\jest-circus\build\jestAdapterInit.js:1556:28)
+    at new Promise (&lt;anonymous&gt;)
+    at callAsyncCircusFn (C:\FloworxInvite\node_modules\jest-circus\build\jestAdapterInit.js:1496:10)
+    at _callCircusTest (C:\FloworxInvite\node_modules\jest-circus\build\jestAdapterInit.js:1006:40)
+    at processTicksAndRejections (node:internal/process/task_queues:105:5)
+    at _runTest (C:\FloworxInvite\node_modules\jest-circus\build\jestAdapterInit.js:946:3)
+    at _runTestsForDescribeBlock (C:\FloworxInvite\node_modules\jest-circus\build\jestAdapterInit.js:839:13)
+    at _runTestsForDescribeBlock (C:\FloworxInvite\node_modules\jest-circus\build\jestAdapterInit.js:829:11)
+    at _runTestsForDescribeBlock (C:\FloworxInvite\node_modules\jest-circus\build\jestAdapterInit.js:829:11)
+    at run (C:\FloworxInvite\node_modules\jest-circus\build\jestAdapterInit.js:757:3)
+    at runAndTransformResultsToJestFormat (C:\FloworxInvite\node_modules\jest-circus\build\jestAdapterInit.js:1917:21)
+    at jestAdapter (C:\FloworxInvite\node_modules\jest-circus\build\runner.js:101:19)
+    at runTestInternal (C:\FloworxInvite\node_modules\jest-runner\build\testWorker.js:275:16)
+    at runTest (C:\FloworxInvite\node_modules\jest-runner\build\testWorker.js:343:7)
+    at Object.worker (C:\FloworxInvite\node_modules\jest-runner\build\testWorker.js:497:12)</failure>
+    </testcase>
+    <testcase classname="Frontend API Client Integration › Response Interceptors" name="should not clear token on other error responses" time="0">
+      <failure>ReferenceError: mockAxios is not defined
+    at Object.mockAxios (C:\FloworxInvite\tests\integration\frontend-api.test.js:525:7)
+    at Promise.finally.completed (C:\FloworxInvite\node_modules\jest-circus\build\jestAdapterInit.js:1556:28)
+    at new Promise (&lt;anonymous&gt;)
+    at callAsyncCircusFn (C:\FloworxInvite\node_modules\jest-circus\build\jestAdapterInit.js:1496:10)
+    at _callCircusTest (C:\FloworxInvite\node_modules\jest-circus\build\jestAdapterInit.js:1006:40)
+    at processTicksAndRejections (node:internal/process/task_queues:105:5)
+    at _runTest (C:\FloworxInvite\node_modules\jest-circus\build\jestAdapterInit.js:946:3)
+    at _runTestsForDescribeBlock (C:\FloworxInvite\node_modules\jest-circus\build\jestAdapterInit.js:839:13)
+    at _runTestsForDescribeBlock (C:\FloworxInvite\node_modules\jest-circus\build\jestAdapterInit.js:829:11)
+    at _runTestsForDescribeBlock (C:\FloworxInvite\node_modules\jest-circus\build\jestAdapterInit.js:829:11)
+    at run (C:\FloworxInvite\node_modules\jest-circus\build\jestAdapterInit.js:757:3)
+    at runAndTransformResultsToJestFormat (C:\FloworxInvite\node_modules\jest-circus\build\jestAdapterInit.js:1917:21)
+    at jestAdapter (C:\FloworxInvite\node_modules\jest-circus\build\runner.js:101:19)
+    at runTestInternal (C:\FloworxInvite\node_modules\jest-runner\build\testWorker.js:275:16)
+    at runTest (C:\FloworxInvite\node_modules\jest-runner\build\testWorker.js:343:7)
+    at Object.worker (C:\FloworxInvite\node_modules\jest-runner\build\testWorker.js:497:12)</failure>
+    </testcase>
+    <testcase classname="Frontend API Client Integration › Response Interceptors" name="should pass through successful responses unchanged" time="0">
+      <failure>ReferenceError: mockAxios is not defined
+    at Object.mockAxios (C:\FloworxInvite\tests\integration\frontend-api.test.js:537:7)
+    at Promise.finally.completed (C:\FloworxInvite\node_modules\jest-circus\build\jestAdapterInit.js:1556:28)
+    at new Promise (&lt;anonymous&gt;)
+    at callAsyncCircusFn (C:\FloworxInvite\node_modules\jest-circus\build\jestAdapterInit.js:1496:10)
+    at _callCircusTest (C:\FloworxInvite\node_modules\jest-circus\build\jestAdapterInit.js:1006:40)
+    at processTicksAndRejections (node:internal/process/task_queues:105:5)
+    at _runTest (C:\FloworxInvite\node_modules\jest-circus\build\jestAdapterInit.js:946:3)
+    at _runTestsForDescribeBlock (C:\FloworxInvite\node_modules\jest-circus\build\jestAdapterInit.js:839:13)
+    at _runTestsForDescribeBlock (C:\FloworxInvite\node_modules\jest-circus\build\jestAdapterInit.js:829:11)
+    at _runTestsForDescribeBlock (C:\FloworxInvite\node_modules\jest-circus\build\jestAdapterInit.js:829:11)
+    at run (C:\FloworxInvite\node_modules\jest-circus\build\jestAdapterInit.js:757:3)
+    at runAndTransformResultsToJestFormat (C:\FloworxInvite\node_modules\jest-circus\build\jestAdapterInit.js:1917:21)
+    at jestAdapter (C:\FloworxInvite\node_modules\jest-circus\build\runner.js:101:19)
+    at runTestInternal (C:\FloworxInvite\node_modules\jest-runner\build\testWorker.js:275:16)
+    at runTest (C:\FloworxInvite\node_modules\jest-runner\build\testWorker.js:343:7)
+    at Object.worker (C:\FloworxInvite\node_modules\jest-runner\build\testWorker.js:497:12)</failure>
+    </testcase>
+    <testcase classname="Frontend API Client Integration › Response Interceptors" name="should handle response interceptor transformation" time="0">
+      <failure>ReferenceError: mockAxios is not defined
+    at Object.mockAxios (C:\FloworxInvite\tests\integration\frontend-api.test.js:547:7)
+    at Promise.finally.completed (C:\FloworxInvite\node_modules\jest-circus\build\jestAdapterInit.js:1556:28)
+    at new Promise (&lt;anonymous&gt;)
+    at callAsyncCircusFn (C:\FloworxInvite\node_modules\jest-circus\build\jestAdapterInit.js:1496:10)
+    at _callCircusTest (C:\FloworxInvite\node_modules\jest-circus\build\jestAdapterInit.js:1006:40)
+    at processTicksAndRejections (node:internal/process/task_queues:105:5)
+    at _runTest (C:\FloworxInvite\node_modules\jest-circus\build\jestAdapterInit.js:946:3)
+    at _runTestsForDescribeBlock (C:\FloworxInvite\node_modules\jest-circus\build\jestAdapterInit.js:839:13)
+    at _runTestsForDescribeBlock (C:\FloworxInvite\node_modules\jest-circus\build\jestAdapterInit.js:829:11)
+    at _runTestsForDescribeBlock (C:\FloworxInvite\node_modules\jest-circus\build\jestAdapterInit.js:829:11)
+    at run (C:\FloworxInvite\node_modules\jest-circus\build\jestAdapterInit.js:757:3)
+    at runAndTransformResultsToJestFormat (C:\FloworxInvite\node_modules\jest-circus\build\jestAdapterInit.js:1917:21)
+    at jestAdapter (C:\FloworxInvite\node_modules\jest-circus\build\runner.js:101:19)
+    at runTestInternal (C:\FloworxInvite\node_modules\jest-runner\build\testWorker.js:275:16)
+    at runTest (C:\FloworxInvite\node_modules\jest-runner\build\testWorker.js:343:7)
+    at Object.worker (C:\FloworxInvite\node_modules\jest-runner\build\testWorker.js:497:12)</failure>
+    </testcase>
+    <testcase classname="Frontend API Client Integration › Advanced HTTP Methods" name="should handle PATCH requests" time="0">
+      <failure>ReferenceError: mockAxios is not defined
+    at Object.mockAxios (C:\FloworxInvite\tests\integration\frontend-api.test.js:568:7)
+    at Promise.finally.completed (C:\FloworxInvite\node_modules\jest-circus\build\jestAdapterInit.js:1556:28)
+    at new Promise (&lt;anonymous&gt;)
+    at callAsyncCircusFn (C:\FloworxInvite\node_modules\jest-circus\build\jestAdapterInit.js:1496:10)
+    at _callCircusTest (C:\FloworxInvite\node_modules\jest-circus\build\jestAdapterInit.js:1006:40)
+    at processTicksAndRejections (node:internal/process/task_queues:105:5)
+    at _runTest (C:\FloworxInvite\node_modules\jest-circus\build\jestAdapterInit.js:946:3)
+    at _runTestsForDescribeBlock (C:\FloworxInvite\node_modules\jest-circus\build\jestAdapterInit.js:839:13)
+    at _runTestsForDescribeBlock (C:\FloworxInvite\node_modules\jest-circus\build\jestAdapterInit.js:829:11)
+    at _runTestsForDescribeBlock (C:\FloworxInvite\node_modules\jest-circus\build\jestAdapterInit.js:829:11)
+    at run (C:\FloworxInvite\node_modules\jest-circus\build\jestAdapterInit.js:757:3)
+    at runAndTransformResultsToJestFormat (C:\FloworxInvite\node_modules\jest-circus\build\jestAdapterInit.js:1917:21)
+    at jestAdapter (C:\FloworxInvite\node_modules\jest-circus\build\runner.js:101:19)
+    at runTestInternal (C:\FloworxInvite\node_modules\jest-runner\build\testWorker.js:275:16)
+    at runTest (C:\FloworxInvite\node_modules\jest-runner\build\testWorker.js:343:7)
+    at Object.worker (C:\FloworxInvite\node_modules\jest-runner\build\testWorker.js:497:12)</failure>
+    </testcase>
+    <testcase classname="Frontend API Client Integration › Advanced HTTP Methods" name="should handle HEAD requests" time="0.001">
+      <failure>ReferenceError: mockAxios is not defined
+    at Object.mockAxios (C:\FloworxInvite\tests\integration\frontend-api.test.js:584:7)
+    at Promise.finally.completed (C:\FloworxInvite\node_modules\jest-circus\build\jestAdapterInit.js:1556:28)
+    at new Promise (&lt;anonymous&gt;)
+    at callAsyncCircusFn (C:\FloworxInvite\node_modules\jest-circus\build\jestAdapterInit.js:1496:10)
+    at _callCircusTest (C:\FloworxInvite\node_modules\jest-circus\build\jestAdapterInit.js:1006:40)
+    at processTicksAndRejections (node:internal/process/task_queues:105:5)
+    at _runTest (C:\FloworxInvite\node_modules\jest-circus\build\jestAdapterInit.js:946:3)
+    at _runTestsForDescribeBlock (C:\FloworxInvite\node_modules\jest-circus\build\jestAdapterInit.js:839:13)
+    at _runTestsForDescribeBlock (C:\FloworxInvite\node_modules\jest-circus\build\jestAdapterInit.js:829:11)
+    at _runTestsForDescribeBlock (C:\FloworxInvite\node_modules\jest-circus\build\jestAdapterInit.js:829:11)
+    at run (C:\FloworxInvite\node_modules\jest-circus\build\jestAdapterInit.js:757:3)
+    at runAndTransformResultsToJestFormat (C:\FloworxInvite\node_modules\jest-circus\build\jestAdapterInit.js:1917:21)
+    at jestAdapter (C:\FloworxInvite\node_modules\jest-circus\build\runner.js:101:19)
+    at runTestInternal (C:\FloworxInvite\node_modules\jest-runner\build\testWorker.js:275:16)
+    at runTest (C:\FloworxInvite\node_modules\jest-runner\build\testWorker.js:343:7)
+    at Object.worker (C:\FloworxInvite\node_modules\jest-runner\build\testWorker.js:497:12)</failure>
+    </testcase>
+    <testcase classname="Frontend API Client Integration › Advanced HTTP Methods" name="should handle OPTIONS requests" time="0">
+      <failure>ReferenceError: mockAxios is not defined
+    at Object.mockAxios (C:\FloworxInvite\tests\integration\frontend-api.test.js:601:7)
+    at Promise.finally.completed (C:\FloworxInvite\node_modules\jest-circus\build\jestAdapterInit.js:1556:28)
+    at new Promise (&lt;anonymous&gt;)
+    at callAsyncCircusFn (C:\FloworxInvite\node_modules\jest-circus\build\jestAdapterInit.js:1496:10)
+    at _callCircusTest (C:\FloworxInvite\node_modules\jest-circus\build\jestAdapterInit.js:1006:40)
+    at processTicksAndRejections (node:internal/process/task_queues:105:5)
+    at _runTest (C:\FloworxInvite\node_modules\jest-circus\build\jestAdapterInit.js:946:3)
+    at _runTestsForDescribeBlock (C:\FloworxInvite\node_modules\jest-circus\build\jestAdapterInit.js:839:13)
+    at _runTestsForDescribeBlock (C:\FloworxInvite\node_modules\jest-circus\build\jestAdapterInit.js:829:11)
+    at _runTestsForDescribeBlock (C:\FloworxInvite\node_modules\jest-circus\build\jestAdapterInit.js:829:11)
+    at run (C:\FloworxInvite\node_modules\jest-circus\build\jestAdapterInit.js:757:3)
+    at runAndTransformResultsToJestFormat (C:\FloworxInvite\node_modules\jest-circus\build\jestAdapterInit.js:1917:21)
+    at jestAdapter (C:\FloworxInvite\node_modules\jest-circus\build\runner.js:101:19)
+    at runTestInternal (C:\FloworxInvite\node_modules\jest-runner\build\testWorker.js:275:16)
+    at runTest (C:\FloworxInvite\node_modules\jest-runner\build\testWorker.js:343:7)
+    at Object.worker (C:\FloworxInvite\node_modules\jest-runner\build\testWorker.js:497:12)</failure>
+    </testcase>
+    <testcase classname="Frontend API Client Integration › Request Data Handling" name="should handle FormData requests" time="0">
+      <failure>ReferenceError: mockAxios is not defined
+    at Object.mockAxios (C:\FloworxInvite\tests\integration\frontend-api.test.js:616:7)
+    at Promise.finally.completed (C:\FloworxInvite\node_modules\jest-circus\build\jestAdapterInit.js:1556:28)
+    at new Promise (&lt;anonymous&gt;)
+    at callAsyncCircusFn (C:\FloworxInvite\node_modules\jest-circus\build\jestAdapterInit.js:1496:10)
+    at _callCircusTest (C:\FloworxInvite\node_modules\jest-circus\build\jestAdapterInit.js:1006:40)
+    at processTicksAndRejections (node:internal/process/task_queues:105:5)
+    at _runTest (C:\FloworxInvite\node_modules\jest-circus\build\jestAdapterInit.js:946:3)
+    at _runTestsForDescribeBlock (C:\FloworxInvite\node_modules\jest-circus\build\jestAdapterInit.js:839:13)
+    at _runTestsForDescribeBlock (C:\FloworxInvite\node_modules\jest-circus\build\jestAdapterInit.js:829:11)
+    at _runTestsForDescribeBlock (C:\FloworxInvite\node_modules\jest-circus\build\jestAdapterInit.js:829:11)
+    at run (C:\FloworxInvite\node_modules\jest-circus\build\jestAdapterInit.js:757:3)
+    at runAndTransformResultsToJestFormat (C:\FloworxInvite\node_modules\jest-circus\build\jestAdapterInit.js:1917:21)
+    at jestAdapter (C:\FloworxInvite\node_modules\jest-circus\build\runner.js:101:19)
+    at runTestInternal (C:\FloworxInvite\node_modules\jest-runner\build\testWorker.js:275:16)
+    at runTest (C:\FloworxInvite\node_modules\jest-runner\build\testWorker.js:343:7)
+    at Object.worker (C:\FloworxInvite\node_modules\jest-runner\build\testWorker.js:497:12)</failure>
+    </testcase>
+    <testcase classname="Frontend API Client Integration › Request Data Handling" name="should handle URL-encoded data" time="0">
+      <failure>ReferenceError: mockAxios is not defined
+    at Object.mockAxios (C:\FloworxInvite\tests\integration\frontend-api.test.js:630:7)
+    at Promise.finally.completed (C:\FloworxInvite\node_modules\jest-circus\build\jestAdapterInit.js:1556:28)
+    at new Promise (&lt;anonymous&gt;)
+    at callAsyncCircusFn (C:\FloworxInvite\node_modules\jest-circus\build\jestAdapterInit.js:1496:10)
+    at _callCircusTest (C:\FloworxInvite\node_modules\jest-circus\build\jestAdapterInit.js:1006:40)
+    at processTicksAndRejections (node:internal/process/task_queues:105:5)
+    at _runTest (C:\FloworxInvite\node_modules\jest-circus\build\jestAdapterInit.js:946:3)
+    at _runTestsForDescribeBlock (C:\FloworxInvite\node_modules\jest-circus\build\jestAdapterInit.js:839:13)
+    at _runTestsForDescribeBlock (C:\FloworxInvite\node_modules\jest-circus\build\jestAdapterInit.js:829:11)
+    at _runTestsForDescribeBlock (C:\FloworxInvite\node_modules\jest-circus\build\jestAdapterInit.js:829:11)
+    at run (C:\FloworxInvite\node_modules\jest-circus\build\jestAdapterInit.js:757:3)
+    at runAndTransformResultsToJestFormat (C:\FloworxInvite\node_modules\jest-circus\build\jestAdapterInit.js:1917:21)
+    at jestAdapter (C:\FloworxInvite\node_modules\jest-circus\build\runner.js:101:19)
+    at runTestInternal (C:\FloworxInvite\node_modules\jest-runner\build\testWorker.js:275:16)
+    at runTest (C:\FloworxInvite\node_modules\jest-runner\build\testWorker.js:343:7)
+    at Object.worker (C:\FloworxInvite\node_modules\jest-runner\build\testWorker.js:497:12)</failure>
+    </testcase>
+    <testcase classname="Frontend API Client Integration › Request Data Handling" name="should handle binary data" time="0.001">
+      <failure>ReferenceError: mockAxios is not defined
+    at Object.mockAxios (C:\FloworxInvite\tests\integration\frontend-api.test.js:645:7)
+    at Promise.finally.completed (C:\FloworxInvite\node_modules\jest-circus\build\jestAdapterInit.js:1556:28)
+    at new Promise (&lt;anonymous&gt;)
+    at callAsyncCircusFn (C:\FloworxInvite\node_modules\jest-circus\build\jestAdapterInit.js:1496:10)
+    at _callCircusTest (C:\FloworxInvite\node_modules\jest-circus\build\jestAdapterInit.js:1006:40)
+    at processTicksAndRejections (node:internal/process/task_queues:105:5)
+    at _runTest (C:\FloworxInvite\node_modules\jest-circus\build\jestAdapterInit.js:946:3)
+    at _runTestsForDescribeBlock (C:\FloworxInvite\node_modules\jest-circus\build\jestAdapterInit.js:839:13)
+    at _runTestsForDescribeBlock (C:\FloworxInvite\node_modules\jest-circus\build\jestAdapterInit.js:829:11)
+    at _runTestsForDescribeBlock (C:\FloworxInvite\node_modules\jest-circus\build\jestAdapterInit.js:829:11)
+    at run (C:\FloworxInvite\node_modules\jest-circus\build\jestAdapterInit.js:757:3)
+    at runAndTransformResultsToJestFormat (C:\FloworxInvite\node_modules\jest-circus\build\jestAdapterInit.js:1917:21)
+    at jestAdapter (C:\FloworxInvite\node_modules\jest-circus\build\runner.js:101:19)
+    at runTestInternal (C:\FloworxInvite\node_modules\jest-runner\build\testWorker.js:275:16)
+    at runTest (C:\FloworxInvite\node_modules\jest-runner\build\testWorker.js:343:7)
+    at Object.worker (C:\FloworxInvite\node_modules\jest-runner\build\testWorker.js:497:12)</failure>
+    </testcase>
+    <testcase classname="Frontend API Client Integration › Request Data Handling" name="should handle null and undefined data" time="0.001">
+      <failure>ReferenceError: mockAxios is not defined
+    at Object.mockAxios (C:\FloworxInvite\tests\integration\frontend-api.test.js:657:7)
+    at Promise.finally.completed (C:\FloworxInvite\node_modules\jest-circus\build\jestAdapterInit.js:1556:28)
+    at new Promise (&lt;anonymous&gt;)
+    at callAsyncCircusFn (C:\FloworxInvite\node_modules\jest-circus\build\jestAdapterInit.js:1496:10)
+    at _callCircusTest (C:\FloworxInvite\node_modules\jest-circus\build\jestAdapterInit.js:1006:40)
+    at processTicksAndRejections (node:internal/process/task_queues:105:5)
+    at _runTest (C:\FloworxInvite\node_modules\jest-circus\build\jestAdapterInit.js:946:3)
+    at _runTestsForDescribeBlock (C:\FloworxInvite\node_modules\jest-circus\build\jestAdapterInit.js:839:13)
+    at _runTestsForDescribeBlock (C:\FloworxInvite\node_modules\jest-circus\build\jestAdapterInit.js:829:11)
+    at _runTestsForDescribeBlock (C:\FloworxInvite\node_modules\jest-circus\build\jestAdapterInit.js:829:11)
+    at run (C:\FloworxInvite\node_modules\jest-circus\build\jestAdapterInit.js:757:3)
+    at runAndTransformResultsToJestFormat (C:\FloworxInvite\node_modules\jest-circus\build\jestAdapterInit.js:1917:21)
+    at jestAdapter (C:\FloworxInvite\node_modules\jest-circus\build\runner.js:101:19)
+    at runTestInternal (C:\FloworxInvite\node_modules\jest-runner\build\testWorker.js:275:16)
+    at runTest (C:\FloworxInvite\node_modules\jest-runner\build\testWorker.js:343:7)
+    at Object.worker (C:\FloworxInvite\node_modules\jest-runner\build\testWorker.js:497:12)</failure>
+    </testcase>
+  </testsuite>
+  <testsuite name="OAuth Integration Tests" errors="0" failures="17" skipped="0" timestamp="2025-09-14T17:13:48" time="10.13" tests="19">
+    <testcase classname="OAuth Integration Tests › OAuth Initiation" name="should initiate Google OAuth flow with valid token" time="0.262">
       <failure>Error: expect(received).toBe(expected) // Object.is equality
 
-Expected: &quot;https://accounts.google.com/oauth/authorize?client_id=test&quot;
-Received: &quot;https://accounts.google.com/o/oauth2/v2/auth?access_type=offline&amp;scope=https%3A%2F%2Fwww.googleapis.com%2Fauth%2Fuserinfo.email%20https%3A%2F%2Fwww.googleapis.com%2Fauth%2Fuserinfo.profile%20https%3A%2F%2Fwww.googleapis.com%2Fauth%2Fgmail.readonly%20https%3A%2F%2Fwww.googleapis.com%2Fauth%2Fgmail.modify%20https%3A%2F%2Fwww.googleapis.com%2Fauth%2Fcalendar.readonly&amp;state=test-user-id&amp;prompt=consent&amp;include_granted_scopes=true&amp;response_type=code&amp;client_id=test-client-id&amp;redirect_uri=http%3A%2F%2Flocalhost%3A3000%2Fcallback&quot;
-    at Object.toBe (C:\FloworxInvite\tests\unit\OAuthService.test.js:105:23)
+Expected: 302
+Received: 500
+    at Object.toBe (C:\FloworxInvite\tests\integration\oauth.test.js:103:31)
+    at processTicksAndRejections (node:internal/process/task_queues:105:5)</failure>
+    </testcase>
+    <testcase classname="OAuth Integration Tests › OAuth Initiation" name="should redirect with error for missing token" time="0.006">
+    </testcase>
+    <testcase classname="OAuth Integration Tests › OAuth Initiation" name="should redirect with error for invalid token" time="0.022">
+      <failure>Error: expect(received).toBe(expected) // Object.is equality
+
+Expected: 302
+Received: 500
+    at Object.toBe (C:\FloworxInvite\tests\integration\oauth.test.js:130:31)
+    at processTicksAndRejections (node:internal/process/task_queues:105:5)</failure>
+    </testcase>
+    <testcase classname="OAuth Integration Tests › OAuth Initiation" name="should handle OAuth configuration errors" time="0.025">
+      <failure>Error: expect(received).toBe(expected) // Object.is equality
+
+Expected: 302
+Received: 500
+    at Object.toBe (C:\FloworxInvite\tests\integration\oauth.test.js:143:31)
+    at processTicksAndRejections (node:internal/process/task_queues:105:5)</failure>
+    </testcase>
+    <testcase classname="OAuth Integration Tests › OAuth Callback" name="should handle successful OAuth callback" time="0.018">
+      <failure>Error: expect(received).toContain(expected) // indexOf
+
+Expected substring: &quot;connected=google&quot;
+Received string:    &quot;https://app.floworx-iq.com/dashboard?error=config_error&quot;
+    at Object.toContain (C:\FloworxInvite\tests\integration\oauth.test.js:179:41)
+    at processTicksAndRejections (node:internal/process/task_queues:105:5)</failure>
+    </testcase>
+    <testcase classname="OAuth Integration Tests › OAuth Callback" name="should handle OAuth denial" time="0.015">
+      <failure>Error: expect(received).toContain(expected) // indexOf
+
+Expected substring: &quot;error=oauth_denied&quot;
+Received string:    &quot;https://app.floworx-iq.com/dashboard?error=connection_failed&quot;
+    at Object.toContain (C:\FloworxInvite\tests\integration\oauth.test.js:200:41)
+    at processTicksAndRejections (node:internal/process/task_queues:105:5)</failure>
+    </testcase>
+    <testcase classname="OAuth Integration Tests › OAuth Callback" name="should handle missing authorization code" time="0.008">
+    </testcase>
+    <testcase classname="OAuth Integration Tests › OAuth Callback" name="should handle token exchange failure" time="0.015">
+      <failure>Error: expect(received).toContain(expected) // indexOf
+
+Expected substring: &quot;error=token_exchange_failed&quot;
+Received string:    &quot;https://app.floworx-iq.com/dashboard?error=config_error&quot;
+    at Object.toContain (C:\FloworxInvite\tests\integration\oauth.test.js:225:41)
+    at processTicksAndRejections (node:internal/process/task_queues:105:5)</failure>
+    </testcase>
+    <testcase classname="OAuth Integration Tests › Token Refresh" name="should refresh access token successfully" time="0.043">
+      <failure>Error: expect(received).toBe(expected) // Object.is equality
+
+Expected: 200
+Received: 500
+    at Object.toBe (C:\FloworxInvite\tests\integration\oauth.test.js:265:31)
+    at processTicksAndRejections (node:internal/process/task_queues:105:5)</failure>
+    </testcase>
+    <testcase classname="OAuth Integration Tests › Token Refresh" name="should handle missing refresh token" time="0.015">
+      <failure>Error: expect(received).toBe(expected) // Object.is equality
+
+Expected: 401
+Received: 500
+    at Object.toBe (C:\FloworxInvite\tests\integration\oauth.test.js:282:31)
+    at processTicksAndRejections (node:internal/process/task_queues:105:5)</failure>
+    </testcase>
+    <testcase classname="OAuth Integration Tests › Token Refresh" name="should handle invalid refresh token" time="0.021">
+      <failure>Error: expect(received).toBe(expected) // Object.is equality
+
+Expected: 401
+Received: 500
+    at Object.toBe (C:\FloworxInvite\tests\integration\oauth.test.js:306:31)
+    at processTicksAndRejections (node:internal/process/task_queues:105:5)</failure>
+    </testcase>
+    <testcase classname="OAuth Integration Tests › Token Refresh" name="should handle unsupported provider" time="0.019">
+      <failure>Error: expect(received).toBe(expected) // Object.is equality
+
+Expected: 400
+Received: 500
+    at Object.toBe (C:\FloworxInvite\tests\integration\oauth.test.js:317:31)
+    at processTicksAndRejections (node:internal/process/task_queues:105:5)</failure>
+    </testcase>
+    <testcase classname="OAuth Integration Tests › OAuth Status" name="should return OAuth connection status" time="0.021">
+      <failure>Error: expect(received).toBe(expected) // Object.is equality
+
+Expected: 200
+Received: 500
+    at Object.toBe (C:\FloworxInvite\tests\integration\oauth.test.js:349:31)
+    at processTicksAndRejections (node:internal/process/task_queues:105:5)</failure>
+    </testcase>
+    <testcase classname="OAuth Integration Tests › OAuth Status" name="should handle OAuth status errors" time="0.025">
+      <failure>Error: expect(received).toBe(expected) // Object.is equality
+
+Expected: &quot;Failed to get OAuth status&quot;
+Received: {&quot;code&quot;: 500, &quot;message&quot;: &quot;Internal server error&quot;, &quot;requestId&quot;: &quot;GET:/api/oauth/status&quot;, &quot;type&quot;: &quot;INTERNAL_ERROR&quot;}
+    at Object.toBe (C:\FloworxInvite\tests\integration\oauth.test.js:367:35)
+    at processTicksAndRejections (node:internal/process/task_queues:105:5)</failure>
+    </testcase>
+    <testcase classname="OAuth Integration Tests › Connection Management" name="should disconnect OAuth connection successfully" time="0.021">
+      <failure>Error: expect(received).toBe(expected) // Object.is equality
+
+Expected: 200
+Received: 500
+    at Object.toBe (C:\FloworxInvite\tests\integration\oauth.test.js:396:31)
+    at processTicksAndRejections (node:internal/process/task_queues:105:5)</failure>
+    </testcase>
+    <testcase classname="OAuth Integration Tests › Connection Management" name="should handle disconnect when no connection exists" time="0.019">
+      <failure>Error: expect(received).toBe(expected) // Object.is equality
+
+Expected: 200
+Received: 500
+    at Object.toBe (C:\FloworxInvite\tests\integration\oauth.test.js:411:31)
+    at processTicksAndRejections (node:internal/process/task_queues:105:5)</failure>
+    </testcase>
+    <testcase classname="OAuth Integration Tests › Connection Management" name="should handle provider revocation failure gracefully" time="0.016">
+      <failure>Error: expect(received).toBe(expected) // Object.is equality
+
+Expected: 200
+Received: 500
+    at Object.toBe (C:\FloworxInvite\tests\integration\oauth.test.js:433:31)
+    at processTicksAndRejections (node:internal/process/task_queues:105:5)</failure>
+    </testcase>
+    <testcase classname="OAuth Integration Tests › User Status with OAuth" name="should include OAuth connections in user status" time="0.017">
+      <failure>Error: expect(received).toBe(expected) // Object.is equality
+
+Expected: 200
+Received: 500
+    at Object.toBe (C:\FloworxInvite\tests\integration\oauth.test.js:467:31)
+    at processTicksAndRejections (node:internal/process/task_queues:105:5)</failure>
+    </testcase>
+    <testcase classname="OAuth Integration Tests › User Status with OAuth" name="should handle OAuth service errors in user status" time="0.026">
+      <failure>Error: expect(received).toBe(expected) // Object.is equality
+
+Expected: 200
+Received: 500
+    at Object.toBe (C:\FloworxInvite\tests\integration\oauth.test.js:482:31)
+    at processTicksAndRejections (node:internal/process/task_queues:105:5)</failure>
+    </testcase>
+  </testsuite>
+  <testsuite name="REST API Validation Tests" errors="0" failures="15" skipped="0" timestamp="2025-09-14T17:13:48" time="10.889" tests="20">
+    <testcase classname="REST API Validation Tests › Authentication Endpoints" name="POST /api/auth/register - should create new user" time="0.072">
+      <failure>Error: expected 201 &quot;Created&quot;, got 400 &quot;Bad Request&quot;
+    at Object.expect (C:\FloworxInvite\tests\integration\rest-api-validation.test.js:48:10)
     at Promise.finally.completed (C:\FloworxInvite\node_modules\jest-circus\build\jestAdapterInit.js:1556:28)
     at new Promise (&lt;anonymous&gt;)
     at callAsyncCircusFn (C:\FloworxInvite\node_modules\jest-circus\build\jestAdapterInit.js:1496:10)
@@ -45,37 +801,24 @@ Received: &quot;https://accounts.google.com/o/oauth2/v2/auth?access_type=offline
     at run (C:\FloworxInvite\node_modules\jest-circus\build\jestAdapterInit.js:757:3)
     at runAndTransformResultsToJestFormat (C:\FloworxInvite\node_modules\jest-circus\build\jestAdapterInit.js:1917:21)
     at jestAdapter (C:\FloworxInvite\node_modules\jest-circus\build\runner.js:101:19)
-    at runTestInternal (C:\FloworxInvite\node_modules\jest-runner\build\index.js:275:16)
-    at runTest (C:\FloworxInvite\node_modules\jest-runner\build\index.js:343:7)</failure>
+    at runTestInternal (C:\FloworxInvite\node_modules\jest-runner\build\testWorker.js:275:16)
+    at runTest (C:\FloworxInvite\node_modules\jest-runner\build\testWorker.js:343:7)
+    at Object.worker (C:\FloworxInvite\node_modules\jest-runner\build\testWorker.js:497:12)
+----
+    at Test._assertStatus (C:\FloworxInvite\node_modules\supertest\lib\test.js:309:14)
+    at C:\FloworxInvite\node_modules\supertest\lib\test.js:365:13
+    at Test._assertFunction (C:\FloworxInvite\node_modules\supertest\lib\test.js:342:13)
+    at Test.assert (C:\FloworxInvite\node_modules\supertest\lib\test.js:195:23)
+    at localAssert (C:\FloworxInvite\node_modules\supertest\lib\test.js:138:14)
+    at Server.&lt;anonymous&gt; (C:\FloworxInvite\node_modules\supertest\lib\test.js:152:11)
+    at Object.onceWrapper (node:events:622:28)
+    at Server.emit (node:events:508:28)
+    at emitCloseNT (node:net:2419:8)
+    at processTicksAndRejections (node:internal/process/task_queues:89:21)</failure>
     </testcase>
-    <testcase classname="OAuthService Unit Tests › Authorization URL Generation" name="should throw error for unsupported provider" time="0.001">
-    </testcase>
-    <testcase classname="OAuthService Unit Tests › Token Exchange" name="should exchange authorization code for tokens successfully" time="0.197">
-      <failure>Error: Failed to exchange authorization code: invalid_client
-    at OAuthService.exchangeCodeForTokens (C:\FloworxInvite\backend\services\OAuthService.js:117:15)
-    at processTicksAndRejections (node:internal/process/task_queues:105:5)
-    at Object.&lt;anonymous&gt; (C:\FloworxInvite\tests\unit\OAuthService.test.js:143:22)</failure>
-    </testcase>
-    <testcase classname="OAuthService Unit Tests › Token Exchange" name="should handle token exchange failure" time="0.061">
-    </testcase>
-    <testcase classname="OAuthService Unit Tests › Token Exchange" name="should handle missing access token" time="0.068">
-      <failure>Error: expect(received).rejects.toThrow(expected)
-
-Expected substring: &quot;No access token received from Google&quot;
-Received message:   &quot;Failed to exchange authorization code: invalid_client&quot;
-
-      115 |       } catch (error) {
-      116 |         console.error(`${provider} token exchange error:`, error);
-    &gt; 117 |         throw new Error(`Failed to exchange authorization code: ${error.message}`);
-          |               ^
-      118 |       }
-      119 |     }
-      120 |
-
-      at OAuthService.exchangeCodeForTokens (backend/services/OAuthService.js:117:15)
-      at Object.&lt;anonymous&gt; (tests/unit/OAuthService.test.js:169:7)
-    at Object.toThrow (C:\FloworxInvite\node_modules\expect\build\index.js:2155:20)
-    at Object.toThrow (C:\FloworxInvite\tests\unit\OAuthService.test.js:171:17)
+    <testcase classname="REST API Validation Tests › Authentication Endpoints" name="POST /api/auth/login - should authenticate existing user" time="0.062">
+      <failure>Error: expected 200 &quot;OK&quot;, got 500 &quot;Internal Server Error&quot;
+    at Object.expect (C:\FloworxInvite\tests\integration\rest-api-validation.test.js:70:10)
     at Promise.finally.completed (C:\FloworxInvite\node_modules\jest-circus\build\jestAdapterInit.js:1556:28)
     at new Promise (&lt;anonymous&gt;)
     at callAsyncCircusFn (C:\FloworxInvite\node_modules\jest-circus\build\jestAdapterInit.js:1496:10)
@@ -88,53 +831,287 @@ Received message:   &quot;Failed to exchange authorization code: invalid_client&
     at run (C:\FloworxInvite\node_modules\jest-circus\build\jestAdapterInit.js:757:3)
     at runAndTransformResultsToJestFormat (C:\FloworxInvite\node_modules\jest-circus\build\jestAdapterInit.js:1917:21)
     at jestAdapter (C:\FloworxInvite\node_modules\jest-circus\build\runner.js:101:19)
-    at runTestInternal (C:\FloworxInvite\node_modules\jest-runner\build\index.js:275:16)
-    at runTest (C:\FloworxInvite\node_modules\jest-runner\build\index.js:343:7)</failure>
+    at runTestInternal (C:\FloworxInvite\node_modules\jest-runner\build\testWorker.js:275:16)
+    at runTest (C:\FloworxInvite\node_modules\jest-runner\build\testWorker.js:343:7)
+    at Object.worker (C:\FloworxInvite\node_modules\jest-runner\build\testWorker.js:497:12)
+----
+    at Test._assertStatus (C:\FloworxInvite\node_modules\supertest\lib\test.js:309:14)
+    at C:\FloworxInvite\node_modules\supertest\lib\test.js:365:13
+    at Test._assertFunction (C:\FloworxInvite\node_modules\supertest\lib\test.js:342:13)
+    at Test.assert (C:\FloworxInvite\node_modules\supertest\lib\test.js:195:23)
+    at localAssert (C:\FloworxInvite\node_modules\supertest\lib\test.js:138:14)
+    at Server.&lt;anonymous&gt; (C:\FloworxInvite\node_modules\supertest\lib\test.js:152:11)
+    at Object.onceWrapper (node:events:622:28)
+    at Server.emit (node:events:508:28)
+    at emitCloseNT (node:net:2419:8)
+    at processTicksAndRejections (node:internal/process/task_queues:89:21)</failure>
     </testcase>
-    <testcase classname="OAuthService Unit Tests › Token Storage and Retrieval" name="should store tokens successfully" time="0.003">
-    </testcase>
-    <testcase classname="OAuthService Unit Tests › Token Storage and Retrieval" name="should retrieve tokens successfully" time="0">
-    </testcase>
-    <testcase classname="OAuthService Unit Tests › Token Storage and Retrieval" name="should return null for non-existent tokens" time="0.001">
-    </testcase>
-    <testcase classname="OAuthService Unit Tests › Token Refresh" name="should refresh access token successfully" time="0.059">
-      <failure>Error: Token refresh failed: invalid_client
-    at OAuthService.refreshAccessToken (C:\FloworxInvite\backend\services\OAuthService.js:229:13)
+    <testcase classname="REST API Validation Tests › Authentication Endpoints" name="POST /api/auth/verify - should verify valid JWT token" time="0.021">
+      <failure>Error: expected 200 &quot;OK&quot;, got 404 &quot;Not Found&quot;
+    at Object.expect (C:\FloworxInvite\tests\integration\rest-api-validation.test.js:85:10)
+    at Promise.finally.completed (C:\FloworxInvite\node_modules\jest-circus\build\jestAdapterInit.js:1556:28)
+    at new Promise (&lt;anonymous&gt;)
+    at callAsyncCircusFn (C:\FloworxInvite\node_modules\jest-circus\build\jestAdapterInit.js:1496:10)
+    at _callCircusTest (C:\FloworxInvite\node_modules\jest-circus\build\jestAdapterInit.js:1006:40)
     at processTicksAndRejections (node:internal/process/task_queues:105:5)
-    at Object.&lt;anonymous&gt; (C:\FloworxInvite\tests\unit\OAuthService.test.js:252:22)</failure>
+    at _runTest (C:\FloworxInvite\node_modules\jest-circus\build\jestAdapterInit.js:946:3)
+    at _runTestsForDescribeBlock (C:\FloworxInvite\node_modules\jest-circus\build\jestAdapterInit.js:839:13)
+    at _runTestsForDescribeBlock (C:\FloworxInvite\node_modules\jest-circus\build\jestAdapterInit.js:829:11)
+    at _runTestsForDescribeBlock (C:\FloworxInvite\node_modules\jest-circus\build\jestAdapterInit.js:829:11)
+    at run (C:\FloworxInvite\node_modules\jest-circus\build\jestAdapterInit.js:757:3)
+    at runAndTransformResultsToJestFormat (C:\FloworxInvite\node_modules\jest-circus\build\jestAdapterInit.js:1917:21)
+    at jestAdapter (C:\FloworxInvite\node_modules\jest-circus\build\runner.js:101:19)
+    at runTestInternal (C:\FloworxInvite\node_modules\jest-runner\build\testWorker.js:275:16)
+    at runTest (C:\FloworxInvite\node_modules\jest-runner\build\testWorker.js:343:7)
+    at Object.worker (C:\FloworxInvite\node_modules\jest-runner\build\testWorker.js:497:12)
+----
+    at Test._assertStatus (C:\FloworxInvite\node_modules\supertest\lib\test.js:309:14)
+    at C:\FloworxInvite\node_modules\supertest\lib\test.js:365:13
+    at Test._assertFunction (C:\FloworxInvite\node_modules\supertest\lib\test.js:342:13)
+    at Test.assert (C:\FloworxInvite\node_modules\supertest\lib\test.js:195:23)
+    at localAssert (C:\FloworxInvite\node_modules\supertest\lib\test.js:138:14)
+    at Server.&lt;anonymous&gt; (C:\FloworxInvite\node_modules\supertest\lib\test.js:152:11)
+    at Object.onceWrapper (node:events:622:28)
+    at Server.emit (node:events:508:28)
+    at emitCloseNT (node:net:2419:8)
+    at processTicksAndRejections (node:internal/process/task_queues:89:21)</failure>
     </testcase>
-    <testcase classname="OAuthService Unit Tests › Token Refresh" name="should handle missing refresh token" time="0.004">
+    <testcase classname="REST API Validation Tests › Authentication Endpoints" name="POST /api/auth/verify - should reject invalid token" time="0.015">
+      <failure>Error: expected 401 &quot;Unauthorized&quot;, got 404 &quot;Not Found&quot;
+    at Object.expect (C:\FloworxInvite\tests\integration\rest-api-validation.test.js:96:10)
+    at Promise.finally.completed (C:\FloworxInvite\node_modules\jest-circus\build\jestAdapterInit.js:1556:28)
+    at new Promise (&lt;anonymous&gt;)
+    at callAsyncCircusFn (C:\FloworxInvite\node_modules\jest-circus\build\jestAdapterInit.js:1496:10)
+    at _callCircusTest (C:\FloworxInvite\node_modules\jest-circus\build\jestAdapterInit.js:1006:40)
+    at processTicksAndRejections (node:internal/process/task_queues:105:5)
+    at _runTest (C:\FloworxInvite\node_modules\jest-circus\build\jestAdapterInit.js:946:3)
+    at _runTestsForDescribeBlock (C:\FloworxInvite\node_modules\jest-circus\build\jestAdapterInit.js:839:13)
+    at _runTestsForDescribeBlock (C:\FloworxInvite\node_modules\jest-circus\build\jestAdapterInit.js:829:11)
+    at _runTestsForDescribeBlock (C:\FloworxInvite\node_modules\jest-circus\build\jestAdapterInit.js:829:11)
+    at run (C:\FloworxInvite\node_modules\jest-circus\build\jestAdapterInit.js:757:3)
+    at runAndTransformResultsToJestFormat (C:\FloworxInvite\node_modules\jest-circus\build\jestAdapterInit.js:1917:21)
+    at jestAdapter (C:\FloworxInvite\node_modules\jest-circus\build\runner.js:101:19)
+    at runTestInternal (C:\FloworxInvite\node_modules\jest-runner\build\testWorker.js:275:16)
+    at runTest (C:\FloworxInvite\node_modules\jest-runner\build\testWorker.js:343:7)
+    at Object.worker (C:\FloworxInvite\node_modules\jest-runner\build\testWorker.js:497:12)
+----
+    at Test._assertStatus (C:\FloworxInvite\node_modules\supertest\lib\test.js:309:14)
+    at C:\FloworxInvite\node_modules\supertest\lib\test.js:365:13
+    at Test._assertFunction (C:\FloworxInvite\node_modules\supertest\lib\test.js:342:13)
+    at Test.assert (C:\FloworxInvite\node_modules\supertest\lib\test.js:195:23)
+    at localAssert (C:\FloworxInvite\node_modules\supertest\lib\test.js:138:14)
+    at Server.&lt;anonymous&gt; (C:\FloworxInvite\node_modules\supertest\lib\test.js:152:11)
+    at Object.onceWrapper (node:events:622:28)
+    at Server.emit (node:events:508:28)
+    at emitCloseNT (node:net:2419:8)
+    at processTicksAndRejections (node:internal/process/task_queues:89:21)</failure>
     </testcase>
-    <testcase classname="OAuthService Unit Tests › Token Refresh" name="should handle refresh token failure" time="0.056">
+    <testcase classname="REST API Validation Tests › System Health Endpoints" name="GET /api/health - should return system health" time="0.015">
+      <failure>Error: expect(received).toBe(expected) // Object.is equality
+
+Expected: &quot;healthy&quot;
+Received: &quot;ok&quot;
+    at Object.toBe (C:\FloworxInvite\tests\integration\rest-api-validation.test.js:108:36)
+    at processTicksAndRejections (node:internal/process/task_queues:105:5)</failure>
     </testcase>
-    <testcase classname="OAuthService Unit Tests › Token Validation" name="should identify tokens that need refresh" time="0.001">
+    <testcase classname="REST API Validation Tests › System Health Endpoints" name="GET /api/health/database - should return database health" time="0.012">
+      <failure>Error: expected 200 &quot;OK&quot;, got 503 &quot;Service Unavailable&quot;
+    at Object.expect (C:\FloworxInvite\tests\integration\rest-api-validation.test.js:116:10)
+    at Promise.finally.completed (C:\FloworxInvite\node_modules\jest-circus\build\jestAdapterInit.js:1556:28)
+    at new Promise (&lt;anonymous&gt;)
+    at callAsyncCircusFn (C:\FloworxInvite\node_modules\jest-circus\build\jestAdapterInit.js:1496:10)
+    at _callCircusTest (C:\FloworxInvite\node_modules\jest-circus\build\jestAdapterInit.js:1006:40)
+    at processTicksAndRejections (node:internal/process/task_queues:105:5)
+    at _runTest (C:\FloworxInvite\node_modules\jest-circus\build\jestAdapterInit.js:946:3)
+    at _runTestsForDescribeBlock (C:\FloworxInvite\node_modules\jest-circus\build\jestAdapterInit.js:839:13)
+    at _runTestsForDescribeBlock (C:\FloworxInvite\node_modules\jest-circus\build\jestAdapterInit.js:829:11)
+    at _runTestsForDescribeBlock (C:\FloworxInvite\node_modules\jest-circus\build\jestAdapterInit.js:829:11)
+    at run (C:\FloworxInvite\node_modules\jest-circus\build\jestAdapterInit.js:757:3)
+    at runAndTransformResultsToJestFormat (C:\FloworxInvite\node_modules\jest-circus\build\jestAdapterInit.js:1917:21)
+    at jestAdapter (C:\FloworxInvite\node_modules\jest-circus\build\runner.js:101:19)
+    at runTestInternal (C:\FloworxInvite\node_modules\jest-runner\build\testWorker.js:275:16)
+    at runTest (C:\FloworxInvite\node_modules\jest-runner\build\testWorker.js:343:7)
+    at Object.worker (C:\FloworxInvite\node_modules\jest-runner\build\testWorker.js:497:12)
+----
+    at Test._assertStatus (C:\FloworxInvite\node_modules\supertest\lib\test.js:309:14)
+    at C:\FloworxInvite\node_modules\supertest\lib\test.js:365:13
+    at Test._assertFunction (C:\FloworxInvite\node_modules\supertest\lib\test.js:342:13)
+    at Test.assert (C:\FloworxInvite\node_modules\supertest\lib\test.js:195:23)
+    at localAssert (C:\FloworxInvite\node_modules\supertest\lib\test.js:138:14)
+    at Server.&lt;anonymous&gt; (C:\FloworxInvite\node_modules\supertest\lib\test.js:152:11)
+    at Object.onceWrapper (node:events:622:28)
+    at Server.emit (node:events:508:28)
+    at emitCloseNT (node:net:2419:8)
+    at processTicksAndRejections (node:internal/process/task_queues:89:21)</failure>
     </testcase>
-    <testcase classname="OAuthService Unit Tests › Token Validation" name="should get valid access token without refresh" time="0.001">
+    <testcase classname="REST API Validation Tests › Protected Endpoints" name="GET /api/dashboard/stats - should require authentication" time="0.006">
+      <failure>Error: expected 401 &quot;Unauthorized&quot;, got 404 &quot;Not Found&quot;
+    at Object.expect (C:\FloworxInvite\tests\integration\rest-api-validation.test.js:128:10)
+    at Promise.finally.completed (C:\FloworxInvite\node_modules\jest-circus\build\jestAdapterInit.js:1556:28)
+    at new Promise (&lt;anonymous&gt;)
+    at callAsyncCircusFn (C:\FloworxInvite\node_modules\jest-circus\build\jestAdapterInit.js:1496:10)
+    at _callCircusTest (C:\FloworxInvite\node_modules\jest-circus\build\jestAdapterInit.js:1006:40)
+    at processTicksAndRejections (node:internal/process/task_queues:105:5)
+    at _runTest (C:\FloworxInvite\node_modules\jest-circus\build\jestAdapterInit.js:946:3)
+    at _runTestsForDescribeBlock (C:\FloworxInvite\node_modules\jest-circus\build\jestAdapterInit.js:839:13)
+    at _runTestsForDescribeBlock (C:\FloworxInvite\node_modules\jest-circus\build\jestAdapterInit.js:829:11)
+    at _runTestsForDescribeBlock (C:\FloworxInvite\node_modules\jest-circus\build\jestAdapterInit.js:829:11)
+    at run (C:\FloworxInvite\node_modules\jest-circus\build\jestAdapterInit.js:757:3)
+    at runAndTransformResultsToJestFormat (C:\FloworxInvite\node_modules\jest-circus\build\jestAdapterInit.js:1917:21)
+    at jestAdapter (C:\FloworxInvite\node_modules\jest-circus\build\runner.js:101:19)
+    at runTestInternal (C:\FloworxInvite\node_modules\jest-runner\build\testWorker.js:275:16)
+    at runTest (C:\FloworxInvite\node_modules\jest-runner\build\testWorker.js:343:7)
+    at Object.worker (C:\FloworxInvite\node_modules\jest-runner\build\testWorker.js:497:12)
+----
+    at Test._assertStatus (C:\FloworxInvite\node_modules\supertest\lib\test.js:309:14)
+    at C:\FloworxInvite\node_modules\supertest\lib\test.js:365:13
+    at Test._assertFunction (C:\FloworxInvite\node_modules\supertest\lib\test.js:342:13)
+    at Test.assert (C:\FloworxInvite\node_modules\supertest\lib\test.js:195:23)
+    at localAssert (C:\FloworxInvite\node_modules\supertest\lib\test.js:138:14)
+    at Server.&lt;anonymous&gt; (C:\FloworxInvite\node_modules\supertest\lib\test.js:152:11)
+    at Object.onceWrapper (node:events:622:28)
+    at Server.emit (node:events:508:28)
+    at emitCloseNT (node:net:2419:8)
+    at processTicksAndRejections (node:internal/process/task_queues:89:21)</failure>
     </testcase>
-    <testcase classname="OAuthService Unit Tests › Token Validation" name="should get valid access token with refresh" time="0.055">
+    <testcase classname="REST API Validation Tests › Protected Endpoints" name="GET /api/dashboard/stats - should return stats with valid token" time="0.01">
+      <failure>Error: expected 200 &quot;OK&quot;, got 404 &quot;Not Found&quot;
+    at Object.expect (C:\FloworxInvite\tests\integration\rest-api-validation.test.js:137:10)
+    at Promise.finally.completed (C:\FloworxInvite\node_modules\jest-circus\build\jestAdapterInit.js:1556:28)
+    at new Promise (&lt;anonymous&gt;)
+    at callAsyncCircusFn (C:\FloworxInvite\node_modules\jest-circus\build\jestAdapterInit.js:1496:10)
+    at _callCircusTest (C:\FloworxInvite\node_modules\jest-circus\build\jestAdapterInit.js:1006:40)
+    at processTicksAndRejections (node:internal/process/task_queues:105:5)
+    at _runTest (C:\FloworxInvite\node_modules\jest-circus\build\jestAdapterInit.js:946:3)
+    at _runTestsForDescribeBlock (C:\FloworxInvite\node_modules\jest-circus\build\jestAdapterInit.js:839:13)
+    at _runTestsForDescribeBlock (C:\FloworxInvite\node_modules\jest-circus\build\jestAdapterInit.js:829:11)
+    at _runTestsForDescribeBlock (C:\FloworxInvite\node_modules\jest-circus\build\jestAdapterInit.js:829:11)
+    at run (C:\FloworxInvite\node_modules\jest-circus\build\jestAdapterInit.js:757:3)
+    at runAndTransformResultsToJestFormat (C:\FloworxInvite\node_modules\jest-circus\build\jestAdapterInit.js:1917:21)
+    at jestAdapter (C:\FloworxInvite\node_modules\jest-circus\build\runner.js:101:19)
+    at runTestInternal (C:\FloworxInvite\node_modules\jest-runner\build\testWorker.js:275:16)
+    at runTest (C:\FloworxInvite\node_modules\jest-runner\build\testWorker.js:343:7)
+    at Object.worker (C:\FloworxInvite\node_modules\jest-runner\build\testWorker.js:497:12)
+----
+    at Test._assertStatus (C:\FloworxInvite\node_modules\supertest\lib\test.js:309:14)
+    at C:\FloworxInvite\node_modules\supertest\lib\test.js:365:13
+    at Test._assertFunction (C:\FloworxInvite\node_modules\supertest\lib\test.js:342:13)
+    at Test.assert (C:\FloworxInvite\node_modules\supertest\lib\test.js:195:23)
+    at localAssert (C:\FloworxInvite\node_modules\supertest\lib\test.js:138:14)
+    at Server.&lt;anonymous&gt; (C:\FloworxInvite\node_modules\supertest\lib\test.js:152:11)
+    at Object.onceWrapper (node:events:622:28)
+    at Server.emit (node:events:508:28)
+    at emitCloseNT (node:net:2419:8)
+    at processTicksAndRejections (node:internal/process/task_queues:89:21)</failure>
+    </testcase>
+    <testcase classname="REST API Validation Tests › Protected Endpoints" name="GET /api/user/profile - should return user profile with valid token" time="0.012">
       <failure>Error: expect(received).toBe(expected) // Object.is equality
 
 Expected: true
-Received: false
-    at Object.toBe (C:\FloworxInvite\tests\unit\OAuthService.test.js:351:30)
+Received: undefined
+    at Object.toBe (C:\FloworxInvite\tests\integration\rest-api-validation.test.js:149:37)
     at processTicksAndRejections (node:internal/process/task_queues:105:5)</failure>
     </testcase>
-    <testcase classname="OAuthService Unit Tests › Connection Status" name="should get OAuth connections status" time="0.002">
+    <testcase classname="REST API Validation Tests › Business Configuration Endpoints" name="GET /api/business-types - should return business types" time="0.1">
     </testcase>
-    <testcase classname="OAuthService Unit Tests › Connection Status" name="should check active connection status" time="0.001">
+    <testcase classname="REST API Validation Tests › Business Configuration Endpoints" name="POST /api/business-types - should create business type with auth" time="0.016">
+      <failure>Error: expected 201 &quot;Created&quot;, got 404 &quot;Not Found&quot;
+    at Object.expect (C:\FloworxInvite\tests\integration\rest-api-validation.test.js:172:10)
+    at Promise.finally.completed (C:\FloworxInvite\node_modules\jest-circus\build\jestAdapterInit.js:1556:28)
+    at new Promise (&lt;anonymous&gt;)
+    at callAsyncCircusFn (C:\FloworxInvite\node_modules\jest-circus\build\jestAdapterInit.js:1496:10)
+    at _callCircusTest (C:\FloworxInvite\node_modules\jest-circus\build\jestAdapterInit.js:1006:40)
+    at processTicksAndRejections (node:internal/process/task_queues:105:5)
+    at _runTest (C:\FloworxInvite\node_modules\jest-circus\build\jestAdapterInit.js:946:3)
+    at _runTestsForDescribeBlock (C:\FloworxInvite\node_modules\jest-circus\build\jestAdapterInit.js:839:13)
+    at _runTestsForDescribeBlock (C:\FloworxInvite\node_modules\jest-circus\build\jestAdapterInit.js:829:11)
+    at _runTestsForDescribeBlock (C:\FloworxInvite\node_modules\jest-circus\build\jestAdapterInit.js:829:11)
+    at run (C:\FloworxInvite\node_modules\jest-circus\build\jestAdapterInit.js:757:3)
+    at runAndTransformResultsToJestFormat (C:\FloworxInvite\node_modules\jest-circus\build\jestAdapterInit.js:1917:21)
+    at jestAdapter (C:\FloworxInvite\node_modules\jest-circus\build\runner.js:101:19)
+    at runTestInternal (C:\FloworxInvite\node_modules\jest-runner\build\testWorker.js:275:16)
+    at runTest (C:\FloworxInvite\node_modules\jest-runner\build\testWorker.js:343:7)
+    at Object.worker (C:\FloworxInvite\node_modules\jest-runner\build\testWorker.js:497:12)
+----
+    at Test._assertStatus (C:\FloworxInvite\node_modules\supertest\lib\test.js:309:14)
+    at C:\FloworxInvite\node_modules\supertest\lib\test.js:365:13
+    at Test._assertFunction (C:\FloworxInvite\node_modules\supertest\lib\test.js:342:13)
+    at Test.assert (C:\FloworxInvite\node_modules\supertest\lib\test.js:195:23)
+    at localAssert (C:\FloworxInvite\node_modules\supertest\lib\test.js:138:14)
+    at Server.&lt;anonymous&gt; (C:\FloworxInvite\node_modules\supertest\lib\test.js:152:11)
+    at Object.onceWrapper (node:events:622:28)
+    at Server.emit (node:events:508:28)
+    at emitCloseNT (node:net:2419:8)
+    at processTicksAndRejections (node:internal/process/task_queues:89:21)</failure>
     </testcase>
-    <testcase classname="OAuthService Unit Tests › Connection Revocation" name="should revoke connection successfully" time="0.05">
-      <failure>Error: expect(jest.fn()).toHaveBeenCalledWith(...expected)
+    <testcase classname="REST API Validation Tests › OAuth Endpoints" name="GET /api/oauth/google - should redirect to Google OAuth" time="0.01">
+      <failure>Error: expect(received).toContain(expected) // indexOf
 
-Expected: &quot;test-access-token&quot;
-
-Number of calls: 0
-    at Object.toHaveBeenCalledWith (C:\FloworxInvite\tests\unit\OAuthService.test.js:417:44)
+Expected substring: &quot;accounts.google.com&quot;
+Received string:    &quot;https://app.floworx-iq.com/dashboard?error=auth_required&quot;
+    at Object.toContain (C:\FloworxInvite\tests\integration\rest-api-validation.test.js:188:41)
     at processTicksAndRejections (node:internal/process/task_queues:105:5)</failure>
     </testcase>
-    <testcase classname="OAuthService Unit Tests › Connection Revocation" name="should handle revocation when no connection exists" time="0.001">
+    <testcase classname="REST API Validation Tests › OAuth Endpoints" name="GET /api/oauth/google/callback - should handle OAuth callback" time="0.004">
+      <failure>Error: expected 400 &quot;Bad Request&quot;, got 302 &quot;Found&quot;
+    at Object.expect (C:\FloworxInvite\tests\integration\rest-api-validation.test.js:196:10)
+    at Promise.finally.completed (C:\FloworxInvite\node_modules\jest-circus\build\jestAdapterInit.js:1556:28)
+    at new Promise (&lt;anonymous&gt;)
+    at callAsyncCircusFn (C:\FloworxInvite\node_modules\jest-circus\build\jestAdapterInit.js:1496:10)
+    at _callCircusTest (C:\FloworxInvite\node_modules\jest-circus\build\jestAdapterInit.js:1006:40)
+    at processTicksAndRejections (node:internal/process/task_queues:105:5)
+    at _runTest (C:\FloworxInvite\node_modules\jest-circus\build\jestAdapterInit.js:946:3)
+    at _runTestsForDescribeBlock (C:\FloworxInvite\node_modules\jest-circus\build\jestAdapterInit.js:839:13)
+    at _runTestsForDescribeBlock (C:\FloworxInvite\node_modules\jest-circus\build\jestAdapterInit.js:829:11)
+    at _runTestsForDescribeBlock (C:\FloworxInvite\node_modules\jest-circus\build\jestAdapterInit.js:829:11)
+    at run (C:\FloworxInvite\node_modules\jest-circus\build\jestAdapterInit.js:757:3)
+    at runAndTransformResultsToJestFormat (C:\FloworxInvite\node_modules\jest-circus\build\jestAdapterInit.js:1917:21)
+    at jestAdapter (C:\FloworxInvite\node_modules\jest-circus\build\runner.js:101:19)
+    at runTestInternal (C:\FloworxInvite\node_modules\jest-runner\build\testWorker.js:275:16)
+    at runTest (C:\FloworxInvite\node_modules\jest-runner\build\testWorker.js:343:7)
+    at Object.worker (C:\FloworxInvite\node_modules\jest-runner\build\testWorker.js:497:12)
+----
+    at Test._assertStatus (C:\FloworxInvite\node_modules\supertest\lib\test.js:309:14)
+    at C:\FloworxInvite\node_modules\supertest\lib\test.js:365:13
+    at Test._assertFunction (C:\FloworxInvite\node_modules\supertest\lib\test.js:342:13)
+    at Test.assert (C:\FloworxInvite\node_modules\supertest\lib\test.js:195:23)
+    at localAssert (C:\FloworxInvite\node_modules\supertest\lib\test.js:138:14)
+    at Server.&lt;anonymous&gt; (C:\FloworxInvite\node_modules\supertest\lib\test.js:152:11)
+    at Object.onceWrapper (node:events:622:28)
+    at Server.emit (node:events:508:28)
+    at emitCloseNT (node:net:2419:8)
+    at processTicksAndRejections (node:internal/process/task_queues:89:21)</failure>
     </testcase>
-    <testcase classname="OAuthService Unit Tests › Connection Revocation" name="should continue with local deletion if remote revocation fails" time="0.048">
+    <testcase classname="REST API Validation Tests › Performance and Monitoring" name="GET /api/performance - should return performance metrics" time="0.007">
+      <failure>Error: expect(received).toBeDefined()
+
+Received: undefined
+    at Object.toBeDefined (C:\FloworxInvite\tests\integration\rest-api-validation.test.js:209:37)
+    at processTicksAndRejections (node:internal/process/task_queues:105:5)</failure>
+    </testcase>
+    <testcase classname="REST API Validation Tests › Performance and Monitoring" name="Database operations should complete within reasonable time" time="0.07">
+    </testcase>
+    <testcase classname="REST API Validation Tests › Error Handling" name="Should handle malformed JSON requests" time="0.014">
+    </testcase>
+    <testcase classname="REST API Validation Tests › Error Handling" name="Should handle missing required fields" time="0.02">
+    </testcase>
+    <testcase classname="REST API Validation Tests › Error Handling" name="Should handle non-existent endpoints" time="0.004">
+    </testcase>
+    <testcase classname="REST API Validation Tests › Data Validation" name="Should validate email format in registration" time="0.009">
+      <failure>Error: expect(received).toBe(expected) // Object.is equality
+
+Expected: &quot;VALIDATION_ERROR&quot;
+Received: undefined
+    at Object.toBe (C:\FloworxInvite\tests\integration\rest-api-validation.test.js:269:40)
+    at processTicksAndRejections (node:internal/process/task_queues:105:5)</failure>
+    </testcase>
+    <testcase classname="REST API Validation Tests › Data Validation" name="Should validate password strength" time="0.021">
+      <failure>Error: expect(received).toBe(expected) // Object.is equality
+
+Expected: &quot;VALIDATION_ERROR&quot;
+Received: undefined
+    at Object.toBe (C:\FloworxInvite\tests\integration\rest-api-validation.test.js:283:40)
+    at processTicksAndRejections (node:internal/process/task_queues:105:5)</failure>
     </testcase>
   </testsuite>
 </testsuites>

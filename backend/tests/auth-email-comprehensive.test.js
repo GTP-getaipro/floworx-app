@@ -5,6 +5,21 @@
 
 const request = require('supertest');
 
+// Set test environment variables BEFORE importing server
+process.env.NODE_ENV = 'test';
+process.env.JWT_SECRET = 'test-jwt-secret-key-for-testing-only';
+process.env.ENCRYPTION_KEY = 'test-encryption-key-32-chars-lon';
+process.env.SMTP_HOST = 'smtp.ethereal.email';
+process.env.SMTP_PORT = '587';
+process.env.SMTP_USER = 'test@ethereal.email';
+process.env.SMTP_PASS = 'test-password';
+process.env.FROM_EMAIL = 'test@floworx-iq.com';
+process.env.FROM_NAME = 'FloWorx Test';
+process.env.N8N_BASE_URL = 'http://localhost:5678';
+process.env.N8N_API_KEY = 'test-api-key';
+process.env.DATABASE_URL = process.env.TEST_DATABASE_URL || 'postgresql://localhost:5432/floworx_test';
+process.env.DISABLE_RATE_LIMITING = 'true';
+
 const { query } = require('../database/unified-connection');
 const app = require('../server');
 const emailService = require('../services/emailService');
@@ -165,16 +180,12 @@ describe('Authentication and Email Comprehensive Tests', () => {
 
   describe('4. Email Service Configuration Tests', () => {
     test('should have all required email environment variables', () => {
-      );
-
       const requiredVars = ['SMTP_HOST', 'SMTP_PORT', 'SMTP_USER', 'SMTP_PASS', 'FROM_EMAIL', 'FROM_NAME'];
 
       requiredVars.forEach(varName => {
         expect(process.env[varName]).toBeDefined();
         expect(process.env[varName]).not.toBe('');
       });
-
-      );
     });
 
     test('should generate valid verification tokens', () => {
@@ -237,7 +248,6 @@ describe('Authentication and Email Comprehensive Tests', () => {
           console.log('🔧 DIAGNOSIS: Gmail App Password issue');
           console.log('   - Check if 2FA is enabled on Gmail account');
           console.log('   - Generate new App Password in Google Account settings');
-          );
         } else if (error.message.includes('connection')) {
           console.log('🔧 DIAGNOSIS: Network/firewall issue');
           console.log('   - Check SMTP_HOST and SMTP_PORT settings');

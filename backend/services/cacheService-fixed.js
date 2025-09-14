@@ -48,9 +48,7 @@ class CacheService {
   async initializeKeyDB() {
     // Skip KeyDB initialization if not configured
     if (!process.env.REDIS_HOST) {
-
-      );
-      );
+      console.log('⚠️ KeyDB not configured - using memory cache only');
       this.isRedisConnected = false;
       return;
     }

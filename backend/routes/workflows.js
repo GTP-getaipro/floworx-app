@@ -2,9 +2,12 @@ const express = require('express');
 
 const { query } = require('../database/unified-connection');
 const { authenticateToken } = require('../middleware/auth');
+const { databaseOperations } = require('../database/database-operations');
+const { scheduler } = require('../scheduler/n8nScheduler');
 const n8nService = require('../services/n8nService');
 const onboardingSessionService = require('../services/onboardingSessionService');
 const transactionService = require('../services/transactionService');
+const logger = require('../utils/logger');
 
 const router = express.Router();
 
@@ -546,5 +549,108 @@ router.delete('/:workflowId', authenticateToken, async (req, res) => {
     });
   }
 });
+
+// POST /api/workflows/reconfigure
+// Reconfigure workflow
+router.post('/reconfigure', authenticateToken, async (req, res) => {
+  try {
+    const userId = req.user.id;
+    const { emailProvider, businessTypeId, customSettings } = req.body;
+    
+    // Validate inputs
+    if (!emailProvider || !businessTypeId) {
+      return res.status(400).json({
+        success: false,
+        message: 'Email provider and business type are required'
+      });
+    }
+    
+    // Verify business type exists
+    const businessType = await databaseOperations.getBusinessTypeById(businessTypeId);
+    
+    if (!businessType.data) {
+      return res.status(400).json({
+        success: false,
+        message: 'Invalid business type ID'
+      });
+    }
+    
+    // Update user configuration
+    await databaseOperations.updateUserConfiguration(userId, {
+      emailProvider,
+      businessTypeId,
+      customSettings: customSettings || {}
+    });
+    
+    // Check if user has existing workflow
+    const workflow = await databaseOperations.getUserWorkflow(userId);
+    
+    let workflowResult;
+    
+    if (workflow.data) {
+      // Update existing workflow
+      workflowResult = await scheduler.updateWorkflow({
+        workflowId: workflow.data.workflow_id,
+        userId,
+        emailProvider,
+        businessType: businessType.data.name,
+        template: businessType.data.workflow_template,
+        customSettings: customSettings || {}
+      });
+    } else {
+      // Deploy new workflow
+      workflowResult = await scheduler.deployWorkflow({
+        userId,
+        emailProvider,
+        businessType: businessType.data.name,
+        template: businessType.data.workflow_template,
+        customSettings: customSettings || {}
+      });
+      
+      // Store workflow ID
+      await databaseOperations.updateUserWorkflow(userId, workflowResult.workflowId);
+    }
+    
+    if (!workflowResult.success) {
+      return res.status(500).json({
+        success: false,
+        message: 'Failed to reconfigure workflow',
+        error: workflowResult.error
+      });
+    }
+    
+    // Log activity
+    await logUserActivity(userId, 'WORKFLOW_RECONFIGURED', {
+      workflowId: workflowResult.workflowId,
+      emailProvider,
+      businessTypeId,
+      businessTypeName: businessType.data.name
+    }, req);
+    
+    return res.json({
+      success: true,
+      message: 'Workflow reconfigured successfully',
+      data: {
+        workflowId: workflowResult.workflowId
+      }
+    });
+  } catch (error) {
+    logger.error('Failed to reconfigure workflow', { error, userId: req.user.id });
+    return res.status(500).json({
+      success: false,
+      message: 'Failed to reconfigure workflow',
+      error: error.message
+    });
+  }
+});
+
+// Helper function to log user activity
+async function logUserActivity(userId, activityType, metadata, req) {
+  try {
+    await databaseOperations.logUserActivity(userId, activityType, metadata);
+  } catch (error) {
+    logger.warn('Failed to log user activity', { error, userId, activityType });
+  }
+}
 
 module.exports = router;

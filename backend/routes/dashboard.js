@@ -1,6 +1,6 @@
 const express = require('express');
 
-const { query } = require('../database/unified-connection');
+const { getUserById, getRecentActivities, getOAuthConnections } = require('../database/unified-connection');
 const { authenticateToken } = require('../middleware/auth');
 const { asyncHandler, successResponse } = require('../middleware/standardErrorHandler');
 const { ErrorResponse } = require('../utils/ErrorResponse');
@@ -12,65 +12,29 @@ const router = express.Router();
 // Get user dashboard data
 router.get('/', authenticateToken, async (req, res) => {
   try {
-    console.log('Dashboard endpoint called for user:', req.user?.id);
+    logger.info('Dashboard endpoint called', { userId: req.user?.id });
 
-    // Get user's full information
-    const userQuery = `
-      SELECT id, email, first_name, last_name, company_name, created_at, last_login
-      FROM users
-      WHERE id = $1
-    `;
-    const userResult = await query(userQuery, [req.user.id]);
-    console.log('Dashboard user query result:', userResult.rows.length, 'rows');
-    
-    if (userResult.rows.length === 0) {
+    // Get user's full information using REST API
+    const userDetails = await getUserById(req.user.id);
+
+    if (!userDetails) {
       return res.status(404).json({
-        error: 'User not found',
-        message: 'User account not found'
+        success: false,
+        error: {
+          code: 'USER_NOT_FOUND',
+          message: 'User account not found',
+          statusCode: 404,
+          timestamp: new Date().toISOString(),
+          requestId: req.id
+        }
       });
     }
-    
-    const userDetails = userResult.rows[0];
 
-    // Get recent activities (graceful handling)
-    let recentActivities = [];
-    try {
-      const activitiesQuery = `
-        SELECT action, ip_address, created_at
-        FROM security_audit_log
-        WHERE user_id = $1
-        ORDER BY created_at DESC
-        LIMIT 5
-      `;
-      const activitiesResult = await query(activitiesQuery, [req.user.id]);
-      recentActivities = activitiesResult.rows.map(activity => ({
-        action: activity.action,
-        timestamp: activity.created_at,
-        ip_address: activity.ip_address
-      }));
-    } catch (_actError) {
-      console.log('Activities data not available, continuing without recent activities');
-    }
+    // Get recent activities using REST API (graceful handling)
+    const recentActivities = await getRecentActivities(req.user.id, 5);
 
-    // Get connection status
-    const connections = { google: { connected: false } };
-    try {
-      const oauthQuery = `
-        SELECT provider, created_at
-        FROM oauth_tokens
-        WHERE user_id = $1 AND access_token IS NOT NULL
-      `;
-      const oauthResult = await query(oauthQuery, [req.user.id]);
-      
-      oauthResult.rows.forEach(oauth => {
-        connections[oauth.provider] = {
-          connected: true,
-          connected_at: oauth.created_at
-        };
-      });
-    } catch (_oauthError) {
-      console.log('OAuth data not available, showing default connection status');
-    }
+    // Get connection status using REST API (graceful handling)
+    const connections = await getOAuthConnections(req.user.id);
 
     const dashboardData = {
       user: {
@@ -109,7 +73,12 @@ router.get('/', authenticateToken, async (req, res) => {
       }
     };
 
-    res.status(200).json(dashboardData);
+    res.status(200).json({
+      success: true,
+      data: dashboardData,
+      timestamp: new Date().toISOString(),
+      requestId: req.id
+    });
   } catch (error) {
     logger.error('Dashboard error', {
       error: error.message,

@@ -12,7 +12,7 @@ const router = express.Router();
 
 router.get('/test-keydb', (req, res) => {
   try {
-    );
+    console.log('🧪 Running KeyDB connection test...');
 
     // Run the KeyDB test script
     const testScript = path.join(__dirname, '..', '..', 'test-keydb-connection.js');

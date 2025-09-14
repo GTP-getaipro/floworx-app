@@ -39,28 +39,34 @@ const analyticsRoutes = require('./routes/analytics');
 const authRoutes = require('./routes/auth');
 const businessTypesRoutes = require('./routes/businessTypes');
 const dashboardRoutes = require('./routes/dashboard');
-const healthRoutes = require('./routes/health');   if (process.env.NODE_ENV === 'production') {
-    console.error('🚨 Memory threshold exceeded - consider scaling');
-    // TODO: Integrate with auto-scaling service
-  }
-});
+const diagnosticsRoutes = require('./routes/diagnostics');
+const errorRoutes = require('./routes/errors');
+const healthRoutes = require('./routes/health');
+const monitoringRoutes = require('./routes/monitoring');
+const oauthRoutes = require('./routes/oauth');
+const onboardingRoutes = require('./routes/onboarding');
+const passwordResetRoutes = require('./routes/passwordReset');
+const performanceRoutes = require('./routes/performance');
+const recoveryRoutes = require('./routes/recovery');
+const testKeydbRoutes = require('./routes/test-keydb');
+const userRoutes = require('./routes/user');
+const workflowRoutes = require('./routes/workflows');
 
-globalMemoryMonitor.on('emergency', ({ stats: _stats, relevantUsage }) => {
-  console.error(`🚨 EMERGENCY: Critical memory usage at ${relevantUsage.description}`);
-  console.error('🚨 IMMEDIATE ACTION REQUIRED - System may become unstable');
+// Initialize Express app
+const app = express();
 
-  // Force garbage collection in emergency
-  const gcResult = globalMemoryMonitor.forceGC();
-  if (gcResult) {
-    console.log('✅ Emergency garbage collection triggered');
-  }
-});
+// Load configuration and get PORT
+const PORT = config.get('port');
 
-app.use((req, res, next) => {
-  // The global monitor handles the heavy lifting
-  // This middleware just adds request-level context if needed
-  next();
-});
+// Import performance monitoring
+const performanceService = require('./services/performanceService');
+
+// Configuration validation middleware
+app.use(validateConfigurationOnStartup);
+app.use(addConfigContext);
+
+// Request ID middleware for tracking
+app.use(requestIdMiddleware);
 
 // CORS configuration with enhanced security
 app.use(
@@ -98,6 +104,16 @@ app.use(
     maxAge: 86400 // 24 hours
   })
 );
+
+// Security middleware stack (after CORS)
+// app.use(helmet()); // Temporarily disabled due to initialization issues
+app.use(additionalSecurityHeaders);
+app.use(sanitizeRequest);
+
+// Performance middleware stack
+app.use(performanceMiddlewareStack);
+app.use(smartCompression);
+app.use(cacheHeaders);
 
 // Global rate limiting for all API routes
 app.use('/api', apiRateLimit);
@@ -182,13 +198,27 @@ if (config.get('nodeEnv') !== 'production') {
 
 app.get('/api/health/db', async (req, res) => {
   try {
-    const { pool } = require('./database/unified-connection');
-    const result = await pool.query('SELECT NOW() as current_time');
-    res.json({
-      database: 'connected',
-      timestamp: result.rows[0].current_time,
-      status: 'healthy'
-    });
+    const { healthCheck } = require('./database/unified-connection');
+    const result = await healthCheck();
+
+    if (result.connected) {
+      res.json({
+        database: 'connected',
+        method: result.method,
+        timestamp: result.timestamp,
+        status: 'healthy',
+        supabaseUrl: result.supabaseUrl || undefined,
+        version: result.version || undefined,
+        poolSize: result.poolSize || undefined
+      });
+    } else {
+      res.status(503).json({
+        database: 'disconnected',
+        method: result.method,
+        error: result.error,
+        status: 'unhealthy'
+      });
+    }
   } catch (error) {
     res.status(503).json({
       database: 'disconnected',
@@ -230,25 +260,34 @@ app.use('/api/business-types', businessTypesRoutes);
 app.use('/api/workflows', workflowRoutes);
 app.use('/api/analytics', analyticsRoutes);
 app.use('/api/performance', performanceRoutes);
-app.use('/api/scheduler', schedulerRoutes);
 app.use('/api/health', healthRoutes); // Comprehensive health monitoring
 app.use('/api/diagnostics', diagnosticsRoutes); // Database connection diagnostics
 
 app.use('/api', testKeydbRoutes);
-  // Stop the scheduler
-  scheduler.stop();
+
+// Error handling middleware (must be last)
+app.use(standardNotFoundHandler);
+app.use(standardErrorHandler);
+
+// Graceful shutdown handler
+const gracefulShutdown = () => {
+  logger.info('Received shutdown signal, starting graceful shutdown...');
 
   // Close server
-  global.server.close(() => {
-    console.log('✅ Server closed successfully');
-    process.exit(0);
-  });
+  if (global.server) {
+    global.server.close(() => {
+      logger.info('✅ Server closed successfully');
+      process.exit(0);
+    });
 
-  // Force close after 10 seconds
-  setTimeout(() => {
-    console.log('⚠️ Forcing server shutdown');
-    process.exit(1);
-  }, 10000);
+    // Force close after 10 seconds
+    setTimeout(() => {
+      logger.warn('⚠️ Forcing server shutdown');
+      process.exit(1);
+    }, 10000);
+  } else {
+    process.exit(0);
+  }
 };
 
 // Handle shutdown signals
@@ -282,14 +321,10 @@ const startServer = async () => {
       // Only log detailed info in development
       if (config.get('nodeEnv') !== 'production') {
         console.log(`🚀 Floworx backend server running on port ${PORT}`);
-        );
         console.log(`🔗 Frontend URL: ${config.get('app.frontendUrl')}`);
         console.log(`🌐 Server accessible on: 0.0.0.0:${PORT}`);
       }
     });
-
-    // Start the n8n scheduler
-    scheduler.start();
 
     // Make server available for graceful shutdown
     global.server = server;

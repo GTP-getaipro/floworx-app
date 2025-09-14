@@ -374,6 +374,64 @@ class SupabaseRestClient {
     }
   }
 
+  async getOnboardingStatus(userId) {
+    try {
+      // Get onboarding steps
+      const { data: stepsData, error: stepsError } = await this.getAdminClient()
+        .from('user_onboarding_status')
+        .select('step_completed, step_data, completed_at')
+        .eq('user_id', userId)
+        .order('completed_at', { ascending: true });
+
+      if (stepsError) {
+        throw stepsError;
+      }
+
+      // Get user info
+      const { data: userData, error: userError } = await this.getAdminClient()
+        .from('users')
+        .select('email_verified, onboarding_completed, first_name, company_name')
+        .eq('id', userId)
+        .single();
+
+      if (userError) {
+        throw userError;
+      }
+
+      // Check Google credentials
+      const { data: credData, error: credError } = await this.getAdminClient()
+        .from('credentials')
+        .select('id')
+        .eq('user_id', userId)
+        .eq('service_name', 'google');
+
+      if (credError && credError.code !== 'PGRST116') {
+        throw credError;
+      }
+
+      const completedSteps = stepsData.map(row => row.step_completed);
+      const stepData = stepsData.reduce((acc, row) => {
+        acc[row.step_completed] = row.step_data;
+        return acc;
+      }, {});
+
+      return {
+        user: {
+          emailVerified: userData.email_verified,
+          onboardingCompleted: userData.onboarding_completed,
+          firstName: userData.first_name,
+          companyName: userData.company_name
+        },
+        googleConnected: credData && credData.length > 0,
+        completedSteps,
+        stepData
+      };
+    } catch (error) {
+      console.error('❌ Get onboarding status error:', error.message);
+      throw error;
+    }
+  }
+
   // =====================================================
   // ANALYTICS TRACKING (converted to REST API)
   // =====================================================
@@ -400,6 +458,105 @@ class SupabaseRestClient {
     } catch (error) {
       console.error('❌ Track event error:', error.message);
       throw error;
+    }
+  }
+
+  // =====================================================
+  // USER MANAGEMENT (converted to REST API)
+  // =====================================================
+
+  async getUserById(userId) {
+    try {
+      const { data, error } = await this.getAdminClient()
+        .from('users')
+        .select('id, email, first_name, last_name, company_name, email_verified, onboarding_completed, created_at, last_login')
+        .eq('id', userId)
+        .single();
+
+      if (error) {
+        if (error.code === 'PGRST116') {
+          return null;
+        } // No rows found
+        throw error;
+      }
+
+      return data;
+    } catch (error) {
+      console.error('❌ Get user by ID error:', error.message);
+      throw error;
+    }
+  }
+
+  async getUserByEmail(email) {
+    try {
+      const { data, error } = await this.getAdminClient()
+        .from('users')
+        .select('id, email, password_hash, email_verified, first_name, last_name')
+        .eq('email', email.toLowerCase())
+        .single();
+
+      if (error) {
+        if (error.code === 'PGRST116') {
+          return null;
+        } // No rows found
+        throw error;
+      }
+
+      return data;
+    } catch (error) {
+      console.error('❌ Get user by email error:', error.message);
+      throw error;
+    }
+  }
+
+  async getRecentActivities(userId, limit = 5) {
+    try {
+      const { data, error } = await this.getAdminClient()
+        .from('security_audit_log')
+        .select('action, ip_address, created_at')
+        .eq('user_id', userId)
+        .order('created_at', { ascending: false })
+        .limit(limit);
+
+      if (error) {
+        throw error;
+      }
+
+      return data.map(activity => ({
+        action: activity.action,
+        timestamp: activity.created_at,
+        ip_address: activity.ip_address
+      }));
+    } catch (error) {
+      console.error('❌ Get recent activities error:', error.message);
+      return []; // Return empty array on error
+    }
+  }
+
+  async getOAuthConnections(userId) {
+    try {
+      const { data, error } = await this.getAdminClient()
+        .from('oauth_tokens')
+        .select('provider, created_at')
+        .eq('user_id', userId)
+        .not('access_token', 'is', null);
+
+      if (error) {
+        throw error;
+      }
+
+      const connections = { google: { connected: false } };
+      data.forEach(oauth => {
+        connections[oauth.provider] = {
+          connected: true,
+          connected_at: oauth.created_at
+        };
+      });
+
+      return connections;
+    } catch (error) {
+      console.error('❌ Get OAuth connections error:', error.message);
+      return { google: { connected: false } }; // Return default on error
     }
   }
 

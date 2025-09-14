@@ -28,7 +28,7 @@ for (const envPath of envPaths) {
 }
 
 if (!envLoaded) {
-  );
+  console.warn('⚠️ No .env file found, using system environment variables');
 }
 
 // Unified Database Connection Manager
@@ -58,21 +58,22 @@ class DatabaseManager {
 
     // Priority 1: Use DATABASE_URL if available (recommended for production)
     if (process.env.DATABASE_URL) {
-      );
-      );
-
-              console.log(`   Protocol: ${parsedUrl.protocol}`);
+      console.log('🔗 Using DATABASE_URL for connection');
+      let parsedUrl;
+      try {
+        parsedUrl = new URL(process.env.DATABASE_URL);
+        console.log(`   Protocol: ${parsedUrl.protocol}`);
         console.log(`   Hostname: ${parsedUrl.hostname}`);
         console.log(`   Port: ${parsedUrl.port}`);
         console.log(`   Database: ${parsedUrl.pathname.substring(1)}`);
         console.log(`   Username: ${parsedUrl.username}`);
       } catch (parseError) {
-        , parseError.message);
+        console.error('❌ Failed to parse DATABASE_URL:', parseError.message);
       }
 
       // AGGRESSIVE IPv4 FIX: Parse URL and use individual components
       if (parsedUrl) {
-        );
+        console.log('   Using parsed URL components for connection');
         return {
           host: parsedUrl.hostname,
           port: parseInt(parsedUrl.port) || 5432,
@@ -131,11 +132,11 @@ class DatabaseManager {
     }
 
     // Priority 2: Fallback to individual DB_* variables
-    );
-    );
-    );
-    );
-    );
+    console.log('🔗 Using individual DB_* environment variables');
+    console.log(`   DB_HOST: ${process.env.DB_HOST || 'localhost'}`);
+    console.log(`   DB_PORT: ${process.env.DB_PORT || 5432}`);
+    console.log(`   DB_NAME: ${process.env.DB_NAME || 'not set'}`);
+    console.log(`   DB_USER: ${process.env.DB_USER || 'not set'}`);
 
     return {
       host: process.env.DB_HOST || 'localhost',
@@ -253,7 +254,7 @@ class DatabaseManager {
 
           console.error('❌ All database connection methods failed');
           console.error('⚠️ Database not available - running in limited mode');
-          );
+          console.error('   Install PostgreSQL and configure environment variables to enable full functionality');
 
           // Don't throw error - allow app to run without database
           this.isInitialized = false;
@@ -400,6 +401,12 @@ class DatabaseManager {
   // =====================================================
 
   async getUserById(userId) {
+    // If using REST API, delegate to REST client
+    if (this.useRestApi && this.restClient) {
+      return await this.restClient.getUserById(userId);
+    }
+
+    // Fallback to direct SQL
     const query = `
       SELECT id, email, first_name, last_name, company_name,
              email_verified, onboarding_completed, created_at
@@ -412,6 +419,12 @@ class DatabaseManager {
   }
 
   async getUserByEmail(email) {
+    // If using REST API, delegate to REST client
+    if (this.useRestApi && this.restClient) {
+      return await this.restClient.getUserByEmail(email);
+    }
+
+    // Fallback to direct SQL
     const query = `
       SELECT id, email, password_hash, email_verified, first_name, last_name
       FROM users
@@ -422,15 +435,85 @@ class DatabaseManager {
     return result.rows[0] || null;
   }
 
+  async getRecentActivities(userId, limit = 5) {
+    // If using REST API, delegate to REST client
+    if (this.useRestApi && this.restClient) {
+      return await this.restClient.getRecentActivities(userId, limit);
+    }
+
+    // Fallback to direct SQL
+    try {
+      const query = `
+        SELECT action, ip_address, created_at
+        FROM security_audit_log
+        WHERE user_id = $1
+        ORDER BY created_at DESC
+        LIMIT $2
+      `;
+      const result = await this.query(query, [userId, limit]);
+      return result.rows.map(activity => ({
+        action: activity.action,
+        timestamp: activity.created_at,
+        ip_address: activity.ip_address
+      }));
+    } catch (error) {
+      console.log('Activities data not available, returning empty array');
+      return [];
+    }
+  }
+
+  async getOAuthConnections(userId) {
+    // If using REST API, delegate to REST client
+    if (this.useRestApi && this.restClient) {
+      return await this.restClient.getOAuthConnections(userId);
+    }
+
+    // Fallback to direct SQL
+    try {
+      const query = `
+        SELECT provider, created_at
+        FROM oauth_tokens
+        WHERE user_id = $1 AND access_token IS NOT NULL
+      `;
+      const result = await this.query(query, [userId]);
+
+      const connections = { google: { connected: false } };
+      result.rows.forEach(oauth => {
+        connections[oauth.provider] = {
+          connected: true,
+          connected_at: oauth.created_at
+        };
+      });
+      return connections;
+    } catch (error) {
+      console.log('OAuth data not available, returning default connection status');
+      return { google: { connected: false } };
+    }
+  }
+
   // =====================================================
   // HEALTH CHECK
   // =====================================================
 
   async healthCheck() {
     try {
+      // If using REST API, use the REST client's test connection
+      if (this.useRestApi && this.restClient) {
+        const testResult = await this.restClient.testConnection();
+        return {
+          connected: testResult.success,
+          method: 'REST API',
+          timestamp: testResult.timestamp || new Date().toISOString(),
+          error: testResult.success ? null : testResult.error,
+          supabaseUrl: this.restClient.supabaseUrl
+        };
+      }
+
+      // Fallback to direct SQL for PostgreSQL connections
       const result = await this.query('SELECT NOW() as timestamp, version() as version');
       return {
         connected: true,
+        method: 'PostgreSQL',
         timestamp: result.rows[0].timestamp,
         version: result.rows[0].version.split(' ')[0],
         poolSize: this.pool ? this.pool.totalCount : 0,
@@ -440,6 +523,7 @@ class DatabaseManager {
     } catch (error) {
       return {
         connected: false,
+        method: this.useRestApi ? 'REST API' : 'PostgreSQL',
         error: error.message
       };
     }
@@ -476,5 +560,12 @@ module.exports = {
   transaction: callback => databaseManager.transaction(callback),
   healthCheck: () => databaseManager.healthCheck(),
   close: () => databaseManager.close(),
-  initialize: () => databaseManager.initialize()
+  initialize: () => databaseManager.initialize(),
+  // User management methods
+  getUserById: userId => databaseManager.getUserById(userId),
+  getUserByEmail: email => databaseManager.getUserByEmail(email),
+  getRecentActivities: (userId, limit) => databaseManager.getRecentActivities(userId, limit),
+  getOAuthConnections: userId => databaseManager.getOAuthConnections(userId),
+  // Onboarding methods
+  getOnboardingStatus: userId => databaseManager.restClient ? databaseManager.restClient.getOnboardingStatus(userId) : null
 };

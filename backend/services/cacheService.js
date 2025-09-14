@@ -79,10 +79,9 @@ class CacheService {
 
     if (!process.env.REDIS_HOST && !process.env.REDIS_URL) {
       if (!isDevelopment) {
-
-        );
-        );
-        );
+        console.warn('⚠️ Redis not configured - using in-memory cache');
+        console.warn('   Set REDIS_HOST or REDIS_URL for production caching');
+        console.warn('   Performance may be degraded without Redis');
       }
       this.isRedisConnected = false;
       return;
@@ -201,9 +200,8 @@ class CacheService {
       ].filter(Boolean);
 
       if (!isDevelopment) {
-
-        );
-        );
+        console.log('🔍 Attempting KeyDB connection with multiple hosts...');
+        console.log('   This may take a few seconds in production environments');
         console.log(`   Trying hosts: ${possibleHosts.slice(0, 3).join(', ')}... (${possibleHosts.length} total)`);
       }
 
@@ -382,8 +380,6 @@ class CacheService {
       } else {
         this.stats.misses++;
       }
-
-            }
 
       return value;
     } catch (error) {

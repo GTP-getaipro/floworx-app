@@ -424,7 +424,7 @@ router.post('/verify-email', async (req, res) => {
 
 // POST /api/auth/resend-verification
 // Resend verification email
-router.post('/resend-verification', asyncWrapper(async (req, res) => {
+router.post('/resend-verification', asyncHandler(async (req, res) => {
   const { email } = req.body;
 
   if (!email) {

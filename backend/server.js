@@ -4,7 +4,7 @@ const morgan = require('morgan');
 
 // Load centralized configuration
 const config = require('./config/config');
-const logger = require('./utils/logger');
+const { logger } = require('./utils/logger');
 
 // Import configuration validation middleware
 const { validateConfigurationOnStartup, addConfigContext, configHealthCheck, viewSafeConfig } = require('./middleware/configValidation');

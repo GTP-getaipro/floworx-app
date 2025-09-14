@@ -4,7 +4,7 @@
  */
 
 const Redis = require('ioredis');
-const logger = require('../utils/logger');
+const { logger } = require('../utils/logger');
 
 class RedisConnectionManager {
   constructor() {

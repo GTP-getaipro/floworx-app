@@ -419,6 +419,130 @@ class DatabaseOperations {
     }
   }
 
+  async updateUserEmailProvider(userId, provider) {
+    const { type, client } = await this.getClient();
+
+    if (type === 'REST_API') {
+      // Update users table
+      const userUpdate = await client.getAdminClient()
+        .from('users')
+        .update({
+          email_provider: provider,
+          updated_at: new Date().toISOString()
+        })
+        .eq('id', userId)
+        .select()
+        .single();
+
+      if (userUpdate.error) {
+        return userUpdate;
+      }
+
+      // Upsert user_configurations table
+      return await client.getAdminClient()
+        .from('user_configurations')
+        .upsert({
+          user_id: userId,
+          email_provider: provider,
+          updated_at: new Date().toISOString()
+        })
+        .select()
+        .single();
+    } else {
+      // PostgreSQL implementation
+      const query = `
+        WITH user_update AS (
+          UPDATE users
+          SET email_provider = $1, updated_at = NOW()
+          WHERE id = $2
+          RETURNING id
+        ),
+        config_upsert AS (
+          INSERT INTO user_configurations (user_id, email_provider)
+          VALUES ($2, $1)
+          ON CONFLICT (user_id)
+          DO UPDATE SET email_provider = EXCLUDED.email_provider, updated_at = NOW()
+          RETURNING *
+        )
+        SELECT * FROM config_upsert
+      `;
+      const result = await client.query(query, [provider, userId]);
+      return {
+        data: result.rows[0] || null,
+        error: result.rows.length === 0 ? { message: 'User not found' } : null
+      };
+    }
+  }
+
+  async getUserConfiguration(userId) {
+    const { type, client } = await this.getClient();
+
+    if (type === 'REST_API') {
+      return await client.getAdminClient()
+        .from('user_configurations')
+        .select(`
+          email_provider,
+          business_type_id,
+          custom_settings,
+          business_types (
+            id,
+            name,
+            description
+          )
+        `)
+        .eq('user_id', userId)
+        .single();
+    } else {
+      // PostgreSQL implementation
+      const query = `
+        SELECT
+          uc.email_provider,
+          uc.business_type_id,
+          uc.custom_settings,
+          bt.name as business_type_name,
+          bt.description as business_type_description
+        FROM user_configurations uc
+        LEFT JOIN business_types bt ON uc.business_type_id = bt.id
+        WHERE uc.user_id = $1
+      `;
+      const result = await client.query(query, [userId]);
+      return {
+        data: result.rows[0] || null,
+        error: result.rows.length === 0 ? null : null
+      };
+    }
+  }
+
+  async updateUserCustomSettings(userId, settings) {
+    const { type, client } = await this.getClient();
+
+    if (type === 'REST_API') {
+      return await client.getAdminClient()
+        .from('user_configurations')
+        .upsert({
+          user_id: userId,
+          custom_settings: settings,
+          updated_at: new Date().toISOString()
+        })
+        .select()
+        .single();
+    } else {
+      // PostgreSQL implementation
+      const query = `
+        INSERT INTO user_configurations (user_id, custom_settings)
+        VALUES ($1, $2)
+        ON CONFLICT (user_id)
+        DO UPDATE SET custom_settings = EXCLUDED.custom_settings, updated_at = NOW()
+        RETURNING *
+      `;
+      const result = await client.query(query, [userId, JSON.stringify(settings)]);
+      return {
+        data: result.rows[0] || null,
+        error: result.rows.length === 0 ? { message: 'Failed to update settings' } : null
+      };
+    }
+  }
+
   async updateOnboardingProgress(userId, stepData) {
     const { type, client } = await this.getClient();
 
@@ -702,213 +826,6 @@ class DatabaseOperations {
       `;
       const result = await client.query(query, [userId, token, expiresAt]);
       return { data: result.rows[0] || null, error: null };
-    }
-  }
-
-  // PASSWORD RESET TOKEN OPERATIONS
-  // =====================================================
-
-  /**
-   * Store password reset token in database
-   * @param {string} userId - User ID
-   * @param {string} token - Reset token
-   * @param {Date} expiresAt - Token expiration date
-   * @returns {Promise<Object>} Result object
-   */
-  async storePasswordResetToken(userId, token, expiresAt) {
-    const { type, client } = await this.getClient();
-
-    if (type === 'REST_API') {
-      // Delete any existing tokens for this user first
-      await client.getAdminClient()
-        .from('password_reset_tokens')
-        .delete()
-        .eq('user_id', userId);
-
-      // Insert new token
-      return await client.getAdminClient()
-        .from('password_reset_tokens')
-        .insert({
-          user_id: userId,
-          token: token,
-          expires_at: expiresAt,
-          created_at: new Date().toISOString()
-        })
-        .select()
-        .single();
-    } else {
-      // PostgreSQL implementation
-      // Delete existing tokens first
-      await client.query('DELETE FROM password_reset_tokens WHERE user_id = $1', [userId]);
-
-      // Insert new token
-      const query = `
-        INSERT INTO password_reset_tokens (user_id, token, expires_at, created_at)
-        VALUES ($1, $2, $3, NOW())
-        RETURNING *
-      `;
-      const result = await client.query(query, [userId, token, expiresAt]);
-      return { data: result.rows[0] || null, error: null };
-    }
-  }
-
-  /**
-   * Get password reset token from database
-   * @param {string} token - Reset token
-   * @returns {Promise<Object>} Result object with token data
-   */
-  async getPasswordResetToken(token) {
-    const { type, client } = await this.getClient();
-
-    if (type === 'REST_API') {
-      return await client.getAdminClient()
-        .from('password_reset_tokens')
-        .select('user_id, expires_at, created_at')
-        .eq('token', token)
-        .single();
-    } else {
-      // PostgreSQL implementation
-      const query = `
-        SELECT user_id, expires_at, created_at
-        FROM password_reset_tokens
-        WHERE token = $1
-      `;
-      const result = await client.query(query, [token]);
-      return {
-        data: result.rows.length > 0 ? result.rows[0] : null,
-        error: null
-      };
-    }
-  }
-
-  /**
-   * Delete password reset token from database
-   * @param {string} token - Reset token
-   * @returns {Promise<Object>} Result object
-   */
-  async deletePasswordResetToken(token) {
-    const { type, client } = await this.getClient();
-
-    if (type === 'REST_API') {
-      return await client.getAdminClient()
-        .from('password_reset_tokens')
-        .delete()
-        .eq('token', token);
-    } else {
-      // PostgreSQL implementation
-      const query = `DELETE FROM password_reset_tokens WHERE token = $1`;
-      const result = await client.query(query, [token]);
-      return { data: null, error: null };
-    }
-  }
-
-  /**
-   * Update user's password
-   * @param {string} userId - User ID
-   * @param {string} hashedPassword - Hashed password
-   * @returns {Promise<Object>} Result object
-   */
-  async updateUserPassword(userId, hashedPassword) {
-    const { type, client } = await this.getClient();
-
-    if (type === 'REST_API') {
-      return await client.getAdminClient()
-        .from('users')
-        .update({
-          password_hash: hashedPassword,
-          updated_at: new Date().toISOString()
-        })
-        .eq('id', userId)
-        .select()
-        .single();
-    } else {
-      // PostgreSQL implementation
-      const query = `
-        UPDATE users
-        SET password_hash = $1, updated_at = NOW()
-        WHERE id = $2
-        RETURNING *
-      `;
-      const result = await client.query(query, [hashedPassword, userId]);
-      return { data: result.rows[0] || null, error: null };
-    }
-  }
-
-  // USER ACTIVITY LOGGING OPERATIONS
-  // =====================================================
-
-  /**
-   * Log user activity to database
-   * @param {string} userId - User ID
-   * @param {string} activityType - Type of activity
-   * @param {Object} details - Activity details
-   * @param {string} ipAddress - IP address
-   * @param {string} userAgent - User agent
-   * @returns {Promise<Object>} Result object
-   */
-  async logUserActivity(userId, activityType, details = {}, ipAddress = null, userAgent = null) {
-    const { type, client } = await this.getClient();
-
-    if (type === 'REST_API') {
-      return await client.getAdminClient()
-        .from('user_activity_logs')
-        .insert({
-          user_id: userId,
-          activity_type: activityType,
-          details: JSON.stringify(details),
-          ip_address: ipAddress,
-          user_agent: userAgent,
-          created_at: new Date().toISOString()
-        })
-        .select()
-        .single();
-    } else {
-      // PostgreSQL implementation
-      const query = `
-        INSERT INTO user_activity_logs
-        (user_id, activity_type, details, ip_address, user_agent, created_at)
-        VALUES ($1, $2, $3, $4, $5, NOW())
-        RETURNING *
-      `;
-      const result = await client.query(query, [
-        userId,
-        activityType,
-        JSON.stringify(details),
-        ipAddress,
-        userAgent
-      ]);
-      return { data: result.rows[0] || null, error: null };
-    }
-  }
-
-  /**
-   * Get user activity history
-   * @param {string} userId - User ID
-   * @param {number} limit - Maximum number of records to return
-   * @param {number} offset - Number of records to skip
-   * @returns {Promise<Object>} Result object with activity data
-   */
-  async getUserActivityHistory(userId, limit = 50, offset = 0) {
-    const { type, client } = await this.getClient();
-
-    if (type === 'REST_API') {
-      return await client.getAdminClient()
-        .from('user_activity_logs')
-        .select('id, activity_type, details, ip_address, user_agent, created_at')
-        .eq('user_id', userId)
-        .order('created_at', { ascending: false })
-        .range(offset, offset + limit - 1);
-    } else {
-      // PostgreSQL implementation
-      const query = `
-        SELECT id, activity_type, details, ip_address, user_agent, created_at
-        FROM user_activity_logs
-        WHERE user_id = $1
-        ORDER BY created_at DESC
-        LIMIT $2 OFFSET $3
-      `;
-      const result = await client.query(query, [userId, limit, offset]);
-      return { data: result.rows, error: null };
     }
   }
 

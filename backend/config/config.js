@@ -5,7 +5,7 @@
 
 const path = require('path');
 const dotenv = require('dotenv');
-const logger = require('../utils/logger');
+const { logger } = require('../utils/logger');
 
 class ConfigManager {
   constructor() {

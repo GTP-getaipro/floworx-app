@@ -1,7 +1,9 @@
 const express = require('express');
+const { body, validationResult } = require('express-validator');
 
 const { query, transaction } = require('../database/unified-connection');
 const { authenticateToken } = require('../middleware/auth');
+const { databaseOperations } = require('../database/database-operations');
 const gmailService = require('../services/gmailService');
 const onboardingSessionService = require('../services/onboardingSessionService');
 const transactionService = require('../services/transactionService');
@@ -9,23 +11,23 @@ const transactionService = require('../services/transactionService');
 const router = express.Router();
 
 // GET /api/onboarding/status
-// Get user's onboarding progress
+// Get user's onboarding progress including email provider and business type
 router.get('/status', authenticateToken, async (req, res) => {
   try {
     const userId = req.user.id;
 
     // Get user's onboarding status
     const statusQuery = `
-      SELECT step_completed, step_data, completed_at 
-      FROM user_onboarding_status 
-      WHERE user_id = $1 
+      SELECT step_completed, step_data, completed_at
+      FROM user_onboarding_status
+      WHERE user_id = $1
       ORDER BY completed_at ASC
     `;
     const statusResult = await query(statusQuery, [userId]);
 
     // Get user's basic info
     const userQuery = `
-      SELECT email_verified, onboarding_completed, first_name, company_name
+      SELECT email_verified, onboarding_completed, first_name, company_name, email_provider
       FROM users
       WHERE id = $1
     `;
@@ -34,6 +36,12 @@ router.get('/status', authenticateToken, async (req, res) => {
     // Check if Google is connected
     const credQuery = 'SELECT id FROM credentials WHERE user_id = $1 AND service_name = $2';
     const credResult = await query(credQuery, [userId, 'google']);
+
+    // Get user configuration (email provider, business type, custom settings)
+    const userConfig = await databaseOperations.getUserConfiguration(userId);
+
+    // Get all business types for selection
+    const businessTypes = await databaseOperations.getBusinessTypes();
 
     const completedSteps = statusResult.rows.map(row => row.step_completed);
     const user = userResult.rows[0];
@@ -46,17 +54,119 @@ router.get('/status', authenticateToken, async (req, res) => {
         companyName: user.company_name
       },
       googleConnected: credResult.rows.length > 0,
+      emailProvider: userConfig.data?.email_provider || user.email_provider || null,
+      businessTypeId: userConfig.data?.business_type_id || null,
+      businessTypes: businessTypes.data || [],
+      onboardingComplete: !!(
+        (userConfig.data?.email_provider || user.email_provider) &&
+        userConfig.data?.business_type_id
+      ),
+      customSettings: userConfig.data?.custom_settings || {},
       completedSteps,
       stepData: statusResult.rows.reduce((acc, row) => {
         acc[row.step_completed] = row.step_data;
         return acc;
       }, {}),
-      nextStep: getNextStep(completedSteps, credResult.rows.length > 0)
+      nextStep: getNextStep(completedSteps, credResult.rows.length > 0, userConfig.data)
     });
   } catch (error) {
     console.error('Onboarding status error:', error);
     res.status(500).json({
       error: 'Failed to get onboarding status',
+      message: error.message
+    });
+  }
+});
+
+// POST /api/onboarding/email-provider
+// Select email provider for authenticated user
+router.post('/email-provider', authenticateToken, [
+  body('provider')
+    .isIn(['gmail', 'outlook'])
+    .withMessage('Provider must be either gmail or outlook')
+], async (req, res) => {
+  try {
+    // Check for validation errors
+    const errors = validationResult(req);
+    if (!errors.isEmpty()) {
+      return res.status(400).json({
+        success: false,
+        errors: errors.array()
+      });
+    }
+
+    const { provider } = req.body;
+    const userId = req.user.id;
+
+    // Update user's email provider
+    const updateResult = await databaseOperations.updateUserEmailProvider(userId, provider);
+
+    if (updateResult.error) {
+      console.error('Error updating user email provider:', updateResult.error);
+      return res.status(500).json({
+        success: false,
+        error: 'Failed to update email provider',
+        message: 'Unable to save your email provider selection',
+        details: updateResult.error.message
+      });
+    }
+
+    res.json({
+      success: true,
+      message: 'Email provider selected successfully',
+      data: { provider }
+    });
+  } catch (error) {
+    console.error('Failed to select email provider:', error);
+    res.status(500).json({
+      success: false,
+      error: 'Failed to select email provider',
+      message: error.message
+    });
+  }
+});
+
+// POST /api/onboarding/custom-settings
+// Save custom onboarding settings
+router.post('/custom-settings', authenticateToken, [
+  body('settings').isObject().withMessage('Settings must be an object')
+], async (req, res) => {
+  try {
+    // Check for validation errors
+    const errors = validationResult(req);
+    if (!errors.isEmpty()) {
+      return res.status(400).json({
+        success: false,
+        errors: errors.array()
+      });
+    }
+
+    const { settings } = req.body;
+    const userId = req.user.id;
+
+    // Update user's custom settings
+    const updateResult = await databaseOperations.updateUserCustomSettings(userId, settings);
+
+    if (updateResult.error) {
+      console.error('Error updating custom settings:', updateResult.error);
+      return res.status(500).json({
+        success: false,
+        error: 'Failed to update custom settings',
+        message: 'Unable to save your custom settings',
+        details: updateResult.error.message
+      });
+    }
+
+    res.json({
+      success: true,
+      message: 'Custom settings updated successfully',
+      data: { settings }
+    });
+  } catch (error) {
+    console.error('Failed to update custom settings:', error);
+    res.status(500).json({
+      success: false,
+      error: 'Failed to update custom settings',
       message: error.message
     });
   }
@@ -324,23 +434,38 @@ router.post('/step/team-setup', authenticateToken, async (req, res) => {
 });
 
 // Helper function to determine next step
-function getNextStep(completedSteps, googleConnected) {
+function getNextStep(completedSteps, googleConnected, userConfig = null) {
+  // Step 1: Email provider selection
+  if (!userConfig?.email_provider) {
+    return 'email-provider';
+  }
+
+  // Step 2: Business type selection
+  if (!userConfig?.business_type_id) {
+    return 'business-type';
+  }
+
+  // Step 3: Google connection
   if (!googleConnected) {
     return 'google-connection';
   }
 
+  // Step 4: Business categories setup
   if (!completedSteps.includes('business-categories')) {
     return 'business-categories';
   }
 
+  // Step 5: Gmail label mapping
   if (!completedSteps.includes('label-mapping')) {
     return 'label-mapping';
   }
 
+  // Step 6: Team setup
   if (!completedSteps.includes('team-setup')) {
     return 'team-setup';
   }
 
+  // Step 7: Workflow deployment
   if (!completedSteps.includes('workflow-deployment')) {
     return 'workflow-deployment';
   }

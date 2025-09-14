@@ -7,6 +7,39 @@ const Joi = require('joi');
 
 const { uuid, _optionalUuid, _name, _email, _phone } = require('./common');
 
+// Email provider selection schema
+const emailProviderSchema = Joi.object({
+  provider: Joi.string().valid('gmail', 'outlook').required().messages({
+    'any.only': 'Email provider must be either gmail or outlook',
+    'any.required': 'Email provider is required'
+  })
+}).options({ stripUnknown: true });
+
+// Custom settings schema
+const customSettingsSchema = Joi.object({
+  settings: Joi.object({
+    emailNotifications: Joi.boolean().optional(),
+    autoArchive: Joi.boolean().optional(),
+    priorityKeywords: Joi.array().items(Joi.string()).optional(),
+    businessHours: Joi.object({
+      enabled: Joi.boolean().default(false),
+      timezone: Joi.string().optional(),
+      start: Joi.string().pattern(/^([0-1]?[0-9]|2[0-3]):[0-5][0-9]$/).optional(),
+      end: Joi.string().pattern(/^([0-1]?[0-9]|2[0-3]):[0-5][0-9]$/).optional(),
+      days: Joi.array().items(Joi.string().valid('monday', 'tuesday', 'wednesday', 'thursday', 'friday', 'saturday', 'sunday')).optional()
+    }).optional(),
+    customLabels: Joi.array().items(
+      Joi.object({
+        name: Joi.string().required(),
+        color: Joi.string().optional(),
+        priority: Joi.string().valid('low', 'medium', 'high').optional()
+      })
+    ).optional()
+  }).required().messages({
+    'any.required': 'Settings object is required'
+  })
+}).options({ stripUnknown: true });
+
 // Onboarding session creation schema
 const createOnboardingSessionSchema = Joi.object({
   userId: uuid,
@@ -222,6 +255,8 @@ const updateOnboardingSessionSchema = Joi.object({
 }).options({ stripUnknown: true });
 
 module.exports = {
+  emailProviderSchema,
+  customSettingsSchema,
   createOnboardingSessionSchema,
   businessInfoSchema,
   gmailConnectionSchema,

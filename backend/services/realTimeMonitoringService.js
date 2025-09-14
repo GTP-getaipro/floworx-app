@@ -6,7 +6,7 @@
 const EventEmitter = require('events');
 
 const { query } = require('../database/unified-connection');
-const logger = require('../utils/logger');
+const { logger } = require('../utils/logger');
 
 class RealTimeMonitoringService extends EventEmitter {
   constructor() {

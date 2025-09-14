@@ -11,10 +11,12 @@ process.env.NODE_ENV = 'production';
 process.env.VERCEL = 'true';
 
 const app = require('../../server');
+const { databaseOperations } = require('../../database/database-operations');
 
 describe('Business Types API', () => {
   let authToken;
   let testUserId;
+  let originalGetUserById;
 
   beforeAll(() => {
     // Create a test JWT token
@@ -24,6 +26,26 @@ describe('Business Types API', () => {
       process.env.JWT_SECRET || 'test-secret',
       { expiresIn: '1h' }
     );
+
+    // Mock getUserById for authentication
+    originalGetUserById = databaseOperations.getUserById;
+    databaseOperations.getUserById = jest.fn().mockResolvedValue({
+      data: {
+        id: testUserId,
+        email: 'test@example.com',
+        first_name: 'Test',
+        last_name: 'User',
+        email_verified: true,
+        account_locked_until: null
+      }
+    });
+  });
+
+  afterAll(() => {
+    // Restore original function
+    if (originalGetUserById) {
+      databaseOperations.getUserById = originalGetUserById;
+    }
   });
 
   describe('GET /api/business-types/test', () => {
@@ -118,7 +140,10 @@ describe('Business Types API', () => {
         .expect(401);
 
       expect(response.body).toMatchObject({
-        error: 'Access denied'
+        error: expect.objectContaining({
+          message: expect.stringContaining('Access token required'),
+          type: 'AUTHENTICATION_ERROR'
+        })
       });
     });
 
@@ -126,7 +151,7 @@ describe('Business Types API', () => {
       const response = await request(app)
         .post('/api/business-types/select')
         .set('Authorization', `Bearer ${authToken}`)
-        .send({ businessTypeId: 'invalid' })
+        .send({ businessTypeId: -1 }) // Invalid negative ID
         .expect(400);
 
       expect(response.body).toMatchObject({
@@ -198,7 +223,10 @@ describe('Business Types API', () => {
         .expect(401);
 
       expect(response.body).toMatchObject({
-        error: 'Access denied'
+        error: expect.objectContaining({
+          message: expect.stringContaining('Access token required'),
+          type: 'AUTHENTICATION_ERROR'
+        })
       });
     });
 
@@ -239,7 +267,10 @@ describe('Business Types API', () => {
         .expect(401);
 
       expect(response.body).toMatchObject({
-        error: 'Access denied'
+        error: expect.objectContaining({
+          message: expect.stringContaining('Access token required'),
+          type: 'AUTHENTICATION_ERROR'
+        })
       });
     });
 

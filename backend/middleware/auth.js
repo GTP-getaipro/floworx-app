@@ -64,7 +64,14 @@ const authenticateToken = async (req, res, next) => {
     const token = authHeader && authHeader.split(' ')[1]; // Bearer TOKEN
 
     if (!token) {
-      throw new AuthenticationError('Access token required');
+      return res.status(401).json({
+        success: false,
+        error: {
+          type: 'AUTHENTICATION_ERROR',
+          message: 'Access token required',
+          code: 401
+        }
+      });
     }
 
     // Check token cache first
@@ -98,10 +105,34 @@ const authenticateToken = async (req, res, next) => {
     next();
   } catch (error) {
     if (error.name === 'TokenExpiredError') {
-      next(new AuthenticationError('Token has expired'));
+      return res.status(401).json({
+        success: false,
+        error: {
+          type: 'TOKEN_EXPIRED',
+          message: 'Token has expired',
+          code: 401
+        }
+      });
     } else if (error.name === 'JsonWebTokenError') {
-      next(new AuthenticationError('Invalid token format'));
+      return res.status(401).json({
+        success: false,
+        error: {
+          type: 'INVALID_TOKEN',
+          message: 'Invalid token format',
+          code: 401
+        }
+      });
+    } else if (error instanceof AuthenticationError || error instanceof AuthorizationError) {
+      return res.status(401).json({
+        success: false,
+        error: {
+          type: 'AUTHENTICATION_ERROR',
+          message: error.message,
+          code: 401
+        }
+      });
     } else {
+      // For other errors, still use the global error handler
       next(error);
     }
   }

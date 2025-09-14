@@ -26,6 +26,64 @@ const query = async (sql, params) => {
 
 // Input validation is now handled by centralized validation middleware
 
+// GET /api/auth/debug - Debug registration dependencies
+router.get('/debug', async (req, res) => {
+  try {
+    console.log('🔍 Auth debug endpoint called');
+
+    // Test dependencies
+    const debugInfo = {
+      timestamp: new Date().toISOString(),
+      environment: process.env.NODE_ENV,
+      jwtSecret: process.env.JWT_SECRET ? 'Present' : 'Missing',
+      dependencies: {}
+    };
+
+    // Test database operations
+    try {
+      const testResult = await databaseOperations.getUserByEmail('test@example.com');
+      debugInfo.dependencies.databaseOperations = 'Working';
+    } catch (error) {
+      debugInfo.dependencies.databaseOperations = `Error: ${error.message}`;
+    }
+
+    // Test email service
+    try {
+      const token = emailService.generateVerificationToken();
+      debugInfo.dependencies.emailService = token ? 'Working' : 'Failed';
+    } catch (error) {
+      debugInfo.dependencies.emailService = `Error: ${error.message}`;
+    }
+
+    // Test validation schema
+    try {
+      const testData = {
+        email: 'test@example.com',
+        password: 'Test123!',
+        firstName: 'Test',
+        lastName: 'User',
+        agreeToTerms: true
+      };
+      const { error } = registerSchema.validate(testData);
+      debugInfo.dependencies.registerSchema = error ? `Validation Error: ${error.message}` : 'Working';
+    } catch (error) {
+      debugInfo.dependencies.registerSchema = `Error: ${error.message}`;
+    }
+
+    res.json({
+      success: true,
+      debug: debugInfo
+    });
+  } catch (error) {
+    console.error('🔍 Auth debug error:', error);
+    res.status(500).json({
+      success: false,
+      error: error.message,
+      stack: error.stack
+    });
+  }
+});
+
 // POST /api/auth/register
 // Register a new user account - SECURED with rate limiting and validation
 router.post(

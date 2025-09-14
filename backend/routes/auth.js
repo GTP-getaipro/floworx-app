@@ -176,6 +176,15 @@ router.post('/test-register', async (req, res) => {
   }
 });
 
+// POST /api/auth/register-simple - Ultra simple registration for debugging
+router.post('/register-simple', async (req, res) => {
+  try {
+    res.json({ success: true, message: 'Simple registration endpoint working' });
+  } catch (error) {
+    res.status(500).json({ success: false, error: error.message });
+  }
+});
+
 // POST /api/auth/register
 // Register a new user account - SECURED with rate limiting and validation
 router.post('/register', async (req, res) => {

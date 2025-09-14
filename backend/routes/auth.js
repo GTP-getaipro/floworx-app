@@ -124,7 +124,7 @@ router.post(
           message: emailError.message,
           type: emailError.constructor.name
         }
-      })
+      }),
       title: emailSent ? 'Registration Successful!' : 'Registration Complete',
       instructions: emailSent ? [
         'Check your email inbox for a verification message',

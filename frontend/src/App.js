@@ -43,8 +43,8 @@ function App() {
         <ToastProvider>
           <AuthProvider>
             <Router>
-            <>
-              <div className='App'>
+              <>
+                <div className='App'>
                 <header className='App-header'>
                   <div className='flex items-center justify-center space-x-4'>
                     <Logo

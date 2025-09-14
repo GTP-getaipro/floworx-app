@@ -340,10 +340,13 @@ const RegisterForm = () => {
           </Alert>
         )}
 
-        <form onSubmit={e => {
-          // Form submission handling
-          return handleSubmit(handleRegistration, e);
-        }} className='space-y-6'>
+        <form
+          onSubmit={e => {
+            // Form submission handling
+            return handleSubmit(handleRegistration, e);
+          }}
+          className='space-y-6'
+        >
           <div className='grid grid-cols-2 gap-4'>
             <ValidatedInput
               label='First Name'

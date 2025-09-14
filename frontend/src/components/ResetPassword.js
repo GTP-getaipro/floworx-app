@@ -230,9 +230,8 @@ const ResetPassword = () => {
   return (
     <div className='auth-card'>
       <div className='auth-header'>
-
-          <h2>Create New Password</h2>
-          <p className='auth-subtitle'>
+        <h2>Create New Password</h2>
+        <p className='auth-subtitle'>
             Enter a new password for <strong>{userInfo?.email}</strong>
           </p>
         </div>

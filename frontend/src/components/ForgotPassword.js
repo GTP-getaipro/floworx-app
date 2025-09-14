@@ -193,16 +193,15 @@ const ForgotPassword = () => {
 
   return (
     <div className='auth-card'>
-
-        <div className='auth-header'>
+      <div className='auth-header'>
           <h2>Reset Your Password</h2>
           <p className='auth-subtitle'>
             Enter your email address and we'll send you a link to reset your password
           </p>
         </div>
 
-        {error && (
-          <div className={`error-message ${rateLimited ? 'rate-limited' : ''}`}>
+      {error && (
+        <div className={`error-message ${rateLimited ? 'rate-limited' : ''}`}>
             {error}
             {rateLimited && (
               <div className='rate-limit-info'>
@@ -213,8 +212,8 @@ const ForgotPassword = () => {
           </div>
         )}
 
-        <form onSubmit={handleSubmit} className='auth-form'>
-          <div className='form-group'>
+      <form onSubmit={handleSubmit} className='auth-form'>
+        <div className='form-group'>
             <Input
               label='Email Address'
               type='email'
@@ -243,6 +242,7 @@ const ForgotPassword = () => {
                 {recoveryOptions.map(option => (
                   <label
                     key={option.id}
+                    htmlFor={`recovery-${option.id}`}
                     className={`flex items-center p-3 border rounded-lg cursor-pointer transition-colors ${
                       recoveryType === option.id
                         ? 'border-brand-primary bg-brand-primary-50'
@@ -250,6 +250,7 @@ const ForgotPassword = () => {
                     }`}
                   >
                     <input
+                      id={`recovery-${option.id}`}
                       type='radio'
                       name='recoveryType'
                       value={option.id}
@@ -288,7 +289,7 @@ const ForgotPassword = () => {
           </Button>
         </form>
 
-        <div className='auth-links'>
+      <div className='auth-links'>
           <p>
             Remember your password?{' '}
             <Link to='/login' className='auth-link'>
@@ -303,14 +304,14 @@ const ForgotPassword = () => {
           </p>
         </div>
 
-        <div className='security-notice'>
+      <div className='security-notice'>
           <h4>🔒 Security Notice</h4>
           <p>
             For your security, password reset links expire after 60 minutes and can only be used
             once. If you don't receive an email, check your spam folder or contact support.
           </p>
-        </div>
       </div>
+    </div>
   );
 };
 

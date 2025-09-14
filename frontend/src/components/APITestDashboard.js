@@ -110,9 +110,10 @@ const APITestDashboard = () => {
 
       <div className="test-controls">
         <div className="category-selector">
-          <label>Test Category:</label>
-          <select 
-            value={selectedCategory} 
+          <label htmlFor="test-category">Test Category:</label>
+          <select
+            id="test-category"
+            value={selectedCategory}
             onChange={(e) => setSelectedCategory(e.target.value)}
             disabled={isRunning}
           >
@@ -186,7 +187,7 @@ const APITestDashboard = () => {
         <div className="results-container">
           {testResults.length === 0 && !isRunning && (
             <div className="no-results">
-              <p>No test results yet. Click "Run Tests" to start testing API endpoints.</p>
+              <p>No test results yet. Click &quot;Run Tests&quot; to start testing API endpoints.</p>
             </div>
           )}
 

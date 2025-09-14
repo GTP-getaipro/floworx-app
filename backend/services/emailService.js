@@ -24,6 +24,22 @@ class EmailService {
   }
 
   /**
+   * Get verified sender configuration
+   * @returns {Object} Sender configuration
+   */
+  getSenderConfig() {
+    // Use a verified sender identity for SendGrid
+    const fromEmail = process.env.FROM_EMAIL || 'getai.pro@gmail.com'; // Fallback to verified email
+    const fromName = process.env.FROM_NAME || 'Floworx Team';
+
+    return {
+      from: `"${fromName}" <${fromEmail}>`,
+      fromEmail,
+      fromName
+    };
+  }
+
+  /**
    * Generate secure verification token
    * @returns {string} Verification token
    */
@@ -42,8 +58,10 @@ class EmailService {
 
     const htmlContent = this.getVerificationEmailTemplate(firstName, verificationUrl);
 
+    const senderConfig = this.getSenderConfig();
+
     const mailOptions = {
-      from: `"${process.env.FROM_NAME || 'Floworx Team'}" <${process.env.FROM_EMAIL || process.env.SMTP_USER}>`,
+      from: senderConfig.from,
       to: email,
       subject: 'Welcome to Floworx - Please Verify Your Email',
       html: htmlContent
@@ -69,8 +87,10 @@ class EmailService {
 
     const htmlContent = this.getWelcomeEmailTemplate(firstName, dashboardUrl);
 
+    const senderConfig = this.getSenderConfig();
+
     const mailOptions = {
-      from: `"${process.env.FROM_NAME || 'Floworx Team'}" <${process.env.FROM_EMAIL || process.env.SMTP_USER}>`,
+      from: senderConfig.from,
       to: email,
       subject: "Welcome to Floworx - Let's Get Your Email Automation Started!",
       html: htmlContent

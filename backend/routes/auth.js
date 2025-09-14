@@ -65,9 +65,10 @@ router.post(
 
     const user = createUserResult.data;
 
-    // Generate and store verification token (with error handling)
+    // Generate and store verification token
     let emailSent = false;
     let verificationToken = null;
+    let emailError = null;
 
     try {
       verificationToken = emailService.generateVerificationToken();
@@ -76,26 +77,39 @@ router.post(
       // Send verification email
       await emailService.sendVerificationEmail(email, firstName, verificationToken);
       emailSent = true;
-    } catch (emailError) {
-      console.error('Failed to handle email verification:', emailError.message);
-      console.error('Full error details:', emailError);
-      // Continue with registration even if email verification fails
-      // This allows registration to work even if email_verification_tokens table doesn't exist
+      console.log(`✅ Verification email sent successfully to ${email}`);
+    } catch (error) {
+      emailError = error;
+      console.error('Failed to handle email verification:', error.message);
+      console.error('Full error details:', error);
+
+      // For now, continue with registration even if email verification fails
+      // But log the specific error for debugging
+      console.error('Email verification error stack:', error.stack);
     }
 
     res.status(201).json({
       message: emailSent
         ? 'User registered successfully. Please check your email to verify your account.'
-        : 'User registered successfully. Email verification is temporarily unavailable.',
-      requiresVerification: false, // Set to false since we're not requiring verification for now
+        : 'User registered successfully. Email verification is temporarily unavailable - please contact support.',
+      requiresVerification: emailSent, // Only require verification if email was sent successfully
+      emailSent: emailSent,
       user: {
         id: user.id,
         email: user.email,
-        firstName: firstName, // Use the input values since they're not stored in basic schema
+        firstName: firstName,
         lastName: lastName,
         companyName: businessName || null,
+        emailVerified: false, // Always false for new registrations
         created_at: user.created_at
-      }
+      },
+      // Include error details in development/testing
+      ...(process.env.NODE_ENV !== 'production' && emailError && {
+        emailError: {
+          message: emailError.message,
+          type: emailError.constructor.name
+        }
+      })
     });
   })
 );
@@ -416,53 +430,45 @@ router.post('/verify-email', async (req, res) => {
 
 // POST /api/auth/resend-verification
 // Resend verification email
-router.post('/resend-verification', async (req, res) => {
-  try {
-    const { email } = req.body;
+router.post('/resend-verification', asyncWrapper(async (req, res) => {
+  const { email } = req.body;
 
-    if (!email) {
-      return res.status(400).json({
-        error: 'Missing email',
-        message: 'Email address is required'
-      });
-    }
-
-    // Find user
-    const userQuery = 'SELECT id, first_name, email_verified FROM users WHERE email = $1';
-    const userResult = await query(userQuery, [email.toLowerCase()]);
-
-    if (userResult.rows.length === 0) {
-      return res.status(404).json({
-        error: 'User not found',
-        message: 'No account found with this email address'
-      });
-    }
-
-    const user = userResult.rows[0];
-
-    if (user.email_verified) {
-      return res.status(400).json({
-        error: 'Already verified',
-        message: 'This email address is already verified'
-      });
-    }
-
-    // Generate and send new verification token
-    const verificationToken = emailService.generateVerificationToken();
-    await emailService.storeVerificationToken(user.id, verificationToken, email, user.first_name);
-    await emailService.sendVerificationEmail(email, user.first_name, verificationToken);
-
-    res.json({
-      message: 'Verification email sent successfully'
-    });
-  } catch (error) {
-    console.error('Resend verification error:', error);
-    res.status(500).json({
-      error: 'Failed to resend verification',
-      message: 'Unable to send verification email'
+  if (!email) {
+    return res.status(400).json({
+      error: 'Missing email',
+      message: 'Email address is required'
     });
   }
-});
+
+  // Find user using database operations
+  const userResult = await databaseOperations.getUserByEmail(email.toLowerCase());
+
+  if (!userResult.data) {
+    // Don't reveal whether user exists or not for security
+    return res.status(400).json({
+      error: 'Invalid request',
+      message: 'If this email is registered, a verification email will be sent'
+    });
+  }
+
+  const user = userResult.data;
+
+  if (user.email_verified) {
+    return res.status(400).json({
+      error: 'Already verified',
+      message: 'This email address is already verified'
+    });
+  }
+
+  // Generate and send new verification token
+  const verificationToken = emailService.generateVerificationToken();
+  await emailService.storeVerificationToken(user.id, verificationToken, email, user.first_name);
+  await emailService.sendVerificationEmail(email, user.first_name, verificationToken);
+
+  res.json({
+    message: 'Verification email sent successfully'
+  });
+}));
 
 // POST /api/auth/complete-onboarding
 // Mark user's onboarding as completed

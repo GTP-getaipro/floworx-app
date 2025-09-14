@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import { Card, Button, Input, Alert } from './ui';
 import useApi from '../hooks/useApi';
 import './UserManagement.css';
@@ -19,9 +19,9 @@ const UserManagement = () => {
 
   useEffect(() => {
     fetchUsers();
-  }, []);
+  }, [fetchUsers]);
 
-  const fetchUsers = async () => {
+  const fetchUsers = useCallback(async () => {
     try {
       setLoading(true);
       const response = await apiRequest('/api/users');
@@ -33,7 +33,7 @@ const UserManagement = () => {
     } finally {
       setLoading(false);
     }
-  };
+  }, [apiRequest]);
 
   const handleAddUser = async e => {
     e.preventDefault();

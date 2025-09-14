@@ -329,7 +329,7 @@ const Dashboard = () => {
       // Mock data is already set, so we don't need to do anything
       // This is normal in development when backend isn't running
     }
-  }, [refreshing, userStatus]);
+  }, [refreshing]);
 
   // Handle dashboard refresh
   const handleRefreshDashboard = async () => {

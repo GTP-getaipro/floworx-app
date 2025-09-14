@@ -42,27 +42,24 @@ const useFormPersistence = (formKey, initialValues = {}, options = {}) => {
   }, [formKey, storage, storageKey, excludeFields, storageAPI]);
 
   // Debounced save function
-  const saveToStorage = useCallback(
-    debounce((dataToSave) => {
-      try {
-        // Filter out excluded fields and empty values
-        const filteredData = Object.keys(dataToSave).reduce((acc, key) => {
-          if (!excludeFields.includes(key) && dataToSave[key] !== '') {
-            acc[key] = dataToSave[key];
-          }
-          return acc;
-        }, {});
-
-        if (Object.keys(filteredData).length > 0) {
-          storageAPI.setItem(storageKey, JSON.stringify(filteredData));
-          // Form data persisted successfully
+  const saveToStorage = useCallback((dataToSave) => {
+    try {
+      // Filter out excluded fields and empty values
+      const filteredData = Object.keys(dataToSave).reduce((acc, key) => {
+        if (!excludeFields.includes(key) && dataToSave[key] !== '') {
+          acc[key] = dataToSave[key];
         }
-      } catch (error) {
-        // Failed to persist form data - silently continue
+        return acc;
+      }, {});
+
+      if (Object.keys(filteredData).length > 0) {
+        storageAPI.setItem(storageKey, JSON.stringify(filteredData));
+        // Form data persisted successfully
       }
-    }, debounceMs),
-    [storageKey, excludeFields, debounceMs, storageAPI]
-  );
+    } catch (error) {
+      // Failed to persist form data - silently continue
+    }
+  }, [storageKey, excludeFields, storageAPI]);
 
   // Update values and persist
   const updateValues = useCallback(
@@ -94,7 +91,7 @@ const useFormPersistence = (formKey, initialValues = {}, options = {}) => {
     } catch (error) {
       // Failed to clear persisted data - silently continue
     }
-  }, [storageKey]);
+  }, [storageKey, storageAPI]);
 
   // Clear on successful submit
   const handleSubmitSuccess = useCallback(() => {

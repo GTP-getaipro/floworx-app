@@ -1,5 +1,5 @@
 import axios from 'axios';
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import './AnalyticsDashboard.css';
 
 const AnalyticsDashboard = () => {
@@ -12,7 +12,7 @@ const AnalyticsDashboard = () => {
   });
   const [_refreshInterval, setRefreshInterval] = useState(null);
 
-  const fetchDashboardData = async () => {
+  const fetchDashboardData = useCallback(async () => {
     try {
       setLoading(true);
       const token = localStorage.getItem('token');
@@ -30,7 +30,7 @@ const AnalyticsDashboard = () => {
     } finally {
       setLoading(false);
     }
-  };
+  }, [dateRange]);
 
   useEffect(() => {
     fetchDashboardData();
@@ -42,7 +42,7 @@ const AnalyticsDashboard = () => {
     return () => {
       if (interval) clearInterval(interval);
     };
-  }, [dateRange]);
+  }, [dateRange, fetchDashboardData]);
 
   const handleDateRangeChange = (field, value) => {
     setDateRange(prev => ({

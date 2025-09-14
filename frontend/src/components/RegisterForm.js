@@ -116,7 +116,7 @@ const RegisterForm = () => {
         // Don't override password fields - let them maintain their current values
       }));
     }
-  }, [persistenceLoaded, persistedValues]);
+  }, [persistenceLoaded, persistedValues, setValues]);
 
   // Progress tracking
   const updateProgress = useCallback((fieldName, fieldValue) => {

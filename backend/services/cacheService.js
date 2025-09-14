@@ -59,18 +59,31 @@ class CacheService {
       return;
     }
 
+    // Check if we're in development/test mode
+    const isDevelopment = process.env.NODE_ENV === 'development' || process.env.NODE_ENV === 'test';
+
     // Skip KeyDB initialization if disabled or not configured
     if (process.env.DISABLE_REDIS === 'true') {
-      console.log('⚠️ KeyDB disabled via DISABLE_REDIS - using memory cache only');
+      if (!isDevelopment) {
+        console.log('⚠️ KeyDB disabled via DISABLE_REDIS - using memory cache only');
+      }
+      this.isRedisConnected = false;
+      return;
+    }
+
+    // In test mode, skip Redis entirely unless explicitly enabled
+    if (process.env.NODE_ENV === 'test' && process.env.ENABLE_REDIS_IN_TESTS !== 'true') {
       this.isRedisConnected = false;
       return;
     }
 
     if (!process.env.REDIS_HOST && !process.env.REDIS_URL) {
-      console.log('⚠️ KeyDB disabled - no Redis configuration found - using memory cache only');
-      console.log(`   REDIS_HOST: ${process.env.REDIS_HOST || 'not set'}`);
-      console.log(`   REDIS_URL: ${process.env.REDIS_URL ? 'SET' : 'not set'}`);
-      console.log(`   NODE_ENV: ${process.env.NODE_ENV || 'not set'}`);
+      if (!isDevelopment) {
+        console.log('⚠️ KeyDB disabled - no Redis configuration found - using memory cache only');
+        console.log(`   REDIS_HOST: ${process.env.REDIS_HOST || 'not set'}`);
+        console.log(`   REDIS_URL: ${process.env.REDIS_URL ? 'SET' : 'not set'}`);
+        console.log(`   NODE_ENV: ${process.env.NODE_ENV || 'not set'}`);
+      }
       this.isRedisConnected = false;
       return;
     }
@@ -89,6 +102,9 @@ class CacheService {
 
   async _performInitialization() {
     try {
+      // Development mode already checked in parent method
+      const isDevelopment = process.env.NODE_ENV === 'development' || process.env.NODE_ENV === 'test';
+
       // If REDIS_URL is provided, use it directly (Coolify style)
       if (process.env.REDIS_URL) {
         console.log('🔗 Using REDIS_URL for KeyDB connection');
@@ -97,19 +113,20 @@ class CacheService {
         const redisUrl = process.env.REDIS_URL;
 
         const keydbConfig = {
-          connectTimeout: 5000,
-          commandTimeout: 3000,
-          retryDelayOnFailover: 100,
-          maxRetriesPerRequest: 2,
+          connectTimeout: isDevelopment ? 3000 : 10000, // Longer timeout for production
+          commandTimeout: isDevelopment ? 2000 : 5000,
+          retryDelayOnFailover: 200,
+          maxRetriesPerRequest: isDevelopment ? 1 : 3, // Fewer retries in development
           lazyConnect: true,
           keepAlive: 30000,
-          enableOfflineQueue: true,
+          enableOfflineQueue: false, // Disable offline queue to fail fast
           enableReadyCheck: false,
-          retryStrategy: (times) => {
-            if (times > 3) {
+          retryStrategy: times => {
+            const maxRetries = isDevelopment ? 2 : 4;
+            if (times > maxRetries) {
               return null;
             }
-            return Math.min(times * 200, 1000);
+            return Math.min(times * 300, 2000);
           }
         };
 
@@ -144,63 +161,83 @@ class CacheService {
 
         // Test connection with timeout
         try {
+          const timeout = isDevelopment ? 3000 : 8000;
           await Promise.race([
             this.redis.ping(),
-            new Promise((_, reject) =>
-              setTimeout(() => reject(new Error('Connection timeout')), 5000)
-            )
+            new Promise((_, reject) => setTimeout(() => reject(new Error('Connection timeout')), timeout))
           ]);
 
-          console.log('✅ KeyDB connection test successful');
+          console.log('✅ KeyDB connection test successful via REDIS_URL');
           this.isRedisConnected = true;
           return;
         } catch (error) {
-          console.warn('⚠️ KeyDB connection test failed:', error.message);
+          if (isDevelopment) {
+            console.log('ℹ️ KeyDB connection failed in development mode - using memory cache');
+          } else {
+            console.warn('⚠️ KeyDB connection test failed:', error.message);
+          }
           this.isRedisConnected = false;
-          // Don't throw - fall back to memory cache
+          // Clean up failed connection
+          if (this.redis) {
+            try {
+              this.redis.disconnect();
+            } catch (_e) {
+              // Ignore cleanup errors
+            }
+            this.redis = null;
+          }
         }
       }
 
-      // Fallback to host-based connection
+      // Fallback to host-based connection with improved host resolution
       const possibleHosts = [
         process.env.REDIS_HOST,
-        'sckck444cs4c88g0ws8kw0ss', // Correct Coolify hostname
+        'redis-database', // Standard Redis service name
+        'bgkgcogwgcksc0sccw48c8s0', // Coolify hostname from REDIS_URL
+        'sckck444cs4c88g0ws8kw0ss', // Alternative Coolify hostname
         'keydb-database-sckck444cs4c88g0ws8kw0ss', // Full service name
         'keydb-service',
         'floworx-keydb',
         'redis-db', // Docker compose fallback
-        '127.0.0.1'
+        ...(isDevelopment ? ['127.0.0.1', 'localhost'] : []) // Only try localhost in development
       ].filter(Boolean);
 
-      console.log('🔍 KeyDB connection debug info:');
-      console.log(`   REDIS_HOST env var: ${process.env.REDIS_HOST || 'not set'}`);
-      console.log(`   REDIS_URL env var: ${process.env.REDIS_URL ? 'SET (hidden)' : 'not set'}`);
-      console.log(`   Trying hosts: ${possibleHosts.join(', ')}`);
+      if (!isDevelopment) {
+        console.log('🔍 KeyDB connection debug info:');
+        console.log(`   REDIS_HOST env var: ${process.env.REDIS_HOST || 'not set'}`);
+        console.log(`   REDIS_URL env var: ${process.env.REDIS_URL ? 'SET (hidden)' : 'not set'}`);
+        console.log(`   Trying hosts: ${possibleHosts.slice(0, 3).join(', ')}... (${possibleHosts.length} total)`);
+      }
 
       let connected = false;
       let lastError = null;
 
       for (const host of possibleHosts) {
         try {
-          console.log(`🔗 Trying KeyDB connection to: ${host}:${process.env.REDIS_PORT || 6379}`);
+          if (!isDevelopment) {
+            console.log(`🔗 Trying KeyDB connection to: ${host}:${process.env.REDIS_PORT || 6379}`);
+          }
 
           const keydbConfig = {
             host: host,
             port: process.env.REDIS_PORT || 6379,
             password: process.env.REDIS_PASSWORD || undefined,
             db: process.env.REDIS_DB || 0,
-            retryDelayOnFailover: 100,
-            maxRetriesPerRequest: 2,
+            retryDelayOnFailover: 200,
+            maxRetriesPerRequest: isDevelopment ? 1 : 2,
             lazyConnect: true,
             keepAlive: 30000,
-            connectTimeout: 5000,
-            commandTimeout: 3000,
-            enableOfflineQueue: true,
+            connectTimeout: isDevelopment ? 2000 : 8000,
+            commandTimeout: isDevelopment ? 1500 : 4000,
+            enableOfflineQueue: false, // Fail fast instead of queuing
             retryDelayOnClusterDown: 300,
             enableReadyCheck: false,
-            retryStrategy: (times) => {
-              if (times > 3) {return null;}
-              return Math.min(times * 200, 1000);
+            retryStrategy: times => {
+              const maxRetries = isDevelopment ? 1 : 3;
+              if (times > maxRetries) {
+                return null;
+              }
+              return Math.min(times * 300, 1500);
             }
           };
 
@@ -208,38 +245,50 @@ class CacheService {
 
           // Set up event handlers
           this.redis.on('connect', () => {
-            console.log(`✅ KeyDB connected successfully to ${host}`);
+            if (!isDevelopment) {
+              console.log(`✅ KeyDB connected successfully to ${host}`);
+            }
             this.isRedisConnected = true;
           });
 
           this.redis.on('error', error => {
-            console.warn(`⚠️ KeyDB error on ${host}:`, error.message);
+            if (!isDevelopment) {
+              console.warn(`⚠️ KeyDB error on ${host}:`, error.message);
+            }
             this.isRedisConnected = false;
             this.stats.errors++;
           });
 
           this.redis.on('close', () => {
-            console.warn(`⚠️ KeyDB connection closed on ${host}`);
+            if (!isDevelopment) {
+              console.warn(`⚠️ KeyDB connection closed on ${host}`);
+            }
             this.isRedisConnected = false;
           });
 
           // Test connection with timeout
+          const timeout = isDevelopment ? 2000 : 5000;
           await Promise.race([
             this.redis.ping(),
-            new Promise((_, reject) =>
-              setTimeout(() => reject(new Error('Connection timeout')), 3000)
-            )
+            new Promise((_, reject) => setTimeout(() => reject(new Error('Connection timeout')), timeout))
           ]);
 
-          console.log(`✅ KeyDB ping successful on ${host}`);
+          if (!isDevelopment) {
+            console.log(`✅ KeyDB ping successful on ${host}`);
+          }
           connected = true;
           break;
-
         } catch (error) {
           lastError = error;
-          console.warn(`❌ KeyDB connection failed on ${host}:`, error.message);
+          if (!isDevelopment) {
+            console.warn(`❌ KeyDB connection failed on ${host}:`, error.message);
+          }
           if (this.redis) {
-            this.redis.disconnect();
+            try {
+              this.redis.disconnect();
+            } catch (_e) {
+              // Ignore cleanup errors
+            }
             this.redis = null;
           }
           continue;
@@ -249,15 +298,21 @@ class CacheService {
       if (!connected) {
         throw lastError || new Error('All KeyDB connection attempts failed');
       }
-
     } catch (error) {
-      console.warn('⚠️ KeyDB initialization failed completely, using memory cache only:', error.message);
+      const isDevelopment = process.env.NODE_ENV === 'development' || process.env.NODE_ENV === 'test';
+      if (isDevelopment) {
+        console.log('ℹ️ KeyDB not available in development mode - using memory cache only');
+      } else {
+        console.warn('⚠️ KeyDB initialization failed completely, using memory cache only:', error.message);
+      }
       this.isRedisConnected = false;
       this.redis = null;
 
       // Don't let KeyDB failures crash the application
       // The app will continue with memory cache only
-      console.log('✅ Application will continue with memory cache only');
+      if (!isDevelopment) {
+        console.log('✅ Application will continue with memory cache only');
+      }
     }
   }
 
@@ -564,38 +619,53 @@ class CacheService {
   }
 
   /**
-   * Health check
+   * Health check with improved Redis monitoring
    */
   async healthCheck() {
+    const isDevelopment = process.env.NODE_ENV === 'development' || process.env.NODE_ENV === 'test';
     const health = {
-      redis: { status: 'disconnected', latency: null },
-      memory: { status: 'ok', keys: this.memoryCache.keys().length },
+      redis: {
+        status: 'disconnected',
+        latency: null,
+        configured: !!(process.env.REDIS_URL || process.env.REDIS_HOST),
+        mode: isDevelopment ? 'development' : 'production'
+      },
+      memory: {
+        status: 'ok',
+        keys: this.memoryCache.keys().length,
+        maxKeys: this.memoryCache.options.maxKeys
+      },
       overall: 'degraded'
     };
 
-    // Test Redis
+    // Test Redis connection
     if (this.isRedisConnected && this.redis) {
       try {
         const start = performance.now();
-        await this.redis.ping();
+        await Promise.race([
+          this.redis.ping(),
+          new Promise((_, reject) => setTimeout(() => reject(new Error('Health check timeout')), 2000))
+        ]);
         health.redis.status = 'connected';
-        health.redis.latency = performance.now() - start;
+        health.redis.latency = Math.round(performance.now() - start);
       } catch (error) {
-        console.warn('⚠️ Redis health check failed:', error.message);
+        if (!isDevelopment) {
+          console.warn('⚠️ Redis health check failed:', error.message);
+        }
         health.redis.status = 'error';
         this.isRedisConnected = false;
-
-        // Don't auto-reset during health checks to avoid connection loops
-        // Let the application handle reconnection attempts separately
       }
-    } else if (process.env.REDIS_URL && !this.isInitializing) {
-      // Redis is configured but not connected and not currently initializing
+    } else if (health.redis.configured && !this.isInitializing) {
       health.redis.status = 'disconnected';
+    } else if (!health.redis.configured) {
+      health.redis.status = 'not_configured';
     }
 
-    // Overall health
+    // Overall health assessment
     if (health.redis.status === 'connected') {
       health.overall = 'healthy';
+    } else if (health.redis.status === 'not_configured' && isDevelopment) {
+      health.overall = 'healthy'; // OK in development without Redis
     } else if (health.memory.status === 'ok') {
       health.overall = 'degraded'; // Memory cache working but Redis down
     } else {
@@ -603,6 +673,30 @@ class CacheService {
     }
 
     return health;
+  }
+
+  /**
+   * Attempt to reconnect to Redis (for manual recovery)
+   */
+  async reconnect() {
+    if (this.isInitializing) {
+      console.log('⚠️ Redis reconnection already in progress');
+      return false;
+    }
+
+    if (this.isRedisConnected) {
+      console.log('✅ Redis already connected');
+      return true;
+    }
+
+    console.log('🔄 Attempting Redis reconnection...');
+    try {
+      await this.initializeKeyDB();
+      return this.isRedisConnected;
+    } catch (error) {
+      console.warn('⚠️ Redis reconnection failed:', error.message);
+      return false;
+    }
   }
 
   /**
@@ -616,7 +710,7 @@ class CacheService {
       const memLimitMB = Math.round(memUsage.heapTotal / 1024 / 1024);
 
       // More aggressive memory management
-      if (memUsageMB > 30 || (memUsageMB / memLimitMB) > 0.6) {
+      if (memUsageMB > 30 || memUsageMB / memLimitMB > 0.6) {
         const keyCount = this.memoryCache.keys().length;
 
         if (keyCount > 50) {
@@ -626,7 +720,9 @@ class CacheService {
 
           keysToDelete.forEach(key => this.memoryCache.del(key));
 
-          console.warn(`🧹 Aggressive memory cleanup: Removed ${keysToDelete.length} cache entries. Memory: ${memUsageMB}MB/${memLimitMB}MB, Remaining keys: ${this.memoryCache.keys().length}`);
+          console.warn(
+            `🧹 Aggressive memory cleanup: Removed ${keysToDelete.length} cache entries. Memory: ${memUsageMB}MB/${memLimitMB}MB, Remaining keys: ${this.memoryCache.keys().length}`
+          );
         }
       } else if (memUsageMB > 20 && !this.isRedisConnected) {
         // Less aggressive cleanup when Redis is not connected
@@ -638,7 +734,9 @@ class CacheService {
 
           keysToDelete.forEach(key => this.memoryCache.del(key));
 
-          console.warn(`🧹 Memory cleanup: Removed ${keysToDelete.length} cache entries. Memory: ${memUsageMB}MB, Remaining keys: ${this.memoryCache.keys().length}`);
+          console.warn(
+            `🧹 Memory cleanup: Removed ${keysToDelete.length} cache entries. Memory: ${memUsageMB}MB, Remaining keys: ${this.memoryCache.keys().length}`
+          );
         }
       }
     }, 15000); // Every 15 seconds

@@ -14,7 +14,7 @@ const redisManager = require('../services/redis-connection-manager');
 const { asyncHandler, successResponse } = require('../middleware/standardErrorHandler');
 const { ErrorResponse } = require('../utils/ErrorResponse');
 const { validateRequest } = require('../utils/validateRequest');
-const logger = require('../utils/logger');
+const { logger } = require('../utils/logger');
 const { databaseCircuitBreaker, authCircuitBreaker } = require('../utils/circuitBreaker');
 
 const router = express.Router();
@@ -247,84 +247,90 @@ router.post('/test-register', async (req, res) => {
 // POST /api/auth/register
 // Register a new user account with enhanced security and error handling
 router.post('/register', async (req, res) => {
-  const startTime = Date.now();
-  const requestId = req.headers['x-request-id'] || require('crypto').randomUUID();
-
   try {
-    logger.info('Registration attempt started', {
-      requestId,
-      email: req.body.email,
-      userAgent: req.get('User-Agent'),
-      ip: req.ip
-    });
+    console.log('🔐 Registration attempt started:', req.body.email);
 
-    const { email, password, firstName, lastName, businessName } = req.body;
+    const { email, password, firstName, lastName, businessName, companyName } = req.body;
 
-    // Enhanced input validation (synchronous - no timeout needed)
-    const validationResult = validateRegistrationInput({ email, password, firstName, lastName });
-
-    if (!validationResult.isValid) {
-      logger.warn('Registration validation failed', {
-        requestId,
-        email,
-        errors: validationResult.errors
-      });
+    // Basic validation
+    if (!email || !password || !firstName || !lastName) {
       return res.status(400).json({
         success: false,
-        error: validationResult.errors[0] || 'Invalid input data',
-        requestId
+        error: 'Missing required fields: email, password, firstName, lastName'
       });
     }
 
-    // Check if user exists (simplified)
-    const existingUserResult = await databaseOperations.getUserByEmail(email);
-
-    if (existingUserResult.data) {
-      logger.warn('Registration attempt for existing user', { requestId, email });
-      return res.status(409).json({
+    // Email format validation
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    if (!emailRegex.test(email)) {
+      return res.status(400).json({
         success: false,
-        error: 'User already exists',
-        requestId
+        error: 'Please provide a valid email address'
       });
     }
 
-    // Hash password (simplified)
+    // Password strength validation
+    if (password.length < 8) {
+      return res.status(400).json({
+        success: false,
+        error: 'Password must be at least 8 characters long'
+      });
+    }
+
+    console.log('✅ Validation passed');
+
+    // Check if user exists
+    try {
+      const existingUserResult = await databaseOperations.getUserByEmail(email);
+      if (existingUserResult.data) {
+        return res.status(409).json({
+          success: false,
+          error: 'An account with this email already exists'
+        });
+      }
+      console.log('✅ User availability confirmed');
+    } catch (error) {
+      console.log('⚠️ User check error (proceeding):', error.message);
+    }
+
+    // Hash password
     const passwordHash = await bcrypt.hash(password, 12);
+    console.log('✅ Password hashed');
 
-    logger.info('Password hashed successfully', { requestId });
-
-    // Create user data with enhanced validation
+    // Create user data
     const userData = {
       id: require('crypto').randomUUID(),
       email: email.toLowerCase().trim(),
       password_hash: passwordHash,
       first_name: firstName.trim(),
       last_name: lastName.trim(),
-      company_name: businessName ? businessName.trim() : null,
+      company_name: (businessName || companyName || '').trim() || null,
       created_at: new Date().toISOString()
     };
 
-    logger.info('Creating user account', { requestId, userId: userData.id });
+    console.log('👤 Creating user:', userData.id);
 
-    // Create user (simplified)
+    // Create user
     const createResult = await databaseOperations.createUser(userData);
 
     if (createResult.error) {
-      logger.error('User creation failed', {
-        requestId,
-        error: createResult.error.message,
-        userId: userData.id
-      });
+      console.error('❌ User creation failed:', createResult.error);
       return res.status(500).json({
         success: false,
         error: 'Failed to create user account',
-        requestId
+        details: createResult.error.message
       });
     }
 
-    // Generate JWT token (simplified)
+    console.log('✅ User created successfully');
+
+    // Generate JWT token
     if (!process.env.JWT_SECRET) {
-      throw new Error('JWT_SECRET not configured');
+      console.error('❌ JWT_SECRET not configured');
+      return res.status(500).json({
+        success: false,
+        error: 'Server configuration error'
+      });
     }
 
     const token = jwt.sign(
@@ -333,71 +339,37 @@ router.post('/register', async (req, res) => {
       { expiresIn: '24h' }
     );
 
-    const duration = Date.now() - startTime;
-    logger.info('Registration completed successfully', {
-      requestId,
-      userId: userData.id,
-      duration: `${duration}ms`
-    });
+    console.log('✅ JWT token generated');
 
+    // Success response
     res.status(201).json({
       success: true,
-      data: {
-        user: {
-          id: userData.id,
-          email: userData.email,
-          firstName: firstName,
-          lastName: lastName,
-          companyName: businessName || null
-        },
-        token: token
+      message: 'Account created successfully',
+      user: {
+        id: createResult.data.id,
+        email: createResult.data.email,
+        firstName: createResult.data.first_name,
+        lastName: createResult.data.last_name,
+        companyName: createResult.data.company_name
       },
-      message: 'Registration successful',
-      requestId
+      token,
+      expiresIn: '24h'
     });
+
+    console.log('🎉 Registration completed successfully');
 
   } catch (error) {
-    const duration = Date.now() - startTime;
+    console.error('💥 Registration error:', error.message);
+    console.error('Stack:', error.stack);
 
-    logger.error('Registration failed', {
-      requestId,
-      error: error.message,
-      stack: error.stack,
-      email: req.body?.email,
-      duration: `${duration}ms`,
-      userAgent: req.get('User-Agent'),
-      ip: req.ip
-    });
-
-    // Determine appropriate error response based on error type
-    let statusCode = 500;
-    let errorMessage = 'Registration failed due to server error';
-
-    if (error.message.includes('timeout')) {
-      statusCode = 504;
-      errorMessage = 'Request timeout - please try again';
-    } else if (error.message.includes('temporarily unavailable')) {
-      statusCode = 503;
-      errorMessage = 'Service temporarily unavailable - please try again later';
-    } else if (error.message.includes('Circuit breaker')) {
-      statusCode = 503;
-      errorMessage = 'Service temporarily unavailable due to high load';
-    } else if (error.message.includes('validation')) {
-      statusCode = 400;
-      errorMessage = 'Invalid input data';
-    } else if (error.message.includes('already exists')) {
-      statusCode = 409;
-      errorMessage = 'User already exists';
-    }
-
-    res.status(statusCode).json({
+    // Safe error response
+    res.status(500).json({
       success: false,
-      error: errorMessage,
-      requestId,
-      details: process.env.NODE_ENV === 'development' ? error.message : undefined
+      error: 'Registration failed due to server error',
+      details: process.env.NODE_ENV === 'development' ? error.message : 'Internal server error'
     });
   }
-});
+
 
 // POST /api/auth/login
 // Authenticate user and return JWT - Simplified working version

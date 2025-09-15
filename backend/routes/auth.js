@@ -388,6 +388,7 @@ router.post('/register', async (req, res) => {
       details: process.env.NODE_ENV === 'development' ? error.message : 'Internal server error'
     });
   }
+});
 
 
 // POST /api/auth/login

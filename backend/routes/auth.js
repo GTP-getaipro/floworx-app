@@ -260,13 +260,8 @@ router.post('/register', async (req, res) => {
 
     const { email, password, firstName, lastName, businessName } = req.body;
 
-    // Enhanced input validation with timeout protection
-    const validationResult = await Promise.race([
-      validateRegistrationInput({ email, password, firstName, lastName }),
-      new Promise((_, reject) =>
-        setTimeout(() => reject(new Error('Validation timeout')), 5000)
-      )
-    ]);
+    // Enhanced input validation (synchronous - no timeout needed)
+    const validationResult = validateRegistrationInput({ email, password, firstName, lastName });
 
     if (!validationResult.isValid) {
       logger.warn('Registration validation failed', {
@@ -281,22 +276,8 @@ router.post('/register', async (req, res) => {
       });
     }
 
-    // Check if user exists with circuit breaker protection
-    const existingUserResult = await databaseCircuitBreaker.execute(
-      async () => {
-        const result = await Promise.race([
-          databaseOperations.getUserByEmail(email),
-          new Promise((_, reject) =>
-            setTimeout(() => reject(new Error('Database query timeout')), 10000)
-          )
-        ]);
-        return result;
-      },
-      () => {
-        logger.error('Database circuit breaker open for user existence check', { requestId, email });
-        throw new Error('Service temporarily unavailable');
-      }
-    );
+    // Check if user exists (simplified)
+    const existingUserResult = await databaseOperations.getUserByEmail(email);
 
     if (existingUserResult.data) {
       logger.warn('Registration attempt for existing user', { requestId, email });
@@ -307,13 +288,8 @@ router.post('/register', async (req, res) => {
       });
     }
 
-    // Hash password with timeout protection
-    const passwordHash = await Promise.race([
-      bcrypt.hash(password, 12),
-      new Promise((_, reject) =>
-        setTimeout(() => reject(new Error('Password hashing timeout')), 15000)
-      )
-    ]);
+    // Hash password (simplified)
+    const passwordHash = await bcrypt.hash(password, 12);
 
     logger.info('Password hashed successfully', { requestId });
 
@@ -330,22 +306,8 @@ router.post('/register', async (req, res) => {
 
     logger.info('Creating user account', { requestId, userId: userData.id });
 
-    // Create user with circuit breaker protection
-    const createResult = await databaseCircuitBreaker.execute(
-      async () => {
-        const result = await Promise.race([
-          databaseOperations.createUser(userData),
-          new Promise((_, reject) =>
-            setTimeout(() => reject(new Error('User creation timeout')), 15000)
-          )
-        ]);
-        return result;
-      },
-      () => {
-        logger.error('Database circuit breaker open for user creation', { requestId });
-        throw new Error('Service temporarily unavailable');
-      }
-    );
+    // Create user (simplified)
+    const createResult = await databaseOperations.createUser(userData);
 
     if (createResult.error) {
       logger.error('User creation failed', {
@@ -360,29 +322,15 @@ router.post('/register', async (req, res) => {
       });
     }
 
-    // Generate JWT token with circuit breaker protection
-    const token = await authCircuitBreaker.execute(
-      async () => {
-        if (!process.env.JWT_SECRET) {
-          throw new Error('JWT_SECRET not configured');
-        }
+    // Generate JWT token (simplified)
+    if (!process.env.JWT_SECRET) {
+      throw new Error('JWT_SECRET not configured');
+    }
 
-        const tokenResult = await Promise.race([
-          Promise.resolve(jwt.sign(
-            { userId: userData.id, email: userData.email },
-            process.env.JWT_SECRET,
-            { expiresIn: '24h' }
-          )),
-          new Promise((_, reject) =>
-            setTimeout(() => reject(new Error('Token generation timeout')), 5000)
-          )
-        ]);
-        return tokenResult;
-      },
-      () => {
-        logger.error('Auth circuit breaker open for token generation', { requestId });
-        throw new Error('Authentication service temporarily unavailable');
-      }
+    const token = jwt.sign(
+      { userId: userData.id, email: userData.email },
+      process.env.JWT_SECRET,
+      { expiresIn: '24h' }
     );
 
     const duration = Date.now() - startTime;

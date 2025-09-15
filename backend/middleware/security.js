@@ -133,6 +133,8 @@ const rateLimitConfigs = {
     },
     standardHeaders: true,
     legacyHeaders: false,
+    // Configure trust proxy to work with Coolify/Docker
+    trustProxy: ['127.0.0.1', '::1', '10.0.0.0/8', '172.16.0.0/12', '192.168.0.0/16'],
     handler: (req, res) => {
       res.status(429).json({
         success: false,
@@ -158,6 +160,8 @@ const rateLimitConfigs = {
       message: 'Please wait before trying again.',
       retryAfter: '15 minutes'
     },
+    // Configure trust proxy to work with Coolify/Docker
+    trustProxy: ['127.0.0.1', '::1', '10.0.0.0/8', '172.16.0.0/12', '192.168.0.0/16'],
     skip: (_req) => {
       // Skip rate limiting for test environments
       return process.env.NODE_ENV === 'test' || process.env.SKIP_RATE_LIMIT === 'true';
@@ -173,6 +177,8 @@ const rateLimitConfigs = {
       message: 'Maximum registrations per hour exceeded.',
       retryAfter: '1 hour'
     },
+    // Configure trust proxy to work with Coolify/Docker
+    trustProxy: ['127.0.0.1', '::1', '10.0.0.0/8', '172.16.0.0/12', '192.168.0.0/16'],
     skip: (_req) => {
       // Skip rate limiting for test environments
       return process.env.NODE_ENV === 'test' || process.env.SKIP_RATE_LIMIT === 'true';

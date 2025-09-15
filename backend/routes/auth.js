@@ -26,7 +26,7 @@ const query = async (sql, params) => {
 };
 
 // Enhanced validation helper functions
-const validateRegistrationInput = async ({ email, password, firstName, lastName }) => {
+const validateRegistrationInput = ({ email, password, firstName, lastName }) => {
   const errors = [];
 
   // Required fields validation
@@ -445,7 +445,7 @@ router.post('/register', async (req, res) => {
     res.status(statusCode).json({
       success: false,
       error: errorMessage,
-      requestId
+      requestId,
       details: process.env.NODE_ENV === 'development' ? error.message : undefined
     });
   }

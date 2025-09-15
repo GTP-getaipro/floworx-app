@@ -119,8 +119,8 @@ app.use(performanceMiddlewareStack);
 app.use(smartCompression);
 app.use(cacheHeaders);
 
-// Global rate limiting for all API routes
-app.use('/api', apiRateLimit);
+// Global rate limiting for all API routes (temporarily disabled for debugging)
+// app.use('/api', apiRateLimit);
 
 // Body parsing middleware with security limits
 app.use(

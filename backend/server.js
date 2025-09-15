@@ -1,6 +1,7 @@
 const cors = require('cors');
 const express = require('express');
 const morgan = require('morgan');
+const path = require('path');
 
 // Load centralized configuration
 const config = require('./config/config');
@@ -278,6 +279,31 @@ app.use('/api/diagnostics', diagnosticsRoutes); // Database connection diagnosti
 
 app.use('/api', testKeydbRoutes);
 
+// --- SERVE STATIC FILES FROM REACT BUILD ---
+// Serve static files from the React build folder
+const frontendPath = path.join(__dirname, '..', 'frontend', 'build');
+app.use(express.static(frontendPath));
+
+// --- CATCH-ALL HANDLER FOR REACT ROUTER ---
+// For any non-API routes, serve the React app's index.html
+// This ensures that React Router can handle client-side routing
+app.get('*', (req, res) => {
+  // Only serve index.html for non-API routes that aren't static files
+  if (!req.url.startsWith('/api') && !req.url.startsWith('/health')) {
+    res.sendFile(path.join(frontendPath, 'index.html'));
+  } else {
+    // Let the error handler deal with unmatched API routes
+    res.status(404).json({
+      success: false,
+      error: {
+        type: 'NOT_FOUND',
+        message: 'API endpoint not found',
+        path: req.url
+      }
+    });
+  }
+});
+
 // Error handling middleware (must be last)
 app.use(standardNotFoundHandler);
 app.use(standardErrorHandler);
@@ -330,6 +356,10 @@ const startServer = async () => {
         version: config.get('deployment.version'),
         platform: config.get('deployment.platform')
       });
+
+      // Log frontend serving configuration
+      const frontendPath = path.join(__dirname, '..', 'frontend', 'build');
+      console.log(`📁 Serving frontend from: ${frontendPath}`);
 
       // Only log detailed info in development
       if (config.get('nodeEnv') !== 'production') {

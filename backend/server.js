@@ -187,7 +187,9 @@ app.get('/api/health', (req, res) => {
     deployment: {
       buildTime: new Date().toISOString(),
       nodeVersion: process.version,
-      platform: config.get('deployment.platform')
+      platform: config.get('deployment.platform'),
+      staticFileServingEnabled: true,
+      commitHash: 'ee6b793' // Latest commit with static file serving fix
     }
   });
 });

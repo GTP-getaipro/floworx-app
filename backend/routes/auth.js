@@ -19,6 +19,25 @@ const { databaseCircuitBreaker, authCircuitBreaker } = require('../utils/circuit
 
 const router = express.Router();
 
+// EMERGENCY TEST ROUTE - Bypass all middleware and dependencies
+router.post('/test-emergency', (req, res) => {
+  try {
+    console.log('🚨 Emergency test route called');
+    res.status(200).json({
+      success: true,
+      message: 'Emergency route working',
+      timestamp: new Date().toISOString(),
+      body: req.body
+    });
+  } catch (error) {
+    console.error('Emergency route error:', error);
+    res.status(500).json({
+      success: false,
+      error: error.message
+    });
+  }
+});
+
 // Helper function for database queries
 const query = async (sql, params) => {
   await databaseManager.initialize();

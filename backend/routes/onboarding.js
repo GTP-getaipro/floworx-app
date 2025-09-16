@@ -19,13 +19,13 @@ router.get('/debug', async (req, res) => {
     const businessTypesResult = await databaseOperations.getBusinessTypes();
     console.log('📊 Business types result:', businessTypesResult.success);
 
-    // Test if user_configurations table exists
+    // Test if business config works (replacement for user_configurations)
     let userConfigTest = null;
     try {
-      userConfigTest = await databaseOperations.getUserConfiguration('test-user-id');
-      console.log('📊 User config test result:', userConfigTest.success);
+      userConfigTest = await databaseOperations.getBusinessConfig('test-user-id');
+      console.log('📊 Business config test result:', userConfigTest.success !== false);
     } catch (error) {
-      console.log('📊 User config test error:', error.message);
+      console.log('📊 Business config test error:', error.message);
       userConfigTest = { error: error.message };
     }
 
@@ -65,8 +65,8 @@ router.get('/status', authenticateToken, async (req, res) => {
       });
     }
 
-    // Get user configuration (email provider, business type, custom settings)
-    const userConfig = await databaseOperations.getUserConfiguration(userId);
+    // Get user business configuration (replacement for getUserConfiguration)
+    const userConfig = await databaseOperations.getBusinessConfig(userId);
 
     // Get all business types for selection
     const businessTypes = await databaseOperations.getBusinessTypes();

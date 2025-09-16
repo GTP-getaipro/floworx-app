@@ -45,11 +45,11 @@ class DatabaseOperations {
     } else {
       // PostgreSQL implementation
       const query = `
-        INSERT INTO users (id, email, password_hash, first_name, last_name, company_name, created_at)
-        VALUES ($1, $2, $3, $4, $5, $6, NOW())
+        INSERT INTO users (id, email, password_hash, first_name, last_name, created_at)
+        VALUES ($1, $2, $3, $4, $5, NOW())
         RETURNING *
       `;
-      const values = [userData.id, userData.email, userData.password_hash, userData.first_name, userData.last_name, userData.company_name];
+      const values = [userData.id, userData.email, userData.password_hash, userData.first_name, userData.last_name];
       const result = await client.query(query, values);
       return { data: result.rows[0], error: null };
     }
@@ -795,6 +795,127 @@ class DatabaseOperations {
         console.log('Credentials table not found, returning empty array');
         return { data: [], error: null };
       }
+    }
+  }
+
+  // =====================================================
+  // COMPATIBILITY METHODS (Wrappers for missing methods)
+  // =====================================================
+
+  /**
+   * Get user configuration (wrapper for getBusinessConfig)
+   * @param {string} userId - User ID
+   * @returns {Promise<Object>} User configuration data
+   */
+  async getUserConfiguration(userId) {
+    try {
+      // Use getBusinessConfig as the primary source
+      const businessConfig = await this.getBusinessConfig(userId);
+
+      if (businessConfig.data) {
+        return businessConfig;
+      }
+
+      // Fallback to user profile data
+      const userProfile = await this.getUserProfile(userId);
+      if (userProfile.data) {
+        return {
+          data: {
+            email_provider: null,
+            business_type: 'hot_tub_service',
+            custom_settings: {},
+            user_id: userId
+          },
+          error: null
+        };
+      }
+
+      return { data: null, error: null };
+    } catch (error) {
+      return { data: null, error: error };
+    }
+  }
+
+  /**
+   * Get user workflow (wrapper for getWorkflowDeployments)
+   * @param {string} userId - User ID
+   * @returns {Promise<Object>} User workflow data
+   */
+  async getUserWorkflow(userId) {
+    try {
+      const deployments = await this.getWorkflowDeployments(userId);
+
+      if (deployments.data && Array.isArray(deployments.data) && deployments.data.length > 0) {
+        // Return the most recent deployment in the expected format
+        const latestDeployment = deployments.data[0];
+        return {
+          data: {
+            workflow_id: latestDeployment.workflow_id || latestDeployment.n8n_workflow_id,
+            status: latestDeployment.status || 'deployed',
+            created_at: latestDeployment.created_at || latestDeployment.deployed_at,
+            updated_at: latestDeployment.updated_at || latestDeployment.deployed_at
+          },
+          error: null
+        };
+      }
+
+      return { data: null, error: null };
+    } catch (error) {
+      return { data: null, error: error };
+    }
+  }
+
+  /**
+   * Get user activity history (wrapper using onboarding progress)
+   * @param {string} userId - User ID
+   * @param {number} limit - Limit of records
+   * @param {number} offset - Offset for pagination
+   * @returns {Promise<Object>} User activity data
+   */
+  async getUserActivityHistory(userId, limit = 20, offset = 0) {
+    try {
+      const onboardingProgress = await this.getOnboardingProgress(userId);
+      const workflowDeployments = await this.getWorkflowDeployments(userId);
+
+      const activities = [];
+
+      // Add onboarding activities
+      if (onboardingProgress.data) {
+        const progress = onboardingProgress.data;
+        if (progress.completed_steps && Array.isArray(progress.completed_steps)) {
+          progress.completed_steps.forEach((step, index) => {
+            activities.push({
+              id: `onboarding-${index}`,
+              type: 'onboarding',
+              description: `Completed step: ${step}`,
+              created_at: progress.updated_at || progress.created_at,
+              metadata: { step }
+            });
+          });
+        }
+      }
+
+      // Add workflow activities
+      if (workflowDeployments.data && Array.isArray(workflowDeployments.data)) {
+        workflowDeployments.data.forEach((workflow, index) => {
+          activities.push({
+            id: `workflow-${index}`,
+            type: 'workflow',
+            description: `Workflow deployed: ${workflow.workflow_name || 'Email Automation'}`,
+            created_at: workflow.created_at || workflow.deployed_at,
+            metadata: { workflow_id: workflow.workflow_id }
+          });
+        });
+      }
+
+      // Sort by date and apply pagination
+      const sortedActivities = activities
+        .sort((a, b) => new Date(b.created_at) - new Date(a.created_at))
+        .slice(offset, offset + limit);
+
+      return { data: sortedActivities, error: null };
+    } catch (error) {
+      return { data: [], error: error };
     }
   }
 }

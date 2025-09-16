@@ -16,10 +16,8 @@ const rateLimitConfig = {
     legacyHeaders: false,
     // Skip successful requests
     skipSuccessfulRequests: true,
-    // IPv6 compatible key generator
-    keyGenerator: (req) => {
-      return req.ip || req.connection?.remoteAddress || 'unknown';
-    }
+    // Simple key generator for IPv4
+    keyGenerator: (req) => req.ip || 'unknown'
   },
 
   // Moderate rate limiting for password reset
@@ -33,11 +31,8 @@ const rateLimitConfig = {
     },
     standardHeaders: true,
     legacyHeaders: false,
-    // IPv6 compatible key generator for password reset
-    keyGenerator: (req) => {
-      const ip = req.ip || req.connection?.remoteAddress || 'unknown';
-      return `password-reset-${ip}`;
-    }
+    // Simple key generator for password reset
+    keyGenerator: (req) => `password-reset-${req.ip || 'unknown'}`
   },
 
   // General API rate limiting
@@ -51,11 +46,8 @@ const rateLimitConfig = {
     },
     standardHeaders: true,
     legacyHeaders: false,
-    // IPv6 compatible key generator
-    keyGenerator: (req) => {
-      const ip = req.ip || req.connection?.remoteAddress || 'unknown';
-      return `api-${ip}`;
-    }
+    // Simple key generator for API
+    keyGenerator: (req) => `api-${req.ip || 'unknown'}`
   },
 
   // Strict rate limiting for registration

@@ -12,8 +12,18 @@ const { logger } = require('../utils/logger');
 
 const router = express.Router();
 
-// Google OAuth2 client configuration
+// Google OAuth2 client configuration with validation
 const getGoogleOAuth2Client = () => {
+  // Validate environment variables
+  const requiredVars = ['GOOGLE_CLIENT_ID', 'GOOGLE_CLIENT_SECRET', 'GOOGLE_REDIRECT_URI'];
+  const missingVars = requiredVars.filter(varName => !process.env[varName]);
+
+  if (missingVars.length > 0) {
+    const errorMsg = `Missing OAuth environment variables: ${missingVars.join(', ')}`;
+    logger.error('OAuth configuration error', { missingVars });
+    throw new Error(errorMsg);
+  }
+
   return new google.auth.OAuth2(
     process.env.GOOGLE_CLIENT_ID,
     process.env.GOOGLE_CLIENT_SECRET,

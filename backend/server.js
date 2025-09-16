@@ -273,17 +273,45 @@ app.use('/api/analytics', analyticsRoutes);
 app.use('/api', testKeydbRoutes);
 
 // --- SERVE STATIC FILES FROM REACT BUILD ---
-// Serve static files from the React build folder
+// Serve static files from the React build folder (with error handling)
 const frontendPath = path.join(__dirname, '..', 'frontend', 'build');
-app.use(express.static(frontendPath));
+const fs = require('fs');
+
+// Check if frontend build exists before serving
+if (fs.existsSync(frontendPath)) {
+  app.use(express.static(frontendPath));
+  console.log(`📁 Serving frontend from: ${frontendPath}`);
+} else {
+  console.log(`⚠️  Frontend build not found at: ${frontendPath}`);
+  console.log(`📋 API-only mode: Frontend routes will return 404`);
+}
 
 // --- CATCH-ALL HANDLER FOR REACT ROUTER ---
-// For any non-API routes, serve the React app's index.html
-// This ensures that React Router can handle client-side routing
+// For any non-API routes, serve the React app's index.html (with error handling)
 app.get('*', (req, res) => {
   // Only serve index.html for non-API routes that aren't static files
   if (!req.url.startsWith('/api') && !req.url.startsWith('/health')) {
-    res.sendFile(path.join(frontendPath, 'index.html'));
+    const indexPath = path.join(frontendPath, 'index.html');
+
+    // Check if index.html exists before serving
+    if (fs.existsSync(indexPath)) {
+      res.sendFile(indexPath);
+    } else {
+      // Frontend not built - return helpful message
+      res.status(503).json({
+        success: false,
+        error: {
+          type: 'FRONTEND_NOT_BUILT',
+          message: 'Frontend build not found. API endpoints are available.',
+          apiEndpoints: [
+            '/api/health',
+            '/api/auth/login',
+            '/api/auth/register',
+            '/api/oauth/status'
+          ]
+        }
+      });
+    }
   } else {
     // Let the error handler deal with unmatched API routes
     res.status(404).json({

@@ -31,9 +31,34 @@ class OAuthService {
    * @returns {google.auth.OAuth2} OAuth2 client instance
    */
   getGoogleOAuth2Client() {
-    if (!process.env.GOOGLE_CLIENT_ID || !process.env.GOOGLE_CLIENT_SECRET || !process.env.GOOGLE_REDIRECT_URI) {
-      throw new Error('Google OAuth configuration missing. Please check environment variables.');
+    // Detailed environment variable validation
+    const requiredVars = {
+      GOOGLE_CLIENT_ID: process.env.GOOGLE_CLIENT_ID,
+      GOOGLE_CLIENT_SECRET: process.env.GOOGLE_CLIENT_SECRET,
+      GOOGLE_REDIRECT_URI: process.env.GOOGLE_REDIRECT_URI
+    };
+
+    const missingVars = Object.entries(requiredVars)
+      .filter(([key, value]) => !value)
+      .map(([key]) => key);
+
+    if (missingVars.length > 0) {
+      const errorMsg = `Google OAuth configuration missing: ${missingVars.join(', ')}. ` +
+        'Please configure these environment variables in Coolify.';
+      console.error('❌ OAuth Configuration Error:', errorMsg);
+      throw new Error(errorMsg);
     }
+
+    // Validate format of credentials
+    if (!requiredVars.GOOGLE_CLIENT_ID.includes('googleusercontent.com')) {
+      throw new Error('Invalid GOOGLE_CLIENT_ID format. Must be a valid Google OAuth client ID.');
+    }
+
+    if (!requiredVars.GOOGLE_CLIENT_SECRET.startsWith('GOCSPX-')) {
+      throw new Error('Invalid GOOGLE_CLIENT_SECRET format. Must start with GOCSPX-');
+    }
+
+    console.log('✅ Google OAuth configuration validated successfully');
 
     return new google.auth.OAuth2(
       process.env.GOOGLE_CLIENT_ID,

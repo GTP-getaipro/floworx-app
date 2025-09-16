@@ -741,7 +741,7 @@ router.post('/verify-email', async (req, res) => {
     // Update user's email verification status
     const updateResult = await databaseOperations.updateUserEmailVerification(user_id, true);
 
-    if (updateResult.error) {
+    if (!updateResult.success) {
       return res.status(500).json({
         success: false,
         error: 'Verification failed',

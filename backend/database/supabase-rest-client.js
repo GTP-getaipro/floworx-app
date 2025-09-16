@@ -232,7 +232,8 @@ class SupabaseRestClient {
       };
     } catch (error) {
       console.error('❌ Get business config error:', error.message);
-      throw error;
+      // Return null instead of throwing to prevent dashboard crashes
+      return null;
     }
   }
 
@@ -280,9 +281,9 @@ class SupabaseRestClient {
           deployment_data,
           last_execution,
           execution_count,
+          business_config_id,
           created_at,
-          updated_at,
-          business_configs!inner(config_json)
+          updated_at
         `
         )
         .eq('user_id', userId)
@@ -292,22 +293,11 @@ class SupabaseRestClient {
         throw error;
       }
 
-      return data.map(row => ({
-        id: row.id,
-        n8nWorkflowId: row.n8n_workflow_id,
-        workflowName: row.workflow_name,
-        webhookUrl: row.webhook_url,
-        status: row.status,
-        deploymentData: row.deployment_data,
-        businessConfig: row.business_configs.config_json,
-        lastExecution: row.last_execution,
-        executionCount: row.execution_count,
-        createdAt: row.created_at,
-        updatedAt: row.updated_at
-      }));
+      return data || [];
     } catch (error) {
       console.error('❌ Get workflow deployments error:', error.message);
-      throw error;
+      // Return empty array instead of throwing to prevent dashboard crashes
+      return [];
     }
   }
 

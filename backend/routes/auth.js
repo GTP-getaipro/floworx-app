@@ -613,7 +613,7 @@ router.get('/dashboard', authenticateToken, async (req, res) => {
 });
 
 // GET /api/auth/verify-email
-// Enhanced email verification endpoint
+// Enhanced email verification endpoint (for email links)
 router.get('/verify-email', async (req, res) => {
   try {
     const { token } = req.query;
@@ -694,6 +694,94 @@ router.get('/verify-email', async (req, res) => {
     });
   } catch (error) {
     logger.error('Email verification error', { error, token: req.query.token });
+    res.status(500).json({
+      success: false,
+      error: 'Verification failed',
+      message: 'Unable to verify email address. Please try again or contact support.'
+    });
+  }
+});
+
+// POST /api/auth/verify-email
+// Email verification endpoint (for API calls)
+router.post('/verify-email', async (req, res) => {
+  try {
+    const { token } = req.body;
+
+    if (!token) {
+      return res.status(400).json({
+        success: false,
+        error: 'Missing token',
+        message: 'Verification token is required'
+      });
+    }
+
+    // Get verification token from database
+    const tokenResult = await databaseOperations.getVerificationToken(token);
+
+    if (!tokenResult.data) {
+      return res.status(400).json({
+        success: false,
+        error: 'Invalid token',
+        message: 'Verification token is invalid or has been used'
+      });
+    }
+
+    const { user_id, expires_at } = tokenResult.data;
+
+    // Check if token is expired
+    if (new Date() > new Date(expires_at)) {
+      return res.status(400).json({
+        success: false,
+        error: 'Token expired',
+        message: 'Verification token has expired. Please request a new verification email.'
+      });
+    }
+
+    // Update user's email verification status
+    const updateResult = await databaseOperations.updateUserEmailVerification(user_id, true);
+
+    if (updateResult.error) {
+      return res.status(500).json({
+        success: false,
+        error: 'Verification failed',
+        message: 'Unable to update email verification status'
+      });
+    }
+
+    // Delete used token
+    await databaseOperations.deleteVerificationToken(token);
+
+    // Get updated user data
+    const userResult = await databaseOperations.getUserById(user_id);
+    const user = userResult.data;
+
+    // Generate JWT token for the verified user
+    const jwtToken = jwt.sign(
+      {
+        userId: user.id,
+        email: user.email,
+        firstName: user.first_name,
+        lastName: user.last_name
+      },
+      process.env.JWT_SECRET,
+      { expiresIn: '24h' }
+    );
+
+    res.json({
+      success: true,
+      message: 'Email verified successfully',
+      user: {
+        id: user.id,
+        email: user.email,
+        firstName: user.first_name,
+        lastName: user.last_name,
+        emailVerified: true
+      },
+      token: jwtToken
+    });
+  } catch (error) {
+    logger.error('Email verification error', { error, token: req.body.token });
     res.status(500).json({
       success: false,
       error: 'Verification failed',

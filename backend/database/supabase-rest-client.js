@@ -703,6 +703,12 @@ class SupabaseRestClient {
       const expiresAt = new Date();
       expiresAt.setHours(expiresAt.getHours() + 24); // Token expires in 24 hours
 
+      // First, delete any existing tokens for this user to avoid unique constraint violation
+      await this.getAdminClient()
+        .from('email_verification_tokens')
+        .delete()
+        .eq('user_id', userId);
+
       const { data, error } = await this.getAdminClient()
         .from('email_verification_tokens')
         .insert({

@@ -16,11 +16,11 @@ const rateLimitConfig = {
     legacyHeaders: false,
     // Skip successful requests
     skipSuccessfulRequests: true,
-    // Custom key generator with IPv6 support
+    // Simple key generator to avoid trust proxy issues
     keyGenerator: (req, res) => {
-      const { ipKeyGenerator } = require('express-rate-limit');
-      const ip = ipKeyGenerator(req, res);
-      return `${ip}-${req.get('User-Agent') || 'unknown'}`;
+      const ip = req.ip || req.connection?.remoteAddress || 'unknown';
+      const userAgent = req.get('User-Agent') || 'unknown';
+      return `${ip}-${userAgent}`;
     }
   },
 
@@ -34,7 +34,12 @@ const rateLimitConfig = {
       retryAfter: 60 * 60
     },
     standardHeaders: true,
-    legacyHeaders: false
+    legacyHeaders: false,
+    // Simple key generator for password reset
+    keyGenerator: (req, res) => {
+      const ip = req.ip || req.connection?.remoteAddress || 'unknown';
+      return `password-reset-${ip}`;
+    }
   },
 
   // General API rate limiting
@@ -47,7 +52,17 @@ const rateLimitConfig = {
       retryAfter: 15 * 60
     },
     standardHeaders: true,
-    legacyHeaders: false
+    legacyHeaders: false,
+    // Simple key generator to avoid IPv6 issues
+    keyGenerator: (req, res) => {
+      const ip = req.ip || req.connection?.remoteAddress || 'unknown';
+      return `api-${ip}`;
+    },
+    // Disable trust proxy validation
+    validate: {
+      trustProxy: false,
+      xForwardedForHeaders: false
+    }
   },
 
   // Strict rate limiting for registration

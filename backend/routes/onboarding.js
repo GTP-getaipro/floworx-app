@@ -75,8 +75,8 @@ router.get('/status', authenticateToken, async (req, res) => {
     const completedSteps = [];
     const user = userResult.data;
 
-    // Handle migration-required case
-    if (userConfig.data?.migrationRequired) {
+    // Handle migration-required case or no config found
+    if (!userConfig || userConfig.data?.migrationRequired) {
       console.warn('⚠️  Database migration required for full email provider functionality');
       return res.json({
         user: {
@@ -95,7 +95,7 @@ router.get('/status', authenticateToken, async (req, res) => {
         stepData: {},
         nextStep: 'email-provider', // Start with email provider selection
         migrationRequired: true,
-        warning: userConfig.warning || 'Database migration required for email provider functionality'
+        warning: userConfig?.warning || 'Database migration required for email provider functionality'
       });
     }
 
@@ -107,14 +107,14 @@ router.get('/status', authenticateToken, async (req, res) => {
         companyName: user.company_name
       },
       googleConnected: false, // Mock for now - would need to check credentials table
-      emailProvider: userConfig.data?.email_provider || user.email_provider || null,
-      businessTypeId: userConfig.data?.business_type_id || user.business_type_id || null,
+      emailProvider: userConfig?.data?.email_provider || user.email_provider || null,
+      businessTypeId: userConfig?.data?.business_type_id || user.business_type_id || null,
       businessTypes: businessTypes.data || [],
       onboardingComplete: !!(
-        (userConfig.data?.email_provider || user.email_provider) &&
-        (userConfig.data?.business_type_id || user.business_type_id)
+        (userConfig?.data?.email_provider || user.email_provider) &&
+        (userConfig?.data?.business_type_id || user.business_type_id)
       ),
-      customSettings: userConfig.data?.custom_settings || {},
+      customSettings: userConfig?.data?.custom_settings || {},
       completedSteps,
       stepData: {}, // Mock for now - would need user_onboarding_status table
       nextStep: getNextStep(completedSteps, false, {

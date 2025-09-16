@@ -3,19 +3,19 @@ import { useState, useEffect } from 'react';
 
 import { Button, Alert, Card, Badge } from '../ui';
 
-const BusinessTypeStep = ({ onNext, onBack, stepData, onStepDataChange }) => {
+const BusinessTypeStep = ({ onNext, onBack, onComplete, data, isFirstStep, isLastStep }) => {
   const [businessTypes, setBusinessTypes] = useState([]);
   const [selectedBusinessType, setSelectedBusinessType] = useState(null);
   const [isLoading, setIsLoading] = useState(true);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [error, setError] = useState('');
 
-  // Load existing selection from step data
+  // Load existing selection from data
   useEffect(() => {
-    if (stepData?.businessTypeId) {
-      setSelectedBusinessType(stepData.businessTypeId);
+    if (data?.businessType) {
+      setSelectedBusinessType(data.businessType);
     }
-  }, [stepData]);
+  }, [data]);
 
   // Fetch available business types
   useEffect(() => {
@@ -82,18 +82,21 @@ const BusinessTypeStep = ({ onNext, onBack, stepData, onStepDataChange }) => {
       );
 
       if (response.data.success) {
-        // Update step data with server response
-        onStepDataChange('business-type', {
-          ...stepData,
-          businessTypeId: selectedBusinessType,
+        // Prepare step completion data
+        const completionData = {
+          businessType: selectedBusinessType,
           businessTypeName: response.data.data.businessType.name,
           businessTypeSlug: response.data.data.businessType.slug,
           defaultCategories: response.data.data.businessType.defaultCategories,
           savedAt: new Date().toISOString(),
-        });
+        };
 
-        // Proceed to next step
-        onNext();
+        // Complete this step
+        if (onComplete) {
+          onComplete(completionData);
+        } else if (onNext) {
+          onNext();
+        }
       } else {
         throw new Error(response.data.message || 'Failed to save business type');
       }
@@ -248,9 +251,11 @@ const BusinessTypeStep = ({ onNext, onBack, stepData, onStepDataChange }) => {
       </div>
 
       <div className='flex justify-between items-center mt-8 pt-6 border-t border-surface-border'>
-        <Button type='button' onClick={onBack} variant='secondary' disabled={isSubmitting} data-testid="back-button">
-          Back
-        </Button>
+        {!isFirstStep && (
+          <Button type='button' onClick={onBack} variant='secondary' disabled={isSubmitting} data-testid="back-button">
+            Back
+          </Button>
+        )}
 
         <Button
           type='button'
@@ -260,7 +265,7 @@ const BusinessTypeStep = ({ onNext, onBack, stepData, onStepDataChange }) => {
           loading={isSubmitting}
           data-testid="continue-button"
         >
-          Continue
+          {isLastStep ? 'Complete Setup' : 'Continue'}
         </Button>
       </div>
     </div>

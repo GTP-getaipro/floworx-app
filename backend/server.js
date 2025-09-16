@@ -35,19 +35,19 @@ const {
   // securityHeaders, // Not used in this file
   handleValidationErrors
 } = require('./middleware/security');
-const accountRecoveryRoutes = require('./routes/accountRecovery');
+// const accountRecoveryRoutes = require('./routes/accountRecovery'); // Removed during cleanup
 const analyticsRoutes = require('./routes/analytics');
 const authRoutes = require('./routes/auth');
 const businessTypesRoutes = require('./routes/businessTypes');
 const dashboardRoutes = require('./routes/dashboard');
-const diagnosticsRoutes = require('./routes/diagnostics');
+// const diagnosticsRoutes = require('./routes/diagnostics'); // Removed during cleanup
 const errorRoutes = require('./routes/errors');
-const healthRoutes = require('./routes/health');
+// const healthRoutes = require('./routes/health'); // Removed during cleanup
 const monitoringRoutes = require('./routes/monitoring');
 const oauthRoutes = require('./routes/oauth');
 const onboardingRoutes = require('./routes/onboarding');
 const passwordResetRoutes = require('./routes/passwordReset');
-const performanceRoutes = require('./routes/performance');
+// const performanceRoutes = require('./routes/performance'); // Removed during cleanup
 const recoveryRoutes = require('./routes/recovery');
 const testKeydbRoutes = require('./routes/test-keydb');
 const userRoutes = require('./routes/user');
@@ -261,14 +261,14 @@ app.use('/api/dashboard', dashboardRoutes);
 app.use('/api/oauth', oauthRateLimit, oauthRoutes);
 app.use('/api/onboarding', onboardingRoutes);
 app.use('/api/recovery', recoveryRoutes);
-app.use('/api/account-recovery', accountRecoveryRoutes);
+// app.use('/api/account-recovery', accountRecoveryRoutes); // Removed during cleanup
 app.use('/api/password-reset', passwordResetRoutes);
 app.use('/api/business-types', businessTypesRoutes);
 app.use('/api/workflows', workflowRoutes);
 app.use('/api/analytics', analyticsRoutes);
-app.use('/api/performance', performanceRoutes);
-app.use('/api/health', healthRoutes); // Comprehensive health monitoring
-app.use('/api/diagnostics', diagnosticsRoutes); // Database connection diagnostics
+// app.use('/api/performance', performanceRoutes); // Removed during cleanup
+// app.use('/api/health', healthRoutes); // Removed during cleanup
+// app.use('/api/diagnostics', diagnosticsRoutes); // Removed during cleanup
 
 app.use('/api', testKeydbRoutes);
 

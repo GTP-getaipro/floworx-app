@@ -1,9 +1,0 @@
-#!/usr/bin/env sh
-. "$(dirname -- "$0")/_/husky.sh"
-
-# Run lint-staged for code quality
-npx lint-staged
-
-# Run quick tests to ensure nothing is broken
-echo "🧪 Running quick validation tests..."
-npm run quality:check

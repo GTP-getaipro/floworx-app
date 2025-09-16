@@ -3,7 +3,7 @@ const path = require('path');
 const winston = require('winston');
 
 const { format } = winston;
-const ContainerMemoryMonitor = require('./ContainerMemoryMonitor');
+// ContainerMemoryMonitor removed during cleanup
 
 /**
  * Structured logging service
@@ -117,15 +117,8 @@ class Logger {
       ...meta
     };
 
-    // Add memory context if monitoring is enabled
-    if (this.memoryMonitor) {
-      const memorySummary = this.memoryMonitor.getMemorySummary();
-      context.memory = {
-        status: memorySummary.status,
-        usage: memorySummary.usage.description,
-        trend: memorySummary.trend.trend
-      };
-    }
+    // Memory monitoring disabled - ContainerMemoryMonitor removed during cleanup
+    context.memory = { status: 'monitoring_disabled' };
 
     return context;
   }
@@ -204,81 +197,24 @@ class Logger {
    * Initialize container-aware memory monitoring
    */
   initializeMemoryMonitoring() {
-    this.memoryMonitor = new ContainerMemoryMonitor({
-      warningThreshold: 70,
-      criticalThreshold: 85,
-      emergencyThreshold: 95,
-      monitorInterval: 30000, // 30 seconds
-      logInterval: 300000, // 5 minutes
-      enableLogging: false // We'll handle logging through Winston
-    });
+    // ContainerMemoryMonitor removed during cleanup - using basic memory monitoring
+    this.memoryMonitor = {
+      start: () => console.log('Memory monitoring disabled'),
+      stop: () => console.log('Memory monitoring stopped'),
+      getStats: () => ({ usage: 0, available: 0 }),
+      getMemorySummary: () => ({ status: 'disabled', usage: { description: 'N/A' }, trend: { trend: 'stable' } }),
+      on: () => {} // Mock event listener
+    };
 
-    // Listen to memory events and log through Winston
-    this.memoryMonitor.on('warning', ({ stats, relevantUsage }) => {
-      this.warn('Memory usage elevated', {
-        memory: {
-          type: relevantUsage.type,
-          usage: relevantUsage.description,
-          percent: relevantUsage.percent,
-          container: stats.container.isContainer,
-          cgroup_version: stats.container.cgroupVersion
-        }
-      });
-    });
-
-    this.memoryMonitor.on('critical', ({ stats, relevantUsage }) => {
-      this.error('Critical memory usage detected', {
-        memory: {
-          type: relevantUsage.type,
-          usage: relevantUsage.description,
-          percent: relevantUsage.percent,
-          container: stats.container.isContainer,
-          cgroup_version: stats.container.cgroupVersion,
-          recommendations: this.memoryMonitor.getRecommendations(stats)
-        }
-      });
-    });
-
-    this.memoryMonitor.on('emergency', ({ stats, relevantUsage }) => {
-      this.error('EMERGENCY: Memory usage critical - immediate action required', {
-        memory: {
-          type: relevantUsage.type,
-          usage: relevantUsage.description,
-          percent: relevantUsage.percent,
-          container: stats.container.isContainer,
-          cgroup_version: stats.container.cgroupVersion,
-          recommendations: this.memoryMonitor.getRecommendations(stats)
-        },
-        action_required: true,
-        severity: 'emergency'
-      });
-
-      // Force garbage collection in emergency
-      const gcResult = this.memoryMonitor.forceGC();
-      if (gcResult) {
-        this.info('Emergency garbage collection triggered');
-      }
-    });
-
-    this.info('Container-aware memory monitoring initialized', {
-      container: this.memoryMonitor.isContainer,
-      cgroup_version: this.memoryMonitor.cgroupVersion,
-      thresholds: {
-        warning: this.memoryMonitor.options.warningThreshold,
-        critical: this.memoryMonitor.options.criticalThreshold,
-        emergency: this.memoryMonitor.options.emergencyThreshold
-      }
-    });
+    // Memory monitoring disabled - ContainerMemoryMonitor was removed during cleanup
+    this.info('Memory monitoring disabled - ContainerMemoryMonitor removed during cleanup');
   }
 
   /**
    * Get current memory status for health checks
    */
   getMemoryStatus() {
-    if (!this.memoryMonitor) {
-      return { status: 'monitoring_disabled' };
-    }
-    return this.memoryMonitor.getMemorySummary();
+    return { status: 'monitoring_disabled', message: 'ContainerMemoryMonitor removed during cleanup' };
   }
 
   /**

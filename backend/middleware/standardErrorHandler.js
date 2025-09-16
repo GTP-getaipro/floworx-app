@@ -97,10 +97,11 @@ const standardErrorHandler = async (error, req, res, next) => {
       });
     } else {
       // Generic internal error
-      errorResponse = ErrorResponse.internal('An unexpected error occurred', {
+      errorResponse = ErrorResponse.internalError('An unexpected error occurred', {
         originalError: error.name,
-        stack: process.env.NODE_ENV === 'development' ? error.stack : undefined
-      }, req.requestId);
+        stack: process.env.NODE_ENV === 'development' ? error.stack : undefined,
+        requestId: req.requestId
+      });
     }
   }
 

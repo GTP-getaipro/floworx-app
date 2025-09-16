@@ -28,7 +28,7 @@ jest.mock('axios', () => {
       options: jest.fn(),
       request: jest.fn(),
       defaults: {
-        baseURL: 'http://localhost:3001/api',
+        baseURL: 'https://app.floworx-iq.com/api',
         timeout: 10000,
         headers: { 'Content-Type': 'application/json' }
       },
@@ -53,7 +53,7 @@ jest.mock('../../frontend/src/services/api', () => {
   
   class ApiClient {
     constructor() {
-      this.baseURL = process.env.REACT_APP_API_URL || 'http://localhost:3001/api';
+      this.baseURL = process.env.REACT_APP_API_URL || 'https://app.floworx-iq.com/api';
       this.token = null;
       
       this.client = axios.create({
@@ -269,7 +269,7 @@ describe('Frontend API Client Integration', () => {
 
   describe('Request Configuration', () => {
     test('should use correct base URL', () => {
-      expect(apiClient.client.defaults.baseURL).toBe('http://localhost:3001/api');
+      expect(apiClient.client.defaults.baseURL).toBe('https://app.floworx-iq.com/api');
     });
 
     test('should set correct timeout', () => {

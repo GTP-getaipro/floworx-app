@@ -122,9 +122,6 @@ async function fixRLSConfiguration() {
     console.log(`   ❌ Policy verification failed: ${err.message}`);
   }
 
-  // =====================================================
-  // 3. TEST ANONYMOUS ACCESS (Should be blocked)
-  // =====================================================
   console.log('\n3. Testing anonymous access (should be blocked)...');
   
   try {

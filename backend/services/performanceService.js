@@ -6,7 +6,7 @@
 const { performance } = require('perf_hooks');
 
 const cacheService = require('./cacheService');
-const logger = require('../utils/logger');
+const { logger } = require('../utils/logger');
 
 /**
  * Performance monitoring and optimization service

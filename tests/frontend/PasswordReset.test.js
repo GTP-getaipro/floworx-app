@@ -1,11 +1,10 @@
-import React from 'react';
-import { render, screen, fireEvent, waitFor } from '@testing-library/react';
+
+
 import userEvent from '@testing-library/user-event';
 import { BrowserRouter } from 'react-router-dom';
 import axios from 'axios';
 import ForgotPassword from '../../frontend/src/components/ForgotPassword';
 import ResetPassword from '../../frontend/src/components/ResetPassword';
-
 // Mock axios
 jest.mock('axios');
 const mockedAxios = axios;

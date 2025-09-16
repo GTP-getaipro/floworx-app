@@ -8,7 +8,7 @@ const { encrypt, decrypt } = require('../utils/encryption');
 const { oauthService } = require('../services/OAuthService');
 const { successResponse } = require('../middleware/standardErrorHandler');
 const { ErrorResponse } = require('../utils/ErrorResponse');
-const logger = require('../utils/logger');
+const { logger } = require('../utils/logger');
 
 const router = express.Router();
 

@@ -1,5 +1,4 @@
 import React, { Suspense } from 'react';
-import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom';
 
 // Critical components loaded immediately
 import ErrorBoundary from './components/ErrorBoundary';
@@ -9,7 +8,6 @@ import { Logo } from './components/ui';
 import { AuthProvider } from './contexts/AuthContext';
 import { ErrorProvider } from './contexts/ErrorContext';
 import { ToastProvider } from './contexts/ToastContext';
-
 // Lazy-loaded components for better performance
 const Dashboard = React.lazy(() => import('./components/Dashboard'));
 const DatabaseTest = React.lazy(() => import('./components/DatabaseTest'));
@@ -23,9 +21,8 @@ const UserManagement = React.lazy(() => import('./components/UserManagement'));
 const Settings = React.lazy(() => import('./components/Settings'));
 const APITestDashboard = React.lazy(() => import('./components/APITestDashboard'));
 const OnboardingWizard = React.lazy(() => import('./components/OnboardingWizard'));
-
+const OAuthCallback = React.lazy(() => import('./components/oauth/OAuthCallback'));
 import './App.css';
-
 // Loading component for Suspense fallback
 const LoadingSpinner = () => (
   <div className="min-h-screen flex items-center justify-center bg-surface">
@@ -189,6 +186,18 @@ function App() {
                               <OnboardingWizard />
                             </Suspense>
                           </ProtectedRoute>
+                        </ErrorBoundary>
+                      }
+                    />
+
+                    {/* OAuth Callback Route */}
+                    <Route
+                      path='/oauth/callback'
+                      element={
+                        <ErrorBoundary key='oauth-callback'>
+                          <Suspense fallback={<LoadingSpinner />}>
+                            <OAuthCallback />
+                          </Suspense>
                         </ErrorBoundary>
                       }
                     />

@@ -1,10 +1,9 @@
-import React from 'react';
+
 import { render, screen, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { BrowserRouter } from 'react-router-dom';
 import Register from '../../src/components/Register';
 import { useAuth } from '../../src/context/AuthContext';
-
 // Mock the useAuth hook
 jest.mock('../../src/context/AuthContext');
 

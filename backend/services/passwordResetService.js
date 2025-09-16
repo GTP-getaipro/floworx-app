@@ -57,12 +57,10 @@ class PasswordResetService {
       const tokenResult = await databaseOperations.createPasswordResetToken(
         user.id,
         resetToken,
-        expiresAt,
-        ipAddress,
-        userAgent
+        expiresAt
       );
 
-      if (!tokenResult || !tokenResult.success) {
+      if (!tokenResult || tokenResult.error || !tokenResult.data) {
         throw new Error('Failed to create reset token');
       }
 

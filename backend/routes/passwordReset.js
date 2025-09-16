@@ -8,7 +8,7 @@ const { databaseOperations } = require('../database/database-operations');
 const { passwordResetRateLimit, authRateLimit } = require('../middleware/rateLimiter');
 const { validationMiddleware } = require('../middleware/validation');
 const { generatePasswordResetToken } = require('../utils/tokenGenerator');
-const { logAuthEvent } = require('../utils/activityLogger');
+const { logAuthActivity } = require('../utils/activityLogger');
 const { logger } = require('../utils/logger');
 const emailService = require('../services/emailService');
 
@@ -83,7 +83,7 @@ router.post('/request', async (req, res) => {
     // Store password reset token using new database operations
     logger.info('Creating password reset token', { userId: user.id, email: user.email });
     try {
-      const tokenResult = await databaseOperations.storePasswordResetToken(user.id, token, expiresAt.toISOString());
+      const tokenResult = await databaseOperations.createPasswordResetToken(user.id, token, expiresAt);
 
       if (tokenResult.error) {
         logger.error('Failed to store reset token', { error: tokenResult.error, userId: user.id });
@@ -117,7 +117,7 @@ router.post('/request', async (req, res) => {
       logger.error('Failed to send password reset email', { error: emailError, userId: user.id });
 
       // Log failed email attempt
-      await logAuthEvent(user.id, 'PASSWORD_RESET_REQUEST', { emailSent: false, error: emailError.message }, req);
+      logAuthActivity(user.id, 'PASSWORD_RESET_REQUEST', false, { emailSent: false, error: emailError.message }, req);
     }
 
     res.json({

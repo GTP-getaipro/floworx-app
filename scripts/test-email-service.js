@@ -118,9 +118,6 @@ async function testEmailService() {
     console.log(`   ❌ Email service loading failed: ${err.message}`);
   }
 
-  // =====================================================
-  // 4. TEST EMAIL SENDING (Optional)
-  // =====================================================
   console.log('\n4. Test email sending...');
 
   if (results.smtpConnection && process.env.SMTP_USER && !process.env.SMTP_USER.includes('your-')) {

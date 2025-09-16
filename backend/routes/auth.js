@@ -13,7 +13,7 @@ const passwordResetService = require('../services/passwordResetService');
 const redisManager = require('../services/redis-connection-manager');
 const { asyncHandler, successResponse } = require('../middleware/standardErrorHandler');
 const { ErrorResponse } = require('../utils/ErrorResponse');
-const { validateRequest } = require('../utils/validateRequest');
+const { validateRequest } = require('../schemas/common');
 const { logger } = require('../utils/logger');
 const { databaseCircuitBreaker, authCircuitBreaker } = require('../utils/circuitBreaker');
 
@@ -269,32 +269,20 @@ router.post('/register', async (req, res) => {
   try {
     console.log('🔐 Registration attempt started:', req.body.email);
 
-    const { email, password, firstName, lastName, businessName, companyName } = req.body;
-
-    // Basic validation
-    if (!email || !password || !firstName || !lastName) {
+    // Validate request data using Joi schema
+    const { error, value } = registerSchema.validate(req.body);
+    if (error) {
       return res.status(400).json({
         success: false,
-        error: 'Missing required fields: email, password, firstName, lastName'
+        error: 'Validation failed',
+        details: error.details.map(detail => ({
+          field: detail.path.join('.'),
+          message: detail.message
+        }))
       });
     }
 
-    // Email format validation
-    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-    if (!emailRegex.test(email)) {
-      return res.status(400).json({
-        success: false,
-        error: 'Please provide a valid email address'
-      });
-    }
-
-    // Password strength validation
-    if (password.length < 8) {
-      return res.status(400).json({
-        success: false,
-        error: 'Password must be at least 8 characters long'
-      });
-    }
+    const { email, password, firstName, lastName, businessName, companyName, agreeToTerms } = value;
 
     console.log('✅ Validation passed');
 
@@ -627,7 +615,7 @@ router.get('/verify-email', async (req, res) => {
     }
 
     // Get verification token from database
-    const tokenResult = await databaseOperations.getVerificationToken(token);
+    const tokenResult = await databaseOperations.getEmailVerificationToken(token);
 
     if (!tokenResult.data) {
       return res.status(400).json({
@@ -649,7 +637,7 @@ router.get('/verify-email', async (req, res) => {
     }
 
     // Update user's email verification status
-    const updateResult = await databaseOperations.updateUserEmailVerification(user_id, true);
+    const updateResult = await databaseOperations.markEmailAsVerified(user_id);
 
     if (updateResult.error) {
       return res.status(500).json({
@@ -660,7 +648,7 @@ router.get('/verify-email', async (req, res) => {
     }
 
     // Delete used token
-    await databaseOperations.deleteVerificationToken(token);
+    await databaseOperations.deleteEmailVerificationToken(token);
 
     // Get updated user data
     const userResult = await databaseOperations.getUserById(user_id);
@@ -717,7 +705,7 @@ router.post('/verify-email', async (req, res) => {
     }
 
     // Get verification token from database
-    const tokenResult = await databaseOperations.getVerificationToken(token);
+    const tokenResult = await databaseOperations.getEmailVerificationToken(token);
 
     if (!tokenResult.data) {
       return res.status(400).json({
@@ -739,9 +727,9 @@ router.post('/verify-email', async (req, res) => {
     }
 
     // Update user's email verification status
-    const updateResult = await databaseOperations.updateUserEmailVerification(user_id, true);
+    const updateResult = await databaseOperations.markEmailAsVerified(user_id);
 
-    if (!updateResult.success) {
+    if (updateResult.error) {
       return res.status(500).json({
         success: false,
         error: 'Verification failed',
@@ -750,7 +738,7 @@ router.post('/verify-email', async (req, res) => {
     }
 
     // Delete used token
-    await databaseOperations.deleteVerificationToken(token);
+    await databaseOperations.deleteEmailVerificationToken(token);
 
     // Get updated user data
     const userResult = await databaseOperations.getUserById(user_id);
@@ -1290,8 +1278,7 @@ router.post('/manual-verify-email', async (req, res) => {
 
     // Manually set email as verified
     const updateResult = await databaseOperations.updateUser(user.id, {
-      email_verified: true,
-      email_verified_at: new Date().toISOString()
+      email_verified: true
     });
 
     if (updateResult.error) {
@@ -1381,6 +1368,75 @@ router.get('/test-keydb', async (req, res) => {
       error: 'KeyDB test failed',
       message: error.message,
       timestamp: new Date().toISOString()
+    });
+  }
+});
+
+// GET /api/auth/profile
+// Get user profile information
+router.get('/profile', authenticateToken, async (req, res) => {
+  try {
+    const userId = req.user.id;
+
+    const userResult = await databaseOperations.getUserById(userId);
+    if (userResult.error || !userResult.data) {
+      return res.status(404).json({
+        success: false,
+        error: 'User not found'
+      });
+    }
+
+    const user = userResult.data;
+    res.status(200).json({
+      success: true,
+      user: {
+        id: user.id,
+        email: user.email,
+        firstName: user.first_name,
+        lastName: user.last_name,
+        companyName: user.company_name,
+        emailVerified: user.email_verified || false,
+        onboardingCompleted: user.onboarding_completed || false,
+        createdAt: user.created_at,
+        lastLogin: user.last_login
+      }
+    });
+
+  } catch (error) {
+    console.error('Profile fetch error:', error);
+    res.status(500).json({
+      success: false,
+      error: 'Failed to fetch user profile'
+    });
+  }
+});
+
+// GET /api/auth/verify-email/:token
+// Email verification endpoint (basic implementation)
+router.get('/verify-email/:token', async (req, res) => {
+  try {
+    const { token } = req.params;
+
+    if (!token) {
+      return res.status(400).json({
+        success: false,
+        error: 'Verification token is required'
+      });
+    }
+
+    // For now, return a basic response indicating the endpoint exists
+    // In a full implementation, this would verify the token and update user status
+    res.status(200).json({
+      success: true,
+      message: 'Email verification endpoint is available',
+      note: 'Full email verification implementation pending'
+    });
+
+  } catch (error) {
+    console.error('Email verification error:', error);
+    res.status(500).json({
+      success: false,
+      error: 'Email verification failed'
     });
   }
 });

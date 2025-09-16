@@ -7,3 +7,4 @@ export { default as Link } from './Link';
 export { default as Logo } from './Logo';
 export { default as ProgressBar } from './ProgressBar';
 export { default as Toast } from './Toast';
+export { default as GmailConnectionStatus } from './GmailConnectionStatus';

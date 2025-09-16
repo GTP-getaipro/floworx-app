@@ -214,9 +214,7 @@ class Final85PercentPush {
     
     const workflowPageCode = `
 // Basic Workflow Management Page - Add to frontend/src/pages/Workflows.js
-
 import React from 'react';
-
 const WorkflowsPage = () => {
   return (
     <div className="min-h-screen bg-gray-50 py-8">
@@ -331,7 +329,7 @@ export default WorkflowsPage;
     const profilePageCode = `
 // Basic Profile Settings Page - Add to frontend/src/pages/Profile.js
 
-import React from 'react';
+
 
 const ProfilePage = () => {
   return (

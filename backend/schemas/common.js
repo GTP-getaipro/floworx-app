@@ -1,214 +1,138 @@
 /**
  * Common Validation Schemas
- * Reusable validation patterns used across multiple endpoints
+ * Replacement for the deleted common schemas
  */
 
 const Joi = require('joi');
 
-// Common field patterns
+/**
+ * Common validation patterns
+ */
 const commonPatterns = {
-  // Email validation with comprehensive rules
   email: Joi.string()
-    .email({ minDomainSegments: 2, tlds: { allow: ['com', 'net', 'org', 'edu', 'gov', 'mil', 'int', 'co', 'io'] } })
+    .email({ tlds: { allow: false } })
+    .max(255)
     .lowercase()
-    .trim()
-    .max(254)
-    .required()
-    .custom((value, helpers) => {
-      // Block disposable email domains
-      const disposableDomains = [
-        'tempmail.org', '10minutemail.com', 'guerrillamail.com', 'mailinator.com',
-        'throwaway.email', 'temp-mail.org', 'yopmail.com', 'maildrop.cc',
-        'sharklasers.com', 'guerrillamailblock.com', 'pokemail.net', 'spam4.me'
-      ];
-      const domain = value.split('@')[1];
-      if (domain && disposableDomains.includes(domain.toLowerCase())) {
-        return helpers.error('email.disposable');
-      }
-      return value;
-    })
-    .messages({
-      'string.email': 'Please provide a valid email address',
-      'string.empty': 'Email is required',
-      'string.max': 'Email must be less than 254 characters',
-      'any.required': 'Email is required',
-      'email.disposable': 'Disposable email addresses are not allowed'
-    }),
+    .trim(),
 
-  // Password validation with security requirements
   password: Joi.string()
     .min(8)
     .max(128)
     .pattern(/^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]/)
-    .required()
-    .messages({
-      'string.min': 'Password must be at least 8 characters long',
-      'string.max': 'Password must be less than 128 characters',
-      'string.pattern.base':
-        'Password must contain at least one uppercase letter, one lowercase letter, one number, and one special character',
-      'string.empty': 'Password is required',
-      'any.required': 'Password is required'
-    }),
+    .message('Password must contain at least one lowercase letter, one uppercase letter, one number, and one special character'),
 
-  // UUID validation
-  uuid: Joi.string().uuid({ version: 'uuidv4' }).required().messages({
-    'string.guid': 'Must be a valid UUID',
-    'any.required': 'ID is required'
-  }),
-
-  // Optional UUID
-  optionalUuid: Joi.string().uuid({ version: 'uuidv4' }).optional().messages({
-    'string.guid': 'Must be a valid UUID'
-  }),
-
-  // Name validation
   name: Joi.string()
-    .trim()
     .min(1)
     .max(100)
-    .pattern(/^[a-zA-Z\s'-]+$/)
-    .required()
-    .messages({
-      'string.min': 'Name must be at least 1 character',
-      'string.max': 'Name must be less than 100 characters',
-      'string.pattern.base': 'Name can only contain letters, spaces, hyphens, and apostrophes',
-      'string.empty': 'Name is required',
-      'any.required': 'Name is required'
-    }),
-
-  // Optional name
-  optionalName: Joi.string()
     .trim()
-    .min(1)
-    .max(100)
     .pattern(/^[a-zA-Z\s'-]+$/)
-    .optional()
-    .messages({
-      'string.min': 'Name must be at least 1 character',
-      'string.max': 'Name must be less than 100 characters',
-      'string.pattern.base': 'Name can only contain letters, spaces, hyphens, and apostrophes'
-    }),
+    .message('Name can only contain letters, spaces, hyphens, and apostrophes'),
 
-  // Phone number validation
+  businessName: Joi.string()
+    .min(1)
+    .max(200)
+    .trim(),
+
   phone: Joi.string()
-    .pattern(/^\+?[1-9]\d{1,14}$/)
-    .optional()
-    .messages({
-      'string.pattern.base': 'Please provide a valid phone number'
-    }),
+    .pattern(/^\+?[\d\s\-\(\)]+$/)
+    .min(10)
+    .max(20)
+    .optional(),
 
-  // URL validation
   url: Joi.string()
     .uri({ scheme: ['http', 'https'] })
-    .optional()
-    .messages({
-      'string.uri': 'Must be a valid URL'
-    }),
+    .max(500)
+    .optional(),
 
-  // Date validation
-  date: Joi.date().iso().optional().messages({
-    'date.format': 'Date must be in ISO format'
+  uuid: Joi.string()
+    .uuid()
+    .required(),
+
+  id: Joi.alternatives().try(
+    Joi.string().uuid(),
+    Joi.number().integer().positive()
+  ),
+
+  pagination: {
+    page: Joi.number().integer().min(1).default(1),
+    limit: Joi.number().integer().min(1).max(100).default(10)
+  },
+
+  dateRange: {
+    startDate: Joi.date().iso().optional(),
+    endDate: Joi.date().iso().min(Joi.ref('startDate')).optional()
+  }
+};
+
+/**
+ * Common response schemas
+ */
+const responseSchemas = {
+  success: Joi.object({
+    success: Joi.boolean().valid(true).required(),
+    data: Joi.any(),
+    message: Joi.string().optional()
   }),
 
-  // Pagination parameters
-  limit: Joi.number().integer().min(1).max(100).default(10).messages({
-    'number.base': 'Limit must be a number',
-    'number.integer': 'Limit must be an integer',
-    'number.min': 'Limit must be at least 1',
-    'number.max': 'Limit cannot exceed 100'
+  error: Joi.object({
+    success: Joi.boolean().valid(false).required(),
+    error: Joi.object({
+      message: Joi.string().required(),
+      code: Joi.string().optional(),
+      details: Joi.any().optional()
+    }).required()
   }),
 
-  offset: Joi.number().integer().min(0).default(0).messages({
-    'number.base': 'Offset must be a number',
-    'number.integer': 'Offset must be an integer',
-    'number.min': 'Offset cannot be negative'
-  }),
-
-  // Search query
-  search: Joi.string().trim().min(1).max(100).optional().messages({
-    'string.min': 'Search query must be at least 1 character',
-    'string.max': 'Search query must be less than 100 characters'
-  }),
-
-  // Sort parameters
-  sortBy: Joi.string().valid('createdAt', 'updatedAt', 'name', 'email', 'status').default('createdAt').messages({
-    'any.only': 'Sort field must be one of: createdAt, updatedAt, name, email, status'
-  }),
-
-  sortOrder: Joi.string().valid('asc', 'desc').default('desc').messages({
-    'any.only': 'Sort order must be either asc or desc'
+  paginated: Joi.object({
+    success: Joi.boolean().valid(true).required(),
+    data: Joi.array().required(),
+    pagination: Joi.object({
+      currentPage: Joi.number().integer().min(1).required(),
+      itemsPerPage: Joi.number().integer().min(1).required(),
+      totalPages: Joi.number().integer().min(0).required(),
+      totalCount: Joi.number().integer().min(0).required(),
+      hasNextPage: Joi.boolean().required(),
+      hasPreviousPage: Joi.boolean().required(),
+      nextPage: Joi.number().integer().min(1).allow(null).required(),
+      previousPage: Joi.number().integer().min(1).allow(null).required()
+    }).required()
   })
 };
 
-// Common schema combinations
-const commonSchemas = {
-  // Pagination query schema
-  paginationQuery: Joi.object({
-    limit: commonPatterns.limit,
-    offset: commonPatterns.offset,
-    search: commonPatterns.search,
-    sortBy: commonPatterns.sortBy,
-    sortOrder: commonPatterns.sortOrder
-  }),
+/**
+ * Common validation middleware
+ */
+const validateRequest = (schema, property = 'body') => {
+  return (req, res, next) => {
+    const { error, value } = schema.validate(req[property], {
+      abortEarly: false,
+      stripUnknown: true
+    });
 
-  // ID parameter schema
-  idParam: Joi.object({
-    id: commonPatterns.uuid
-  }),
+    if (error) {
+      const details = error.details.map(detail => ({
+        field: detail.path.join('.'),
+        message: detail.message,
+        value: detail.context?.value
+      }));
 
-  // User ID parameter schema
-  userIdParam: Joi.object({
-    userId: commonPatterns.uuid
-  }),
+      return res.status(400).json({
+        success: false,
+        error: {
+          message: 'Validation failed',
+          code: 'VALIDATION_ERROR',
+          details
+        }
+      });
+    }
 
-  // Basic contact info schema
-  contactInfo: Joi.object({
-    firstName: commonPatterns.name,
-    lastName: commonPatterns.name,
-    email: commonPatterns.email,
-    phone: commonPatterns.phone
-  }),
-
-  // Optional contact info schema
-  optionalContactInfo: Joi.object({
-    firstName: commonPatterns.optionalName,
-    lastName: commonPatterns.optionalName,
-    email: commonPatterns.email.optional(),
-    phone: commonPatterns.phone
-  }),
-
-  // Timestamp schema
-  timestamps: Joi.object({
-    createdAt: commonPatterns.date,
-    updatedAt: commonPatterns.date
-  })
+    req[property] = value;
+    next();
+  };
 };
 
 module.exports = {
-  patterns: commonPatterns,
-  schemas: commonSchemas,
-
-  // Export individual patterns for direct use
-  email: commonPatterns.email,
-  password: commonPatterns.password,
-  uuid: commonPatterns.uuid,
-  optionalUuid: commonPatterns.optionalUuid,
-  name: commonPatterns.name,
-  optionalName: commonPatterns.optionalName,
-  phone: commonPatterns.phone,
-  url: commonPatterns.url,
-  date: commonPatterns.date,
-  limit: commonPatterns.limit,
-  offset: commonPatterns.offset,
-  search: commonPatterns.search,
-  sortBy: commonPatterns.sortBy,
-  sortOrder: commonPatterns.sortOrder,
-
-  // Export common schemas
-  paginationQuery: commonSchemas.paginationQuery,
-  idParam: commonSchemas.idParam,
-  userIdParam: commonSchemas.userIdParam,
-  contactInfo: commonSchemas.contactInfo,
-  optionalContactInfo: commonSchemas.optionalContactInfo,
-  timestamps: commonSchemas.timestamps
+  commonPatterns,
+  responseSchemas,
+  validateRequest
 };

@@ -68,9 +68,6 @@ async function testRLSProperly() {
     return results;
   }
 
-  // =====================================================
-  // 2. TEST ANONYMOUS ACCESS (Should return no data)
-  // =====================================================
   console.log('\n2. Testing anonymous access (should return empty results)...');
   
   try {
@@ -101,9 +98,6 @@ async function testRLSProperly() {
     console.log(`   ❌ Anonymous access test failed: ${err.message}`);
   }
 
-  // =====================================================
-  // 3. TEST USER ISOLATION (Simulate authenticated user)
-  // =====================================================
   console.log('\n3. Testing user isolation with simulated authentication...');
   
   try {

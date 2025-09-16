@@ -39,9 +39,6 @@ class SupabaseRestClient {
     console.log(`   Using HTTPS REST API instead of direct PostgreSQL connection`);
   }
 
-  // =====================================================
-  // ENCRYPTION UTILITIES (same as original)
-  // =====================================================
 
   encrypt(text) {
     if (!text) {
@@ -106,9 +103,6 @@ class SupabaseRestClient {
     return this.adminClient;
   }
 
-  // =====================================================
-  // CREDENTIALS MANAGEMENT (converted to REST API)
-  // =====================================================
 
   async storeCredentials(userId, serviceName, accessToken, refreshToken = null, expiryDate = null, scope = null) {
     try {
@@ -175,9 +169,6 @@ class SupabaseRestClient {
     }
   }
 
-  // =====================================================
-  // BUSINESS CONFIGURATION MANAGEMENT (converted to REST API)
-  // =====================================================
 
   async storeBusinessConfig(userId, configData) {
     try {
@@ -237,9 +228,6 @@ class SupabaseRestClient {
     }
   }
 
-  // =====================================================
-  // WORKFLOW DEPLOYMENT TRACKING (converted to REST API)
-  // =====================================================
 
   async storeWorkflowDeployment(userId, businessConfigId, n8nWorkflowId, workflowName, webhookUrl, deploymentData) {
     try {
@@ -301,9 +289,6 @@ class SupabaseRestClient {
     }
   }
 
-  // =====================================================
-  // ONBOARDING PROGRESS TRACKING (converted to REST API)
-  // =====================================================
 
   async updateOnboardingProgress(
     userId,
@@ -422,9 +407,6 @@ class SupabaseRestClient {
     }
   }
 
-  // =====================================================
-  // ANALYTICS TRACKING (converted to REST API)
-  // =====================================================
 
   async trackEvent(userId, eventType, eventData, sessionId = null, ipAddress = null, userAgent = null) {
     try {
@@ -451,9 +433,6 @@ class SupabaseRestClient {
     }
   }
 
-  // =====================================================
-  // USER MANAGEMENT (converted to REST API)
-  // =====================================================
 
   async getUserById(userId) {
     try {
@@ -795,9 +774,6 @@ class SupabaseRestClient {
     }
   }
 
-  // =====================================================
-  // CONNECTION MANAGEMENT (converted to REST API)
-  // =====================================================
 
   async testConnection() {
     try {

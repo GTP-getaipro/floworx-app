@@ -1,7 +1,7 @@
 
 // Basic Workflow Management Page - Add to frontend/src/pages/Workflows.js
 
-import React from 'react';
+
 
 const WorkflowsPage = () => {
   return (

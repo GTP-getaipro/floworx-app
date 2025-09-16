@@ -1,0 +1,1571 @@
+{
+  "unusedFiles": [
+    ".husky\\pre-commit",
+    ".husky\\pre-push",
+    ".husky\\_\\applypatch-msg",
+    ".husky\\_\\commit-msg",
+    ".husky\\_\\husky.sh",
+    ".husky\\_\\post-applypatch",
+    ".husky\\_\\post-checkout",
+    ".husky\\_\\post-commit",
+    ".husky\\_\\post-merge",
+    ".husky\\_\\post-rewrite",
+    ".husky\\_\\pre-applypatch",
+    ".husky\\_\\pre-auto-gc",
+    ".husky\\_\\pre-commit",
+    ".husky\\_\\pre-merge-commit",
+    ".husky\\_\\pre-push",
+    ".husky\\_\\pre-rebase",
+    ".husky\\_\\prepare-commit-msg",
+    ".prettierignore",
+    "achieve-100-percent.js",
+    "api\\_lib\\encryption.js",
+    "apply-production-migration.js",
+    "apply-security-fixes.js",
+    "archive\\debug-files\\browser-debug-dashboard.js",
+    "archive\\debug-files\\check-available-routes.js",
+    "archive\\debug-files\\check-browser-storage.html",
+    "archive\\debug-files\\check-dashboard-preview.js",
+    "archive\\debug-files\\check-frontend-env.html",
+    "archive\\debug-files\\check-user-password.js",
+    "authentication-improvement-system.js",
+    "auto-fix-deployment.js",
+    "backend\\.prettierignore",
+    "backend\\.snyk",
+    "backend\\check-token.js",
+    "backend\\config\\business-alerting-rules.js",
+    "backend\\database\\account-recovery-functions.sql",
+    "backend\\database\\account-recovery-rls-policies.sql",
+    "backend\\database\\account-recovery-schema.sql",
+    "backend\\database\\EMERGENCY_FIX.sql",
+    "backend\\database\\migrations\\002_add_email_verification_table.sql",
+    "backend\\database\\safe-account-recovery-migration.sql",
+    "backend\\database\\secureQueries.js",
+    "backend\\eslint.config.js",
+    "backend\\fix-business-types.js",
+    "backend\\fix-constraint.js",
+    "backend\\get-new-token.js",
+    "backend\\get-token.js",
+    "backend\\list-tokens.js",
+    "backend\\middleware\\configValidation.js",
+    "backend\\middleware\\performance.js",
+    "backend\\middleware\\sanitization.js",
+    "backend\\prisma\\schema.prisma",
+    "backend\\reports\\eslint-report-2025-09-02T02-40-58-929Z.html",
+    "backend\\routes\\accountRecovery.js",
+    "backend\\routes\\diagnostics.js",
+    "backend\\routes\\health.js",
+    "backend\\routes\\onboarding-v2.js",
+    "backend\\routes\\performance.js",
+    "backend\\routes\\workflow-generation-demo.js",
+    "backend\\schemas\\accountRecovery.js",
+    "backend\\schemas\\common.js",
+    "backend\\schemas\\validation-schemas.js",
+    "backend\\schemas\\workflow.js",
+    "backend\\scripts\\apply-migration-direct.js",
+    "backend\\scripts\\complete-import-cleanup.js",
+    "backend\\scripts\\performance-audit.js",
+    "backend\\scripts\\run-email-provider-migration.js",
+    "backend\\scripts\\run-migration.js",
+    "backend\\scripts\\run-performance-migration.js",
+    "backend\\scripts\\security-audit.js",
+    "backend\\services\\adaptiveThresholdService.js",
+    "backend\\services\\analyticsService.js",
+    "backend\\services\\businessAlertingEngine.js",
+    "backend\\services\\cacheService-fixed.js",
+    "backend\\services\\gmailService.js",
+    "backend\\services\\industryTemplateManager.js",
+    "backend\\services\\performanceService.js",
+    "backend\\services\\productionMonitoringService.js",
+    "backend\\services\\queryOptimizationService.js",
+    "backend\\services\\stakeholderReportingService.js",
+    "backend\\templates\\account-recovery-email.html",
+    "backend\\utils\\activityLogger.js",
+    "backend\\utils\\asyncWrapper.js",
+    "backend\\utils\\ContainerMemoryMonitor.js",
+    "backend\\utils\\ErrorMonitor.js",
+    "backend\\utils\\ErrorResponse.js",
+    "backend\\utils\\pagination.js",
+    "backend\\utils\\PerformanceMonitor.js",
+    "backend\\utils\\ResponseFormatter.js",
+    "backend\\utils\\tokenGenerator.js",
+    "backend\\utils\\validateRequest.js",
+    "business-logic-screenshots\\01-Complete-User-Registration-Journey.png",
+    "business-logic-screenshots\\02-Business-Type-Selection-Flow.png",
+    "business-logic-screenshots\\03-Gmail-Integration-Setup.png",
+    "business-logic-screenshots\\04-Workflow-Template-Selection.png",
+    "business-logic-screenshots\\05-Dashboard-Analytics-Display.png",
+    "business-logic-screenshots\\06-Email-Campaign-Management.png",
+    "business-logic-screenshots\\07-Customer-Segmentation.png",
+    "business-logic-screenshots\\08-Automation-Rules-Setup.png",
+    "check-deployment-status.js",
+    "check-existing-users.js",
+    "check-migration-status.ps1",
+    "cleanup-dead-code.js",
+    "clear-rate-limits.js",
+    "comprehensive-bug-fix-and-validation.js",
+    "comprehensive-bug-fix.js",
+    "comprehensive-diagnosis.js",
+    "comprehensive-diagnostic.js",
+    "create-verified-user.js",
+    "cypress\\e2e\\features\\api\\api-integration.feature",
+    "cypress\\e2e\\features\\integration\\complete-user-journey.feature",
+    "cypress\\e2e\\features\\smoke\\critical-functionality.feature",
+    "cypress\\e2e\\step_definitions\\api-steps.js",
+    "cypress\\e2e\\step_definitions\\common-steps.js",
+    "cypress\\e2e\\step_definitions\\dashboard-steps.js",
+    "cypress\\e2e\\step_definitions\\oauth-steps.js",
+    "dashboard-fix-final.png",
+    "dashboard-fix-initial.png",
+    "database\\add-missing-components.js",
+    "database\\check-schema.js",
+    "database\\migrations\\simplified-migration.sql",
+    "database-migration-billing-system.sql",
+    "database-migration-email-provider-fixed.sql",
+    "database-migration-onboarding.sql",
+    "database-migration-password-reset-rls.sql",
+    "database-migration-rollback.sql",
+    "demo-workflow-generation.js",
+    "deploy-to-coolify.js",
+    "deployment-orchestration.js",
+    "diagnose-deployment-errors.js",
+    "diagnose-deployment-issues.js",
+    "diagnose-deployment.js",
+    "diagnose-production-issues.js",
+    "diagnose-supabase-connectivity.js",
+    "e2e-dashboard-access-1757612539383.png",
+    "e2e-login-filled-1757612532105.png",
+    "e2e-login-page-1757612529986.png",
+    "e2e-login-submitted-1757612538208.png",
+    "e2e-registration-filled-1757612519580.png",
+    "e2e-registration-page-1757612515406.png",
+    "e2e-registration-submitted-1757612525709.png",
+    "e2e-session-refresh-1757612540565.png",
+    "e2e-validation-errors-1757612544705.png",
+    "final-502-diagnosis.js",
+    "final-diagnosis.js",
+    "fix-403-errors.js",
+    "fix-app-password.js",
+    "fix-authentication-issues.js",
+    "fix-business-types-and-password-reset.js",
+    "fix-database-schema.js",
+    "fix-email-service.js",
+    "fix-frontend-integration.js",
+    "fix-logger-imports.js",
+    "fix-missing-api-endpoints.js",
+    "fix-remaining-endpoints.js",
+    "fix-sender-identity.js",
+    "fix-supabase-connection.js",
+    "fix-supabase-security-existing-tables.sql",
+    "fix-user-email.js",
+    "focused-issue-diagnosis.js",
+    "frontend\\public\\.htaccess",
+    "frontend\\public\\logo512.png",
+    "frontend\\public\\web.config",
+    "frontend\\src\\components\\AnalyticsDashboard.js",
+    "frontend\\src\\components\\APITestDashboard.js",
+    "frontend\\src\\components\\ComponentShowcase.js",
+    "frontend\\src\\components\\Dashboard.js",
+    "frontend\\src\\components\\DatabaseTest.js",
+    "frontend\\src\\components\\EmailVerification.js",
+    "frontend\\src\\components\\ErrorBoundary.js",
+    "frontend\\src\\components\\FloWorxColorShowcase.js",
+    "frontend\\src\\components\\LoadingSpinner.jsx",
+    "frontend\\src\\components\\NotFoundPage.js",
+    "frontend\\src\\components\\onboarding\\BusinessCategoriesStep.js",
+    "frontend\\src\\components\\onboarding\\CompletionStep.js",
+    "frontend\\src\\components\\onboarding\\LabelMappingStep.js",
+    "frontend\\src\\components\\onboarding\\OnboardingStep.css",
+    "frontend\\src\\components\\onboarding\\ReviewStep.js",
+    "frontend\\src\\components\\onboarding\\TeamSetupStep.js",
+    "frontend\\src\\components\\onboarding\\WelcomeStep.js",
+    "frontend\\src\\components\\OnboardingWizard.css",
+    "frontend\\src\\components\\OnboardingWizard.js",
+    "frontend\\src\\components\\recovery\\AccountRecoveryDashboard.js",
+    "frontend\\src\\components\\recovery\\ChangeEmailStep.js",
+    "frontend\\src\\components\\recovery\\EmergencyAccessStep.js",
+    "frontend\\src\\components\\recovery\\ResetPasswordStep.js",
+    "frontend\\src\\components\\recovery\\SelectActionsStep.js",
+    "frontend\\src\\components\\Settings.js",
+    "frontend\\src\\components\\SuccessModal.jsx",
+    "frontend\\src\\components\\ui\\Alert.js",
+    "frontend\\src\\components\\ui\\Badge.js",
+    "frontend\\src\\components\\ui\\Button.js",
+    "frontend\\src\\components\\ui\\Card.js",
+    "frontend\\src\\components\\ui\\Input.js",
+    "frontend\\src\\components\\ui\\Link.js",
+    "frontend\\src\\components\\ui\\Logo.js",
+    "frontend\\src\\components\\ui\\ProgressBar.js",
+    "frontend\\src\\components\\ui\\ProgressIndicator.js",
+    "frontend\\src\\components\\ui\\ProtectedButton.js",
+    "frontend\\src\\components\\ui\\Toast.js",
+    "frontend\\src\\components\\ui\\ValidatedInput.js",
+    "frontend\\src\\components\\UserManagement.js",
+    "frontend\\src\\components\\WorkflowDeployment.js",
+    "frontend\\src\\contexts\\ErrorContext.js",
+    "frontend\\src\\contexts\\ToastContext.js",
+    "frontend\\src\\Floworx logo\\Label Logo.png",
+    "frontend\\src\\Floworx logo\\lable on transperent with word Floworx.png",
+    "frontend\\src\\Floworx logo\\transpoerent logo.png",
+    "frontend\\src\\Floworx logo\\white on a blue.png",
+    "frontend\\src\\hooks\\useAnalytics.js",
+    "frontend\\src\\hooks\\useFormPersistence.js",
+    "frontend\\src\\hooks\\useFormValidation.js",
+    "frontend\\src\\services\\ValidationService.js",
+    "frontend\\src\\utils\\errorHandling.js",
+    "frontend\\src\\utils\\validationRules.js",
+    "frontend-integration-example.jsx",
+    "get-supabase-credentials.js",
+    "investigate-remaining-issues.js",
+    "jest.integration.config.js",
+    "jest.simple.config.js",
+    "keydb-connection-fix.js",
+    "list-all-users.js",
+    "modules\\login\\LoginModuleStatus.js",
+    "modules\\login\\UserManager.js",
+    "monitor-deployment.ps1",
+    "onboarding-flow-step1.png",
+    "playwright-home-page-1757617580649.png",
+    "playwright-home-page-1757617964323.png",
+    "playwright-home-page-1757619784392.png",
+    "playwright-login-filled-1757617582809.png",
+    "playwright-login-filled-1757617966525.png",
+    "playwright-login-filled-1757619786521.png",
+    "playwright-login-page-1757617581335.png",
+    "playwright-login-page-1757617582711.png",
+    "playwright-login-page-1757617965005.png",
+    "playwright-login-page-1757617966411.png",
+    "playwright-login-page-1757619785065.png",
+    "playwright-login-page-1757619786419.png",
+    "playwright-login-submitted-1757617586303.png",
+    "playwright-login-submitted-1757617970017.png",
+    "playwright-login-submitted-1757619790023.png",
+    "playwright-register-page-1757617582107.png",
+    "playwright-register-page-1757617586884.png",
+    "playwright-register-page-1757617965783.png",
+    "playwright-register-page-1757617970608.png",
+    "playwright-register-page-1757619785822.png",
+    "playwright-register-page-1757619790607.png",
+    "playwright.config.production.js",
+    "playwright.production.config.js",
+    "production-dashboard-initial.png",
+    "production-deployment-complete.js",
+    "production-oauth-callback-result.png",
+    "push-to-85-percent.js",
+    "python-3.12.2-amd64.exe",
+    "run-uat-validation.ps1",
+    "scripts\\align-structure.js",
+    "scripts\\apply-performance-indexes.js",
+    "scripts\\check-user-in-db.js",
+    "scripts\\cleanup-codebase.js",
+    "scripts\\convert-mocha-to-jest.js",
+    "scripts\\coolify-env-check.sh",
+    "scripts\\deploy-blue-green.sh",
+    "scripts\\deploy-to-coolify.js",
+    "scripts\\diagnose-registration-error.js",
+    "scripts\\eslint-auto-fix.js",
+    "scripts\\execute-migration-direct.js",
+    "scripts\\final-deployment-verification.js",
+    "scripts\\fix-eslint-errors.js",
+    "scripts\\fix-frontend-issues.js",
+    "scripts\\fix-oauth-production.js",
+    "scripts\\fix-pool-queries.js",
+    "scripts\\fix-rls-configuration.js",
+    "scripts\\fix-rls-policies.js",
+    "scripts\\generate-docs.js",
+    "scripts\\implement-clean-oauth-urls.ps1",
+    "scripts\\implement-clean-oauth-urls.sh",
+    "scripts\\open-google-console.js",
+    "scripts\\optimize-memory-usage-fixed.js",
+    "scripts\\optimize-memory-usage.js",
+    "scripts\\organize-project.js",
+    "scripts\\prepare-production-env.js",
+    "scripts\\quick-start-production.js",
+    "scripts\\remove-debug-environment.js",
+    "scripts\\remove-debug-statements.js",
+    "scripts\\rollback.sh",
+    "scripts\\run-database-migration.js",
+    "scripts\\setup-production-oauth-urls.js",
+    "scripts\\switch-traffic.sh",
+    "scripts\\troubleshoot-coolify.js",
+    "scripts\\verify-google-oauth.js",
+    "scripts\\verify-rls-working.js",
+    "scripts\\verify-supabase-deployment.js",
+    "setup-database.js",
+    "setup-sendgrid-email.js",
+    "shared\\utils\\array.js",
+    "shared\\utils\\constants.js",
+    "shared\\utils\\dateTime.js",
+    "shared\\utils\\formatting.js",
+    "shared\\utils\\object.js",
+    "shared\\utils\\string.js",
+    "shared\\utils\\validation\\rules.js",
+    "simple-supabase-validator.ps1",
+    "templates\\standardized-component-template.jsx",
+    "templates\\standardized-route-template.js",
+    "verify-api-fixes.js",
+    "verify-nixpacks-compatibility.js"
+  ],
+  "unusedImports": [
+    {
+      "file": "basic-workflow-page.js",
+      "imports": [
+        {
+          "line": 4,
+          "imports": [
+            "React"
+          ],
+          "fullLine": "import React from 'react';"
+        }
+      ]
+    },
+    {
+      "file": "cypress\\e2e\\step_definitions\\dashboard-steps.js",
+      "imports": [
+        {
+          "line": 1,
+          "imports": [
+            "Given"
+          ],
+          "fullLine": "import { Given, When, Then } from '@badeball/cypress-cucumber-preprocessor';\r"
+        }
+      ]
+    },
+    {
+      "file": "final-85-percent-push.js",
+      "imports": [
+        {
+          "line": 334,
+          "imports": [
+            "React"
+          ],
+          "fullLine": "import React from 'react';"
+        }
+      ]
+    },
+    {
+      "file": "frontend\\src\\App.js",
+      "imports": [
+        {
+          "line": 2,
+          "imports": [
+            "BrowserRouter as Router"
+          ],
+          "fullLine": "import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom';\r"
+        }
+      ]
+    },
+    {
+      "file": "tests\\frontend\\BusinessTypeStep.test.js",
+      "imports": [
+        {
+          "line": 1,
+          "imports": [
+            "React"
+          ],
+          "fullLine": "import React from 'react';"
+        }
+      ]
+    },
+    {
+      "file": "tests\\frontend\\Login.test.js",
+      "imports": [
+        {
+          "line": 1,
+          "imports": [
+            "React"
+          ],
+          "fullLine": "import React from 'react';\r"
+        }
+      ]
+    },
+    {
+      "file": "tests\\frontend\\PasswordReset.test.js",
+      "imports": [
+        {
+          "line": 1,
+          "imports": [
+            "React"
+          ],
+          "fullLine": "import React from 'react';"
+        },
+        {
+          "line": 2,
+          "imports": [
+            "fireEvent"
+          ],
+          "fullLine": "import { render, screen, fireEvent, waitFor } from '@testing-library/react';"
+        }
+      ]
+    },
+    {
+      "file": "tests\\frontend\\Register.test.js",
+      "imports": [
+        {
+          "line": 1,
+          "imports": [
+            "React"
+          ],
+          "fullLine": "import React from 'react';\r"
+        }
+      ]
+    }
+  ],
+  "commentedCode": [
+    {
+      "file": "backend\\database\\supabase-rest-client.js",
+      "blocks": [
+        {
+          "startLine": 42,
+          "endLine": 44,
+          "lines": [
+            "  // =====================================================",
+            "  // ENCRYPTION UTILITIES (same as original)",
+            "  // ====================================================="
+          ]
+        },
+        {
+          "startLine": 109,
+          "endLine": 111,
+          "lines": [
+            "  // =====================================================",
+            "  // CREDENTIALS MANAGEMENT (converted to REST API)",
+            "  // ====================================================="
+          ]
+        },
+        {
+          "startLine": 178,
+          "endLine": 180,
+          "lines": [
+            "  // =====================================================",
+            "  // BUSINESS CONFIGURATION MANAGEMENT (converted to REST API)",
+            "  // ====================================================="
+          ]
+        },
+        {
+          "startLine": 240,
+          "endLine": 242,
+          "lines": [
+            "  // =====================================================",
+            "  // WORKFLOW DEPLOYMENT TRACKING (converted to REST API)",
+            "  // ====================================================="
+          ]
+        },
+        {
+          "startLine": 304,
+          "endLine": 306,
+          "lines": [
+            "  // =====================================================",
+            "  // ONBOARDING PROGRESS TRACKING (converted to REST API)",
+            "  // ====================================================="
+          ]
+        },
+        {
+          "startLine": 425,
+          "endLine": 427,
+          "lines": [
+            "  // =====================================================",
+            "  // ANALYTICS TRACKING (converted to REST API)",
+            "  // ====================================================="
+          ]
+        },
+        {
+          "startLine": 454,
+          "endLine": 456,
+          "lines": [
+            "  // =====================================================",
+            "  // USER MANAGEMENT (converted to REST API)",
+            "  // ====================================================="
+          ]
+        },
+        {
+          "startLine": 798,
+          "endLine": 800,
+          "lines": [
+            "  // =====================================================",
+            "  // CONNECTION MANAGEMENT (converted to REST API)",
+            "  // ====================================================="
+          ]
+        }
+      ]
+    },
+    {
+      "file": "backend\\middleware\\auth.js",
+      "blocks": [
+        {
+          "startLine": 57,
+          "endLine": 59,
+          "lines": [
+            " * @param {Request} req - Express request object\r",
+            " * @param {Response} res - Express response object\r",
+            " * @param {NextFunction} next - Express next function\r"
+          ]
+        },
+        {
+          "startLine": 142,
+          "endLine": 145,
+          "lines": [
+            " * Middleware for optional authentication (doesn't fail if no token)\r",
+            " * @param {Request} req - Express request object\r",
+            " * @param {Response} res - Express response object\r",
+            " * @param {NextFunction} next - Express next function\r"
+          ]
+        }
+      ]
+    },
+    {
+      "file": "backend\\middleware\\index.js",
+      "blocks": [
+        {
+          "startLine": 101,
+          "endLine": 104,
+          "lines": [
+            "   * @param {Object} options - Middleware options\r",
+            "   * @param {boolean} options.requireAuth - Whether authentication is required\r",
+            "   * @param {string[]} options.roles - Required user roles\r",
+            "   * @param {Object} options.validation - Validation schema\r"
+          ]
+        }
+      ]
+    },
+    {
+      "file": "backend\\routes\\performance.js",
+      "blocks": [
+        {
+          "startLine": 41,
+          "endLine": 44,
+          "lines": [
+            "    // Check if user is admin (implement your admin check logic)\r",
+            "    // if (!req.user.isAdmin) {\r",
+            "    //   return res.status(403).json({ error: 'Admin access required' });\r",
+            "    // }\r"
+          ]
+        },
+        {
+          "startLine": 136,
+          "endLine": 138,
+          "lines": [
+            "    // if (!req.user.isAdmin) {\r",
+            "    //   return res.status(403).json({ error: 'Admin access required' });\r",
+            "    // }\r"
+          ]
+        },
+        {
+          "startLine": 181,
+          "endLine": 183,
+          "lines": [
+            "    // if (!req.user.isAdmin) {\r",
+            "    //   return res.status(403).json({ error: 'Admin access required' });\r",
+            "    // }\r"
+          ]
+        },
+        {
+          "startLine": 285,
+          "endLine": 287,
+          "lines": [
+            "    // if (!req.user.isAdmin) {\r",
+            "    //   return res.status(403).json({ error: 'Admin access required' });\r",
+            "    // }\r"
+          ]
+        }
+      ]
+    },
+    {
+      "file": "backend\\services\\accountRecoveryService.js",
+      "blocks": [
+        {
+          "startLine": 39,
+          "endLine": 42,
+          "lines": [
+            "   * @param {string} userId - User ID\r",
+            "   * @param {string} serviceName - Service name (google, etc.)\r",
+            "   * @param {Object} credentialData - Credential metadata to backup\r",
+            "   * @returns {Object} Backup result\r"
+          ]
+        },
+        {
+          "startLine": 78,
+          "endLine": 83,
+          "lines": [
+            "   * @param {string} email - User email\r",
+            "   * @param {string} recoveryType - Type of recovery (email_change, account_recovery, emergency_access)\r",
+            "   * @param {Object} recoveryData - Additional recovery data\r",
+            "   * @param {string} ipAddress - Client IP address\r",
+            "   * @param {string} userAgent - Client user agent\r",
+            "   * @returns {Object} Recovery result\r"
+          ]
+        },
+        {
+          "startLine": 196,
+          "endLine": 200,
+          "lines": [
+            "   * @param {string} token - Recovery token\r",
+            "   * @param {Object} recoveryActions - Actions to perform during recovery\r",
+            "   * @param {string} ipAddress - Client IP address\r",
+            "   * @param {string} userAgent - Client user agent\r",
+            "   * @returns {Object} Recovery result\r"
+          ]
+        }
+      ]
+    },
+    {
+      "file": "backend\\services\\analyticsService.js",
+      "blocks": [
+        {
+          "startLine": 23,
+          "endLine": 26,
+          "lines": [
+            "   * @param {string} userId - User ID\r",
+            "   * @param {string} eventType - Type of event\r",
+            "   * @param {Object} eventData - Event data\r",
+            "   * @param {Object} metadata - Additional metadata\r"
+          ]
+        },
+        {
+          "startLine": 63,
+          "endLine": 67,
+          "lines": [
+            "   * @param {string} userId - User ID\r",
+            "   * @param {string} step - Step name\r",
+            "   * @param {number} duration - Time spent on step (ms)\r",
+            "   * @param {Object} stepData - Step-specific data\r",
+            "   * @param {Object} metadata - Request metadata\r"
+          ]
+        },
+        {
+          "startLine": 85,
+          "endLine": 89,
+          "lines": [
+            "   * @param {string} userId - User ID\r",
+            "   * @param {string} step - Step name\r",
+            "   * @param {string} error - Error message\r",
+            "   * @param {number} duration - Time spent before failure (ms)\r",
+            "   * @param {Object} metadata - Request metadata\r"
+          ]
+        },
+        {
+          "startLine": 106,
+          "endLine": 110,
+          "lines": [
+            "   * Track user drop-off (abandonment)\r",
+            "   * @param {string} userId - User ID\r",
+            "   * @param {string} step - Step where user dropped off\r",
+            "   * @param {number} timeSpent - Total time spent in onboarding (ms)\r",
+            "   * @param {Object} metadata - Request metadata\r"
+          ]
+        }
+      ]
+    },
+    {
+      "file": "backend\\services\\emailService.js",
+      "blocks": [
+        {
+          "startLine": 67,
+          "endLine": 69,
+          "lines": [
+            "   * @param {string} templateName - Template file name\r",
+            "   * @param {Object} replacements - Key-value pairs for replacements\r",
+            "   * @returns {string} Processed template HTML\r"
+          ]
+        },
+        {
+          "startLine": 115,
+          "endLine": 117,
+          "lines": [
+            "   * @param {string} email - User email\r",
+            "   * @param {string} firstName - User first name\r",
+            "   * @param {string} token - Verification token\r"
+          ]
+        },
+        {
+          "startLine": 151,
+          "endLine": 153,
+          "lines": [
+            "   * @param {string} email - User email\r",
+            "   * @param {string} resetUrl - Password reset URL with token\r",
+            "   * @returns {Promise<Object>} Result object\r"
+          ]
+        },
+        {
+          "startLine": 216,
+          "endLine": 218,
+          "lines": [
+            "   * @param {string} email - User email\r",
+            "   * @param {string} firstName - User first name\r",
+            "   * @param {string} lastStep - Last completed step\r"
+          ]
+        },
+        {
+          "startLine": 292,
+          "endLine": 295,
+          "lines": [
+            "   * @param {string} userId - User ID\r",
+            "   * @param {string} token - Verification token\r",
+            "   * @param {string} email - User email\r",
+            "   * @param {string} firstName - User first name\r"
+          ]
+        },
+        {
+          "startLine": 383,
+          "endLine": 386,
+          "lines": [
+            "   * @param {string} firstName - User's first name\r",
+            "   * @param {string} resetUrl - Password reset URL\r",
+            "   * @param {number} expiryMinutes - Token expiry time in minutes\r",
+            "   * @returns {string} HTML email template\r"
+          ]
+        }
+      ]
+    },
+    {
+      "file": "backend\\services\\encryptionService.js",
+      "blocks": [
+        {
+          "startLine": 194,
+          "endLine": 196,
+          "lines": [
+            "   * @param {string} data - Data to hash\r",
+            "   * @param {string} salt - Salt for hashing (optional)\r",
+            "   * @returns {Object} Hash result with salt and hash\r"
+          ]
+        },
+        {
+          "startLine": 214,
+          "endLine": 216,
+          "lines": [
+            "   * @param {string} data - Original data\r",
+            "   * @param {string} combined - Combined salt:hash string\r",
+            "   * @returns {boolean} Verification result\r"
+          ]
+        }
+      ]
+    },
+    {
+      "file": "backend\\services\\gmailService.js",
+      "blocks": [
+        {
+          "startLine": 90,
+          "endLine": 92,
+          "lines": [
+            "   * @param {string} userId - User ID\r",
+            "   * @param {string} labelName - Name of the label to create\r",
+            "   * @returns {Object} Created label information\r"
+          ]
+        },
+        {
+          "startLine": 120,
+          "endLine": 122,
+          "lines": [
+            "   * @param {string} userId - User ID\r",
+            "   * @param {number} maxResults - Maximum number of emails to fetch\r",
+            "   * @returns {Array} Array of email messages\r"
+          ]
+        },
+        {
+          "startLine": 174,
+          "endLine": 176,
+          "lines": [
+            "   * @param {string} userId - User ID\r",
+            "   * @param {string} messageId - Gmail message ID\r",
+            "   * @param {string} labelId - Gmail label ID to apply\r"
+          ]
+        },
+        {
+          "startLine": 199,
+          "endLine": 203,
+          "lines": [
+            "   * @param {string} userId - User ID\r",
+            "   * @param {string} threadId - Gmail thread ID\r",
+            "   * @param {string} to - Recipient email\r",
+            "   * @param {string} subject - Email subject\r",
+            "   * @param {string} body - Email body\r"
+          ]
+        }
+      ]
+    },
+    {
+      "file": "backend\\services\\intelligentLabelMatcher.js",
+      "blocks": [
+        {
+          "startLine": 431,
+          "endLine": 433,
+          "lines": [
+            "   * @param {string} labelName - Gmail label name\r",
+            "   * @param {RegExp} pattern - Pattern to match against\r",
+            "   * @returns {number} Confidence score 0-1\r"
+          ]
+        },
+        {
+          "startLine": 473,
+          "endLine": 476,
+          "lines": [
+            "   * @param {Array} matches - Matched labels\r",
+            "   * @param {number} totalLabels - Total number of labels\r",
+            "   * @param {number} missingLabels - Number of missing critical labels\r",
+            "   * @returns {number} Readiness score 0-1\r"
+          ]
+        },
+        {
+          "startLine": 698,
+          "endLine": 700,
+          "lines": [
+            "   * @param {string} businessType - Business type\r",
+            "   * @param {Object} analysisResult - Label analysis result\r",
+            "   * @returns {Array} Business-specific form fields\r"
+          ]
+        },
+        {
+          "startLine": 790,
+          "endLine": 792,
+          "lines": [
+            "   * @param {Object} analysisResult - Label analysis result\r",
+            "   * @param {string} businessType - Business type\r",
+            "   * @returns {Array} Missing categories\r"
+          ]
+        }
+      ]
+    },
+    {
+      "file": "backend\\services\\n8nService.js",
+      "blocks": [
+        {
+          "startLine": 72,
+          "endLine": 74,
+          "lines": [
+            "   * @param {string} userId - User ID\r",
+            "   * @param {Object} config - User's onboarding configuration\r",
+            "   * @returns {Object} Created workflow information\r"
+          ]
+        },
+        {
+          "startLine": 149,
+          "endLine": 151,
+          "lines": [
+            "   * @param {string} workflowId - n8n workflow ID\r",
+            "   * @param {Object} testData - Test data to send\r",
+            "   * @returns {Object} Test execution result\r"
+          ]
+        },
+        {
+          "startLine": 339,
+          "endLine": 342,
+          "lines": [
+            "   * @param {Object} template - Base template\r",
+            "   * @param {string} userId - User ID\r",
+            "   * @param {Object} config - User configuration\r",
+            "   * @returns {Object} Customized workflow\r"
+          ]
+        },
+        {
+          "startLine": 436,
+          "endLine": 438,
+          "lines": [
+            "   * @param {string} userId - User ID\r",
+            "   * @param {Object} workflowData - n8n workflow data\r",
+            "   * @param {Object} config - User configuration\r"
+          ]
+        }
+      ]
+    },
+    {
+      "file": "backend\\services\\n8nWorkflowGenerator.js",
+      "blocks": [
+        {
+          "startLine": 117,
+          "endLine": 122,
+          "lines": [
+            "   * @param {Object} businessData - User's business information\r",
+            "   * @param {Object} labelMappings - Gmail label mappings\r",
+            "   * @param {Array} customManagers - Custom manager names (up to 5)\r",
+            "   * @param {Array} customSuppliers - Custom supplier names (up to 10)\r",
+            "   * @param {string} phoneSystem - Phone system type for support\r",
+            "   * @returns {Object} Personalized n8n workflow JSON\r"
+          ]
+        }
+      ]
+    },
+    {
+      "file": "backend\\services\\OAuthService.js",
+      "blocks": [
+        {
+          "startLine": 51,
+          "endLine": 53,
+          "lines": [
+            "   * @param {string} provider - OAuth provider (google)",
+            "   * @param {string} userId - User ID for state parameter",
+            "   * @returns {string} Authorization URL"
+          ]
+        },
+        {
+          "startLine": 77,
+          "endLine": 80,
+          "lines": [
+            "   * @param {string} provider - OAuth provider",
+            "   * @param {string} code - Authorization code",
+            "   * @param {string} userId - User ID from state parameter",
+            "   * @returns {Object} Token exchange result"
+          ]
+        },
+        {
+          "startLine": 130,
+          "endLine": 132,
+          "lines": [
+            "   * @param {string} userId - User ID",
+            "   * @param {string} provider - OAuth provider",
+            "   * @param {Object} tokens - Token object from OAuth provider"
+          ]
+        },
+        {
+          "startLine": 157,
+          "endLine": 159,
+          "lines": [
+            "   * @param {string} userId - User ID",
+            "   * @param {string} provider - OAuth provider",
+            "   * @returns {Object|null} Decrypted tokens or null if not found"
+          ]
+        },
+        {
+          "startLine": 182,
+          "endLine": 184,
+          "lines": [
+            "   * @param {string} userId - User ID",
+            "   * @param {string} provider - OAuth provider",
+            "   * @returns {Object} Refresh result"
+          ]
+        },
+        {
+          "startLine": 231,
+          "endLine": 233,
+          "lines": [
+            "   * Check if access token needs refresh (expires within 5 minutes)",
+            "   * @param {Object} tokens - Token object",
+            "   * @returns {boolean} True if token needs refresh"
+          ]
+        },
+        {
+          "startLine": 249,
+          "endLine": 251,
+          "lines": [
+            "   * @param {string} userId - User ID",
+            "   * @param {string} provider - OAuth provider",
+            "   * @returns {Object} Valid token or error"
+          ]
+        },
+        {
+          "startLine": 341,
+          "endLine": 343,
+          "lines": [
+            "   * @param {string} userId - User ID",
+            "   * @param {string} provider - OAuth provider",
+            "   * @returns {boolean} True if user has active connection"
+          ]
+        },
+        {
+          "startLine": 361,
+          "endLine": 363,
+          "lines": [
+            "   * @param {string} userId - User ID",
+            "   * @param {string} provider - OAuth provider",
+            "   * @returns {Object} Revocation result"
+          ]
+        }
+      ]
+    },
+    {
+      "file": "backend\\services\\onboardingSessionService.js",
+      "blocks": [
+        {
+          "startLine": 15,
+          "endLine": 17,
+          "lines": [
+            "   * @param {string} userId - User ID\r",
+            "   * @param {string} currentStep - Current onboarding step\r",
+            "   * @returns {Object} Session information\r"
+          ]
+        },
+        {
+          "startLine": 71,
+          "endLine": 74,
+          "lines": [
+            "   * @param {string} userId - User ID\r",
+            "   * @param {string} step - Completed step\r",
+            "   * @param {Object} data - Step data\r",
+            "   * @param {string} transactionId - Optional transaction ID\r"
+          ]
+        },
+        {
+          "startLine": 126,
+          "endLine": 129,
+          "lines": [
+            "   * @param {string} userId - User ID\r",
+            "   * @param {string} step - Failed step\r",
+            "   * @param {Error} error - Error that occurred\r",
+            "   * @param {string} transactionId - Transaction ID if applicable\r"
+          ]
+        },
+        {
+          "startLine": 178,
+          "endLine": 180,
+          "lines": [
+            "   * @param {string} userId - User ID\r",
+            "   * @param {string} step - Step to retry\r",
+            "   * @param {number} failureId - Failure ID\r"
+          ]
+        }
+      ]
+    },
+    {
+      "file": "backend\\services\\passwordResetService.js",
+      "blocks": [
+        {
+          "startLine": 21,
+          "endLine": 24,
+          "lines": [
+            "   * @param {string} email - User email address\r",
+            "   * @param {string} ipAddress - Client IP address\r",
+            "   * @param {string} userAgent - Client user agent\r",
+            "   * @returns {Object} Result object\r"
+          ]
+        },
+        {
+          "startLine": 149,
+          "endLine": 153,
+          "lines": [
+            "   * @param {string} token - Reset token\r",
+            "   * @param {string} newPassword - New password\r",
+            "   * @param {string} ipAddress - Client IP address\r",
+            "   * @param {string} userAgent - Client user agent\r",
+            "   * @returns {Object} Reset result\r"
+          ]
+        }
+      ]
+    },
+    {
+      "file": "backend\\services\\transactionService.js",
+      "blocks": [
+        {
+          "startLine": 186,
+          "endLine": 188,
+          "lines": [
+            "   * @param {string} transactionId - Transaction ID\r",
+            "   * @param {Array} operations - Array of operations to execute\r",
+            "   * @returns {Object} Execution result\r"
+          ]
+        }
+      ]
+    },
+    {
+      "file": "backend\\utils\\activityLogger.js",
+      "blocks": [
+        {
+          "startLine": 11,
+          "endLine": 15,
+          "lines": [
+            " * @param {string} userId - User ID",
+            " * @param {string} activityType - Type of activity",
+            " * @param {Object} details - Activity details",
+            " * @param {Object} req - Express request object or object with IP",
+            " * @returns {Promise<boolean>} Success status"
+          ]
+        },
+        {
+          "startLine": 63,
+          "endLine": 66,
+          "lines": [
+            " * @param {string} userId - User ID",
+            " * @param {number} limit - Maximum number of records to return",
+            " * @param {number} offset - Number of records to skip",
+            " * @returns {Promise<Object>} Result object with activity data"
+          ]
+        },
+        {
+          "startLine": 103,
+          "endLine": 107,
+          "lines": [
+            " * @param {string} userId - User ID",
+            " * @param {string} event - Authentication event type",
+            " * @param {Object} details - Event details",
+            " * @param {Object} req - Express request object",
+            " * @returns {Promise<boolean>} Success status"
+          ]
+        },
+        {
+          "startLine": 133,
+          "endLine": 137,
+          "lines": [
+            " * @param {string} userId - User ID (optional for some events)",
+            " * @param {string} event - Security event type",
+            " * @param {Object} details - Event details",
+            " * @param {Object} req - Express request object",
+            " * @returns {Promise<boolean>} Success status"
+          ]
+        },
+        {
+          "startLine": 169,
+          "endLine": 173,
+          "lines": [
+            " * @param {string} userId - User ID",
+            " * @param {string} event - Business event type",
+            " * @param {Object} details - Event details",
+            " * @param {Object} req - Express request object",
+            " * @returns {Promise<boolean>} Success status"
+          ]
+        }
+      ]
+    },
+    {
+      "file": "backend\\utils\\asyncWrapper.js",
+      "blocks": [
+        {
+          "startLine": 7,
+          "endLine": 9,
+          "lines": [
+            " * Wraps an async function to catch errors and pass them to next()\r",
+            " * @param {Function} fn - The async function to wrap\r",
+            " * @returns {Function} - Express middleware function\r"
+          ]
+        },
+        {
+          "startLine": 29,
+          "endLine": 36,
+          "lines": [
+            " * @param {Object} options - Configuration options\r",
+            " * @param {Object} options.validation - Joi validation schemas\r",
+            " * @param {Object} options.validation.body - Body validation schema\r",
+            " * @param {Object} options.validation.params - Params validation schema\r",
+            " * @param {Object} options.validation.query - Query validation schema\r",
+            " * @param {Function} options.handler - The async route handler\r",
+            " * @param {Array} options.middleware - Additional middleware to run before handler\r",
+            " * @returns {Array} - Array of middleware functions\r"
+          ]
+        },
+        {
+          "startLine": 98,
+          "endLine": 102,
+          "lines": [
+            " * @param {Function} handler - The async route handler\r",
+            " * @param {Object} options - Additional options\r",
+            " * @param {boolean} options.logErrors - Whether to log errors (default: true)\r",
+            " * @param {Function} options.onError - Custom error handler\r",
+            " * @returns {Function} - Wrapped Express middleware\r"
+          ]
+        },
+        {
+          "startLine": 141,
+          "endLine": 143,
+          "lines": [
+            " * @param {Object} service - Service object with methods to wrap\r",
+            " * @param {Array} methods - Array of method names to wrap (optional, wraps all if not provided)\r",
+            " * @returns {Object} - Service object with wrapped methods\r"
+          ]
+        }
+      ]
+    },
+    {
+      "file": "backend\\utils\\ErrorResponse.js",
+      "blocks": [
+        {
+          "startLine": 77,
+          "endLine": 83,
+          "lines": [
+            "   * @param {string} code - Error code from ERROR_CODES\r",
+            "   * @param {string} message - Error message\r",
+            "   * @param {Object} options - Additional options\r",
+            "   * @param {Object} options.details - Additional error details\r",
+            "   * @param {string} options.requestId - Request ID for tracking\r",
+            "   * @param {number} options.statusCode - Override status code\r",
+            "   * @param {Object} options.context - Additional context for logging\r"
+          ]
+        }
+      ]
+    },
+    {
+      "file": "backend\\utils\\validateRequest.js",
+      "blocks": [
+        {
+          "startLine": 12,
+          "endLine": 21,
+          "lines": [
+            " * @param {Object} schemas - Validation schemas\r",
+            " * @param {Object} schemas.body - Body validation schema\r",
+            " * @param {Object} schemas.params - Params validation schema\r",
+            " * @param {Object} schemas.query - Query validation schema\r",
+            " * @param {Object} schemas.headers - Headers validation schema\r",
+            " * @param {Object} options - Validation options\r",
+            " * @param {boolean} options.abortEarly - Stop validation on first error (default: false)\r",
+            " * @param {boolean} options.stripUnknown - Remove unknown fields (default: true)\r",
+            " * @param {boolean} options.allowUnknown - Allow unknown fields (default: false)\r",
+            " * @returns {Function} - Express middleware function\r"
+          ]
+        },
+        {
+          "startLine": 106,
+          "endLine": 109,
+          "lines": [
+            " * @param {any} value - Value to validate\r",
+            " * @param {Object} schema - Joi schema\r",
+            " * @param {Object} options - Validation options\r",
+            " * @returns {Object} - Validation result { error, value }\r"
+          ]
+        },
+        {
+          "startLine": 124,
+          "endLine": 126,
+          "lines": [
+            " * @param {Object} schema - Joi schema for body validation\r",
+            " * @param {Object} options - Validation options\r",
+            " * @returns {Function} - Express middleware function\r"
+          ]
+        },
+        {
+          "startLine": 134,
+          "endLine": 136,
+          "lines": [
+            " * @param {Object} schema - Joi schema for params validation\r",
+            " * @param {Object} options - Validation options\r",
+            " * @returns {Function} - Express middleware function\r"
+          ]
+        },
+        {
+          "startLine": 144,
+          "endLine": 146,
+          "lines": [
+            " * @param {Object} schema - Joi schema for query validation\r",
+            " * @param {Object} options - Validation options\r",
+            " * @returns {Function} - Express middleware function\r"
+          ]
+        },
+        {
+          "startLine": 155,
+          "endLine": 157,
+          "lines": [
+            " * @param {Array} schemas - Array of schema objects to try\r",
+            " * @param {Object} options - Validation options\r",
+            " * @returns {Function} - Express middleware function\r"
+          ]
+        },
+        {
+          "startLine": 231,
+          "endLine": 233,
+          "lines": [
+            " * @param {Function} validationFn - Custom validation function\r",
+            " * @param {string} errorMessage - Error message if validation fails\r",
+            " * @returns {Function} - Joi custom validation function\r"
+          ]
+        }
+      ]
+    },
+    {
+      "file": "final-85-percent-push.js",
+      "blocks": [
+        {
+          "startLine": 9,
+          "endLine": 13,
+          "lines": [
+            " * 1. Form Validation Messages (UX)",
+            " * 2. Dashboard Navigation (Navigation) ",
+            " * 3. Error Page Handling (Error Handling)",
+            " * 4. Workflow Management Access (Workflows)",
+            " * 5. Profile Settings Access (User Management)"
+          ]
+        }
+      ]
+    },
+    {
+      "file": "frontend\\src\\hooks\\useAnalytics.js",
+      "blocks": [
+        {
+          "startLine": 33,
+          "endLine": 35,
+          "lines": [
+            "   * @param {string} eventType - Type of event\r",
+            "   * @param {Object} eventData - Event data\r",
+            "   * @param {Object} customMetadata - Additional metadata\r"
+          ]
+        },
+        {
+          "startLine": 121,
+          "endLine": 123,
+          "lines": [
+            "   * @param {string} step - Step name\r",
+            "   * @param {string} error - Error message\r",
+            "   * @param {Object} errorContext - Additional error context\r"
+          ]
+        },
+        {
+          "startLine": 217,
+          "endLine": 219,
+          "lines": [
+            "   * @param {string} element - Element interacted with\r",
+            "   * @param {string} action - Action performed\r",
+            "   * @param {Object} interactionData - Interaction data\r"
+          ]
+        },
+        {
+          "startLine": 235,
+          "endLine": 237,
+          "lines": [
+            "   * @param {string} errorType - Type of error\r",
+            "   * @param {string} errorMessage - Error message\r",
+            "   * @param {Object} errorContext - Error context\r"
+          ]
+        },
+        {
+          "startLine": 254,
+          "endLine": 256,
+          "lines": [
+            "   * @param {string} metric - Metric name\r",
+            "   * @param {number} value - Metric value\r",
+            "   * @param {Object} context - Metric context\r"
+          ]
+        }
+      ]
+    },
+    {
+      "file": "frontend\\src\\hooks\\useApiRequest.js",
+      "blocks": [
+        {
+          "startLine": 33,
+          "endLine": 37,
+          "lines": [
+            " * @param {Object} options - Hook options\r",
+            " * @param {boolean} options.cache - Whether to cache the request\r",
+            " * @param {number} options.cacheTTL - Cache TTL in milliseconds\r",
+            " * @param {boolean} options.retry - Whether to retry failed requests\r",
+            " * @param {number} options.maxRetries - Maximum number of retries\r"
+          ]
+        },
+        {
+          "startLine": 58,
+          "endLine": 61,
+          "lines": [
+            "   * @param {string} method - HTTP method\r",
+            "   * @param {string} url - Request URL\r",
+            "   * @param {Object} data - Request data\r",
+            "   * @param {Object} config - Additional axios config\r"
+          ]
+        },
+        {
+          "startLine": 138,
+          "endLine": 140,
+          "lines": [
+            "   * @param {string} method - HTTP method\r",
+            "   * @param {string} url - Request URL\r",
+            "   * @param {Object} data - Request data\r"
+          ]
+        }
+      ]
+    },
+    {
+      "file": "frontend\\src\\hooks\\useFormValidation.js",
+      "blocks": [
+        {
+          "startLine": 5,
+          "endLine": 10,
+          "lines": [
+            " * @param {Object} initialValues - Initial form values\r",
+            " * @param {Object} validationRules - Validation rules for each field\r",
+            " * @param {Object} options - Additional options\r",
+            " * @param {boolean} options.validateOnChange - Whether to validate on change\r",
+            " * @param {boolean} options.validateOnBlur - Whether to validate on blur\r",
+            " * @param {Function} options.onValidationComplete - Callback when validation completes\r"
+          ]
+        },
+        {
+          "startLine": 42,
+          "endLine": 45,
+          "lines": [
+            "   * @param {string} name - Field name\r",
+            "   * @param {any} value - Field value\r",
+            "   * @param {Object} allValues - All form values\r",
+            "   * @returns {string} Error message or empty string\r"
+          ]
+        }
+      ]
+    },
+    {
+      "file": "frontend\\src\\services\\ValidationService.js",
+      "blocks": [
+        {
+          "startLine": 9,
+          "endLine": 11,
+          "lines": [
+            "   * @param {string} field - Field name\r",
+            "   * @param {*} value - Field value\r",
+            "   * @returns {Object} - { isValid, errors }\r"
+          ]
+        }
+      ]
+    },
+    {
+      "file": "frontend\\src\\utils\\index.js",
+      "blocks": [
+        {
+          "startLine": 9,
+          "endLine": 12,
+          "lines": [
+            "// import storage from './storage';\r",
+            "// import navigation from './navigation';\r",
+            "// import validation from './validation';\r",
+            "// import hooks from './hooks';\r"
+          ]
+        }
+      ]
+    },
+    {
+      "file": "scripts\\fix-rls-configuration.js",
+      "blocks": [
+        {
+          "startLine": 125,
+          "endLine": 127,
+          "lines": [
+            "  // =====================================================",
+            "  // 3. TEST ANONYMOUS ACCESS (Should be blocked)",
+            "  // ====================================================="
+          ]
+        }
+      ]
+    },
+    {
+      "file": "scripts\\test-email-service.js",
+      "blocks": [
+        {
+          "startLine": 121,
+          "endLine": 123,
+          "lines": [
+            "  // =====================================================",
+            "  // 4. TEST EMAIL SENDING (Optional)",
+            "  // ====================================================="
+          ]
+        }
+      ]
+    },
+    {
+      "file": "scripts\\test-rls-properly.js",
+      "blocks": [
+        {
+          "startLine": 71,
+          "endLine": 73,
+          "lines": [
+            "  // =====================================================",
+            "  // 2. TEST ANONYMOUS ACCESS (Should return no data)",
+            "  // ====================================================="
+          ]
+        },
+        {
+          "startLine": 104,
+          "endLine": 106,
+          "lines": [
+            "  // =====================================================",
+            "  // 3. TEST USER ISOLATION (Simulate authenticated user)",
+            "  // ====================================================="
+          ]
+        }
+      ]
+    },
+    {
+      "file": "shared\\utils\\validation\\utils.js",
+      "blocks": [
+        {
+          "startLine": 5,
+          "endLine": 7,
+          "lines": [
+            " * @param {string} value - The value to validate\r",
+            " * @param {Object} rules - The validation rules to apply\r",
+            " * @returns {Object} - { isValid, errors }\r"
+          ]
+        },
+        {
+          "startLine": 51,
+          "endLine": 53,
+          "lines": [
+            " * @param {Object} values - The values to validate\r",
+            " * @param {Object} rules - The validation rules to apply\r",
+            " * @returns {Object} - { isValid, errors }\r"
+          ]
+        },
+        {
+          "startLine": 72,
+          "endLine": 74,
+          "lines": [
+            " * @param {Object} rule - The validation rule to convert\r",
+            " * @param {string} field - The field name\r",
+            " * @returns {Array} - Array of express-validator rules\r"
+          ]
+        }
+      ]
+    },
+    {
+      "file": "templates\\standardized-component-template.jsx",
+      "blocks": [
+        {
+          "startLine": 22,
+          "endLine": 27,
+          "lines": [
+            " * @param {Object} props - Component props\r",
+            " * @param {string} props.title - Component title\r",
+            " * @param {Array} props.items - Array of items to display\r",
+            " * @param {Function} props.onItemSelect - Callback when item is selected\r",
+            " * @param {boolean} props.loading - Loading state\r",
+            " * @param {string} props.className - Additional CSS classes\r"
+          ]
+        },
+        {
+          "startLine": 384,
+          "endLine": 387,
+          "lines": [
+            " *   title=\"My Items\"\r",
+            " *   items={items}\r",
+            " *   onItemSelect={handleItemSelect}\r",
+            " *   loading={isLoading}\r"
+          ]
+        }
+      ]
+    },
+    {
+      "file": "test-all-endpoints.js",
+      "blocks": [
+        {
+          "startLine": 6,
+          "endLine": 18,
+          "lines": [
+            " * - /api/health (Health monitoring)\r",
+            " * - /api/performance (Performance metrics)\r",
+            " * - /api/auth/* (Authentication & user management)\r",
+            " * - /api/user/* (User profile & status)\r",
+            " * - /api/dashboard (Dashboard data)\r",
+            " * - /api/oauth/* (OAuth integration)\r",
+            " * - /api/onboarding (User onboarding)\r",
+            " * - /api/business-types (Business configuration)\r",
+            " * - /api/workflows (Workflow management)\r",
+            " * - /api/analytics (Analytics data)\r",
+            " * - /api/recovery (Account recovery)\r",
+            " * - /api/password-reset (Password reset)\r",
+            " * - /api/scheduler (Task scheduling)\r"
+          ]
+        }
+      ]
+    },
+    {
+      "file": "test-password-reset-comprehensive.js",
+      "blocks": [
+        {
+          "startLine": 414,
+          "endLine": 416,
+          "lines": [
+            "      //   .from('users')",
+            "      //   .delete()",
+            "      //   .eq('id', this.testUserId);"
+          ]
+        }
+      ]
+    }
+  ],
+  "duplicateFiles": [],
+  "unusedFunctions": [],
+  "unusedVariables": [],
+  "emptyFiles": [
+    "templates\\standardized-component-template.jsx",
+    "templates\\standardized-route-template.js"
+  ]
+}

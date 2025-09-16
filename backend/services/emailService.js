@@ -4,7 +4,7 @@ const path = require('path');
 
 const nodemailer = require('nodemailer');
 
-const { generateVerificationToken, generatePasswordResetToken } = require('../utils/tokenGenerator');
+const { generateEmailVerificationToken, generatePasswordResetToken } = require('../utils/tokenGenerator');
 const { databaseOperations } = require('../database/database-operations');
 require('dotenv').config();
 
@@ -51,7 +51,7 @@ class EmailService {
    * @returns {string} Verification token
    */
   generateVerificationToken() {
-    return generateVerificationToken();
+    return generateEmailVerificationToken();
   }
 
   /**
@@ -300,8 +300,8 @@ class EmailService {
 
       console.log(`📧 Storing verification token for user ${userId}...`);
 
-      // Use new database operations method
-      const result = await databaseOperations.storeVerificationToken(userId, token, expiresAt.toISOString());
+      // Use correct database operations method
+      const result = await databaseOperations.createEmailVerificationToken(userId, token, expiresAt.toISOString());
 
       if (result.error) {
         console.error('Failed to store verification token:', result.error);

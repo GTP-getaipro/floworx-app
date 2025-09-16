@@ -1,9 +1,8 @@
-import React from 'react';
+
 import { render, screen, fireEvent, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import axios from 'axios';
 import BusinessTypeStep from '../../frontend/src/components/onboarding/BusinessTypeStep';
-
 // Mock axios
 jest.mock('axios');
 const mockedAxios = axios;

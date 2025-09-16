@@ -695,6 +695,102 @@ class SupabaseRestClient {
   }
 
   // =====================================================
+  // EMAIL VERIFICATION TOKENS
+  // =====================================================
+
+  async storeVerificationToken(userId, token, email, firstName) {
+    try {
+      const expiresAt = new Date();
+      expiresAt.setHours(expiresAt.getHours() + 24); // Token expires in 24 hours
+
+      const { data, error } = await this.getAdminClient()
+        .from('email_verification_tokens')
+        .insert({
+          user_id: userId,
+          token: token,
+          email: email,
+          expires_at: expiresAt.toISOString(),
+          created_at: new Date().toISOString()
+        })
+        .select()
+        .single();
+
+      if (error) {
+        throw error;
+      }
+
+      return { success: true, data };
+    } catch (error) {
+      console.error('❌ Store verification token error:', error.message);
+      return { success: false, error: error.message };
+    }
+  }
+
+  async getVerificationToken(token) {
+    try {
+      const { data, error } = await this.getAdminClient()
+        .from('email_verification_tokens')
+        .select('user_id, expires_at, email')
+        .eq('token', token)
+        .eq('used', false)
+        .single();
+
+      if (error) {
+        if (error.code === 'PGRST116') {
+          return { success: false, data: null }; // No rows found
+        }
+        throw error;
+      }
+
+      return { success: true, data };
+    } catch (error) {
+      console.error('❌ Get verification token error:', error.message);
+      return { success: false, error: error.message };
+    }
+  }
+
+  async deleteVerificationToken(token) {
+    try {
+      const { error } = await this.getAdminClient()
+        .from('email_verification_tokens')
+        .update({ used: true, used_at: new Date().toISOString() })
+        .eq('token', token);
+
+      if (error) {
+        throw error;
+      }
+
+      return { success: true };
+    } catch (error) {
+      console.error('❌ Delete verification token error:', error.message);
+      return { success: false, error: error.message };
+    }
+  }
+
+  async updateUserEmailVerification(userId, verified) {
+    try {
+      const { data, error } = await this.getAdminClient()
+        .from('users')
+        .update({
+          email_verified: verified,
+          email_verified_at: verified ? new Date().toISOString() : null
+        })
+        .eq('id', userId)
+        .select()
+        .single();
+
+      if (error) {
+        throw error;
+      }
+
+      return { success: true, data };
+    } catch (error) {
+      console.error('❌ Update user email verification error:', error.message);
+      return { success: false, error: error.message };
+    }
+  }
+
+  // =====================================================
   // CONNECTION MANAGEMENT (converted to REST API)
   // =====================================================
 

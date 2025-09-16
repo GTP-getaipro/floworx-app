@@ -738,7 +738,7 @@ class SupabaseRestClient {
         .from('email_verification_tokens')
         .select('user_id, expires_at, email')
         .eq('token', token)
-        .eq('used', false)
+        .is('used_at', null) // Token hasn't been used yet
         .single();
 
       if (error) {
@@ -759,7 +759,7 @@ class SupabaseRestClient {
     try {
       const { error } = await this.getAdminClient()
         .from('email_verification_tokens')
-        .update({ used: true, used_at: new Date().toISOString() })
+        .update({ used_at: new Date().toISOString() })
         .eq('token', token);
 
       if (error) {

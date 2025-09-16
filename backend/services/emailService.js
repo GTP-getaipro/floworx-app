@@ -15,13 +15,14 @@ class EmailService {
 
   createTransporter() {
     // Configure email transporter with flexible SMTP settings
+    const port = parseInt(process.env.SMTP_PORT, 10) || 587;
     return nodemailer.createTransport({
       host: process.env.SMTP_HOST || 'smtp.gmail.com',
-      port: parseInt(process.env.SMTP_PORT, 10) || 587,
-      secure: false, // true for 465, false for other ports
+      port: port,
+      secure: port === 465, // true for 465, false for other ports
       auth: {
         user: process.env.SMTP_USER,
-        pass: process.env.SMTP_PASS // Use App Password for Gmail
+        pass: process.env.SMTP_PASS // Use App Password for Gmail or SendGrid API key
       }
     });
   }
@@ -32,13 +33,16 @@ class EmailService {
    */
   getSenderConfig() {
     // Use a verified sender identity for SendGrid
-    const fromEmail = process.env.FROM_EMAIL || 'getai.pro@gmail.com'; // Fallback to verified email
-    const fromName = process.env.FROM_NAME || 'Floworx Team';
+    const fromEmail = process.env.FROM_EMAIL || 'floworx.ai@gmail.com'; // Verified sender
+    const fromName = process.env.FROM_NAME || 'Artem Lykov';
+    const replyToEmail = process.env.REPLY_TO_EMAIL || 'info@floworx-iq.com';
 
     return {
       from: `"${fromName}" <${fromEmail}>`,
+      replyTo: replyToEmail,
       fromEmail,
-      fromName
+      fromName,
+      replyToEmail
     };
   }
 
@@ -126,6 +130,7 @@ class EmailService {
 
     const mailOptions = {
       from: senderConfig.from,
+      replyTo: senderConfig.replyTo,
       to: email,
       subject: 'Verify Your Email Address - FloworxInvite',
       html: htmlContent
@@ -159,6 +164,7 @@ class EmailService {
 
     const mailOptions = {
       from: senderConfig.from,
+      replyTo: senderConfig.replyTo,
       to: email,
       subject: 'Reset Your Password - FloworxInvite',
       html: htmlContent

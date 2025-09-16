@@ -453,13 +453,8 @@ router.post('/login', async (req, res) => {
     );
     console.log('Token generated successfully');
 
-    // Update last login time (non-blocking)
-    databaseOperations.query(
-      'UPDATE users SET last_login = NOW() WHERE id = $1',
-      [user.id]
-    ).catch(updateError => {
-      console.error('Failed to update last login time:', updateError.message);
-    });
+    // Note: Last login time update removed to prevent crashes
+    // Can be re-implemented later with proper database operations
 
     console.log('Login completed successfully');
 

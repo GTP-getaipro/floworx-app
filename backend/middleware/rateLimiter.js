@@ -16,11 +16,9 @@ const rateLimitConfig = {
     legacyHeaders: false,
     // Skip successful requests
     skipSuccessfulRequests: true,
-    // Simple key generator to avoid trust proxy issues
-    keyGenerator: (req, res) => {
-      const ip = req.ip || req.connection?.remoteAddress || 'unknown';
-      const userAgent = req.get('User-Agent') || 'unknown';
-      return `${ip}-${userAgent}`;
+    // IPv6 compatible key generator
+    keyGenerator: (req) => {
+      return req.ip || req.connection?.remoteAddress || 'unknown';
     }
   },
 
@@ -35,8 +33,8 @@ const rateLimitConfig = {
     },
     standardHeaders: true,
     legacyHeaders: false,
-    // Simple key generator for password reset
-    keyGenerator: (req, res) => {
+    // IPv6 compatible key generator for password reset
+    keyGenerator: (req) => {
       const ip = req.ip || req.connection?.remoteAddress || 'unknown';
       return `password-reset-${ip}`;
     }
@@ -53,15 +51,10 @@ const rateLimitConfig = {
     },
     standardHeaders: true,
     legacyHeaders: false,
-    // Simple key generator to avoid IPv6 issues
-    keyGenerator: (req, res) => {
+    // IPv6 compatible key generator
+    keyGenerator: (req) => {
       const ip = req.ip || req.connection?.remoteAddress || 'unknown';
       return `api-${ip}`;
-    },
-    // Disable trust proxy validation
-    validate: {
-      trustProxy: false,
-      xForwardedForHeaders: false
     }
   },
 

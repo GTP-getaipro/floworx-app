@@ -60,7 +60,9 @@ const rateLimitConfig = {
       retryAfter: 60 * 60
     },
     standardHeaders: true,
-    legacyHeaders: false
+    legacyHeaders: false,
+    // Simple key generator for registration
+    keyGenerator: (req) => `registration-${req.ip || 'unknown'}`
   }
 };
 

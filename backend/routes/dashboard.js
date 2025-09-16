@@ -25,23 +25,14 @@ router.get('/', authenticateToken, async (req, res) => {
       });
     }
     
-    // Get user configuration
-    const userConfig = await databaseOperations.getUserConfiguration(userId);
-    
-    // Get user workflow
-    const workflow = await databaseOperations.getUserWorkflow(userId);
-    
-    // Get workflow statistics if workflow exists
-    let workflowStats = null;
-    if (workflow.data) {
-      const stats = await scheduler.getWorkflowStatistics(workflow.data.workflow_id);
-      if (stats.success) {
-        workflowStats = stats.data;
-      }
-    }
-    
-    // Get user activity
-    const activity = await databaseOperations.getUserActivityHistory(userId, 10);
+    // Get user business configuration
+    const userConfig = await databaseOperations.getBusinessConfig(userId);
+
+    // Get user workflow deployments
+    const workflow = await databaseOperations.getWorkflowDeployments(userId);
+
+    // Get user onboarding progress (as activity substitute)
+    const onboardingProgress = await databaseOperations.getOnboardingProgress(userId);
     
     return res.json({
       success: true,
@@ -55,22 +46,36 @@ router.get('/', authenticateToken, async (req, res) => {
           emailVerified: userProfile.data.email_verified
         },
         configuration: userConfig.data ? {
-          emailProvider: userConfig.data.email_provider,
-          businessType: {
-            id: userConfig.data.business_type_id,
-            name: userConfig.data.business_type_name,
-            description: userConfig.data.business_type_description
-          },
+          businessType: userConfig.data.business_type || 'hot_tub_service',
+          emailProvider: userConfig.data.email_provider || null,
           customSettings: userConfig.data.custom_settings || {}
-        } : null,
-        workflow: workflow.data ? {
-          id: workflow.data.workflow_id,
-          status: workflow.data.status,
-          createdAt: workflow.data.created_at,
-          updatedAt: workflow.data.updated_at,
-          statistics: workflowStats
-        } : null,
-        activity: activity.data || []
+        } : {
+          businessType: 'hot_tub_service',
+          emailProvider: null,
+          customSettings: {}
+        },
+        workflow: workflow.data && workflow.data.length > 0 ? {
+          id: workflow.data[0].workflow_id || null,
+          status: workflow.data[0].status || 'not_deployed',
+          createdAt: workflow.data[0].created_at || null,
+          updatedAt: workflow.data[0].updated_at || null
+        } : {
+          id: null,
+          status: 'not_deployed',
+          createdAt: null,
+          updatedAt: null
+        },
+        onboarding: onboardingProgress.data ? {
+          currentStep: onboardingProgress.data.current_step || 0,
+          completedSteps: onboardingProgress.data.completed_steps || [],
+          googleConnected: onboardingProgress.data.google_connected || false,
+          workflowDeployed: onboardingProgress.data.workflow_deployed || false
+        } : {
+          currentStep: 0,
+          completedSteps: [],
+          googleConnected: false,
+          workflowDeployed: false
+        }
       }
     });
   } catch (error) {

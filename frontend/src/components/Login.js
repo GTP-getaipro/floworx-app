@@ -4,6 +4,7 @@ import { useAuth } from '../contexts/AuthContext';
 import { useToast } from '../contexts/ToastContext';
 import useFormValidation from '../hooks/useFormValidation';
 import { validationRules } from '../utils/validationRules';
+import { parseError, logError, ERROR_MESSAGES } from '../utils/errorHandling';
 import Input from './ui/Input';
 import Button from './ui/Button';
 import Alert from './ui/Alert';
@@ -13,7 +14,7 @@ import Logo from './ui/Logo';
 
 const Login = () => {
   const { login, isAuthenticated } = useAuth();
-  const { showSuccess, showError } = useToast();
+  const { showSuccess, showError, showInfo } = useToast();
   const navigate = useNavigate();
   const location = useLocation();
 
@@ -55,11 +56,26 @@ const Login = () => {
       return { success: false };
     } catch (error) {
       // Log error for debugging
-      console.error('❌ Login error:', error); // eslint-disable-line no-console
+      logError(error, 'Login');
 
-      const errorMessage = 'An unexpected error occurred. Please try again.';
-      showError(errorMessage);
-      setErrors({ submit: errorMessage });
+      // Parse error and show user-friendly message
+      const parsedError = parseError(error);
+
+      // Show appropriate error message
+      showError(`❌ ${parsedError.message}`);
+      setErrors({ submit: parsedError.message });
+
+      // Show additional help for specific error types
+      if (parsedError.type === 'AUTHENTICATION_ERROR' && parsedError.message.includes('credentials')) {
+        setTimeout(() => {
+          showInfo('💡 Make sure you\'re using the correct email and password. You can reset your password if needed.');
+        }, 2000);
+      } else if (parsedError.type === 'SERVER_ERROR' || parsedError.type === 'UNKNOWN_ERROR') {
+        setTimeout(() => {
+          showInfo(`💡 ${ERROR_MESSAGES.CONTACT_SUPPORT}`);
+        }, 3000);
+      }
+
       return { success: false };
     }
   };

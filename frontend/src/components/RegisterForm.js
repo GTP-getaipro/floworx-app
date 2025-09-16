@@ -8,6 +8,7 @@ import useFormPersistence from '../hooks/useFormPersistence';
 import ValidatedInput from './ui/ValidatedInput';
 import ProtectedButton from './ui/ProtectedButton';
 import ProgressIndicator from './ui/ProgressIndicator';
+import { parseError, logError, ERROR_MESSAGES } from '../utils/errorHandling';
 
 import { Alert, Card, Link, Logo } from './ui';
 
@@ -233,11 +234,27 @@ const RegisterForm = () => {
       throw new Error(result.error || 'Registration failed');
     } catch (error) {
       // Log error for debugging
-      console.error('❌ Registration error:', error);
+      logError(error, 'Registration');
 
-      // Show user-friendly error message
-      if (!error.message.includes('Registration failed')) {
-        showError('❌ An unexpected error occurred. Please check your connection and try again.');
+      // Parse error and show user-friendly message
+      const parsedError = parseError(error);
+
+      // Show appropriate error message
+      if (parsedError.type === 'VALIDATION_ERROR' && parsedError.suggestLogin) {
+        showError(`❌ ${parsedError.message}`);
+        // Optionally show login suggestion
+        setTimeout(() => {
+          showInfo('💡 You can try logging in with your existing account instead.');
+        }, 2000);
+      } else {
+        showError(`❌ ${parsedError.message}`);
+
+        // Show additional help for server errors
+        if (parsedError.type === 'SERVER_ERROR' || parsedError.type === 'UNKNOWN_ERROR') {
+          setTimeout(() => {
+            showInfo(`💡 ${ERROR_MESSAGES.CONTACT_SUPPORT}`);
+          }, 3000);
+        }
       }
 
       // Reset progress on error

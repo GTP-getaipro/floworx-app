@@ -1,0 +1,229 @@
+{
+  "middleware": {
+    "CORS Headers": {
+      "status": "FAILED",
+      "error": "Request failed with status code 500",
+      "timestamp": "2025-09-15T03:21:17.468Z"
+    },
+    "Security Headers": {
+      "status": "FAILED",
+      "error": "Missing security headers: x-content-type-options, x-frame-options",
+      "timestamp": "2025-09-15T03:21:17.554Z"
+    },
+    "Rate Limiting": {
+      "status": "PASSED",
+      "result": {
+        "totalRequests": 20,
+        "rateLimited": false,
+        "status": "PASSED"
+      },
+      "timestamp": "2025-09-15T03:21:17.859Z"
+    },
+    "Request Compression": {
+      "status": "PASSED",
+      "result": {
+        "compressionHeaders": {
+          "vary": "Accept-Encoding, Origin"
+        },
+        "status": "PASSED"
+      },
+      "timestamp": "2025-09-15T03:21:17.947Z"
+    },
+    "Error Handling": {
+      "status": "FAILED",
+      "error": "Expected 400, got 502",
+      "timestamp": "2025-09-15T03:21:18.141Z"
+    },
+    "Authentication": {
+      "status": "FAILED",
+      "error": "Expected 401, got 502",
+      "timestamp": "2025-09-15T03:21:18.222Z"
+    },
+    "Input Sanitization": {
+      "status": "PASSED",
+      "result": {
+        "status": "PASSED"
+      },
+      "timestamp": "2025-09-15T03:21:48.307Z"
+    },
+    "Performance Tracking": {
+      "status": "PASSED",
+      "result": {
+        "performanceHeaders": {
+          "x-request-id": "req_1757906508615_7djlvs27m"
+        },
+        "status": "PASSED"
+      },
+      "timestamp": "2025-09-15T03:21:48.392Z"
+    }
+  },
+  "endpoints": {
+    "Health Endpoints": {
+      "status": "PASSED",
+      "result": {
+        "/api/health": {
+          "status": 503,
+          "success": false,
+          "error": "Request failed with status code 503"
+        },
+        "/api/health/detailed": {
+          "status": 503,
+          "success": false,
+          "error": "Request failed with status code 503"
+        },
+        "/api/diagnostics": {
+          "status": 503,
+          "success": false,
+          "error": "Request failed with status code 503"
+        }
+      },
+      "timestamp": "2025-09-15T03:21:50.512Z"
+    },
+    "Auth Endpoints": {
+      "status": "PASSED",
+      "result": {
+        "/api/auth/register": {
+          "status": 503,
+          "success": false,
+          "error": "Request failed with status code 503"
+        }
+      },
+      "timestamp": "2025-09-15T03:21:50.591Z"
+    },
+    "User Endpoints": {
+      "status": "PASSED",
+      "result": {
+        "error": "No auth token available"
+      },
+      "timestamp": "2025-09-15T03:21:50.592Z"
+    },
+    "Dashboard Endpoints": {
+      "status": "PASSED",
+      "result": {
+        "error": "No auth token available"
+      },
+      "timestamp": "2025-09-15T03:21:50.593Z"
+    },
+    "Onboarding Endpoints": {
+      "status": "PASSED",
+      "result": {
+        "error": "No auth token available"
+      },
+      "timestamp": "2025-09-15T03:21:50.593Z"
+    },
+    "Business Types Endpoints": {
+      "status": "PASSED",
+      "result": {
+        "error": "No auth token available"
+      },
+      "timestamp": "2025-09-15T03:21:50.593Z"
+    },
+    "Workflow Endpoints": {
+      "status": "PASSED",
+      "result": {
+        "error": "No auth token available"
+      },
+      "timestamp": "2025-09-15T03:21:50.593Z"
+    },
+    "OAuth Endpoints": {
+      "status": "PASSED",
+      "result": {
+        "/api/oauth/google": {
+          "status": 503,
+          "success": false,
+          "error": "Request failed with status code 503"
+        }
+      },
+      "timestamp": "2025-09-15T03:21:50.671Z"
+    }
+  },
+  "security": {
+    "SQL Injection Protection": {
+      "status": "PASSED",
+      "result": {
+        "status": "PASSED"
+      },
+      "timestamp": "2025-09-15T03:21:48.649Z"
+    },
+    "XSS Protection": {
+      "status": "PASSED",
+      "result": {
+        "status": "PASSED"
+      },
+      "timestamp": "2025-09-15T03:21:49.973Z"
+    },
+    "CSRF Protection": {
+      "status": "PASSED",
+      "result": {
+        "status": "PASSED"
+      },
+      "timestamp": "2025-09-15T03:21:50.053Z"
+    },
+    "Password Security": {
+      "status": "FAILED",
+      "error": "Expected validation error for weak password: 123",
+      "timestamp": "2025-09-15T03:21:50.129Z"
+    },
+    "JWT Security": {
+      "status": "FAILED",
+      "error": "Expected 401 for invalid token: invalid.token.here",
+      "timestamp": "2025-09-15T03:21:50.204Z"
+    }
+  },
+  "performance": {
+    "Response Times": {
+      "status": "PASSED",
+      "result": {
+        "/api/health": {
+          "averageTime": 75.4,
+          "maxTime": 77,
+          "minTime": 73,
+          "acceptable": true
+        },
+        "/api/auth/register": {
+          "averageTime": 77.4,
+          "maxTime": 78,
+          "minTime": 77,
+          "acceptable": true
+        },
+        "/api/onboarding/business-types": {
+          "averageTime": 76.4,
+          "maxTime": 78,
+          "minTime": 75,
+          "acceptable": true
+        }
+      },
+      "timestamp": "2025-09-15T03:21:51.818Z"
+    },
+    "Concurrent Requests": {
+      "status": "PASSED",
+      "result": {
+        "concurrentRequests": 10,
+        "successful": 0,
+        "failed": 10,
+        "totalTime": 294,
+        "averageTime": 29.4,
+        "successRate": 0
+      },
+      "timestamp": "2025-09-15T03:21:52.118Z"
+    },
+    "Memory Usage": {
+      "status": "PASSED",
+      "result": {
+        "initialMemory": 10649112,
+        "finalMemory": 12186664,
+        "memoryIncrease": 1537552,
+        "acceptable": true
+      },
+      "timestamp": "2025-09-15T03:21:53.699Z"
+    }
+  },
+  "overall": {
+    "totalTests": 24,
+    "passedTests": 18,
+    "failedTests": 6,
+    "startTime": "2025-09-15T03:21:17.378Z",
+    "endTime": "2025-09-15T03:21:53.700Z",
+    "duration": 36322
+  }
+}

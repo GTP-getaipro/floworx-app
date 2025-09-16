@@ -74,7 +74,8 @@ router.get('/', authenticateToken, async (req, res) => {
       }
     });
   } catch (error) {
-    logger.error('Failed to get dashboard data', { error, userId: req.user.id });
+    console.error('💥 Dashboard error:', error.message);
+    console.error('Stack:', error.stack);
     return res.status(500).json({
       success: false,
       message: 'Failed to get dashboard data',
@@ -114,7 +115,7 @@ router.get('/statistics', authenticateToken, async (req, res) => {
       }
     });
   } catch (error) {
-    logger.error('Failed to get workflow statistics', { error, userId: req.user.id });
+    console.error('💥 Workflow statistics error:', error.message);
     return res.status(500).json({
       success: false,
       message: 'Failed to get workflow statistics',
@@ -139,7 +140,7 @@ router.get('/activity', authenticateToken, async (req, res) => {
       data: activity.data || []
     });
   } catch (error) {
-    logger.error('Failed to get user activity', { error, userId: req.user.id });
+    console.error('💥 User activity error:', error.message);
     return res.status(500).json({
       success: false,
       message: 'Failed to get user activity',

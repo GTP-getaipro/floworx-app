@@ -117,9 +117,10 @@ async function runComprehensiveTests() {
       };
 
       const loginResponse = await axios.post(`${PRODUCTION_URL}/api/auth/login`, loginData, TEST_CONFIG);
-      
-      if (loginResponse.status === 200 && loginResponse.data.success && loginResponse.data.token) {
+
+      if (loginResponse.status === 200 && loginResponse.data.success && loginResponse.data.data && loginResponse.data.data.token) {
         logTest('User Login', 'PASS', `Login successful for ${testUser.email}`);
+        authToken = loginResponse.data.data.token; // Update token from correct location
       } else {
         logTest('User Login', 'FAIL', `Status: ${loginResponse.status}, Response: ${JSON.stringify(loginResponse.data)}`);
       }

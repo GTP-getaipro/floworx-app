@@ -1,0 +1,41 @@
+{
+  "deployment": {
+    "status": "SERVICE_UNAVAILABLE",
+    "accessible": false,
+    "responseTime": 255,
+    "error": null
+  },
+  "infrastructure": {
+    "dns": "RESOLVED",
+    "ssl": "VALID",
+    "server": "SERVICE_UNAVAILABLE"
+  },
+  "uatFramework": {
+    "status": "READY",
+    "components": {
+      "framework": "AVAILABLE",
+      "playwright": "AVAILABLE",
+      "runner": "AVAILABLE",
+      "dashboard": "AVAILABLE",
+      "framework_core": "AVAILABLE",
+      "uat_runner": "AVAILABLE",
+      "playwright_tests": "AVAILABLE",
+      "uat_dashboard": "AVAILABLE",
+      "powershell_runner": "AVAILABLE"
+    }
+  },
+  "recommendations": [
+    {
+      "priority": "HIGH",
+      "category": "Deployment",
+      "issue": "Server returning 503 Service Unavailable",
+      "action": "Check deployment status, restart services, or wait for deployment completion"
+    },
+    {
+      "priority": "LOW",
+      "category": "UAT",
+      "issue": "UAT framework ready for execution",
+      "action": "Once deployment issues are resolved, run comprehensive UAT suite"
+    }
+  ]
+}

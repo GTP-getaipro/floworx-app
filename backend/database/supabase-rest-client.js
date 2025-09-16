@@ -778,8 +778,7 @@ class SupabaseRestClient {
       const { data, error } = await this.getAdminClient()
         .from('users')
         .update({
-          email_verified: verified,
-          email_verified_at: verified ? new Date().toISOString() : null
+          email_verified: verified
         })
         .eq('id', userId)
         .select()

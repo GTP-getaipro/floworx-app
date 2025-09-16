@@ -242,18 +242,17 @@ class EmailVerificationDebugger {
       
       const { data, error } = await this.supabase
         .from('users')
-        .select('email_verified, email_verified_at')
+        .select('email_verified')
         .eq('id', this.userId)
         .single();
-      
+
       if (error) {
         console.log('User lookup error:', error.message);
         return false;
       }
-      
+
       console.log(`Email verified: ${data.email_verified}`);
-      console.log(`Verified at: ${data.email_verified_at}`);
-      
+
       return data.email_verified === true;
     });
   }
@@ -351,8 +350,8 @@ class EmailVerificationDebugger {
 
 // Run debug if called directly
 if (require.main === module) {
-  const debugger = new EmailVerificationDebugger();
-  debugger.runCompleteDebug().catch(console.error);
+  const debugTool = new EmailVerificationDebugger();
+  debugTool.runCompleteDebug().catch(console.error);
 }
 
 module.exports = EmailVerificationDebugger;

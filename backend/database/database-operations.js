@@ -799,7 +799,7 @@ class DatabaseOperations {
   }
 
   // =====================================================
-  // EMAIL VERIFICATION TOKENS
+  // EMAIL VERIFICATION TOKENS (MISSING METHODS)
   // =====================================================
 
   async storeVerificationToken(userId, token, email, firstName) {
@@ -869,15 +869,14 @@ class DatabaseOperations {
     if (type === 'REST_API') {
       return await client.updateUserEmailVerification(userId, verified);
     } else {
-      // PostgreSQL implementation
+      // PostgreSQL implementation - only update email_verified column
       const query = `
         UPDATE users
-        SET email_verified = $2, email_verified_at = $3
+        SET email_verified = $2
         WHERE id = $1
         RETURNING *
       `;
-      const verifiedAt = verified ? new Date() : null;
-      const result = await client.query(query, [userId, verified, verifiedAt]);
+      const result = await client.query(query, [userId, verified]);
       return { success: true, data: result.rows[0] };
     }
   }

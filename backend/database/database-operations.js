@@ -253,68 +253,12 @@ class DatabaseOperations {
   }
 
   // =====================================================
-  // EMAIL VERIFICATION TOKENS
-  // =====================================================
-
-  async storeVerificationToken(userId, token, email, firstName) {
-    const { type, client } = await this.getClient();
-
-    if (type === 'REST_API') {
-      return await client.storeVerificationToken(userId, token, email, firstName);
-    } else {
-      // Use the existing PostgreSQL method
-      const supabaseClient = require('./supabase-client');
-      const supabaseInstance = new supabaseClient();
-      return await supabaseInstance.storeVerificationToken(userId, token, email, firstName);
-    }
-  }
-
-  async getVerificationToken(token) {
-    const { type, client } = await this.getClient();
-
-    if (type === 'REST_API') {
-      return await client.getVerificationToken(token);
-    } else {
-      // Use the existing PostgreSQL method
-      const supabaseClient = require('./supabase-client');
-      const supabaseInstance = new supabaseClient();
-      return await supabaseInstance.getVerificationToken(token);
-    }
-  }
-
-  async deleteVerificationToken(token) {
-    const { type, client } = await this.getClient();
-
-    if (type === 'REST_API') {
-      return await client.deleteVerificationToken(token);
-    } else {
-      // Use the existing PostgreSQL method
-      const supabaseClient = require('./supabase-client');
-      const supabaseInstance = new supabaseClient();
-      return await supabaseInstance.deleteVerificationToken(token);
-    }
-  }
-
-  async updateUserEmailVerification(userId, verified) {
-    const { type, client } = await this.getClient();
-
-    if (type === 'REST_API') {
-      return await client.updateUserEmailVerification(userId, verified);
-    } else {
-      // Use the existing PostgreSQL method
-      const supabaseClient = require('./supabase-client');
-      const supabaseInstance = new supabaseClient();
-      return await supabaseInstance.updateUserEmailVerification(userId, verified);
-    }
-  }
-
-  // =====================================================
   // HEALTH CHECK
   // =====================================================
 
   async healthCheck() {
     const { type, client } = await this.getClient();
-
+    
     if (type === 'REST_API') {
       return await client.testConnection();
     } else {
@@ -851,6 +795,90 @@ class DatabaseOperations {
         console.log('Credentials table not found, returning empty array');
         return { data: [], error: null };
       }
+    }
+  }
+
+  // =====================================================
+  // EMAIL VERIFICATION TOKENS
+  // =====================================================
+
+  async storeVerificationToken(userId, token, email, firstName) {
+    const { type, client } = await this.getClient();
+
+    if (type === 'REST_API') {
+      return await client.storeVerificationToken(userId, token, email, firstName);
+    } else {
+      // PostgreSQL implementation
+      const query = `
+        INSERT INTO email_verification_tokens (user_id, token, email, expires_at, created_at)
+        VALUES ($1, $2, $3, $4, NOW())
+        ON CONFLICT (user_id) DO UPDATE SET
+          token = EXCLUDED.token,
+          email = EXCLUDED.email,
+          expires_at = EXCLUDED.expires_at,
+          created_at = NOW(),
+          used_at = NULL
+        RETURNING *
+      `;
+      const expiresAt = new Date(Date.now() + 24 * 60 * 60 * 1000); // 24 hours
+      const result = await client.query(query, [userId, token, email, expiresAt]);
+      return { success: true, data: result.rows[0] };
+    }
+  }
+
+  async getVerificationToken(token) {
+    const { type, client } = await this.getClient();
+
+    if (type === 'REST_API') {
+      return await client.getVerificationToken(token);
+    } else {
+      // PostgreSQL implementation
+      const query = `
+        SELECT user_id, expires_at, email
+        FROM email_verification_tokens
+        WHERE token = $1 AND used_at IS NULL
+      `;
+      const result = await client.query(query, [token]);
+      if (result.rows.length === 0) {
+        return { success: false, data: null };
+      }
+      return { success: true, data: result.rows[0] };
+    }
+  }
+
+  async deleteVerificationToken(token) {
+    const { type, client } = await this.getClient();
+
+    if (type === 'REST_API') {
+      return await client.deleteVerificationToken(token);
+    } else {
+      // PostgreSQL implementation
+      const query = `
+        UPDATE email_verification_tokens
+        SET used_at = NOW()
+        WHERE token = $1
+      `;
+      await client.query(query, [token]);
+      return { success: true };
+    }
+  }
+
+  async updateUserEmailVerification(userId, verified) {
+    const { type, client } = await this.getClient();
+
+    if (type === 'REST_API') {
+      return await client.updateUserEmailVerification(userId, verified);
+    } else {
+      // PostgreSQL implementation
+      const query = `
+        UPDATE users
+        SET email_verified = $2, email_verified_at = $3
+        WHERE id = $1
+        RETURNING *
+      `;
+      const verifiedAt = verified ? new Date() : null;
+      const result = await client.query(query, [userId, verified, verifiedAt]);
+      return { success: true, data: result.rows[0] };
     }
   }
 }

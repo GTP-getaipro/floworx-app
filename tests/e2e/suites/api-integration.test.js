@@ -20,7 +20,7 @@ describe('API Integration E2E Tests', () => {
 
     // Setup API client
     apiClient = axios.create({
-      baseURL: `http://localhost:${config.server.port}/api`,
+      baseURL: process.env.REACT_APP_API_URL || 'https://app.floworx-iq.com/api',
       timeout: 15000,
       validateStatus: () => true
     }), 90000;

@@ -8,7 +8,7 @@
 const https = require('https');
 const http = require('http');
 
-const PRODUCTION_URL = 'https://floworx-gxl5ke7q0-floworxdevelopers-projects.vercel.app';
+const PRODUCTION_URL = 'https://app.floworx-iq.com';
 
 console.log('🌐 PRODUCTION API ENDPOINT TESTING');
 );

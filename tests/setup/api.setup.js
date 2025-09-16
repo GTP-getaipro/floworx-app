@@ -68,7 +68,7 @@ afterEach(() => {
 module.exports = {
   request,
   testConfig: {
-    apiUrl: process.env.API_URL || 'http://localhost:3001',
+    apiUrl: process.env.API_URL || 'https://app.floworx-iq.com/api',
     jwtSecret: process.env.JWT_SECRET || 'test-jwt-secret'
   }
 };

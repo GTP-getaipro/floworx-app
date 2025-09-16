@@ -11,7 +11,7 @@ const path = require('path');
  * Load Test Configuration
  */
 const LOAD_TEST_CONFIG = {
-  baseUrl: process.env.TEST_API_URL || 'http://localhost:5001/api',
+  baseUrl: process.env.TEST_API_URL || 'https://app.floworx-iq.com/api',
 
   // Test scenarios
   scenarios: {

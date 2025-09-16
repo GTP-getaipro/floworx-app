@@ -19,8 +19,7 @@ const DatabaseTest = () => {
     agreeToTerms: true,
   });
 
-  const API_BASE =
-    process.env.NODE_ENV === 'production' ? 'https://app.floworx-iq.com' : 'http://localhost:5001';
+  const API_BASE = process.env.REACT_APP_API_URL || 'https://app.floworx-iq.com';
 
   const runTest = async (testName, testFunction) => {
     setTestResults(prev => ({

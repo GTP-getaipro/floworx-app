@@ -13,7 +13,7 @@ const config = {
       name: 'Local Development'
     },
     production: {
-      baseURL: 'https://floworx-app.vercel.app',
+      baseURL: 'https://app.floworx-iq.com',
       name: 'Production'
     }
   },

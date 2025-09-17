@@ -8,3 +8,6 @@ export { default as Logo } from './Logo';
 export { default as ProgressBar } from './ProgressBar';
 export { default as Toast } from './Toast';
 export { default as GmailConnectionStatus } from './GmailConnectionStatus';
+export { default as ValidatedInput } from './ValidatedInput';
+export { default as ProtectedButton } from './ProtectedButton';
+export { default as ProgressIndicator } from './ProgressIndicator';

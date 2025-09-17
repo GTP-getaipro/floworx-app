@@ -340,18 +340,22 @@ class DatabaseManager {
     }
   }
 
-  // Track query performance with monitoring service
+  // Track query performance by emitting events
   trackQueryPerformance(queryText, params, duration, success, error = null) {
     try {
-      // Lazy load monitoring service to avoid circular dependencies
-      if (!this.monitoringService) {
-        this.monitoringService = require('../services/realTimeMonitoringService');
-      }
-
-      this.monitoringService.trackQuery(queryText, params, duration, success, error);
+      // Emit query performance event instead of directly calling monitoring service
+      // This avoids circular dependencies
+      process.emit('database:query', {
+        queryText,
+        params,
+        duration,
+        success,
+        error: error?.message || null,
+        timestamp: Date.now()
+      });
     } catch (monitoringError) {
       // Don't let monitoring errors affect query execution
-      console.warn('Monitoring service error:', monitoringError.message);
+      console.warn('Query performance tracking error:', monitoringError.message);
     }
   }
 

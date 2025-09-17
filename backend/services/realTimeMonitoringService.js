@@ -5,7 +5,8 @@
 
 const EventEmitter = require('events');
 
-const { query } = require('../database/unified-connection');
+// Note: We avoid importing unified-connection directly to prevent circular dependencies
+// Database queries are handled through event listeners and lazy loading
 const { logger } = require('../utils/logger');
 
 class RealTimeMonitoringService extends EventEmitter {
@@ -37,6 +38,25 @@ class RealTimeMonitoringService extends EventEmitter {
     
     // Start monitoring
     this.startMonitoring();
+
+    // Listen for database query events to track performance
+    this.setupDatabaseEventListeners();
+  }
+
+  /**
+   * Setup database event listeners
+   */
+  setupDatabaseEventListeners() {
+    // Listen for database query events from unified-connection
+    process.on('database:query', (queryData) => {
+      this.trackQuery(
+        queryData.queryText,
+        queryData.params,
+        queryData.duration,
+        queryData.success,
+        queryData.error ? { message: queryData.error } : null
+      );
+    });
   }
 
   /**
@@ -222,7 +242,8 @@ class RealTimeMonitoringService extends EventEmitter {
    */
   async getDatabaseStats() {
     try {
-      const { databaseManager } = require('../database/unified-connection');
+      // Lazy load to avoid circular dependency
+      const { databaseManager, query } = require('../database/unified-connection');
 
       // If using REST API, return mock stats since PostgreSQL stats aren't available
       if (databaseManager.useRestApi && databaseManager.restClient) {

@@ -1,0 +1,21 @@
+version: '1.0'
+
+build:
+  dockerfile: './Dockerfile'
+  context: '.'
+  
+environment:
+  NODE_ENV: 'production'
+  PLAYWRIGHT_SKIP_BROWSER_DOWNLOAD: '1'
+  PUPPETEER_SKIP_CHROMIUM_DOWNLOAD: '1'
+  NIXPACKS_NO_BROWSER_INSTALL: '1'
+
+healthcheck:
+  path: '/api/health'
+  port: 5001
+  interval: 30
+  timeout: 10
+  retries: 3
+
+ports:
+  - 5001:5001

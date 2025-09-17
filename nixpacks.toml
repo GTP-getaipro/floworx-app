@@ -1,0 +1,26 @@
+[build]
+# Force using custom Dockerfile
+dockerfile = "./Dockerfile"
+
+[variables]
+# Disable browser installations
+NIXPACKS_NO_BROWSER_INSTALL = "1"
+PLAYWRIGHT_SKIP_BROWSER_DOWNLOAD = "1"
+PUPPETEER_SKIP_CHROMIUM_DOWNLOAD = "1"
+NODE_ENV = "production"
+
+[phases.setup]
+# Use Node.js 20
+nixPkgs = ["nodejs-20_x"]
+
+[phases.install]
+# Install only production dependencies
+cmds = ["npm ci --omit=dev --ignore-scripts"]
+
+[phases.build]
+# Build frontend
+cmds = ["npm run build"]
+
+[start]
+# Start command
+cmd = "npm start"

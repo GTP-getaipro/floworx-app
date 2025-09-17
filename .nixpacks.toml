@@ -1,24 +1,20 @@
 [build]
-# Force Nixpacks to use the custom Dockerfile instead of auto-generating one
+# Force using custom Dockerfile - disable auto-detection completely
 dockerfile = "Dockerfile"
+buildCommand = "docker build -f Dockerfile -t app ."
 
 [variables]
-# Disable auto-detection of browser dependencies
+# Disable all browser installations and auto-detection
 NIXPACKS_NO_BROWSER_INSTALL = "1"
 PLAYWRIGHT_SKIP_BROWSER_DOWNLOAD = "1"
 PUPPETEER_SKIP_CHROMIUM_DOWNLOAD = "1"
+NODE_ENV = "production"
+NPM_CONFIG_PRODUCTION = "true"
 
-[phases.setup]
-# Use Node.js 20 as specified in package.json engines
-nixPkgs = ["nodejs-20_x", "npm-9_x"]
-
-[phases.install]
-# Install only production dependencies
-cmds = ["npm ci --omit=dev"]
-
-[phases.build]
-# Build the frontend
-cmds = ["npm run build"]
+# Disable provider auto-detection to force using Dockerfile
+[providers]
+node = false
+npm = false
 
 [start]
 # Start the application

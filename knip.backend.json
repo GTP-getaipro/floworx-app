@@ -6,17 +6,19 @@
     "backend/**/test/**",
     "backend/**/fixtures/**",
     "backend/**/coverage/**",
-    "**/__deprecated__/**"
+    "**/__deprecated__/**",
+    "backend/node_modules/**"
   ],
   "entry": [
     "backend/app.js",
-    "backend/server.js",
-    "backend/index.js"
+    "backend/server.js"
   ],
   "ignoreDependencies": [
     "dotenv",
     "nodemon",
     "jest",
-    "supertest"
+    "supertest",
+    "eslint",
+    "prettier"
   ]
 }

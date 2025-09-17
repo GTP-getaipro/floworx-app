@@ -1,6 +1,25 @@
-# Comprehensive Audit System
+# Source Code Audit System
 
-This directory contains both **database audit** and **source code audit** systems for comprehensive cleanup of unused resources.
+This directory contains comprehensive tooling for auditing and cleaning up unused source code, dependencies, and database resources.
+
+## 🎯 Quick Start
+
+```bash
+# Install dependencies (if not already installed)
+npm install
+
+# Run all source code audits
+npm run audit:unused    # Find unused files/exports
+npm run audit:deps      # Find unused dependencies
+npm run audit:cycles    # Find circular dependencies
+npm run audit:exports   # Find unused TypeScript exports
+npm run audit:imports   # Check import issues
+
+# Save audit results
+npm run audit:unused > .audit/knip-summary.txt
+npm run audit:deps   > .audit/depcheck.txt
+npm run audit:cycles > .audit/madge.txt
+```
 
 ## 🗄️ Database Audit (Supabase)
 
@@ -258,3 +277,41 @@ npm run audit:code-full     # All static analysis
 CODE_AUDIT=1 npm start      # Enable tracking
 CODE_AUDIT=1 npm test       # Track test usage
 ```
+
+## 🔧 Source Code Audit Tools
+
+### Available Commands
+
+| Command | Purpose | Output |
+|---------|---------|--------|
+| `npm run audit:unused` | Find unused files/exports | Console + `.audit/knip-summary.txt` |
+| `npm run audit:deps` | Find unused dependencies | Console + `.audit/depcheck.txt` |
+| `npm run audit:cycles` | Find circular dependencies | Console + `.audit/madge.txt` |
+| `npm run audit:exports` | Find unused TypeScript exports | Console output |
+| `npm run audit:imports` | Check import issues with ESLint | Console output |
+
+### Configuration Files
+
+- **knip.backend.json** - Backend-specific unused code detection
+- **knip.frontend.json** - Frontend-specific unused code detection
+- **.eslintrc.js** - Includes `no-restricted-imports` rule blocking `__deprecated__/*`
+
+### Quarantine Process
+
+1. **Identify unused code** using audit tools
+2. **Move to quarantine**: `git mv file.js __deprecated__/YYYY-MM-DD/file.js`
+3. **Leave throwing stubs** for shared exports:
+   ```javascript
+   module.exports = function deprecatedFunction() {
+     throw new Error('DEPRECATED: use ../new-path (removed on YYYY-MM-DD)');
+   };
+   ```
+4. **Cool-off period**: 14-30 days monitoring
+5. **Permanent removal**: `git rm -r __deprecated__/YYYY-MM-DD`
+
+### Safety Features
+
+- **ESLint Protection**: Blocks imports from `__deprecated__/*`
+- **Git History**: All moves preserved in version control
+- **Throwing Stubs**: Immediate feedback if deprecated code is called
+- **Reversible**: Easy to restore files during cool-off period

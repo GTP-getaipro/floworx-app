@@ -7,7 +7,8 @@
     "frontend/src/**/test/**",
     "frontend/build/**",
     "frontend/public/**",
-    "**/__deprecated__/**"
+    "**/__deprecated__/**",
+    "frontend/node_modules/**"
   ],
   "entry": [
     "frontend/src/index.js",
@@ -17,6 +18,7 @@
     "@testing-library/jest-dom",
     "@testing-library/react",
     "@testing-library/user-event",
-    "web-vitals"
+    "web-vitals",
+    "react-scripts"
   ]
 }

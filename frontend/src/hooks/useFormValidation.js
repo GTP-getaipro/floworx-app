@@ -62,6 +62,14 @@ export const commonValidationRules = {
     return null;
   },
 
+  match: (fieldName, errorMessage = 'Fields do not match') => (value, allValues) => {
+    if (!value) return null;
+    if (value !== allValues[fieldName]) {
+      return errorMessage;
+    }
+    return null;
+  },
+
   phone: (value) => {
     if (!value) return null;
     const phoneRegex = /^\+?[\d\s\-\(\)]{10,}$/;
@@ -89,16 +97,16 @@ const useFormValidation = (initialValues = {}, validationRules = {}) => {
   const [isSubmitting, setIsSubmitting] = useState(false);
 
   // Validate a single field
-  const validateField = useCallback((fieldName, value) => {
+  const validateField = useCallback((fieldName, value, allValues = values) => {
     const rules = validationRules[fieldName];
     if (!rules) return null;
 
     for (const rule of rules) {
-      const error = rule(value);
+      const error = rule(value, allValues);
       if (error) return error;
     }
     return null;
-  }, [validationRules]);
+  }, [validationRules, values]);
 
   // Validate all fields
   const validateForm = useCallback(() => {
@@ -106,7 +114,7 @@ const useFormValidation = (initialValues = {}, validationRules = {}) => {
     let isValid = true;
 
     Object.keys(validationRules).forEach(fieldName => {
-      const error = validateField(fieldName, values[fieldName]);
+      const error = validateField(fieldName, values[fieldName], values);
       if (error) {
         newErrors[fieldName] = error;
         isValid = false;
@@ -119,20 +127,22 @@ const useFormValidation = (initialValues = {}, validationRules = {}) => {
 
   // Handle field value change
   const handleChange = useCallback((fieldName, value) => {
-    setValues(prev => ({
-      ...prev,
+    const newValues = {
+      ...values,
       [fieldName]: value
-    }));
+    };
+
+    setValues(newValues);
 
     // Validate field if it has been touched
     if (touched[fieldName]) {
-      const error = validateField(fieldName, value);
+      const error = validateField(fieldName, value, newValues);
       setErrors(prev => ({
         ...prev,
         [fieldName]: error
       }));
     }
-  }, [touched, validateField]);
+  }, [touched, validateField, values]);
 
   // Handle field blur (mark as touched)
   const handleBlur = useCallback((fieldName) => {

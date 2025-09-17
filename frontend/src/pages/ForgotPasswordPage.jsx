@@ -1,13 +1,17 @@
-import React, { useEffect } from "react";
-import AuthLayout from "../components/ui/AuthLayout";
-import Input from "../components/ui/Input";
-import PrimaryButton from "../components/ui/PrimaryButton";
+import React, { useEffect, useState } from "react";
+import AuthLayout from "../components/auth/AuthLayout";
+import Input from "../components/auth/Input";
+import Button from "../components/auth/Button";
 import useFormValidation from "../hooks/useFormValidation";
 import useFormPersistence from "../hooks/useFormPersistence";
 import { required, email } from "../utils/validationRules";
+import { api } from "../lib/api";
 
 export default function ForgotPasswordPage({ onSubmit, errors = {}, values = {} }) {
   const { load, save } = useFormPersistence('auth:forgot');
+  const [isLoading, setIsLoading] = useState(false);
+  const [isSuccess, setIsSuccess] = useState(false);
+  const [networkError, setNetworkError] = useState('');
 
   const {
     values: formValues,
@@ -36,38 +40,105 @@ export default function ForgotPasswordPage({ onSubmit, errors = {}, values = {} 
     save(formValues);
   }, [formValues, save]);
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
     const { valid } = validate();
-    if (valid) {
+    if (!valid) return;
+
+    setIsLoading(true);
+    setNetworkError('');
+
+    try {
+      await api('/api/auth/password/request', {
+        method: 'POST',
+        body: { email: formValues.email }
+      });
+      setIsSuccess(true);
+    } catch (error) {
+      // Only show network errors, not user existence errors (security)
+      if (error.status === 0 || error.code === 'NETWORK_ERROR') {
+        setNetworkError('Network error. Please check your connection and try again.');
+      } else {
+        // For all other errors, still show success (security - don't reveal user existence)
+        setIsSuccess(true);
+      }
+    } finally {
+      setIsLoading(false);
+    }
+
+    // Call original onSubmit if provided (for compatibility)
+    if (onSubmit) {
       onSubmit(formValues);
     }
   };
 
+  if (isSuccess) {
+    return (
+      <AuthLayout title="Check your email" subtitle="We've sent you a password reset link">
+        <div className="text-center space-y-4">
+          <div
+            className="p-4 bg-green-50 border border-green-200 rounded-lg text-green-800"
+            role="status"
+            aria-live="polite"
+          >
+            If an account exists with that email address, we've sent you a link to reset your password.
+          </div>
+          <div className="flex flex-col sm:flex-row justify-center gap-3 pt-2">
+            <a
+              href="/login"
+              className="text-brand-300 hover:text-white underline-offset-4 hover:underline text-sm text-center"
+            >
+              Back to login
+            </a>
+          </div>
+        </div>
+      </AuthLayout>
+    );
+  }
+
   return (
     <AuthLayout title="Reset your password" subtitle="Enter your email and we'll send you a reset link">
-      <form onSubmit={handleSubmit} noValidate>
+      <form onSubmit={handleSubmit} noValidate className="space-y-4">
+        {networkError && (
+          <div
+            className="p-4 bg-red-50 border border-red-200 rounded-lg text-red-800"
+            role="alert"
+            aria-live="assertive"
+          >
+            {networkError}
+          </div>
+        )}
         <Input
           id="email"
           name="email"
           type="email"
-          label="Email Address *"
+          label="Email Address"
           value={formValues.email}
           onChange={handleChange}
           onBlur={handleBlur}
           error={formErrors.email || errors.email}
-          placeholder="you@company.com"
+          placeholder="Enter your account email"
           aria-invalid={!!(formErrors.email || errors.email)}
         />
-        <PrimaryButton
+        <Button
           type="submit"
-          disabled={!isValid && Object.keys(touched).length > 0}
+          disabled={isLoading || (!isValid && Object.keys(touched).length > 0)}
         >
-          Send Reset Link
-        </PrimaryButton>
-        <div className="links">
-          <a className="a" href="/login">Back to login</a>
-          <a className="a" href="/register">Create account</a>
+          {isLoading ? 'Sending...' : 'Send Reset Link'}
+        </Button>
+        <div className="flex flex-col sm:flex-row justify-between gap-3 pt-2">
+          <a
+            href="/login"
+            className="text-brand-300 hover:text-white underline-offset-4 hover:underline text-sm text-center"
+          >
+            Back to login
+          </a>
+          <a
+            href="/register"
+            className="text-brand-300 hover:text-white underline-offset-4 hover:underline text-sm text-center"
+          >
+            Create account
+          </a>
         </div>
       </form>
     </AuthLayout>

@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate, useSearchParams, useLocation, Link } from 'react-router-dom';
 import AuthLayout from '../../components/AuthLayout';
+import { api } from '../../lib/api';
 
 const VerifyEmail = () => {
   const [verificationState, setVerificationState] = useState('loading'); // loading, success, error, manual
@@ -34,28 +35,22 @@ const VerifyEmail = () => {
 
   const verifyWithToken = async (verificationToken) => {
     try {
-      const response = await fetch('/api/auth/verify', {
+      const data = await api('/api/auth/verify', {
         method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({ token: verificationToken }),
+        body: { token: verificationToken }
       });
 
-      const data = await response.json();
-
-      if (response.ok) {
-        setVerificationState('success');
+      setVerificationState('success');
+    } catch (error) {
+      setVerificationState('error');
+      if (error.status === 401) {
+        setError('Invalid verification token. Please request a new verification email.');
+      } else if (error.status === 410) {
+        setError('This verification link has expired or has already been used. Please request a new verification email.');
       } else {
-        setVerificationState('error');
-        if (response.status === 401) {
-          setError('Invalid verification token. Please request a new verification email.');
-        } else if (response.status === 410) {
-          setError('This verification link has expired or has already been used. Please request a new verification email.');
-        } else {
-          setError(data.error?.message || 'Verification failed. Please try again.');
-        }
+        setError(error.message || 'Verification failed. Please try again.');
       }
+    }
     } catch (error) {
       console.error('Verification error:', error);
       setVerificationState('error');

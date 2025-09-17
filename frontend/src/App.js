@@ -1,4 +1,5 @@
 import React, { Suspense } from 'react';
+import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom';
 
 // Critical components loaded immediately
 import ErrorBoundary from './components/ErrorBoundary';
@@ -11,12 +12,12 @@ import { ToastProvider } from './contexts/ToastContext';
 // Lazy-loaded components for better performance
 const Dashboard = React.lazy(() => import('./components/Dashboard'));
 const DatabaseTest = React.lazy(() => import('./components/DatabaseTest'));
-const EmailVerification = React.lazy(() => import('./components/EmailVerification'));
-const ForgotPassword = React.lazy(() => import('./components/ForgotPassword'));
+const VerifyEmailPage = React.lazy(() => import('./pages/VerifyEmailPage'));
+const ForgotPasswordPage = React.lazy(() => import('./pages/ForgotPasswordPage'));
+const ResetPasswordPage = React.lazy(() => import('./pages/ResetPasswordPage'));
 const AccountRecoveryDashboard = React.lazy(() => import('./components/recovery/AccountRecoveryDashboard'));
 const NotFoundPage = React.lazy(() => import('./components/NotFoundPage'));
 const Register = React.lazy(() => import('./components/Register'));
-const ResetPassword = React.lazy(() => import('./components/ResetPassword'));
 const UserManagement = React.lazy(() => import('./components/UserManagement'));
 const Settings = React.lazy(() => import('./components/Settings'));
 const APITestDashboard = React.lazy(() => import('./components/APITestDashboard'));
@@ -84,7 +85,7 @@ function App() {
                       element={
                         <ErrorBoundary key='verify-email'>
                           <Suspense fallback={<LoadingSpinner />}>
-                            <EmailVerification />
+                            <VerifyEmailPage />
                           </Suspense>
                         </ErrorBoundary>
                       }
@@ -94,7 +95,7 @@ function App() {
                       element={
                         <ErrorBoundary key='forgot-password'>
                           <Suspense fallback={<LoadingSpinner />}>
-                            <ForgotPassword />
+                            <ForgotPasswordPage />
                           </Suspense>
                         </ErrorBoundary>
                       }
@@ -104,7 +105,7 @@ function App() {
                       element={
                         <ErrorBoundary key='reset-password'>
                           <Suspense fallback={<LoadingSpinner />}>
-                            <ResetPassword />
+                            <ResetPasswordPage />
                           </Suspense>
                         </ErrorBoundary>
                       }

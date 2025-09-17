@@ -1,7 +1,7 @@
 const crypto = require('crypto');
 
 // Encryption configuration
-const ALGORITHM = 'aes-256-gcm';
+const ALGORITHM = 'aes-256-cbc';
 const KEY_LENGTH = 32; // 256 bits
 const IV_LENGTH = 16; // 128 bits
 // TAG_LENGTH removed - not used in current implementation
@@ -24,18 +24,14 @@ const encrypt = text => {
     const key = getEncryptionKey();
     const iv = crypto.randomBytes(IV_LENGTH);
 
-    // FIXED: Use secure createCipherGCM instead of deprecated createCipher
-    const cipher = crypto.createCipherGCM(ALGORITHM, key, iv);
-    cipher.setAAD(Buffer.from('floworx-oauth', 'utf8')); // Additional authenticated data
+    // Use createCipheriv for AES-256-CBC (correct Node.js API)
+    const cipher = crypto.createCipheriv(ALGORITHM, key, iv);
 
     let encrypted = cipher.update(text, 'utf8', 'hex');
     encrypted += cipher.final('hex');
 
-    // Get authentication tag for GCM mode
-    const tag = cipher.getAuthTag();
-
-    // Return IV + tag + encrypted data as a single string
-    return iv.toString('hex') + ':' + tag.toString('hex') + ':' + encrypted;
+    // Return IV + encrypted data as a single string (no auth tag for CBC)
+    return iv.toString('hex') + ':' + encrypted;
   } catch (error) {
     console.error('Encryption error:', error);
     throw new Error('Failed to encrypt data');
@@ -48,18 +44,15 @@ const decrypt = encryptedData => {
     const key = getEncryptionKey();
     const parts = encryptedData.split(':');
 
-    if (parts.length !== 3) {
+    if (parts.length !== 2) {
       throw new Error('Invalid encrypted data format');
     }
 
     const iv = Buffer.from(parts[0], 'hex');
-    const tag = Buffer.from(parts[1], 'hex');
-    const encrypted = parts[2];
+    const encrypted = parts[1];
 
-    // FIXED: Use secure createDecipherGCM instead of deprecated createDecipher
-    const decipher = crypto.createDecipherGCM(ALGORITHM, key, iv);
-    decipher.setAAD(Buffer.from('floworx-oauth', 'utf8')); // Must match AAD from encryption
-    decipher.setAuthTag(tag);
+    // Use createDecipheriv for AES-256-CBC (correct Node.js API)
+    const decipher = crypto.createDecipheriv(ALGORITHM, key, iv);
 
     let decrypted = decipher.update(encrypted, 'hex', 'utf8');
     decrypted += decipher.final('utf8');

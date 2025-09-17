@@ -10,16 +10,20 @@ const cors = require('cors');
 const helmet = require('helmet');
 const compression = require('compression');
 const rateLimit = require('express-rate-limit');
+const cookieParser = require('cookie-parser');
 
 // Import middleware
 const { errorHandler } = require('./middleware/errorHandler');
 // const { performanceMiddlewareStack } = require('./middleware/performance');
 const { additionalSecurityHeaders, sanitizeRequest } = require('./middleware/security');
+const { csrfProtection } = require('./middleware/csrf');
 
 // Import routes
 const authRoutes = require('./routes/auth');
 const userRoutes = require('./routes/user');
 const oauthRoutes = require('./routes/oauth');
+const googleRoutes = require('./routes/google');
+const microsoftRoutes = require('./routes/microsoft');
 const dashboardRoutes = require('./routes/dashboard');
 const businessTypesRoutes = require('./routes/businessTypes');
 const onboardingRoutes = require('./routes/onboarding');
@@ -57,26 +61,12 @@ app.use(helmet({
   crossOriginEmbedderPolicy: false
 }));
 
-// CORS configuration
+// CORS configuration - Allow all origins for now, CSRF middleware will handle origin validation
 const corsOptions = {
-  origin: function (origin, callback) {
-    const allowedOrigins = [
-      'http://localhost:3000',
-      'http://localhost:3001',
-      'https://floworx-app.vercel.app',
-      'https://app.floworx-iq.com',
-      'https://www.floworx-iq.com'
-    ];
-    
-    if (!origin || allowedOrigins.includes(origin)) {
-      callback(null, true);
-    } else {
-      callback(new Error('Not allowed by CORS'));
-    }
-  },
+  origin: true, // Allow all origins, CSRF middleware will validate
   credentials: true,
   methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS', 'PATCH'],
-  allowedHeaders: ['Content-Type', 'Authorization', 'X-Requested-With']
+  allowedHeaders: ['Content-Type', 'Authorization', 'X-Requested-With', 'x-csrf-token']
 };
 
 app.use(cors(corsOptions));
@@ -95,6 +85,9 @@ app.use(limiter);
 // Body parsing middleware
 app.use(express.json({ limit: '10mb' }));
 app.use(express.urlencoded({ extended: true, limit: '10mb' }));
+
+// Cookie parsing middleware
+app.use(cookieParser());
 
 // Compression
 app.use(compression());
@@ -116,10 +109,15 @@ app.get('/health', (req, res) => {
 // Mount health routes
 app.use(healthRoutes);
 
+// CSRF protection for cookie-authenticated API routes
+app.use('/api', csrfProtection);
+
 // API Routes
 app.use('/api/auth', authRoutes);
 app.use('/api/user', userRoutes);
 app.use('/api/oauth', oauthRoutes);
+app.use('/api/integrations/google', googleRoutes);
+app.use('/api/integrations/microsoft', microsoftRoutes);
 app.use('/api/dashboard', dashboardRoutes);
 app.use('/api/business-types', businessTypesRoutes);
 app.use('/api/onboarding', onboardingRoutes);

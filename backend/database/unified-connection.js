@@ -340,23 +340,39 @@ class DatabaseManager {
     }
   }
 
-  // Track query performance by emitting events
+  // Track query performance using injected callback
   trackQueryPerformance(queryText, params, duration, success, error = null) {
     try {
-      // Emit query performance event instead of directly calling monitoring service
-      // This avoids circular dependencies
-      process.emit('database:query', {
-        queryText,
-        params,
-        duration,
-        success,
-        error: error?.message || null,
-        timestamp: Date.now()
-      });
+      // Use injected performance tracker if available
+      if (this.performanceTracker) {
+        this.performanceTracker({
+          queryText,
+          params,
+          duration,
+          success,
+          error: error?.message || null,
+          timestamp: Date.now()
+        });
+      } else {
+        // Fallback to process events for backward compatibility
+        process.emit('database:query', {
+          queryText,
+          params,
+          duration,
+          success,
+          error: error?.message || null,
+          timestamp: Date.now()
+        });
+      }
     } catch (monitoringError) {
       // Don't let monitoring errors affect query execution
       console.warn('Query performance tracking error:', monitoringError.message);
     }
+  }
+
+  // Set performance tracker callback (for dependency injection)
+  setPerformanceTracker(tracker) {
+    this.performanceTracker = tracker;
   }
 
   // Execute transaction with automatic rollback on error
@@ -566,12 +582,8 @@ class DatabaseManager {
   }
 }
 
-// Create singleton instance
-const databaseManager = new DatabaseManager();
-
-// Export both the manager and legacy-compatible pool
-
-// KeyDB singleton instance
+// Global state for database instances
+let globalDatabaseManager = null;
 let keydbInstance = null;
 let keydbConnectionStatus = 'disabled';
 
@@ -682,34 +694,151 @@ function getKeyDBStatus() {
   return keydbConnectionStatus;
 }
 
+/**
+ * Pure API Functions - No side effects at import time
+ */
+
+/**
+ * Initialize database connection
+ * @param {Object} options - Database configuration options
+ * @returns {Promise<DatabaseManager>} Initialized database manager
+ */
+async function initDb(options = {}) {
+  if (!globalDatabaseManager) {
+    globalDatabaseManager = new DatabaseManager();
+  }
+
+  await globalDatabaseManager.initialize();
+  return globalDatabaseManager;
+}
+
+/**
+ * Get initialized database manager
+ * @returns {DatabaseManager} Database manager instance
+ * @throws {Error} If database not initialized
+ */
+function getDb() {
+  if (!globalDatabaseManager || !globalDatabaseManager.isInitialized) {
+    throw new Error('Database not initialized. Call initDb() first.');
+  }
+  return globalDatabaseManager;
+}
+
+/**
+ * Close database connections
+ * @returns {Promise<void>}
+ */
+async function closeDb() {
+  if (globalDatabaseManager) {
+    await globalDatabaseManager.close();
+    globalDatabaseManager = null;
+  }
+}
+
+/**
+ * Create a new database manager instance (for testing)
+ * @returns {DatabaseManager} New database manager instance
+ */
+function createDbManager() {
+  return new DatabaseManager();
+}
+
 module.exports = {
-  databaseManager,
+  // Pure API functions
+  initDb,
+  getDb,
+  closeDb,
+  createDbManager,
+
   // Legacy compatibility - will be deprecated
-  pool: {
-    query: (...args) => databaseManager.query(...args),
-    connect: () => databaseManager.getPool().then(pool => pool.connect()),
-    end: () => databaseManager.close()
+  get databaseManager() {
+    return globalDatabaseManager;
   },
-  // New unified interface
-  query: (...args) => databaseManager.query(...args),
-  transaction: callback => databaseManager.transaction(callback),
-  healthCheck: () => databaseManager.healthCheck(),
-  close: () => databaseManager.close(),
-  initialize: () => databaseManager.initialize(),
+
+  // Legacy pool interface
+  pool: {
+    query: (...args) => {
+      const db = getDb();
+      return db.query(...args);
+    },
+    connect: () => {
+      const db = getDb();
+      return db.getPool().then(pool => pool.connect());
+    },
+    end: () => closeDb()
+  },
+
+  // Unified interface functions
+  query: (...args) => {
+    const db = getDb();
+    return db.query(...args);
+  },
+  transaction: (callback) => {
+    const db = getDb();
+    return db.transaction(callback);
+  },
+  healthCheck: () => {
+    const db = getDb();
+    return db.healthCheck();
+  },
+  close: () => closeDb(),
+  initialize: () => {
+    if (!globalDatabaseManager) {
+      globalDatabaseManager = new DatabaseManager();
+    }
+    return globalDatabaseManager.initialize();
+  },
+
   // User management methods
-  getUserById: userId => databaseManager.getUserById(userId),
-  getUserByEmail: email => databaseManager.getUserByEmail(email),
-  createUser: userData => databaseManager.restClient ? databaseManager.restClient.createUser(userData) : null,
-  getRecentActivities: (userId, limit) => databaseManager.getRecentActivities(userId, limit),
-  getOAuthConnections: userId => databaseManager.getOAuthConnections(userId),
+  getUserById: (userId) => {
+    const db = getDb();
+    return db.getUserById(userId);
+  },
+  getUserByEmail: (email) => {
+    const db = getDb();
+    return db.getUserByEmail(email);
+  },
+  createUser: (userData) => {
+    const db = getDb();
+    return db.restClient ? db.restClient.createUser(userData) : null;
+  },
+  getRecentActivities: (userId, limit) => {
+    const db = getDb();
+    return db.getRecentActivities(userId, limit);
+  },
+  getOAuthConnections: (userId) => {
+    const db = getDb();
+    return db.getOAuthConnections(userId);
+  },
+
   // Onboarding methods
-  getOnboardingStatus: userId => databaseManager.restClient ? databaseManager.restClient.getOnboardingStatus(userId) : null,
+  getOnboardingStatus: (userId) => {
+    const db = getDb();
+    return db.restClient ? db.restClient.getOnboardingStatus(userId) : null;
+  },
+
   // Password reset methods
-  getUserByEmailForPasswordReset: email => databaseManager.restClient ? databaseManager.restClient.getUserByEmailForPasswordReset(email) : null,
-  createPasswordResetToken: (userId, token, expiresAt, ipAddress, userAgent) => databaseManager.restClient ? databaseManager.restClient.createPasswordResetToken(userId, token, expiresAt, ipAddress, userAgent) : null,
-  getPasswordResetToken: token => databaseManager.restClient ? databaseManager.restClient.getPasswordResetToken(token) : null,
-  updateUserPassword: (userId, passwordHash) => databaseManager.restClient ? databaseManager.restClient.updateUserPassword(userId, passwordHash) : null,
-  markPasswordResetTokenUsed: token => databaseManager.restClient ? databaseManager.restClient.markPasswordResetTokenUsed(token) : null,
+  getUserByEmailForPasswordReset: (email) => {
+    const db = getDb();
+    return db.restClient ? db.restClient.getUserByEmailForPasswordReset(email) : null;
+  },
+  createPasswordResetToken: (userId, token, expiresAt, ipAddress, userAgent) => {
+    const db = getDb();
+    return db.restClient ? db.restClient.createPasswordResetToken(userId, token, expiresAt, ipAddress, userAgent) : null;
+  },
+  getPasswordResetToken: (token) => {
+    const db = getDb();
+    return db.restClient ? db.restClient.getPasswordResetToken(token) : null;
+  },
+  updateUserPassword: (userId, passwordHash) => {
+    const db = getDb();
+    return db.restClient ? db.restClient.updateUserPassword(userId, passwordHash) : null;
+  },
+  markPasswordResetTokenUsed: (token) => {
+    const db = getDb();
+    return db.restClient ? db.restClient.markPasswordResetTokenUsed(token) : null;
+  },
+
   // KeyDB functions
   getKeyDB,
   getKeyDBStatus

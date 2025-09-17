@@ -1,6 +1,9 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate, useSearchParams, Link } from 'react-router-dom';
-import AuthLayout from '../../components/AuthLayout';
+import AuthLayout from '../../components/auth/AuthLayout';
+import { api } from '../../lib/api';
+import PasswordInput from '../../components/auth/PasswordInput';
+import Button from '../../components/auth/Button';
 import useFormValidation from '../../hooks/useFormValidation';
 import { required, minLength, passwordStrong, matches } from '../../utils/validationRules';
 
@@ -39,24 +42,15 @@ const ResetPassword = () => {
     // Verify token validity
     const verifyToken = async () => {
       try {
-        const response = await fetch('/api/auth/verify-reset-token', {
+        await api('/api/auth/verify-reset-token', {
           method: 'POST',
-          headers: {
-            'Content-Type': 'application/json',
-          },
-          body: JSON.stringify({ token }),
+          body: { token }
         });
-
-        setIsValidToken(response.ok);
-        
-        if (!response.ok) {
-          const data = await response.json();
-          setErrors({ token: data.error || 'Invalid or expired reset token' });
-        }
+        setIsValidToken(true);
       } catch (error) {
         console.error('Token verification error:', error);
         setIsValidToken(false);
-        setErrors({ token: 'Unable to verify reset token' });
+        setErrors({ token: error.message || 'Invalid or expired reset token' });
       }
     };
 
@@ -72,26 +66,18 @@ const ResetPassword = () => {
     setErrors({});
 
     try {
-      const response = await fetch('/api/auth/reset-password', {
+      await api('/api/auth/reset-password', {
         method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({
+        body: {
           token,
           password: formValues.password
-        }),
+        }
       });
 
-      if (response.ok) {
-        setIsSuccess(true);
-      } else {
-        const data = await response.json();
-        setErrors({ submit: data.error?.message || 'Failed to reset password. Please try again.' });
-      }
+      setIsSuccess(true);
     } catch (error) {
       console.error('Reset password error:', error);
-      setErrors({ submit: 'An unexpected error occurred. Please try again.' });
+      setErrors({ submit: error.message || 'Failed to reset password. Please try again.' });
     } finally {
       setIsSubmitting(false);
     }
@@ -99,9 +85,9 @@ const ResetPassword = () => {
 
   if (isValidToken === null) {
     return (
-      <AuthLayout title="Verifying reset token...">
-        <div style={{ textAlign: 'center', padding: '20px' }}>
-          <div>Please wait while we verify your reset token...</div>
+      <AuthLayout title="Verifying reset token..." subtitle="Please wait while we verify your reset token...">
+        <div className="text-center py-8">
+          <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-white mx-auto"></div>
         </div>
       </AuthLayout>
     );
@@ -109,19 +95,25 @@ const ResetPassword = () => {
 
   if (isValidToken === false) {
     return (
-      <AuthLayout 
-        title="Invalid reset link" 
+      <AuthLayout
+        title="Invalid reset link"
         subtitle="This password reset link is invalid or has expired"
       >
-        <div className="error-callout">
+        <div className="bg-red-50/20 border border-red-300/30 rounded-xl p-4 mb-6 text-red-400 text-sm">
           {errors.token || 'This password reset link is no longer valid.'}
         </div>
-        
-        <div className="auth-links">
-          <Link to="/forgot-password" className="auth-link">
+
+        <div className="flex flex-col gap-3">
+          <Link
+            to="/forgot-password"
+            className="text-brand-300 hover:text-white underline-offset-4 hover:underline text-sm text-center"
+          >
             Request a new reset link
           </Link>
-          <Link to="/login" className="auth-link">
+          <Link
+            to="/login"
+            className="text-brand-300 hover:text-white underline-offset-4 hover:underline text-sm text-center"
+          >
             Back to sign in
           </Link>
         </div>
@@ -131,16 +123,19 @@ const ResetPassword = () => {
 
   if (isSuccess) {
     return (
-      <AuthLayout 
-        title="Password reset successful" 
+      <AuthLayout
+        title="Password reset successful"
         subtitle="Your password has been updated"
       >
-        <div className="success-callout">
+        <div className="bg-green-50/20 border border-green-300/30 rounded-xl p-4 mb-6 text-green-400 text-sm">
           Your password has been successfully reset. You can now sign in with your new password.
         </div>
-        
-        <div className="auth-links">
-          <Link to="/login" className="auth-link">
+
+        <div className="text-center">
+          <Link
+            to="/login"
+            className="text-brand-300 hover:text-white underline-offset-4 hover:underline text-sm"
+          >
             Sign in to your account
           </Link>
         </div>
@@ -149,66 +144,55 @@ const ResetPassword = () => {
   }
 
   return (
-    <AuthLayout 
-      title="Set new password" 
+    <AuthLayout
+      title="Set new password"
       subtitle="Enter your new password below"
     >
       {errors.submit && (
-        <div className="error-callout">
+        <div className="bg-red-50/20 border border-red-300/30 rounded-xl p-4 mb-6 text-red-400 text-sm">
           {errors.submit}
         </div>
       )}
-      
-      <form onSubmit={handleSubmit} className="auth-form">
-        <div className="form-group">
-          <label htmlFor="password" className="form-label">New Password</label>
-          <input
-            id="password"
-            name="password"
-            type="password"
-            className={`form-input ${formErrors.password ? 'error' : ''}`}
-            value={formValues.password}
-            onChange={handleChange}
-            onBlur={handleBlur}
-            placeholder="••••••••"
-            disabled={isSubmitting}
-            autoComplete="new-password"
-            aria-invalid={!!formErrors.password}
-            required
-          />
-          {formErrors.password && <div className="error-message">{formErrors.password}</div>}
-        </div>
 
-        <div className="form-group">
-          <label htmlFor="confirm" className="form-label">Confirm New Password</label>
-          <input
-            id="confirm"
-            name="confirm"
-            type="password"
-            className={`form-input ${formErrors.confirm ? 'error' : ''}`}
-            value={formValues.confirm}
-            onChange={handleChange}
-            onBlur={handleBlur}
-            placeholder="••••••••"
-            disabled={isSubmitting}
-            autoComplete="new-password"
-            aria-invalid={!!formErrors.confirm}
-            required
-          />
-          {formErrors.confirm && <div className="error-message">{formErrors.confirm}</div>}
-        </div>
+      <form onSubmit={handleSubmit} className="space-y-4">
+        <PasswordInput
+          id="password"
+          name="password"
+          label="New Password"
+          value={formValues.password}
+          onChange={handleChange}
+          onBlur={handleBlur}
+          error={formErrors.password}
+          placeholder="Create a new password"
+          disabled={isSubmitting}
+        />
 
-        <button
+        <PasswordInput
+          id="confirm"
+          name="confirm"
+          label="Confirm New Password"
+          value={formValues.confirm}
+          onChange={handleChange}
+          onBlur={handleBlur}
+          error={formErrors.confirm}
+          placeholder="Confirm your new password"
+          disabled={isSubmitting}
+        />
+
+        <Button
           type="submit"
-          className="btn-primary"
           disabled={isSubmitting || (!isValid && Object.keys(touched).length > 0)}
+          loading={isSubmitting}
         >
           {isSubmitting ? 'Updating Password...' : 'Update Password'}
-        </button>
+        </Button>
       </form>
 
-      <div className="auth-links">
-        <Link to="/login" className="auth-link">
+      <div className="text-center pt-4">
+        <Link
+          to="/login"
+          className="text-brand-300 hover:text-white underline-offset-4 hover:underline text-sm"
+        >
           Back to sign in
         </Link>
       </div>

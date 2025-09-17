@@ -1,17 +1,21 @@
 /**
  * Real-time Query Performance Monitoring Service
  * Provides live monitoring, alerting, and optimization recommendations
+ *
+ * Factory pattern to avoid circular dependencies
  */
 
 const EventEmitter = require('events');
 
-// Note: We avoid importing unified-connection directly to prevent circular dependencies
-// Database queries are handled through event listeners and lazy loading
-const { logger } = require('../utils/logger');
-
 class RealTimeMonitoringService extends EventEmitter {
-  constructor() {
+  constructor({ db, pubsub, logger }) {
     super();
+
+    // Injected dependencies
+    this.db = db;
+    this.pubsub = pubsub || this;  // Use self as pubsub if not provided
+    this.logger = logger || console;
+
     this.metrics = {
       queries: new Map(),
       alerts: [],
@@ -35,7 +39,7 @@ class RealTimeMonitoringService extends EventEmitter {
     this.monitoringInterval = null;
     this.connectionMonitoringInterval = null;
     this.alertCooldowns = new Map();
-    
+
     // Start monitoring
     this.startMonitoring();
 
@@ -232,7 +236,7 @@ class RealTimeMonitoringService extends EventEmitter {
       });
 
     } catch (error) {
-      logger.error('Failed to collect metrics', { error: error.message });
+      this.logger.error('Failed to collect metrics', { error: error.message });
     }
   }
 
@@ -242,14 +246,22 @@ class RealTimeMonitoringService extends EventEmitter {
    */
   async getDatabaseStats() {
     try {
-      // Lazy load to avoid circular dependency
-      const { databaseManager, query } = require('../database/unified-connection');
+      // Use injected database dependency
+      if (!this.db) {
+        return {
+          activeConnections: 0,
+          totalConnections: 0,
+          backendCount: 0,
+          connectionMethod: 'none',
+          status: 'no-database'
+        };
+      }
 
       // If using REST API, return mock stats since PostgreSQL stats aren't available
-      if (databaseManager.useRestApi && databaseManager.restClient) {
+      if (this.db.useRestApi && this.db.restClient) {
         // For REST API, we can't get PostgreSQL connection stats
         // Return basic health status instead
-        const healthCheck = await databaseManager.healthCheck();
+        const healthCheck = await this.db.healthCheck();
         return {
           activeConnections: healthCheck.connected ? 1 : 0,
           totalConnections: healthCheck.connected ? 1 : 0,
@@ -260,7 +272,7 @@ class RealTimeMonitoringService extends EventEmitter {
       }
 
       // For direct PostgreSQL connections, get actual stats
-      const stats = await query(`
+      const stats = await this.db.query(`
         SELECT
           (SELECT count(*) FROM pg_stat_activity WHERE state = 'active') as active_connections,
           (SELECT count(*) FROM pg_stat_activity) as total_connections,
@@ -275,7 +287,7 @@ class RealTimeMonitoringService extends EventEmitter {
         status: 'healthy'
       };
     } catch (error) {
-      logger.error('Failed to get database stats', { error: error.message });
+      this.logger.error('Failed to get database stats', { error: error.message });
       return {
         activeConnections: 0,
         totalConnections: 0,
@@ -428,7 +440,7 @@ class RealTimeMonitoringService extends EventEmitter {
     this.alertCooldowns.set(cooldownKey, now);
 
     // Log alert
-    logger.warn('Performance alert created', alert);
+    this.logger.warn('Performance alert created', alert);
 
     // Emit alert event
     this.emit('alert:created', alert);
@@ -449,7 +461,7 @@ class RealTimeMonitoringService extends EventEmitter {
         ...dbStats
       });
     } catch (error) {
-      logger.error('Connection monitoring failed', { error: error.message });
+      this.logger.error('Connection monitoring failed', { error: error.message });
     }
   }
 
@@ -590,7 +602,7 @@ class RealTimeMonitoringService extends EventEmitter {
    */
   updateThresholds(newThresholds) {
     this.metrics.thresholds = { ...this.metrics.thresholds, ...newThresholds };
-    logger.info('Monitoring thresholds updated', this.metrics.thresholds);
+    this.logger.info('Monitoring thresholds updated', this.metrics.thresholds);
     this.emit('thresholds:updated', this.metrics.thresholds);
   }
 
@@ -609,11 +621,24 @@ class RealTimeMonitoringService extends EventEmitter {
       currentConnections: 0
     };
 
-    logger.info('Monitoring metrics reset');
+    this.logger.info('Monitoring metrics reset');
     this.emit('metrics:reset');
   }
 }
 
-// Export singleton instance
-const realTimeMonitoringService = new RealTimeMonitoringService();
-module.exports = realTimeMonitoringService;
+/**
+ * Factory function to create RealTimeMonitoringService with dependency injection
+ * @param {Object} dependencies - Required dependencies
+ * @param {Object} dependencies.db - Database manager instance
+ * @param {Object} dependencies.pubsub - Event emitter for pub/sub (optional)
+ * @param {Object} dependencies.logger - Logger instance (optional)
+ * @returns {RealTimeMonitoringService} Configured monitoring service instance
+ */
+function createRealTimeMonitoringService({ db, pubsub, logger }) {
+  return new RealTimeMonitoringService({ db, pubsub, logger });
+}
+
+module.exports = {
+  createRealTimeMonitoringService,
+  RealTimeMonitoringService // Export class for testing
+};

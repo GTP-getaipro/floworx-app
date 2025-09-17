@@ -1,20 +1,15 @@
 /**
  * Database Connection Module
  * Simple wrapper around unified-connection for backward compatibility
+ *
+ * DEPRECATED: This module is deprecated. Use unified-connection.js directly
+ * with the new dependency injection pattern.
  */
 
-const { databaseManager, pool } = require('./unified-connection');
-
-// Initialize connection
-databaseManager.initialize().catch(error => {
-  console.error('Failed to initialize database connection:', error);
-  // Don't exit in test environment
-  if (process.env.NODE_ENV !== 'test') {
-    process.exit(1);
-  }
-});
+const { pool, databaseManager } = require('./unified-connection');
 
 // Export pool for backward compatibility
+// Note: This is a legacy interface and should be migrated to DI pattern
 module.exports = {
   pool,
   databaseManager

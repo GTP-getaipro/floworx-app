@@ -4,51 +4,67 @@
  */
 
 const request = require('supertest');
+const { createTestCompositionRoot } = require('../helpers/testCompositionRoot');
+const createMonitoringRoutes = require('../../routes/monitoring');
+const express = require('express');
 
-const app = require('../../app');
-const errorTrackingService = require('../../services/errorTrackingService');
-const realTimeMonitoringService = require('../../services/realTimeMonitoringService');
+// Create test app with dependency injection
+async function createTestApp() {
+  const app = express();
+  app.use(express.json());
+
+  // Set up composition root for testing
+  const services = await createTestCompositionRoot({ useRealDb: false });
+
+  // Mount monitoring routes with injected dependencies
+  if (services.realTimeMonitoringService) {
+    const monitoringRoutes = createMonitoringRoutes(services.realTimeMonitoringService);
+    app.use('/api/monitoring', monitoringRoutes);
+  }
+
+  // Store services for test access
+  app.testServices = services;
+
+  return app;
+}
 
 describe('Monitoring API Integration Tests', () => {
+  let app;
   let adminToken;
   let userToken;
+  let realTimeMonitoringService;
 
   beforeAll(async () => {
-    // Create admin user and get token
-    const adminUser = {
-      email: 'admin-monitoring@example.com',
-      password: 'AdminPassword123!',
-      firstName: 'Admin',
-      lastName: 'User',
-      role: 'admin'
-    };
+    // Create test app with dependency injection
+    app = await createTestApp();
+    realTimeMonitoringService = app.testServices.realTimeMonitoringService;
 
-    const adminResponse = await request(app)
-      .post('/api/auth/register')
-      .send(adminUser);
+    // Mock admin token for testing (since we're not testing auth here)
+    adminToken = 'mock-admin-token';
+    userToken = 'mock-user-token';
 
-    adminToken = adminResponse.body.token;
+    // Mock authentication middleware for testing
+    app.use((req, res, next) => {
+      if (req.headers.authorization === `Bearer ${adminToken}`) {
+        req.user = { id: 'admin-id', role: 'admin' };
+      } else if (req.headers.authorization === `Bearer ${userToken}`) {
+        req.user = { id: 'user-id', role: 'user' };
+      }
+      next();
+    });
+  });
 
-    // Create regular user and get token
-    const regularUser = {
-      email: 'user-monitoring@example.com',
-      password: 'UserPassword123!',
-      firstName: 'Regular',
-      lastName: 'User'
-    };
-
-    const userResponse = await request(app)
-      .post('/api/auth/register')
-      .send(regularUser);
-
-    userToken = userResponse.body.token;
+  afterAll(async () => {
+    // Cleanup test services
+    if (app && app.testServices) {
+      await app.testServices.cleanup();
+    }
   });
 
   beforeEach(() => {
     // Reset monitoring services
-    realTimeMonitoringService.resetMetrics();
-    if (errorTrackingService.errors && errorTrackingService.errors.clear) {
-      errorTrackingService.errors.clear();
+    if (realTimeMonitoringService) {
+      realTimeMonitoringService.resetMetrics();
     }
   });
 

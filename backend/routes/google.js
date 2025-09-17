@@ -1,0 +1,253 @@
+const express = require('express');
+const crypto = require('crypto');
+const { databaseOperations } = require('../database/database-operations');
+const { authenticateToken } = require('../middleware/auth');
+const { makeLimiter } = require('../middleware/rateLimiter');
+const { csrfProtection } = require('../middleware/csrf');
+
+const router = express.Router();
+
+// Rate limiters
+const authorizeLimiter = makeLimiter({
+  windowMs: 60 * 1000, // 1 minute
+  limit: 60, // 60 requests per minute
+  keyBy: (req) => req.ip
+});
+const callbackLimiter = makeLimiter({
+  windowMs: 60 * 1000, // 1 minute
+  limit: 60, // 60 requests per minute
+  keyBy: (req) => req.ip
+});
+
+// Google OAuth configuration
+const GOOGLE_CLIENT_ID = process.env.GOOGLE_CLIENT_ID;
+const GOOGLE_CLIENT_SECRET = process.env.GOOGLE_CLIENT_SECRET;
+const GOOGLE_REDIRECT_URI = process.env.GOOGLE_REDIRECT_URI;
+const FRONTEND_URL = process.env.FRONTEND_URL;
+
+// Google OAuth endpoints
+const GOOGLE_AUTH_URL = 'https://accounts.google.com/o/oauth2/v2/auth';
+const GOOGLE_TOKEN_URL = 'https://oauth2.googleapis.com/token';
+const GOOGLE_REVOKE_URL = 'https://oauth2.googleapis.com/revoke';
+
+// Required scopes for Gmail integration
+const GOOGLE_SCOPES = [
+  'https://www.googleapis.com/auth/gmail.modify',
+  'https://www.googleapis.com/auth/gmail.settings.basic',
+  'https://www.googleapis.com/auth/userinfo.email'
+];
+
+/**
+ * Build Google OAuth authorization URL
+ */
+function buildGoogleAuthorizeUrl(state) {
+  const params = new URLSearchParams({
+    client_id: GOOGLE_CLIENT_ID,
+    redirect_uri: GOOGLE_REDIRECT_URI,
+    response_type: 'code',
+    scope: GOOGLE_SCOPES.join(' '),
+    access_type: 'offline',
+    include_granted_scopes: 'true',
+    prompt: 'consent',
+    state: state
+  });
+
+  return `${GOOGLE_AUTH_URL}?${params.toString()}`;
+}
+
+/**
+ * Exchange authorization code for tokens
+ */
+async function exchangeCodeForTokens(code) {
+  const response = await fetch(GOOGLE_TOKEN_URL, {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/x-www-form-urlencoded',
+    },
+    body: new URLSearchParams({
+      client_id: GOOGLE_CLIENT_ID,
+      client_secret: GOOGLE_CLIENT_SECRET,
+      code: code,
+      grant_type: 'authorization_code',
+      redirect_uri: GOOGLE_REDIRECT_URI,
+    }),
+  });
+
+  if (!response.ok) {
+    const error = await response.text();
+    throw new Error(`Token exchange failed: ${error}`);
+  }
+
+  return await response.json();
+}
+
+/**
+ * Get user info from Google
+ */
+async function getUserInfo(accessToken) {
+  const response = await fetch('https://www.googleapis.com/oauth2/v2/userinfo', {
+    headers: {
+      'Authorization': `Bearer ${accessToken}`,
+    },
+  });
+
+  if (!response.ok) {
+    throw new Error('Failed to get user info');
+  }
+
+  return await response.json();
+}
+
+/**
+ * Revoke Google tokens
+ */
+async function revokeTokens(token) {
+  try {
+    const response = await fetch(`${GOOGLE_REVOKE_URL}?token=${token}`, {
+      method: 'POST',
+    });
+    return response.ok;
+  } catch (error) {
+    console.error('Error revoking Google tokens:', error);
+    return false;
+  }
+}
+
+// GET /api/integrations/google/authorize
+router.get('/authorize', authorizeLimiter, authenticateToken, (req, res) => {
+  try {
+    // Check environment variables dynamically for testing
+    if (!process.env.GOOGLE_CLIENT_ID || !process.env.GOOGLE_CLIENT_SECRET || !process.env.GOOGLE_REDIRECT_URI) {
+      return res.status(500).json({
+        error: { code: 'OAUTH_CONFIG_MISSING', message: 'Google OAuth configuration missing' }
+      });
+    }
+
+    // Generate state parameter for CSRF protection and include user ID
+    const stateData = {
+      userId: req.user.id,
+      nonce: crypto.randomBytes(16).toString('hex')
+    };
+    const state = Buffer.from(JSON.stringify(stateData)).toString('base64');
+
+    const authUrl = buildGoogleAuthorizeUrl(state);
+
+    res.json({ url: authUrl });
+  } catch (error) {
+    console.error('Google authorize error:', error);
+    res.status(500).json({
+      error: { code: 'INTERNAL', message: 'Failed to generate authorization URL' }
+    });
+  }
+});
+
+// GET /api/integrations/google/callback
+router.get('/callback', callbackLimiter, async (req, res) => {
+  try {
+    const { code, state, error } = req.query;
+
+    if (error) {
+      console.error('OAuth error:', error);
+      return res.redirect(`${FRONTEND_URL}/onboarding/step2?error=oauth_denied`);
+    }
+
+    if (!code) {
+      return res.status(400).json({
+        error: { code: 'MISSING_CODE', message: 'Authorization code required' }
+      });
+    }
+
+    // Verify and decode state parameter
+    if (!state) {
+      return res.status(400).json({
+        error: { code: 'MISSING_STATE', message: 'State parameter required' }
+      });
+    }
+
+    let stateData;
+    try {
+      stateData = JSON.parse(Buffer.from(state, 'base64').toString('utf8'));
+    } catch (error) {
+      return res.status(400).json({
+        error: { code: 'INVALID_STATE', message: 'Invalid state parameter' }
+      });
+    }
+
+    const userId = stateData.userId;
+    if (!userId) {
+      return res.redirect(`${FRONTEND_URL}/onboarding/step2?error=session_expired`);
+    }
+
+    // Exchange code for tokens
+    const tokenData = await exchangeCodeForTokens(code);
+
+    // Get user info
+    const userInfo = await getUserInfo(tokenData.access_token);
+
+    // Calculate expiry time
+    const expiryAt = new Date(Date.now() + (tokenData.expires_in - 60) * 1000);
+
+    const connectionData = {
+      sub: userInfo.email,
+      access_token: tokenData.access_token,
+      refresh_token: tokenData.refresh_token,
+      scope: GOOGLE_SCOPES,
+      expiry_at: expiryAt.toISOString()
+    };
+
+    const storeResult = await databaseOperations.upsertProviderTokens(userId, 'google', connectionData);
+    if (!storeResult.success) {
+      console.error('Failed to store Google tokens:', storeResult.error);
+      return res.redirect(`${FRONTEND_URL}/onboarding/step2?error=storage_failed`);
+    }
+
+    // Update onboarding state
+    await databaseOperations.setOnboardingProviderFlag(userId, 'google', true);
+
+    // Redirect to frontend with success
+    res.redirect(`${FRONTEND_URL}/onboarding/step2?connected=gmail`);
+  } catch (error) {
+    console.error('Google callback error:', error);
+    res.redirect(`${FRONTEND_URL}/onboarding/step2?error=callback_failed`);
+  }
+});
+
+// POST /api/integrations/google/disconnect
+router.post('/disconnect', authenticateToken, csrfProtection, async (req, res) => {
+  try {
+    const userId = req.user.id;
+
+    // Get current connection to revoke tokens
+    const connection = await databaseOperations.getConnection(userId, 'google');
+    
+    if (connection.success && connection.data) {
+      // Attempt to revoke tokens
+      if (connection.data.access_token) {
+        await revokeTokens(connection.data.access_token);
+      }
+      if (connection.data.refresh_token) {
+        await revokeTokens(connection.data.refresh_token);
+      }
+    }
+
+    // Delete connection from database
+    const deleteResult = await databaseOperations.deleteConnection(userId, 'google');
+    if (!deleteResult.success) {
+      return res.status(500).json({
+        error: { code: 'DELETE_FAILED', message: deleteResult.error }
+      });
+    }
+
+    // Update onboarding state
+    await databaseOperations.setOnboardingProviderFlag(userId, 'google', false);
+
+    res.status(204).send();
+  } catch (error) {
+    console.error('Google disconnect error:', error);
+    res.status(500).json({
+      error: { code: 'INTERNAL', message: 'Failed to disconnect Google account' }
+    });
+  }
+});
+
+module.exports = router;

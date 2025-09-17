@@ -31,12 +31,12 @@
 
   /* Focus styles for accessibility */
   *:focus-visible {
-    @apply outline-none ring-2 ring-brand-primary-hover ring-offset-2;
+    @apply outline-none ring-2 ring-brand-500 ring-offset-2;
   }
 
   /* Ensure proper contrast for links */
   a {
-    @apply text-brand-primary hover:text-brand-primary-hover;
+    @apply text-brand-600 hover:text-brand-500;
   }
 }
 

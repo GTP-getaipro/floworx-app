@@ -2,6 +2,7 @@ const cors = require('cors');
 const express = require('express');
 const morgan = require('morgan');
 const path = require('path');
+const cookieParser = require('cookie-parser');
 
 // Load centralized configuration
 const config = require('./config/config');
@@ -11,7 +12,7 @@ const { logger } = require('./utils/logger');
 const { validateConfigurationOnStartup, addConfigContext, configHealthCheck, viewSafeConfig } = require('./middleware/configValidation');
 
 // Enhanced security imports
-const { initialize: initializeDatabase } = require('./database/unified-connection');
+const { initDb, getDb } = require('./database/unified-connection');
 const { errorHandler, notFoundHandler } = require('./middleware/errorHandler');
 const {
   standardErrorHandler,
@@ -43,18 +44,22 @@ const dashboardRoutes = require('./routes/dashboard');
 // const diagnosticsRoutes = require('./routes/diagnostics'); // Removed during cleanup
 const errorRoutes = require('./routes/errors');
 // const healthRoutes = require('./routes/health'); // Removed during cleanup
-const monitoringRoutes = require('./routes/monitoring');
+const createMonitoringRoutes = require('./routes/monitoring');
 const oauthRoutes = require('./routes/oauth');
 const onboardingRoutes = require('./routes/onboarding');
 const passwordResetRoutes = require('./routes/passwordReset');
 // const performanceRoutes = require('./routes/performance'); // Removed during cleanup
 const recoveryRoutes = require('./routes/recovery');
 const testKeydbRoutes = require('./routes/test-keydb');
+const testRoutes = require('./routes/test');
 const userRoutes = require('./routes/user');
 const workflowRoutes = require('./routes/workflows');
 
 // Initialize Express app
 const app = express();
+
+// Global services (initialized in composition root)
+let realTimeMonitoringService = null;
 
 // Trust proxy for proper IP detection behind load balancers (Coolify/Docker)
 app.set('trust proxy', true);
@@ -64,6 +69,10 @@ const PORT = config.get('port');
 
 // Import performance monitoring
 const performanceService = require('./services/performanceService');
+
+// Import monitoring service factory
+const { createRealTimeMonitoringService } = require('./services/realTimeMonitoringService');
+const EventEmitter = require('events');
 
 // Configuration validation middleware
 app.use(validateConfigurationOnStartup);
@@ -130,6 +139,9 @@ app.use(
     type: 'application/json'
   })
 );
+
+// Cookie parsing middleware
+app.use(cookieParser());
 app.use(
   express.urlencoded({
     extended: true,
@@ -272,6 +284,11 @@ app.use('/api/analytics', analyticsRoutes);
 
 app.use('/api', testKeydbRoutes);
 
+// Test routes (only in test environment)
+if (process.env.NODE_ENV === 'test') {
+  app.use('/api/test', testRoutes);
+}
+
 // --- SERVE STATIC FILES FROM REACT BUILD ---
 // Serve static files from the React build folder (with error handling)
 const frontendPath = path.join(__dirname, '..', 'frontend', 'build');
@@ -357,15 +374,54 @@ process.on('SIGINT', gracefulShutdown);
 // Start server
 const startServer = async () => {
   try {
+    // === COMPOSITION ROOT ===
     // Initialize database connection (skip if DB not available)
+    let db = null;
     try {
-      await initializeDatabase();
+      db = await initDb();
       logger.info('Database connection initialized successfully');
     } catch (error) {
       logger.warn('Database not available - running in limited mode', { error: error.message });
       if (config.get('nodeEnv') !== 'production') {
         logger.warn('Install PostgreSQL and configure environment variables to enable full functionality');
       }
+    }
+
+    // Create pub/sub event emitter
+    const pubsub = new EventEmitter();
+
+    // Initialize real-time monitoring service with dependency injection
+    if (db) {
+      try {
+        realTimeMonitoringService = createRealTimeMonitoringService({
+          db,
+          pubsub,
+          logger
+        });
+
+        // Wire database performance tracking to monitoring service
+        db.setPerformanceTracker((queryData) => {
+          realTimeMonitoringService.trackQuery(
+            queryData.queryText,
+            queryData.params,
+            queryData.duration,
+            queryData.success,
+            queryData.error ? { message: queryData.error } : null
+          );
+        });
+
+        logger.info('Real-time monitoring service initialized with dependency injection');
+
+        // Mount monitoring routes with injected service
+        const monitoringRoutes = createMonitoringRoutes(realTimeMonitoringService);
+        app.use('/api/monitoring', monitoringRoutes);
+        logger.info('Monitoring routes mounted with dependency injection');
+
+      } catch (error) {
+        logger.warn('Failed to initialize monitoring service', { error: error.message });
+      }
+    } else {
+      logger.info('Monitoring service disabled - no database connection');
     }
 
     // Start the server
@@ -400,8 +456,39 @@ const startServer = async () => {
 
 // For Vercel serverless deployment
 if (config.get('nodeEnv') === 'production' && process.env.VERCEL) {
-  // Initialize database for serverless
-  initializeDatabase().catch(error => logger.error('Serverless database initialization failed', { error: error.message }));
+  // Initialize database and services for serverless
+  (async () => {
+    try {
+      const db = await initDb();
+      const pubsub = new EventEmitter();
+
+      if (db) {
+        realTimeMonitoringService = createRealTimeMonitoringService({
+          db,
+          pubsub,
+          logger
+        });
+
+        // Wire database performance tracking
+        db.setPerformanceTracker((queryData) => {
+          realTimeMonitoringService.trackQuery(
+            queryData.queryText,
+            queryData.params,
+            queryData.duration,
+            queryData.success,
+            queryData.error ? { message: queryData.error } : null
+          );
+        });
+
+        // Mount monitoring routes for serverless
+        const monitoringRoutes = createMonitoringRoutes(realTimeMonitoringService);
+        app.use('/api/monitoring', monitoringRoutes);
+      }
+    } catch (error) {
+      logger.error('Serverless initialization failed', { error: error.message });
+    }
+  })();
+
   module.exports = app;
 } else if (config.get('nodeEnv') === 'test') {
   // For testing, export the app without starting the server

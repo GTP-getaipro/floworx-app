@@ -1,14 +1,18 @@
 import React, { useEffect, useState } from "react";
-import AuthLayout from "../components/ui/AuthLayout";
-import Input from "../components/ui/Input";
-import PrimaryButton from "../components/ui/PrimaryButton";
+import { useSearchParams } from "react-router-dom";
+import AuthLayout from "../components/auth/AuthLayout";
+import Input from "../components/auth/Input";
+import PasswordInput from "../components/auth/PasswordInput";
+import Button from "../components/auth/Button";
 import useFormValidation from "../hooks/useFormValidation";
 import useFormPersistence from "../hooks/useFormPersistence";
 import { required, email, minLength, passwordStrong, matches } from "../utils/validationRules";
+import { handleReturnToFromQuery } from "../lib/returnTo";
 
 export default function RegisterPage({ onSubmit, errors = {}, values = {} }) {
   const { load, save, clear } = useFormPersistence('auth:register');
   const [showRestoreNotice, setShowRestoreNotice] = useState(false);
+  const [searchParams] = useSearchParams();
 
   const {
     values: formValues,
@@ -49,6 +53,11 @@ export default function RegisterPage({ onSubmit, errors = {}, values = {} }) {
     }
   }, [load, setValue]);
 
+  // Handle returnTo from query params on mount
+  useEffect(() => {
+    handleReturnToFromQuery(searchParams);
+  }, [searchParams]);
+
   useEffect(() => {
     save(formValues);
   }, [formValues, save]);
@@ -69,54 +78,38 @@ export default function RegisterPage({ onSubmit, errors = {}, values = {} }) {
   };
 
   return (
-    <AuthLayout title="Create your Floworx account" subtitle="Start automating your workflow today">
+    <AuthLayout title="Create your FloWorx account" subtitle="Start automating your workflow today">
       {showRestoreNotice && (
-        <div style={{
-          background: '#f0f9ff',
-          border: '1px solid #0ea5e9',
-          borderRadius: '8px',
-          padding: '12px',
-          marginBottom: '16px',
-          fontSize: '14px'
-        }}>
+        <div className="bg-blue-50/20 border border-blue-300/30 rounded-xl p-3 mb-4 text-sm text-slate-200">
           Previous data restored.
           <button
             type="button"
             onClick={handleClearAndStartFresh}
-            style={{
-              background: 'none',
-              border: 'none',
-              color: '#0ea5e9',
-              textDecoration: 'underline',
-              cursor: 'pointer',
-              marginLeft: '8px'
-            }}
+            className="ml-2 text-brand-300 hover:text-white underline"
           >
             Clear & Start Fresh
           </button>
         </div>
       )}
-      <form onSubmit={handleSubmit} noValidate>
-        <div className="row">
+      <form onSubmit={handleSubmit} noValidate className="space-y-4">
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
           <Input
             id="firstName"
             name="firstName"
-            label="First Name *"
+            label="First Name"
             value={formValues.firstName}
             onChange={handleChange}
             onBlur={handleBlur}
             error={formErrors.firstName || errors.firstName}
-            aria-invalid={!!(formErrors.firstName || errors.firstName)}
           />
           <Input
             id="lastName"
             name="lastName"
-            label="Last Name *"
+            label="Last Name"
             value={formValues.lastName}
             onChange={handleChange}
             onBlur={handleBlur}
             error={formErrors.lastName || errors.lastName}
-            aria-invalid={!!(formErrors.lastName || errors.lastName)}
           />
         </div>
         <Input
@@ -131,42 +124,48 @@ export default function RegisterPage({ onSubmit, errors = {}, values = {} }) {
           id="email"
           name="email"
           type="email"
-          label="Email Address *"
+          label="Email Address"
           value={formValues.email}
           onChange={handleChange}
           onBlur={handleBlur}
           error={formErrors.email || errors.email}
-          aria-invalid={!!(formErrors.email || errors.email)}
+          placeholder="Enter your business email"
         />
-        <Input
+        <PasswordInput
           id="password"
           name="password"
-          type="password"
-          label="Password *"
+          label="Password"
           value={formValues.password}
           onChange={handleChange}
           onBlur={handleBlur}
           error={formErrors.password || errors.password}
-          placeholder="Min. 8 characters"
-          aria-invalid={!!(formErrors.password || errors.password)}
+          placeholder="Create a password (min. 8 characters)"
         />
-        <Input
+        <PasswordInput
           id="confirm"
           name="confirm"
-          type="password"
-          label="Confirm Password *"
+          label="Confirm Password"
           value={formValues.confirm}
           onChange={handleChange}
           onBlur={handleBlur}
           error={formErrors.confirm || errors.confirm}
-          aria-invalid={!!(formErrors.confirm || errors.confirm)}
+          placeholder="Confirm your password"
         />
-        <PrimaryButton
+        <Button
           type="submit"
           disabled={!isValid && Object.keys(touched).length > 0}
         >
           Create Account
-        </PrimaryButton>
+        </Button>
+        <div className="text-center pt-2">
+          <span className="text-slate-200 text-sm">Already have an account? </span>
+          <a
+            href="/login"
+            className="text-brand-300 hover:text-white underline-offset-4 hover:underline text-sm"
+          >
+            Sign in here
+          </a>
+        </div>
       </form>
     </AuthLayout>
   );

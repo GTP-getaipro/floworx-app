@@ -3,17 +3,35 @@
  * This provides a unified interface regardless of the connection method
  */
 
-const { databaseManager } = require('./unified-connection');
+const { initDb, getDb, createDbManager } = require('./unified-connection');
+const { hashRefreshToken } = require('../utils/jwt');
+const redisManager = require('../services/redis-connection-manager');
 
 class DatabaseOperations {
   constructor() {
-    this.dbManager = databaseManager;
+    this.dbManager = null;
+    this._initialized = false;
+  }
+
+  async _ensureInitialized() {
+    if (!this._initialized) {
+      try {
+        this.dbManager = await initDb();
+        this._initialized = true;
+      } catch (error) {
+        // Fallback to creating a new manager for tests
+        this.dbManager = createDbManager();
+        await this.dbManager.initialize();
+        this._initialized = true;
+      }
+    }
   }
 
   /**
    * Get the appropriate client (REST or PostgreSQL)
    */
   async getClient() {
+    await this._ensureInitialized();
     await this.dbManager.initialize();
     
     if (this.dbManager.useRestApi && this.dbManager.restClient) {
@@ -116,7 +134,175 @@ class DatabaseOperations {
   }
 
   // =====================================================
-  // CREDENTIALS MANAGEMENT
+  // USER CONNECTIONS (OAuth Providers)
+  // =====================================================
+
+  /**
+   * Store OAuth provider tokens (encrypted)
+   * @param {string} userId - User ID
+   * @param {string} provider - Provider name ('google' | 'microsoft')
+   * @param {object} tokenData - Token data object
+   * @returns {Promise<{success: boolean, data?: object, error?: string}>}
+   */
+  async upsertProviderTokens(userId, provider, tokenData) {
+    try {
+      const { encrypt } = require('../utils/encryption');
+      const { type, client } = await this.getClient();
+
+      const encryptedData = {
+        user_id: userId,
+        provider: provider,
+        sub: tokenData.sub,
+        access_token_enc: encrypt(tokenData.access_token),
+        refresh_token_enc: tokenData.refresh_token ? encrypt(tokenData.refresh_token) : null,
+        scope: tokenData.scope || [],
+        expiry_at: tokenData.expiry_at,
+        updated_at: new Date().toISOString()
+      };
+
+      if (type === 'REST_API') {
+        const response = await client.upsert('user_connections', encryptedData, {
+          onConflict: 'user_id,provider'
+        });
+        return { success: true, data: response.data };
+      } else {
+        const query = `
+          INSERT INTO user_connections (user_id, provider, sub, access_token_enc, refresh_token_enc, scope, expiry_at, updated_at)
+          VALUES ($1, $2, $3, $4, $5, $6, $7, $8)
+          ON CONFLICT (user_id, provider)
+          DO UPDATE SET
+            sub = EXCLUDED.sub,
+            access_token_enc = EXCLUDED.access_token_enc,
+            refresh_token_enc = EXCLUDED.refresh_token_enc,
+            scope = EXCLUDED.scope,
+            expiry_at = EXCLUDED.expiry_at,
+            updated_at = EXCLUDED.updated_at
+          RETURNING *
+        `;
+        const result = await client.query(query, [
+          userId, provider, tokenData.sub, encryptedData.access_token_enc,
+          encryptedData.refresh_token_enc, tokenData.scope, tokenData.expiry_at, encryptedData.updated_at
+        ]);
+        return { success: true, data: result.rows[0] };
+      }
+    } catch (error) {
+      console.error('Error upserting provider tokens:', error);
+      return { success: false, error: error.message };
+    }
+  }
+
+  /**
+   * Get OAuth connection for user and provider
+   * @param {string} userId - User ID
+   * @param {string} provider - Provider name
+   * @returns {Promise<{success: boolean, data?: object, error?: string}>}
+   */
+  async getConnection(userId, provider) {
+    try {
+      const { decrypt } = require('../utils/encryption');
+      const { type, client } = await this.getClient();
+
+      if (type === 'REST_API') {
+        const response = await client.get('user_connections', {
+          user_id: `eq.${userId}`,
+          provider: `eq.${provider}`
+        });
+
+        if (response.data && response.data.length > 0) {
+          const connection = response.data[0];
+          // Decrypt tokens
+          connection.access_token = decrypt(connection.access_token_enc);
+          if (connection.refresh_token_enc) {
+            connection.refresh_token = decrypt(connection.refresh_token_enc);
+          }
+          delete connection.access_token_enc;
+          delete connection.refresh_token_enc;
+          return { success: true, data: connection };
+        }
+        return { success: true, data: null };
+      } else {
+        const query = `
+          SELECT user_id, provider, sub, access_token_enc, refresh_token_enc, scope, expiry_at, created_at, updated_at
+          FROM user_connections
+          WHERE user_id = $1 AND provider = $2
+        `;
+        const result = await client.query(query, [userId, provider]);
+
+        if (result.rows.length > 0) {
+          const connection = result.rows[0];
+          // Decrypt tokens
+          connection.access_token = decrypt(connection.access_token_enc);
+          if (connection.refresh_token_enc) {
+            connection.refresh_token = decrypt(connection.refresh_token_enc);
+          }
+          delete connection.access_token_enc;
+          delete connection.refresh_token_enc;
+          return { success: true, data: connection };
+        }
+        return { success: true, data: null };
+      }
+    } catch (error) {
+      console.error('Error getting connection:', error);
+      return { success: false, error: error.message };
+    }
+  }
+
+  /**
+   * Delete OAuth connection
+   * @param {string} userId - User ID
+   * @param {string} provider - Provider name
+   * @returns {Promise<{success: boolean, error?: string}>}
+   */
+  async deleteConnection(userId, provider) {
+    try {
+      const { type, client } = await this.getClient();
+
+      if (type === 'REST_API') {
+        await client.delete('user_connections', {
+          user_id: `eq.${userId}`,
+          provider: `eq.${provider}`
+        });
+        return { success: true };
+      } else {
+        const query = `DELETE FROM user_connections WHERE user_id = $1 AND provider = $2`;
+        await client.query(query, [userId, provider]);
+        return { success: true };
+      }
+    } catch (error) {
+      console.error('Error deleting connection:', error);
+      return { success: false, error: error.message };
+    }
+  }
+
+  /**
+   * Set onboarding provider connection flag
+   * @param {string} userId - User ID
+   * @param {string} provider - Provider name ('google' | 'microsoft')
+   * @param {boolean} connected - Connection status
+   * @returns {Promise<{success: boolean, error?: string}>}
+   */
+  async setOnboardingProviderFlag(userId, provider, connected) {
+    try {
+      const currentState = await this.getOnboardingState(userId);
+      if (!currentState.success) {
+        return currentState;
+      }
+
+      const flagName = provider === 'google' ? 'gmailConnected' : 'outlookConnected';
+      const updatedData = {
+        ...currentState.data.data,
+        [flagName]: connected
+      };
+
+      return await this.upsertOnboardingPatch(userId, currentState.data.step, updatedData);
+    } catch (error) {
+      console.error('Error setting onboarding provider flag:', error);
+      return { success: false, error: error.message };
+    }
+  }
+
+  // =====================================================
+  // CREDENTIALS MANAGEMENT (Legacy)
   // =====================================================
 
   async storeCredentials(userId, serviceName, accessToken, refreshToken = null, expiryDate = null, scope = null) {
@@ -825,6 +1011,854 @@ class DatabaseOperations {
         console.log('Credentials table not found, returning empty array');
         return { data: [], error: null };
       }
+    }
+  }
+
+  // =====================================================
+  // PASSWORD RESET OPERATIONS
+  // =====================================================
+
+  /**
+   * Create password reset token with hashed storage
+   * @param {string} userId - User ID
+   * @param {number} ttlMinutes - Time to live in minutes (default: 60)
+   * @returns {Object} { token } - Returns raw token; stores hash + expiresAt
+   */
+  async createPasswordResetToken(userId, ttlMinutes = 60) {
+    const crypto = require('crypto');
+    const rawToken = crypto.randomBytes(32).toString('hex');
+    const tokenHash = crypto.createHash('sha256').update(rawToken).digest('hex');
+    const expiresAt = new Date(Date.now() + ttlMinutes * 60 * 1000);
+
+    const { type, client } = await this.getClient();
+
+    if (type === 'REST_API') {
+      const result = await client.getAdminClient()
+        .from('password_reset_tokens')
+        .insert({
+          user_id: userId,
+          token: tokenHash, // Use 'token' column, not 'token_hash'
+          expires_at: expiresAt.toISOString(),
+          created_at: new Date().toISOString()
+        })
+        .select()
+        .single();
+
+      if (result.error) {
+        throw new Error(`Failed to create reset token: ${result.error.message}`);
+      }
+    } else {
+      // PostgreSQL implementation
+      const query = `
+        INSERT INTO password_reset_tokens (user_id, token, expires_at, created_at)
+        VALUES ($1, $2, $3, NOW())
+        RETURNING id
+      `;
+      const result = await client.query(query, [userId, tokenHash, expiresAt.toISOString()]);
+      if (result.rows.length === 0) {
+        throw new Error('Failed to create reset token');
+      }
+    }
+
+    return { token: rawToken };
+  }
+
+  /**
+   * Consume password reset token (single-use)
+   * @param {string} rawToken - Raw token from user
+   * @returns {Object} { userId } or throws
+   */
+  async consumePasswordResetToken(rawToken) {
+    const crypto = require('crypto');
+    const tokenHash = crypto.createHash('sha256').update(rawToken).digest('hex');
+    const { type, client } = await this.getClient();
+
+    if (type === 'REST_API') {
+      // First, find and validate the token
+      const tokenResult = await client.getAdminClient()
+        .from('password_reset_tokens')
+        .select('user_id, expires_at, used')
+        .eq('token', tokenHash) // Use 'token' column
+        .single();
+
+      if (tokenResult.error || !tokenResult.data) {
+        throw new Error('INVALID_TOKEN');
+      }
+
+      const token = tokenResult.data;
+
+      if (token.used) {
+        throw new Error('TOKEN_EXPIRED');
+      }
+
+      if (new Date(token.expires_at) < new Date()) {
+        throw new Error('TOKEN_EXPIRED');
+      }
+
+      // Mark token as used
+      const updateResult = await client.getAdminClient()
+        .from('password_reset_tokens')
+        .update({ used: true, used_at: new Date().toISOString() })
+        .eq('token', tokenHash); // Use 'token' column
+
+      if (updateResult.error) {
+        throw new Error('Failed to consume token');
+      }
+
+      return { userId: token.user_id };
+    } else {
+      // PostgreSQL implementation
+      const query = `
+        UPDATE password_reset_tokens
+        SET used = true, used_at = NOW()
+        WHERE token = $1 AND used = false AND expires_at > NOW()
+        RETURNING user_id
+      `;
+      const result = await client.query(query, [tokenHash]);
+
+      if (result.rows.length === 0) {
+        // Check if token exists but is expired/used
+        const checkQuery = `
+          SELECT expires_at, used FROM password_reset_tokens WHERE token = $1
+        `;
+        const checkResult = await client.query(checkQuery, [tokenHash]);
+
+        if (checkResult.rows.length === 0) {
+          throw new Error('INVALID_TOKEN');
+        } else {
+          throw new Error('TOKEN_EXPIRED');
+        }
+      }
+
+      return { userId: result.rows[0].user_id };
+    }
+  }
+
+  /**
+   * Set user password
+   * @param {string} userId - User ID
+   * @param {string} passwordHash - Bcrypt password hash
+   */
+  async setUserPassword(userId, passwordHash) {
+    const { type, client } = await this.getClient();
+
+    if (type === 'REST_API') {
+      const result = await client.getAdminClient()
+        .from('users')
+        .update({
+          password_hash: passwordHash,
+          last_password_reset: new Date().toISOString() // Use correct column name
+        })
+        .eq('id', userId);
+
+      if (result.error) {
+        throw new Error(`Failed to update password: ${result.error.message}`);
+      }
+    } else {
+      // PostgreSQL implementation
+      const query = `
+        UPDATE users
+        SET password_hash = $1, last_password_reset = NOW()
+        WHERE id = $2
+      `;
+      await client.query(query, [passwordHash, userId]);
+    }
+  }
+
+  /**
+   * Invalidate all reset tokens for a user
+   * @param {string} userId - User ID
+   */
+  async invalidateUserResetTokens(userId) {
+    const { type, client } = await this.getClient();
+
+    if (type === 'REST_API') {
+      await client.getAdminClient()
+        .from('password_reset_tokens')
+        .update({ used: true, used_at: new Date().toISOString() })
+        .eq('user_id', userId)
+        .eq('used', false);
+    } else {
+      // PostgreSQL implementation
+      const query = `
+        UPDATE password_reset_tokens
+        SET used = true, used_at = NOW()
+        WHERE user_id = $1 AND used = false
+      `;
+      await client.query(query, [userId]);
+    }
+  }
+
+  // =====================================================
+  // REFRESH TOKEN OPERATIONS
+  // =====================================================
+
+  /**
+   * Create a refresh token for a user
+   * @param {string} userId - User ID
+   * @param {string} rawToken - Raw refresh token
+   * @param {number} ttlDays - TTL in days (default: 30)
+   * @returns {Promise<{error?: string, data?: boolean}>}
+   */
+  async createRefreshToken(userId, rawToken, ttlDays = 30) {
+    try {
+      const tokenHash = hashRefreshToken(rawToken);
+      const expiresAt = new Date(Date.now() + ttlDays * 24 * 60 * 60 * 1000);
+
+      // Try KeyDB first
+      try {
+        const client = await redisManager.getClient();
+        if (client) {
+          const tokenData = {
+            userId,
+            exp: expiresAt.getTime(),
+            used: false,
+            createdAt: Date.now()
+          };
+
+          const key = `refresh:${tokenHash}`;
+          const ttlSeconds = ttlDays * 24 * 60 * 60;
+
+          await client.setex(key, ttlSeconds, JSON.stringify(tokenData));
+          return { data: true };
+        }
+      } catch (redisError) {
+        console.warn('KeyDB unavailable for refresh token, falling back to database');
+      }
+
+      // Fallback to database - use users table with JSONB field as temporary solution
+      await this._ensureInitialized();
+
+      if (this.dbManager.client) {
+        // Direct PostgreSQL - try to use refresh_tokens table
+        const query = `
+          INSERT INTO refresh_tokens (user_id, token_hash, expires_at, created_at, used_at)
+          VALUES ($1, $2, $3, $4, NULL)
+          ON CONFLICT (token_hash) DO UPDATE SET
+            user_id = EXCLUDED.user_id,
+            expires_at = EXCLUDED.expires_at,
+            created_at = EXCLUDED.created_at,
+            used_at = NULL
+        `;
+        await this.dbManager.client.query(query, [userId, tokenHash, expiresAt, new Date()]);
+      } else {
+        // Supabase REST API fallback - store in users table preferences field
+        const tokenData = {
+          hash: tokenHash,
+          expires_at: expiresAt.toISOString(),
+          created_at: new Date().toISOString(),
+          used_at: null
+        };
+
+        // Get current user preferences
+        const { data: userData, error: getUserError } = await this.dbManager.restClient.getAdminClient()
+          .from('users')
+          .select('preferences')
+          .eq('id', userId)
+          .single();
+
+        if (getUserError) throw getUserError;
+
+        const preferences = userData.preferences || {};
+        preferences.refresh_tokens = preferences.refresh_tokens || {};
+        preferences.refresh_tokens[tokenHash] = tokenData;
+
+        // Update user preferences
+        const { error: updateError } = await this.dbManager.restClient.getAdminClient()
+          .from('users')
+          .update({ preferences })
+          .eq('id', userId);
+
+        if (updateError) throw updateError;
+      }
+
+      return { data: true };
+    } catch (error) {
+      console.error('Error creating refresh token:', error);
+      return { error: error.message };
+    }
+  }
+
+  /**
+   * Find a refresh token by raw token
+   * @param {string} rawToken - Raw refresh token
+   * @returns {Promise<{error?: string, data?: {userId: string, used: boolean, exp: number}}>}
+   */
+  async findRefreshToken(rawToken) {
+    try {
+      const tokenHash = hashRefreshToken(rawToken);
+
+      // Try KeyDB first
+      try {
+        const client = await redisManager.getClient();
+        if (client) {
+          const key = `refresh:${tokenHash}`;
+          const data = await client.get(key);
+
+          if (data) {
+            const tokenData = JSON.parse(data);
+            return {
+              data: {
+                userId: tokenData.userId,
+                used: tokenData.used,
+                exp: tokenData.exp
+              }
+            };
+          }
+          // Token not found in KeyDB, fall through to database
+        }
+      } catch (redisError) {
+        console.warn('KeyDB unavailable for refresh token lookup, falling back to database');
+      }
+
+      // Fallback to database
+      await this._ensureInitialized();
+
+      if (this.dbManager.client) {
+        // Direct PostgreSQL - try refresh_tokens table
+        const query = `
+          SELECT user_id, expires_at, used_at
+          FROM refresh_tokens
+          WHERE token_hash = $1
+        `;
+        const result = await this.dbManager.client.query(query, [tokenHash]);
+        const row = result.rows[0];
+
+        if (!row) {
+          return { data: null };
+        }
+
+        return {
+          data: {
+            userId: row.user_id,
+            used: !!row.used_at,
+            exp: new Date(row.expires_at).getTime()
+          }
+        };
+      } else {
+        // Supabase REST API fallback - search in users table preferences
+        const { data: users, error } = await this.dbManager.restClient.getAdminClient()
+          .from('users')
+          .select('id, preferences')
+          .not('preferences', 'is', null);
+
+        if (error) throw error;
+
+        // Search through all users' preferences for the token hash
+        for (const user of users) {
+          const preferences = user.preferences || {};
+          const refreshTokens = preferences.refresh_tokens || {};
+
+          if (refreshTokens[tokenHash]) {
+            const tokenData = refreshTokens[tokenHash];
+            return {
+              data: {
+                userId: user.id,
+                used: !!tokenData.used_at,
+                exp: new Date(tokenData.expires_at).getTime()
+              }
+            };
+          }
+        }
+
+        return { data: null };
+      }
+    } catch (error) {
+      console.error('Error finding refresh token:', error);
+      return { error: error.message };
+    }
+  }
+
+  /**
+   * Rotate a refresh token (mark old as used, create new one)
+   * @param {string} oldRawToken - Old refresh token
+   * @param {string} newRawToken - New refresh token
+   * @param {number} ttlDays - TTL in days
+   * @returns {Promise<{error?: string, data?: {userId: string}}>}
+   */
+  async rotateRefreshToken(oldRawToken, newRawToken, ttlDays = 30) {
+    try {
+      const oldTokenHash = hashRefreshToken(oldRawToken);
+      const newTokenHash = hashRefreshToken(newRawToken);
+
+      // Try KeyDB first
+      try {
+        const client = await redisManager.getClient();
+        if (client) {
+          const oldKey = `refresh:${oldTokenHash}`;
+          const newKey = `refresh:${newTokenHash}`;
+
+          // Use transaction for atomicity
+          const multi = client.multi();
+
+          // Get old token data
+          const oldData = await client.get(oldKey);
+          if (!oldData) {
+            return { error: 'Refresh token not found' };
+          }
+
+          const tokenData = JSON.parse(oldData);
+
+          // Check if already used
+          if (tokenData.used) {
+            return { error: 'Refresh token already used' };
+          }
+
+          // Check if expired
+          if (Date.now() > tokenData.exp) {
+            return { error: 'Refresh token expired' };
+          }
+
+          // Mark old token as used
+          tokenData.used = true;
+          multi.setex(oldKey, Math.ceil((tokenData.exp - Date.now()) / 1000), JSON.stringify(tokenData));
+
+          // Create new token
+          const newTokenData = {
+            userId: tokenData.userId,
+            exp: Date.now() + ttlDays * 24 * 60 * 60 * 1000,
+            used: false,
+            createdAt: Date.now()
+          };
+
+          const ttlSeconds = ttlDays * 24 * 60 * 60;
+          multi.setex(newKey, ttlSeconds, JSON.stringify(newTokenData));
+
+          await multi.exec();
+
+          return { data: { userId: tokenData.userId } };
+        }
+      } catch (redisError) {
+        console.warn('KeyDB unavailable for refresh token rotation, falling back to database');
+      }
+
+      // Fallback to database (simplified - mark old as used, insert new)
+      await this._ensureInitialized();
+
+      // First, get and validate old token
+      const oldTokenResult = await this.findRefreshToken(oldRawToken);
+      if (oldTokenResult.error) {
+        return { error: oldTokenResult.error };
+      }
+
+      if (!oldTokenResult.data) {
+        return { error: 'Refresh token not found' };
+      }
+
+      if (oldTokenResult.data.used) {
+        return { error: 'Refresh token already used' };
+      }
+
+      if (Date.now() > oldTokenResult.data.exp) {
+        return { error: 'Refresh token expired' };
+      }
+
+      const userId = oldTokenResult.data.userId;
+
+      // Mark old token as used and create new one
+      if (this.dbManager.client) {
+        await this.dbManager.client.query('BEGIN');
+        try {
+          // Mark old as used
+          await this.dbManager.client.query(
+            'UPDATE refresh_tokens SET used_at = $1 WHERE token_hash = $2',
+            [new Date(), oldTokenHash]
+          );
+
+          // Create new token
+          const expiresAt = new Date(Date.now() + ttlDays * 24 * 60 * 60 * 1000);
+          await this.dbManager.client.query(
+            'INSERT INTO refresh_tokens (user_id, token_hash, expires_at, created_at) VALUES ($1, $2, $3, $4)',
+            [userId, newTokenHash, expiresAt, new Date()]
+          );
+
+          await this.dbManager.client.query('COMMIT');
+        } catch (error) {
+          await this.dbManager.client.query('ROLLBACK');
+          throw error;
+        }
+      } else {
+        // Supabase REST API fallback - update in users table preferences
+        const { data: userData, error: getUserError } = await this.dbManager.restClient.getAdminClient()
+          .from('users')
+          .select('preferences')
+          .eq('id', userId)
+          .single();
+
+        if (getUserError) throw getUserError;
+
+        const preferences = userData.preferences || {};
+        const refreshTokens = preferences.refresh_tokens || {};
+
+        // Mark old token as used
+        if (refreshTokens[oldTokenHash]) {
+          refreshTokens[oldTokenHash].used_at = new Date().toISOString();
+        }
+
+        // Create new token
+        const expiresAt = new Date(Date.now() + ttlDays * 24 * 60 * 60 * 1000);
+        refreshTokens[newTokenHash] = {
+          hash: newTokenHash,
+          expires_at: expiresAt.toISOString(),
+          created_at: new Date().toISOString(),
+          used_at: null
+        };
+
+        preferences.refresh_tokens = refreshTokens;
+
+        // Update user preferences
+        const { error: updateError } = await this.dbManager.restClient.getAdminClient()
+          .from('users')
+          .update({ preferences })
+          .eq('id', userId);
+
+        if (updateError) throw updateError;
+      }
+
+      return { data: { userId } };
+    } catch (error) {
+      console.error('Error rotating refresh token:', error);
+      return { error: error.message };
+    }
+  }
+
+  /**
+   * Revoke a refresh token
+   * @param {string} rawToken - Raw refresh token
+   * @returns {Promise<{error?: string, data?: boolean}>}
+   */
+  async revokeRefreshToken(rawToken) {
+    try {
+      const tokenHash = hashRefreshToken(rawToken);
+
+      // Try KeyDB first
+      try {
+        const client = await redisManager.getClient();
+        if (client) {
+          const key = `refresh:${tokenHash}`;
+          await client.del(key);
+          return { data: true };
+        }
+      } catch (redisError) {
+        console.warn('KeyDB unavailable for refresh token revocation, falling back to database');
+      }
+
+      // Fallback to database
+      await this._ensureInitialized();
+
+      if (this.dbManager.client) {
+        await this.dbManager.client.query(
+          'UPDATE refresh_tokens SET used_at = $1 WHERE token_hash = $2',
+          [new Date(), tokenHash]
+        );
+      } else {
+        // Supabase REST API fallback - find and update in users table preferences
+        const { data: users, error } = await this.dbManager.restClient.getAdminClient()
+          .from('users')
+          .select('id, preferences')
+          .not('preferences', 'is', null);
+
+        if (error) throw error;
+
+        // Search through all users' preferences for the token hash
+        for (const user of users) {
+          const preferences = user.preferences || {};
+          const refreshTokens = preferences.refresh_tokens || {};
+
+          if (refreshTokens[tokenHash]) {
+            refreshTokens[tokenHash].used_at = new Date().toISOString();
+
+            // Update user preferences
+            const { error: updateError } = await this.dbManager.restClient.getAdminClient()
+              .from('users')
+              .update({ preferences })
+              .eq('id', user.id);
+
+            if (updateError) throw updateError;
+            break;
+          }
+        }
+      }
+
+      return { data: true };
+    } catch (error) {
+      console.error('Error revoking refresh token:', error);
+      return { error: error.message };
+    }
+  }
+
+  /**
+   * Revoke all refresh tokens for a user
+   * @param {string} userId - User ID
+   * @returns {Promise<{error?: string, data?: boolean}>}
+   */
+  async revokeAllRefreshTokensForUser(userId) {
+    try {
+      // Try KeyDB first - scan for user's tokens
+      try {
+        const client = await redisManager.getClient();
+        if (client) {
+          const keys = await client.keys('refresh:*');
+          const userKeys = [];
+
+          for (const key of keys) {
+            const data = await client.get(key);
+            if (data) {
+              const tokenData = JSON.parse(data);
+              if (tokenData.userId === userId) {
+                userKeys.push(key);
+              }
+            }
+          }
+
+          if (userKeys.length > 0) {
+            await client.del(...userKeys);
+          }
+
+          return { data: true };
+        }
+      } catch (redisError) {
+        console.warn('KeyDB unavailable for bulk refresh token revocation, falling back to database');
+      }
+
+      // Fallback to database
+      await this._ensureInitialized();
+
+      if (this.dbManager.client) {
+        await this.dbManager.client.query(
+          'UPDATE refresh_tokens SET used_at = $1 WHERE user_id = $2 AND used_at IS NULL',
+          [new Date(), userId]
+        );
+      } else {
+        // Supabase REST API fallback - update in users table preferences
+        const { data: userData, error: getUserError } = await this.dbManager.restClient.getAdminClient()
+          .from('users')
+          .select('preferences')
+          .eq('id', userId)
+          .single();
+
+        if (getUserError) throw getUserError;
+
+        const preferences = userData.preferences || {};
+        const refreshTokens = preferences.refresh_tokens || {};
+
+        // Mark all user's refresh tokens as used
+        for (const tokenHash in refreshTokens) {
+          if (refreshTokens[tokenHash] && !refreshTokens[tokenHash].used_at) {
+            refreshTokens[tokenHash].used_at = new Date().toISOString();
+          }
+        }
+
+        preferences.refresh_tokens = refreshTokens;
+
+        // Update user preferences
+        const { error: updateError } = await this.dbManager.restClient.getAdminClient()
+          .from('users')
+          .update({ preferences })
+          .eq('id', userId);
+
+        if (updateError) throw updateError;
+      }
+
+      return { data: true };
+    } catch (error) {
+      console.error('Error revoking all refresh tokens for user:', error);
+      return { error: error.message };
+    }
+  }
+
+  // =====================================================
+  // ONBOARDING OPERATIONS
+  // =====================================================
+
+  /**
+   * Get user's onboarding state
+   * @param {string} userId - User ID
+   * @returns {Promise<{success: boolean, data?: object, error?: string}>}
+   */
+  async getOnboardingState(userId) {
+    try {
+      const { type, client } = await this.getClient();
+
+      if (type === 'REST_API') {
+        const response = await client.get('onboarding_states', {
+          select: 'user_id,step,data,completed_at,created_at,updated_at',
+          user_id: `eq.${userId}`,
+          limit: 1
+        });
+
+        if (response.length === 0) {
+          // Return default state for new users
+          return {
+            success: true,
+            data: {
+              user_id: userId,
+              step: 1,
+              data: {},
+              completed_at: null,
+              created_at: new Date().toISOString(),
+              updated_at: new Date().toISOString()
+            }
+          };
+        }
+
+        return {
+          success: true,
+          data: response[0]
+        };
+      } else {
+        const query = `
+          SELECT user_id, step, data, completed_at, created_at, updated_at
+          FROM onboarding_states
+          WHERE user_id = $1
+        `;
+        const result = await client.query(query, [userId]);
+
+        if (result.rows.length === 0) {
+          // Return default state for new users
+          return {
+            success: true,
+            data: {
+              user_id: userId,
+              step: 1,
+              data: {},
+              completed_at: null,
+              created_at: new Date().toISOString(),
+              updated_at: new Date().toISOString()
+            }
+          };
+        }
+
+        return {
+          success: true,
+          data: result.rows[0]
+        };
+      }
+    } catch (error) {
+      console.error('Error getting onboarding state:', error);
+      return {
+        success: false,
+        error: error.message
+      };
+    }
+  }
+
+  /**
+   * Update user's onboarding state with patch data
+   * @param {string} userId - User ID
+   * @param {number} nextStep - Next step (1-4)
+   * @param {object} patch - Data to merge into existing data
+   * @returns {Promise<{success: boolean, data?: object, error?: string}>}
+   */
+  async upsertOnboardingPatch(userId, nextStep, patch) {
+    try {
+      const { type, client } = await this.getClient();
+
+      if (type === 'REST_API') {
+        // First get current state
+        const currentState = await this.getOnboardingState(userId);
+        if (!currentState.success) {
+          return currentState;
+        }
+
+        // Merge patch data
+        const mergedData = { ...currentState.data.data, ...patch };
+
+        // Upsert the record
+        const response = await client.upsert('onboarding_states', {
+          user_id: userId,
+          step: nextStep,
+          data: mergedData,
+          updated_at: new Date().toISOString()
+        }, {
+          onConflict: 'user_id'
+        });
+
+        return {
+          success: true,
+          data: {
+            user_id: userId,
+            step: nextStep,
+            data: mergedData,
+            completed_at: currentState.data.completed_at,
+            created_at: currentState.data.created_at,
+            updated_at: new Date().toISOString()
+          }
+        };
+      } else {
+        const query = `
+          INSERT INTO onboarding_states (user_id, step, data, created_at, updated_at)
+          VALUES ($1, $2, $3, NOW(), NOW())
+          ON CONFLICT (user_id)
+          DO UPDATE SET
+            step = EXCLUDED.step,
+            data = onboarding_states.data || EXCLUDED.data,
+            updated_at = NOW()
+          RETURNING user_id, step, data, completed_at, created_at, updated_at
+        `;
+        const result = await client.query(query, [userId, nextStep, JSON.stringify(patch)]);
+
+        return {
+          success: true,
+          data: result.rows[0]
+        };
+      }
+    } catch (error) {
+      console.error('Error upserting onboarding patch:', error);
+      return {
+        success: false,
+        error: error.message
+      };
+    }
+  }
+
+  /**
+   * Complete user's onboarding
+   * @param {string} userId - User ID
+   * @returns {Promise<{success: boolean, data?: object, error?: string}>}
+   */
+  async completeOnboarding(userId) {
+    try {
+      const { type, client } = await this.getClient();
+
+      if (type === 'REST_API') {
+        const response = await client.update('onboarding_states', {
+          completed_at: new Date().toISOString(),
+          updated_at: new Date().toISOString()
+        }, {
+          user_id: `eq.${userId}`
+        });
+
+        // Get the updated record
+        const updatedState = await this.getOnboardingState(userId);
+        return updatedState;
+      } else {
+        const query = `
+          UPDATE onboarding_states
+          SET completed_at = NOW(), updated_at = NOW()
+          WHERE user_id = $1
+          RETURNING user_id, step, data, completed_at, created_at, updated_at
+        `;
+        const result = await client.query(query, [userId]);
+
+        if (result.rows.length === 0) {
+          return {
+            success: false,
+            error: 'Onboarding state not found'
+          };
+        }
+
+        return {
+          success: true,
+          data: result.rows[0]
+        };
+      }
+    } catch (error) {
+      console.error('Error completing onboarding:', error);
+      return {
+        success: false,
+        error: error.message
+      };
     }
   }
 }

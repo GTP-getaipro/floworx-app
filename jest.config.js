@@ -52,6 +52,9 @@ module.exports = {
   ],
   
   // Setup files
+  setupFiles: [
+    '<rootDir>/tests/setupEnv.js'
+  ],
   setupFilesAfterEnv: [
     '<rootDir>/tests/setup/jest.setup.js'
   ],
@@ -95,6 +98,7 @@ module.exports = {
         '<rootDir>/tests/unit/**/*.test.js'
       ],
       testEnvironment: 'node',
+      setupFiles: ['<rootDir>/tests/setupEnv.js'],
       setupFilesAfterEnv: ['<rootDir>/tests/setup/jest.setup.js'],
       collectCoverageFrom: [
         'backend/**/*.js',
@@ -110,9 +114,9 @@ module.exports = {
         '<rootDir>/frontend/src/**/*.test.js',
         '<rootDir>/frontend/src/**/*.spec.js'
       ],
-      testEnvironment: 'jsdom',
+      testEnvironment: 'node',
+      setupFiles: ['<rootDir>/tests/setupEnv.js'],
       setupFilesAfterEnv: [
-        '@testing-library/jest-dom',
         '<rootDir>/tests/setup/frontend.setup.js'
       ],
       moduleNameMapper: {
@@ -141,28 +145,7 @@ module.exports = {
   
   // Reporter configuration
   reporters: [
-    'default',
-    [
-      'jest-junit',
-      {
-        outputDirectory: 'tests/results',
-        outputName: 'junit.xml',
-        classNameTemplate: '{classname}',
-        titleTemplate: '{title}',
-        ancestorSeparator: ' › ',
-        usePathForSuiteName: true
-      }
-    ],
-    [
-      'jest-html-reporters',
-      {
-        publicPath: 'tests/results',
-        filename: 'test-report.html',
-        expand: true,
-        hideIcon: false,
-        pageTitle: 'Floworx Test Report'
-      }
-    ]
+    'default'
   ],
   
   // Error handling
@@ -172,11 +155,11 @@ module.exports = {
   cache: true,
   cacheDirectory: '<rootDir>/.jest-cache',
   
-  // Watch plugins
-  watchPlugins: [
-    'jest-watch-typeahead/filename',
-    'jest-watch-typeahead/testname'
-  ],
+  // Watch plugins - disabled for test environment
+  // watchPlugins: [
+  //   'jest-watch-typeahead/filename',
+  //   'jest-watch-typeahead/testname'
+  // ],
   
   // Custom matchers - disabled for now
   // testResultsProcessor: '<rootDir>/tests/processors/results.processor.js'

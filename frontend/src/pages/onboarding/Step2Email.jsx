@@ -1,0 +1,288 @@
+import React, { useState, useEffect } from 'react';
+import { useNavigate, useSearchParams } from 'react-router-dom';
+import { api } from '../../lib/api';
+
+export default function Step2Email() {
+  const navigate = useNavigate();
+  const [searchParams] = useSearchParams();
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState('');
+  const [success, setSuccess] = useState('');
+  const [connections, setConnections] = useState({
+    gmailConnected: false,
+    outlookConnected: false
+  });
+
+  useEffect(() => {
+    // Load current onboarding state
+    const loadState = async () => {
+      try {
+        const response = await api('/api/onboarding');
+        if (response.data) {
+          setConnections({
+            gmailConnected: response.data.gmailConnected || false,
+            outlookConnected: response.data.outlookConnected || false
+          });
+        }
+      } catch (err) {
+        console.error('Failed to load onboarding state:', err);
+      }
+    };
+    loadState();
+
+    // Check for OAuth callback results
+    const connected = searchParams.get('connected');
+    const error = searchParams.get('error');
+    
+    if (connected === 'gmail') {
+      setSuccess('Gmail connected successfully!');
+      setConnections(prev => ({ ...prev, gmailConnected: true }));
+    } else if (connected === 'outlook') {
+      setSuccess('Outlook connected successfully!');
+      setConnections(prev => ({ ...prev, outlookConnected: true }));
+    } else if (error) {
+      setError(`Connection failed: ${error.replace(/_/g, ' ')}`);
+    }
+  }, [searchParams]);
+
+  const handleConnectGmail = async () => {
+    try {
+      setLoading(true);
+      setError('');
+      
+      const response = await api('/api/integrations/google/authorize');
+      if (response.url) {
+        window.location.href = response.url;
+      }
+    } catch (err) {
+      setError(err.message || 'Failed to initiate Gmail connection');
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const handleConnectOutlook = async () => {
+    try {
+      setLoading(true);
+      setError('');
+      
+      const response = await api('/api/integrations/microsoft/authorize');
+      if (response.url) {
+        window.location.href = response.url;
+      }
+    } catch (err) {
+      setError(err.message || 'Failed to initiate Outlook connection');
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const handleDisconnectGmail = async () => {
+    try {
+      setLoading(true);
+      setError('');
+      
+      await api('/api/integrations/google/disconnect', { method: 'POST' });
+      setConnections(prev => ({ ...prev, gmailConnected: false }));
+      setSuccess('Gmail disconnected successfully');
+    } catch (err) {
+      setError(err.message || 'Failed to disconnect Gmail');
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const handleDisconnectOutlook = async () => {
+    try {
+      setLoading(true);
+      setError('');
+      
+      await api('/api/integrations/microsoft/disconnect', { method: 'POST' });
+      setConnections(prev => ({ ...prev, outlookConnected: false }));
+      setSuccess('Outlook disconnected successfully');
+    } catch (err) {
+      setError(err.message || 'Failed to disconnect Outlook');
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    setLoading(true);
+    setError('');
+
+    try {
+      await api('/api/onboarding', {
+        method: 'PUT',
+        body: {
+          step: 2,
+          patch: connections
+        }
+      });
+      navigate('/onboarding/step3');
+    } catch (err) {
+      setError(err.message || 'Failed to save email integration');
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const handleBack = () => {
+    navigate('/onboarding/step1');
+  };
+
+  return (
+    <div className="min-h-screen bg-gray-50 flex flex-col justify-center py-12 sm:px-6 lg:px-8">
+      <div className="sm:mx-auto sm:w-full sm:max-w-md">
+        <h2 className="mt-6 text-center text-3xl font-extrabold text-gray-900">
+          Email Integration
+        </h2>
+        <p className="mt-2 text-center text-sm text-gray-600">
+          Step 2 of 4 - Connect your email account
+        </p>
+      </div>
+
+      <div className="mt-8 sm:mx-auto sm:w-full sm:max-w-md">
+        <div className="bg-white py-8 px-4 shadow sm:rounded-lg sm:px-10">
+          {error && (
+            <div className="mb-4 bg-red-50 border border-red-200 text-red-700 px-4 py-3 rounded">
+              {error}
+            </div>
+          )}
+
+          {success && (
+            <div className="mb-4 bg-green-50 border border-green-200 text-green-700 px-4 py-3 rounded">
+              {success}
+            </div>
+          )}
+
+          <form onSubmit={handleSubmit} className="space-y-6">
+            {/* Gmail Integration */}
+            <div className="border rounded-lg p-4">
+              <div className="flex items-center justify-between mb-4">
+                <div className="flex items-center">
+                  <div className="w-10 h-10 bg-red-100 rounded-full flex items-center justify-center mr-3">
+                    <svg className="w-6 h-6 text-red-600" fill="currentColor" viewBox="0 0 20 20">
+                      <path d="M2.003 5.884L10 9.882l7.997-3.998A2 2 0 0016 4H4a2 2 0 00-1.997 1.884z" />
+                      <path d="M18 8.118l-8 4-8-4V14a2 2 0 002 2h12a2 2 0 002-2V8.118z" />
+                    </svg>
+                  </div>
+                  <div>
+                    <h3 className="text-lg font-medium text-gray-900">Gmail</h3>
+                    <p className="text-sm text-gray-600">Connect your Gmail account</p>
+                  </div>
+                </div>
+                <div className="flex items-center">
+                  {connections.gmailConnected ? (
+                    <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-green-100 text-green-800">
+                      Connected
+                    </span>
+                  ) : (
+                    <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-gray-100 text-gray-800">
+                      Not Connected
+                    </span>
+                  )}
+                </div>
+              </div>
+              
+              <div className="flex space-x-2">
+                {connections.gmailConnected ? (
+                  <button
+                    type="button"
+                    onClick={handleDisconnectGmail}
+                    disabled={loading}
+                    className="flex-1 bg-red-600 text-white py-2 px-4 rounded-md hover:bg-red-700 disabled:opacity-50"
+                  >
+                    Disconnect Gmail
+                  </button>
+                ) : (
+                  <button
+                    type="button"
+                    onClick={handleConnectGmail}
+                    disabled={loading}
+                    className="flex-1 bg-red-600 text-white py-2 px-4 rounded-md hover:bg-red-700 disabled:opacity-50"
+                  >
+                    Connect Gmail
+                  </button>
+                )}
+              </div>
+            </div>
+
+            {/* Outlook Integration */}
+            <div className="border rounded-lg p-4">
+              <div className="flex items-center justify-between mb-4">
+                <div className="flex items-center">
+                  <div className="w-10 h-10 bg-blue-100 rounded-full flex items-center justify-center mr-3">
+                    <svg className="w-6 h-6 text-blue-600" fill="currentColor" viewBox="0 0 20 20">
+                      <path d="M2.003 5.884L10 9.882l7.997-3.998A2 2 0 0016 4H4a2 2 0 00-1.997 1.884z" />
+                      <path d="M18 8.118l-8 4-8-4V14a2 2 0 002 2h12a2 2 0 002-2V8.118z" />
+                    </svg>
+                  </div>
+                  <div>
+                    <h3 className="text-lg font-medium text-gray-900">Outlook</h3>
+                    <p className="text-sm text-gray-600">Connect your Outlook account</p>
+                  </div>
+                </div>
+                <div className="flex items-center">
+                  {connections.outlookConnected ? (
+                    <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-green-100 text-green-800">
+                      Connected
+                    </span>
+                  ) : (
+                    <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-gray-100 text-gray-800">
+                      Not Connected
+                    </span>
+                  )}
+                </div>
+              </div>
+              
+              <div className="flex space-x-2">
+                {connections.outlookConnected ? (
+                  <button
+                    type="button"
+                    onClick={handleDisconnectOutlook}
+                    disabled={loading}
+                    className="flex-1 bg-blue-600 text-white py-2 px-4 rounded-md hover:bg-blue-700 disabled:opacity-50"
+                  >
+                    Disconnect Outlook
+                  </button>
+                ) : (
+                  <button
+                    type="button"
+                    onClick={handleConnectOutlook}
+                    disabled={loading}
+                    className="flex-1 bg-blue-600 text-white py-2 px-4 rounded-md hover:bg-blue-700 disabled:opacity-50"
+                  >
+                    Connect Outlook
+                  </button>
+                )}
+              </div>
+            </div>
+
+            <div className="text-sm text-gray-600 bg-blue-50 p-3 rounded">
+              <p><strong>Note:</strong> You can connect either Gmail or Outlook (or both). FloWorx will automatically process emails from your connected accounts.</p>
+            </div>
+
+            <div className="flex justify-between">
+              <button
+                type="button"
+                onClick={handleBack}
+                className="bg-gray-300 text-gray-700 py-2 px-4 rounded-md hover:bg-gray-400"
+              >
+                Back
+              </button>
+              <button
+                type="submit"
+                disabled={loading}
+                className="bg-blue-600 text-white py-2 px-4 rounded-md hover:bg-blue-700 disabled:opacity-50"
+              >
+                {loading ? 'Saving...' : 'Continue'}
+              </button>
+            </div>
+          </form>
+        </div>
+      </div>
+    </div>
+  );
+}

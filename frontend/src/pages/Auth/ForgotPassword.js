@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { Link } from 'react-router-dom';
 import AuthLayout from '../../components/AuthLayout';
+import { api } from '../../lib/api';
 
 const ForgotPassword = () => {
   const [email, setEmail] = useState('');
@@ -26,23 +27,15 @@ const ForgotPassword = () => {
     }
 
     try {
-      const response = await fetch('/api/auth/forgot-password', {
+      await api('/api/auth/forgot-password', {
         method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({ email }),
+        body: { email }
       });
 
-      if (response.ok) {
-        setIsSubmitted(true);
-      } else {
-        const data = await response.json();
-        setError(data.error?.message || 'Failed to send reset email. Please try again.');
-      }
+      setIsSubmitted(true);
     } catch (error) {
       console.error('Forgot password error:', error);
-      setError('An unexpected error occurred. Please try again.');
+      setError(error.message || 'Failed to send reset email. Please try again.');
     } finally {
       setIsSubmitting(false);
     }

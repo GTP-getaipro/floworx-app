@@ -1,30 +1,37 @@
 /**
  * Real-time Monitoring API Routes
  * Provides endpoints for performance monitoring and alerting
+ *
+ * Factory pattern to support dependency injection
  */
 
 const express = require('express');
-
-const router = express.Router();
 const { authenticateToken } = require('../middleware/auth');
 const { asyncHandler } = require('../middleware/errorHandler');
-const realTimeMonitoringService = require('../services/realTimeMonitoringService');
 
-// Middleware to check admin access
-const requireAdmin = (req, res, next) => {
-  if (req.user && req.user.role === 'admin') {
-    next();
-  } else {
-    res.status(403).json({
-      success: false,
-      error: {
-        type: 'AUTHORIZATION_ERROR',
-        message: 'Admin access required',
-        code: 403
-      }
-    });
-  }
-};
+/**
+ * Create monitoring routes with injected dependencies
+ * @param {Object} realTimeMonitoringService - Monitoring service instance
+ * @returns {express.Router} Configured router
+ */
+function createMonitoringRoutes(realTimeMonitoringService) {
+  const router = express.Router();
+
+  // Middleware to check admin access
+  const requireAdmin = (req, res, next) => {
+    if (req.user && req.user.role === 'admin') {
+      next();
+    } else {
+      res.status(403).json({
+        success: false,
+        error: {
+          type: 'AUTHORIZATION_ERROR',
+          message: 'Admin access required',
+          code: 403
+        }
+      });
+    }
+  };
 
 /**
  * GET /api/monitoring/dashboard
@@ -335,4 +342,7 @@ function convertToCSV(data) {
   return lines.join('\n');
 }
 
-module.exports = router;
+  return router;
+}
+
+module.exports = createMonitoringRoutes;

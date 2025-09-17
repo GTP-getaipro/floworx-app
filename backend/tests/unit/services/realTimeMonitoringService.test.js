@@ -3,39 +3,60 @@
  * Tests query tracking, performance monitoring, and alerting
  */
 
-const { query } = require('../../../database/unified-connection');
-const realTimeMonitoringService = require('../../../services/realTimeMonitoringService');
+const { createRealTimeMonitoringService } = require('../../../services/realTimeMonitoringService');
 
 // Mock dependencies
-jest.mock('../../../database/unified-connection');
-jest.mock('../../../utils/logger');
+const mockDb = {
+  query: jest.fn(),
+  useRestApi: false,
+  restClient: null,
+  healthCheck: jest.fn()
+};
+
+const mockPubsub = {
+  emit: jest.fn(),
+  on: jest.fn(),
+  once: jest.fn()
+};
+
+const mockLogger = {
+  info: jest.fn(),
+  warn: jest.fn(),
+  error: jest.fn()
+};
 
 describe('Real-time Monitoring Service', () => {
-  const mockQuery = query;
+  let realTimeMonitoringService;
 
   beforeEach(() => {
     jest.clearAllMocks();
-    
-    // Reset monitoring service state
-    realTimeMonitoringService.metrics.queries.clear();
-    realTimeMonitoringService.metrics.alerts = [];
-    realTimeMonitoringService.metrics.performance = {
-      totalQueries: 0,
-      slowQueries: 0,
-      failedQueries: 0,
-      averageResponseTime: 0,
-      peakResponseTime: 0,
-      currentConnections: 0
-    };
+
+    // Create service instance with mocked dependencies
+    realTimeMonitoringService = createRealTimeMonitoringService({
+      db: mockDb,
+      pubsub: mockPubsub,
+      logger: mockLogger
+    });
 
     // Mock database stats query
-    mockQuery.mockResolvedValue({
+    mockDb.query.mockResolvedValue({
       rows: [{
         active_connections: 5,
         total_connections: 10,
         backend_count: 15
       }]
     });
+
+    mockDb.healthCheck.mockResolvedValue({
+      connected: true,
+      method: 'PostgreSQL'
+    });
+  });
+
+  afterEach(() => {
+    if (realTimeMonitoringService) {
+      realTimeMonitoringService.stopMonitoring();
+    }
   });
 
   describe('Query Tracking', () => {

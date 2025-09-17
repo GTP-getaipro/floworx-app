@@ -6,8 +6,10 @@ yarn-error.log*
 
 # Environment variables
 .env
+.env*
 .env.local
 .env.development.local
+.env.test
 .env.test.local
 .env.production.local
 .env.vercel
@@ -19,6 +21,8 @@ vercel-environment-variables-ACTUAL.txt
 # Production builds
 /frontend/build
 /backend/dist
+build/
+dist/
 
 # Runtime data
 pids

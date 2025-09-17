@@ -60,8 +60,14 @@ const verifyAndGetUser = async userId => {
  */
 const authenticateToken = async (req, res, next) => {
   try {
+    // Try to get token from Authorization header first
     const authHeader = req.headers['authorization'];
-    const token = authHeader && authHeader.split(' ')[1]; // Bearer TOKEN
+    let token = authHeader && authHeader.split(' ')[1]; // Bearer TOKEN
+
+    // If no Authorization header, try session cookie
+    if (!token && req.cookies && req.cookies.fx_sess) {
+      token = req.cookies.fx_sess;
+    }
 
     if (!token) {
       return res.status(401).json({
@@ -84,8 +90,21 @@ const authenticateToken = async (req, res, next) => {
     // Verify the JWT token
     const decoded = jwt.verify(token, process.env.JWT_SECRET);
 
+    // Get user ID from token (handle both userId and sub fields)
+    const userId = decoded.userId || decoded.sub;
+    if (!userId) {
+      return res.status(401).json({
+        success: false,
+        error: {
+          type: 'AUTHENTICATION_ERROR',
+          message: 'Invalid token format',
+          code: 401
+        }
+      });
+    }
+
     // Get user data and verify status
-    const user = await verifyAndGetUser(decoded.userId);
+    const user = await verifyAndGetUser(userId);
 
     // Cache the verified token and user data
     tokenCache.set(token, {

@@ -171,6 +171,79 @@ npm start
 
 See `backend/.env.example` for all required environment variables.
 
+## Deploying via Git
+
+### Setting up Git Remote
+
+1. Add your Git remote:
+```bash
+git remote add origin https://github.com/your-username/floworx-app.git
+```
+
+2. Push your code:
+```bash
+git add .
+git commit -m "Initial commit"
+git push -u origin main
+```
+
+### Continuous Integration (CI)
+
+The CI pipeline automatically runs on pushes and pull requests to `main` and `dev` branches.
+
+**What CI runs:**
+- Code audit gates (`audit:unused`, `audit:cycles`)
+- Vitest acceptance tests
+- Jest regression tests (optional, non-blocking)
+- Frontend and backend builds
+- Artifact upload (`frontend/build`)
+
+**CI will fail on:**
+- Unused files detected (unless allowlisted)
+- Circular dependencies found
+- Vitest test failures
+
+### Manual Deployment
+
+To trigger a manual deployment to Coolify:
+
+1. Go to your GitHub repository
+2. Click **Actions** tab
+3. Select **Deploy** workflow
+4. Click **Run workflow** button
+5. Choose the branch and click **Run workflow**
+
+### Repository Secrets
+
+Configure these secrets in **Settings → Secrets and variables → Actions**:
+
+**Required:**
+- `COOLIFY_DEPLOY_HOOK` - The Deploy Hook URL from your Coolify application
+
+**Optional (for CI/tests):**
+- `SUPABASE_URL` - Your Supabase project URL (if tests require)
+- `SUPABASE_SERVICE_KEY` - Your Supabase service key (if tests require)
+- `JWT_SECRET` - JWT secret for testing (or use .env.test)
+
+### Creating Pull Requests
+
+1. Create a feature branch:
+```bash
+git checkout -b feature/your-feature-name
+```
+
+2. Make your changes and commit:
+```bash
+git add .
+git commit -m "Add your feature"
+git push origin feature/your-feature-name
+```
+
+3. Create a Pull Request on GitHub
+4. CI will automatically run on your PR
+5. Once approved and CI passes, merge to `main`
+6. Deployment will automatically trigger (if configured)
+
 ## License
 
 ISC

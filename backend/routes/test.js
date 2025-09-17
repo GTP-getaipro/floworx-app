@@ -6,6 +6,8 @@
 
 const express = require('express');
 const { databaseOperations } = require('../database/database-operations');
+const requireAuth = require('../middleware/requireAuth');
+const { resetRateLimits } = require('../middleware/rateLimiter');
 
 const router = express.Router();
 
@@ -107,6 +109,60 @@ router.get('/last-verification-token', async (req, res) => {
     console.error('Test last-verification-token error:', error);
     res.status(500).json({
       error: { code: "INTERNAL", message: "Unexpected error" }
+    });
+  }
+});
+
+// GET /api/test/last-reset-token?email=... - Get last reset token for user (TEST ONLY)
+router.get('/last-reset-token', async (req, res) => {
+  try {
+    const { email } = req.query;
+
+    if (!email) {
+      return res.status(400).json({
+        error: { code: "BAD_REQUEST", message: "Email is required" }
+      });
+    }
+
+    // Check if we have a stored token from the global test helper
+    if (global.lastResetToken && global.lastResetToken.email === email.toLowerCase()) {
+      return res.status(200).json({
+        token: global.lastResetToken.token
+      });
+    }
+
+    return res.status(404).json({
+      error: { code: "TOKEN_NOT_FOUND", message: "No reset token found for this email" }
+    });
+
+  } catch (error) {
+    console.error('Test last-reset-token error:', error);
+    res.status(500).json({
+      error: { code: "INTERNAL", message: "Unexpected error" }
+    });
+  }
+});
+
+// POST /api/test/echo - Simple echo route for CSRF testing (requires auth)
+router.post('/echo', requireAuth, (req, res) => {
+  res.status(200).json({
+    success: true,
+    message: 'Echo successful',
+    userId: req.auth.userId,
+    body: req.body
+  });
+});
+
+// POST /api/test/reset-rate-limits - Reset rate limits (TEST ONLY)
+router.post('/reset-rate-limits', (req, res) => {
+  try {
+    const { namespace } = req.body;
+    resetRateLimits(namespace);
+    res.status(204).send();
+  } catch (error) {
+    console.error('Reset rate limits error:', error);
+    res.status(500).json({
+      error: { code: "INTERNAL", message: "Failed to reset rate limits" }
     });
   }
 });

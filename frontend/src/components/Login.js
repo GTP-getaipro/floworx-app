@@ -7,7 +7,7 @@ import Input from './ui/Input';
 import PrimaryButton from './ui/PrimaryButton';
 
 const Login = () => {
-  const { login, isAuthenticated } = useAuth();
+  const { login, isAuthenticated, clearErrors } = useAuth();
   const { showSuccess, showError } = useToast();
   const navigate = useNavigate();
   const location = useLocation();
@@ -17,18 +17,21 @@ const Login = () => {
   const [isSubmitting, setIsSubmitting] = useState(false);
 
   useEffect(() => {
+    // Clear any previous auth errors when component mounts
+    clearErrors();
+
     if (isAuthenticated()) {
       const from = location.state?.from?.pathname || '/dashboard';
       navigate(from, { replace: true });
     }
-  }, [isAuthenticated, navigate, location.state]);
+  }, [isAuthenticated, navigate, location.state, clearErrors]);
 
   const handleInputChange = (e) => {
     const { name, value } = e.target;
     setFormData(prev => ({ ...prev, [name]: value }));
     // Clear errors when user starts typing
-    if (errors[name]) {
-      setErrors(prev => ({ ...prev, [name]: '' }));
+    if (errors[name] || errors.submit) {
+      setErrors(prev => ({ ...prev, [name]: '', submit: '' }));
     }
   };
 
@@ -45,11 +48,24 @@ const Login = () => {
         const from = location.state?.from?.pathname || '/dashboard';
         navigate(from, { replace: true });
       } else {
-        setErrors({ submit: result.error || 'Login failed. Please try again.' });
+        // Handle specific error cases
+        if (result.code === 'UNVERIFIED') {
+          setErrors({
+            submit: result.error,
+            showResend: true,
+            resendUrl: result.resendUrl
+          });
+          showError('Please verify your email address before logging in.');
+        } else {
+          setErrors({ submit: result.error || 'Login failed. Please try again.' });
+          showError(result.error || 'Login failed. Please check your credentials and try again.');
+        }
       }
     } catch (error) {
       console.error('Login error:', error);
-      setErrors({ submit: 'An unexpected error occurred. Please try again.' });
+      const errorMessage = 'An unexpected error occurred. Please try again.';
+      setErrors({ submit: errorMessage });
+      showError(errorMessage);
     } finally {
       setIsSubmitting(false);
     }

@@ -20,6 +20,7 @@ export const AuthProvider = ({ children }) => {
   const [user, setUser] = useState(null);
   const [loading, setLoading] = useState(true);
   const [token, setToken] = useState(localStorage.getItem('floworx_token'));
+  const [lastError, setLastError] = useState(null);
 
   // Set up axios interceptor for authentication
   useEffect(() => {
@@ -75,8 +76,11 @@ export const AuthProvider = ({ children }) => {
 
   // Login function
   const login = async (email, password) => {
+    // Clear any previous errors
+    clearErrors();
+
     try {
-      const response = await axios.post('/auth/login', { email, password });
+      const response = await axios.post('/api/auth/login', { email, password });
       const { token: newToken, user: userData } = response.data;
 
       localStorage.setItem('floworx_token', newToken);
@@ -85,15 +89,64 @@ export const AuthProvider = ({ children }) => {
 
       return { success: true };
     } catch (error) {
-      const message = error.response?.data?.message || 'Login failed';
-      return { success: false, error: message };
+      console.error('Login error:', error);
+
+      // Extract error message from backend response structure
+      let message = 'Login failed';
+
+      if (error.response?.data) {
+        const data = error.response.data;
+        // Handle backend error structure: { error: { code: "INVALID_CREDENTIALS", message: "Invalid email or password" } }
+        if (data.error?.message) {
+          message = data.error.message;
+        }
+        // Handle simple message structure: { message: "..." }
+        else if (data.message) {
+          message = data.message;
+        }
+        // Handle direct error string: { error: "..." }
+        else if (typeof data.error === 'string') {
+          message = data.error;
+        }
+      }
+
+      // Provide user-friendly messages for common errors
+      if (error.response?.status === 401) {
+        message = 'Invalid email or password. Please check your credentials and try again.';
+      } else if (error.response?.status === 409) {
+        // Handle unverified email case
+        if (error.response.data?.error?.code === 'UNVERIFIED') {
+          message = 'Please verify your email address before logging in.';
+          return {
+            success: false,
+            error: message,
+            code: 'UNVERIFIED',
+            resendUrl: error.response.data?.resendUrl
+          };
+        }
+      }
+
+      const errorResult = {
+        success: false,
+        error: message,
+        status: error.response?.status,
+        code: error.response?.data?.error?.code
+      };
+
+      // Store the error for debugging
+      setLastError(errorResult);
+
+      return errorResult;
     }
   };
 
   // Register function
   const register = async userData => {
+    // Clear any previous errors
+    clearErrors();
+
     try {
-      const response = await axios.post('/auth/register', userData);
+      const response = await axios.post('/api/auth/register', userData);
       return {
         success: true,
         requiresVerification: response.data.requiresVerification,
@@ -128,13 +181,23 @@ export const AuthProvider = ({ children }) => {
         }
       }
 
-      return {
+      const errorResult = {
         success: false,
         error: message,
         status: error.response?.status,
         code: error.response?.data?.error?.code
       };
+
+      // Store the error for debugging
+      setLastError(errorResult);
+
+      return errorResult;
     }
+  };
+
+  // Clear errors function
+  const clearErrors = () => {
+    setLastError(null);
   };
 
   // Logout function
@@ -142,6 +205,7 @@ export const AuthProvider = ({ children }) => {
     localStorage.removeItem('floworx_token');
     setToken(null);
     setUser(null);
+    clearErrors(); // Clear any errors on logout
   };
 
   // Check if user is authenticated
@@ -153,10 +217,12 @@ export const AuthProvider = ({ children }) => {
     user,
     token,
     loading,
+    lastError,
     login,
     register,
     logout,
     isAuthenticated,
+    clearErrors,
   };
 
   return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;

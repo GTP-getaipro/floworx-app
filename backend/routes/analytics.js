@@ -2,7 +2,7 @@ const express = require('express');
 
 const { authenticateToken } = require('../middleware/auth');
 const analyticsService = require('../services/analyticsService');
-const _cacheService = require('../services/cacheService');
+const { getKeyDB } = require('../database/unified-connection');
 const _performanceService = require('../services/performanceService');
 const { _paginationMiddleware } = require('../utils/pagination');
 

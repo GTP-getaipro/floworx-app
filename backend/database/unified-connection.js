@@ -1,6 +1,7 @@
 const { Pool } = require('pg');
 const { URL } = require('url');
 const SupabaseRestClient = require('./supabase-rest-client');
+const Redis = require('ioredis');
 
 const { encrypt, decrypt } = require('../utils/encryption');
 // Load environment variables with proper path resolution
@@ -547,6 +548,105 @@ class DatabaseManager {
 const databaseManager = new DatabaseManager();
 
 // Export both the manager and legacy-compatible pool
+
+// KeyDB singleton instance
+let keydbInstance = null;
+let keydbConnectionStatus = 'disabled';
+
+/**
+ * Get KeyDB client singleton
+ * @returns {Object} KeyDB client or no-op client
+ */
+function getKeyDB() {
+  if (keydbInstance) {
+    return keydbInstance;
+  }
+
+  // Check if KEYDB_URL is provided
+  if (!process.env.KEYDB_URL) {
+    console.log('🔴 KeyDB disabled - KEYDB_URL not provided');
+    keydbConnectionStatus = 'disabled';
+    return createNoOpClient();
+  }
+
+  try {
+    console.log('🔄 Initializing KeyDB connection...');
+
+    keydbInstance = new Redis(process.env.KEYDB_URL, {
+      maxRetriesPerRequest: 3,
+      retryDelayOnFailover: 100,
+      connectTimeout: 10000,
+      lazyConnect: true,
+      retryStrategy: (times) => {
+        const delay = Math.min(times * 50, 2000);
+        console.log(`🔄 KeyDB retry attempt ${times}, waiting ${delay}ms`);
+        return delay;
+      }
+    });
+
+    // Connection events
+    keydbInstance.on('connect', () => {
+      console.log('✅ KeyDB connected successfully');
+      keydbConnectionStatus = 'enabled';
+    });
+
+    keydbInstance.on('error', (error) => {
+      console.error('❌ KeyDB connection error:', error.message);
+      keydbConnectionStatus = 'disabled';
+
+      // In production, log error but keep process running (fail-open)
+      if (process.env.NODE_ENV === 'production') {
+        console.log('🔄 KeyDB error in production - continuing with no-op client');
+        keydbInstance = createNoOpClient();
+      }
+    });
+
+    keydbInstance.on('close', () => {
+      console.log('🔴 KeyDB connection closed');
+      keydbConnectionStatus = 'disabled';
+    });
+
+    keydbConnectionStatus = 'enabled';
+    return keydbInstance;
+
+  } catch (error) {
+    console.error('❌ KeyDB initialization failed:', error.message);
+    keydbConnectionStatus = 'disabled';
+    return createNoOpClient();
+  }
+}
+
+/**
+ * Create no-op KeyDB client for environments without KeyDB
+ * @returns {Object} No-op client with KeyDB-compatible methods
+ */
+function createNoOpClient() {
+  const noOpPromise = Promise.resolve(null);
+
+  return {
+    get: () => noOpPromise,
+    set: () => noOpPromise,
+    del: () => noOpPromise,
+    expire: () => noOpPromise,
+    ttl: () => noOpPromise,
+    incr: () => noOpPromise,
+    setex: () => noOpPromise,
+    hmset: () => noOpPromise,
+    hgetall: () => noOpPromise,
+    ping: () => Promise.resolve('PONG'),
+    disconnect: () => noOpPromise,
+    quit: () => noOpPromise
+  };
+}
+
+/**
+ * Get KeyDB connection status
+ * @returns {string} 'enabled' or 'disabled'
+ */
+function getKeyDBStatus() {
+  return keydbConnectionStatus;
+}
+
 module.exports = {
   databaseManager,
   // Legacy compatibility - will be deprecated
@@ -574,5 +674,8 @@ module.exports = {
   createPasswordResetToken: (userId, token, expiresAt, ipAddress, userAgent) => databaseManager.restClient ? databaseManager.restClient.createPasswordResetToken(userId, token, expiresAt, ipAddress, userAgent) : null,
   getPasswordResetToken: token => databaseManager.restClient ? databaseManager.restClient.getPasswordResetToken(token) : null,
   updateUserPassword: (userId, passwordHash) => databaseManager.restClient ? databaseManager.restClient.updateUserPassword(userId, passwordHash) : null,
-  markPasswordResetTokenUsed: token => databaseManager.restClient ? databaseManager.restClient.markPasswordResetTokenUsed(token) : null
+  markPasswordResetTokenUsed: token => databaseManager.restClient ? databaseManager.restClient.markPasswordResetTokenUsed(token) : null,
+  // KeyDB functions
+  getKeyDB,
+  getKeyDBStatus
 };

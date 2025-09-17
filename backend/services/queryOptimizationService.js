@@ -3,10 +3,8 @@
  * Implements advanced caching, query batching, and performance monitoring
  */
 
-const { query } = require('../database/unified-connection');
+const { query, getKeyDB } = require('../database/unified-connection');
 const logger = require('../utils/logger');
-
-const cacheService = require('./cacheService');
 
 class QueryOptimizationService {
   constructor() {
@@ -93,9 +91,9 @@ class QueryOptimizationService {
    */
   async getUserWithRelatedData(userId) {
     const cacheKey = `user:full:${userId}`;
-    
+
     // Try cache first
-    const cached = await cacheService.get(cacheKey);
+    const cached = await this.getCachedResult(cacheKey);
     if (cached) {
       this.metrics.cacheHits++;
       return cached;
@@ -132,7 +130,7 @@ class QueryOptimizationService {
       const userData = this.transformUserData(result.rows);
       
       // Cache for 10 minutes
-      await cacheService.set(cacheKey, userData, 600);
+      await this.cacheResult(cacheKey, userData, 600);
       this.metrics.cacheMisses++;
       
       return userData;
@@ -148,7 +146,7 @@ class QueryOptimizationService {
   async getOnboardingProgress(userId) {
     const cacheKey = `onboarding:${userId}`;
     
-    const cached = await cacheService.get(cacheKey);
+    const cached = await this.getCachedResult(cacheKey);
     if (cached) {
       this.metrics.cacheHits++;
       return cached;
@@ -180,7 +178,7 @@ class QueryOptimizationService {
       const progress = this.transformOnboardingData(result.rows);
       
       // Cache for 5 minutes (shorter TTL for dynamic data)
-      await cacheService.set(cacheKey, progress, 300);
+      await this.cacheResult(cacheKey, progress, 300);
       this.metrics.cacheMisses++;
       
       return progress;
@@ -206,9 +204,11 @@ class QueryOptimizationService {
    */
   async getCachedResult(cacheKey) {
     try {
-      return await cacheService.get(cacheKey);
+      const keydb = getKeyDB();
+      const result = await keydb.get(cacheKey);
+      return result ? JSON.parse(result) : null;
     } catch (error) {
-      logger.warn('Cache get failed', { cacheKey, error: error.message });
+      logger.warn('KeyDB get failed', { cacheKey, error: error.message });
       return null;
     }
   }
@@ -218,9 +218,10 @@ class QueryOptimizationService {
    */
   async cacheResult(cacheKey, result, ttl) {
     try {
-      await cacheService.set(cacheKey, result, ttl);
+      const keydb = getKeyDB();
+      await keydb.setex(cacheKey, ttl, JSON.stringify(result));
     } catch (error) {
-      logger.warn('Cache set failed', { cacheKey, error: error.message });
+      logger.warn('KeyDB set failed', { cacheKey, error: error.message });
     }
   }
 
@@ -369,10 +370,14 @@ class QueryOptimizationService {
    */
   async invalidateCache(pattern) {
     try {
-      await cacheService.deletePattern(pattern);
-      logger.info('Cache invalidated', { pattern });
+      const keydb = getKeyDB();
+      const keys = await keydb.keys(pattern);
+      if (keys.length > 0) {
+        await keydb.del(...keys);
+      }
+      logger.info('KeyDB cache invalidated', { pattern, keysDeleted: keys.length });
     } catch (error) {
-      logger.error('Cache invalidation failed', { pattern, error: error.message });
+      logger.error('KeyDB cache invalidation failed', { pattern, error: error.message });
     }
   }
 }

@@ -9,9 +9,8 @@ const rateLimit = require('express-rate-limit');
 
 // Import middleware
 const { errorHandler } = require('./middleware/errorHandler');
-const { performanceTracker } = require('./middleware/performance');
-const { additionalSecurityHeaders } = require('./middleware/security');
-const { sanitizeRequest } = require('./middleware/sanitization');
+// const { performanceMiddlewareStack } = require('./middleware/performance');
+const { additionalSecurityHeaders, sanitizeRequest } = require('./middleware/security');
 
 // Import routes
 const authRoutes = require('./routes/auth');
@@ -22,12 +21,8 @@ const businessTypesRoutes = require('./routes/businessTypes');
 const onboardingRoutes = require('./routes/onboarding');
 const workflowRoutes = require('./routes/workflows');
 const analyticsRoutes = require('./routes/analytics');
-const healthRoutes = require('./routes/health');
-const performanceRoutes = require('./routes/performance');
 const monitoringRoutes = require('./routes/monitoring');
-const diagnosticsRoutes = require('./routes/diagnostics');
 const passwordResetRoutes = require('./routes/passwordReset');
-const accountRecoveryRoutes = require('./routes/accountRecovery');
 const recoveryRoutes = require('./routes/recovery');
 const errorRoutes = require('./routes/errors');
 
@@ -94,17 +89,26 @@ app.use(express.urlencoded({ extended: true, limit: '10mb' }));
 app.use(compression());
 
 // Custom middleware
-app.use(performanceTracker);
 app.use(additionalSecurityHeaders);
 app.use(sanitizeRequest);
 
-// Health check endpoint (before other routes)
+// Health check endpoints (before other routes)
 app.get('/health', (req, res) => {
   res.status(200).json({
     status: 'healthy',
     timestamp: new Date().toISOString(),
     uptime: process.uptime(),
     environment: process.env.NODE_ENV || 'development'
+  });
+});
+
+app.get('/healthz', (req, res) => {
+  const { getKeyDBStatus } = require('./database/unified-connection');
+  const cacheStatus = getKeyDBStatus();
+
+  res.status(200).json({
+    ok: true,
+    cache: cacheStatus
   });
 });
 
@@ -117,12 +121,8 @@ app.use('/api/business-types', businessTypesRoutes);
 app.use('/api/onboarding', onboardingRoutes);
 app.use('/api/workflows', workflowRoutes);
 app.use('/api/analytics', analyticsRoutes);
-app.use('/api/health', healthRoutes);
-app.use('/api/performance', performanceRoutes);
 app.use('/api/monitoring', monitoringRoutes);
-app.use('/api/diagnostics', diagnosticsRoutes);
 app.use('/api/password-reset', passwordResetRoutes);
-app.use('/api/account-recovery', accountRecoveryRoutes);
 app.use('/api/recovery', recoveryRoutes);
 app.use('/api/errors', errorRoutes);
 

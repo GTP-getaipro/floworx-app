@@ -330,48 +330,7 @@ router.post('/register', async (req, res) => {
   }
 });
 
-// TEST-ONLY helper route to mark users as verified
-// Only mounted in NODE_ENV === 'test'
-if (process.env.NODE_ENV === 'test') {
-  router.post('/mark-verified', async (req, res) => {
-    try {
-      const { email } = req.body;
 
-      if (!email) {
-        return res.status(400).json({
-          error: { code: "BAD_REQUEST", message: "Email is required" }
-        });
-      }
-
-      // Get user by email
-      const userResult = await databaseOperations.getUserByEmail(email);
-      if (!userResult.data) {
-        return res.status(404).json({
-          error: { code: "USER_NOT_FOUND", message: "User not found" }
-        });
-      }
-
-      // Mark user as verified by updating email_verified
-      const updateResult = await databaseOperations.updateUser(userResult.data.id, {
-        email_verified: true
-      });
-
-      if (updateResult.error) {
-        return res.status(500).json({
-          error: { code: "INTERNAL", message: "Failed to verify user" }
-        });
-      }
-
-      res.status(200).json({ success: true });
-
-    } catch (error) {
-      console.error('Test mark-verified error:', error);
-      res.status(500).json({
-        error: { code: "INTERNAL", message: "Unexpected error" }
-      });
-    }
-  });
-}
 
 // POST /api/auth/login
 router.post('/login', async (req, res) => {
@@ -410,9 +369,9 @@ router.post('/login', async (req, res) => {
       return res.status(409).json({
         error: {
           code: "UNVERIFIED",
-          message: "Email not verified",
-          resendUrl: "/api/auth/resend-verification"
-        }
+          message: "Email not verified"
+        },
+        resendUrl: "/api/auth/resend"
       });
     }
 

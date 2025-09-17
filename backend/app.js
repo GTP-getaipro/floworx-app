@@ -31,6 +31,12 @@ const recoveryRoutes = require('./routes/recovery');
 const errorRoutes = require('./routes/errors');
 const healthRoutes = require('./routes/health');
 
+// Test routes (only in test environment)
+let testRoutes = null;
+if (process.env.NODE_ENV === 'test') {
+  testRoutes = require('./routes/test');
+}
+
 const app = express();
 
 // Trust proxy for accurate IP addresses - safer configuration
@@ -123,6 +129,11 @@ app.use('/api/monitoring', monitoringRoutes);
 app.use('/api/password-reset', passwordResetRoutes);
 app.use('/api/recovery', recoveryRoutes);
 app.use('/api/errors', errorRoutes);
+
+// Mount test routes only in test environment
+if (process.env.NODE_ENV === 'test' && testRoutes) {
+  app.use('/api/test', testRoutes);
+}
 
 // 404 handler
 app.use('*', (req, res) => {

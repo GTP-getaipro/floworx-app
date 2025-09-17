@@ -56,7 +56,12 @@ export const ToastProvider = ({ children }) => {
     success,
     error,
     warning,
-    info
+    info,
+    // Aliases for compatibility
+    showSuccess: success,
+    showError: error,
+    showWarning: warning,
+    showInfo: info
   };
 
   return (

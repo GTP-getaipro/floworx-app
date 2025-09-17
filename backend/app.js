@@ -29,11 +29,12 @@ const monitoringRoutes = require('./routes/monitoring');
 const passwordResetRoutes = require('./routes/passwordReset');
 const recoveryRoutes = require('./routes/recovery');
 const errorRoutes = require('./routes/errors');
+const healthRoutes = require('./routes/health');
 
 const app = express();
 
-// Trust proxy for accurate IP addresses
-app.set('trust proxy', 1);
+// Trust proxy for accurate IP addresses - safer configuration
+app.set('trust proxy', 'loopback, linklocal, uniquelocal');
 
 // Security middleware
 app.use(helmet({
@@ -106,21 +107,8 @@ app.get('/health', (req, res) => {
   });
 });
 
-app.get('/healthz', (req, res) => {
-  const { getKeyDBStatus } = require('./database/unified-connection');
-  const { getDbStatus, getEnvStatus } = require('./utils/env');
-
-  const cacheStatus = getKeyDBStatus();
-  const dbStatus = getDbStatus();
-  const envStatus = getEnvStatus();
-
-  res.status(200).json({
-    ok: true,
-    cache: cacheStatus,
-    db: dbStatus,
-    env: envStatus
-  });
-});
+// Mount health routes
+app.use(healthRoutes);
 
 // API Routes
 app.use('/api/auth', authRoutes);

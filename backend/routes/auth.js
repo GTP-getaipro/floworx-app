@@ -264,116 +264,68 @@ router.post('/test-register', async (req, res) => {
 });
 
 // POST /api/auth/register
-// Register a new user account with enhanced security and error handling
 router.post('/register', async (req, res) => {
   try {
-    console.log('🔐 Registration attempt started:', req.body.email);
+    const { email, password } = req.body;
 
-    // Validate request data using Joi schema
-    const { error, value } = registerSchema.validate(req.body);
-    if (error) {
+    // Input validation
+    if (!email || !password) {
       return res.status(400).json({
-        success: false,
-        error: 'Validation failed',
-        details: error.details.map(detail => ({
-          field: detail.path.join('.'),
-          message: detail.message
-        }))
+        error: { code: "BAD_REQUEST", message: "Email and password are required" }
       });
     }
 
-    const { email, password, firstName, lastName, businessName, companyName, agreeToTerms } = value;
+    // Email validation (simple regex)
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    if (!emailRegex.test(email)) {
+      return res.status(400).json({
+        error: { code: "BAD_REQUEST", message: "Invalid email format" }
+      });
+    }
 
-    console.log('✅ Validation passed');
+    // Password validation
+    if (password.length < 8) {
+      return res.status(400).json({
+        error: { code: "BAD_REQUEST", message: "Password must be at least 8 characters long" }
+      });
+    }
 
-    // Check if user exists
-    try {
-      const existingUserResult = await databaseOperations.getUserByEmail(email);
-      if (existingUserResult.data) {
-        return res.status(409).json({
-          success: false,
-          error: 'An account with this email already exists'
-        });
-      }
-      console.log('✅ User availability confirmed');
-    } catch (error) {
-      console.log('⚠️ User check error (proceeding):', error.message);
+    // Check for duplicate email
+    const existingUser = await databaseOperations.getUserByEmail(email);
+    if (existingUser.data) {
+      return res.status(409).json({
+        error: { code: "EMAIL_EXISTS", message: "Email already registered" }
+      });
     }
 
     // Hash password
     const passwordHash = await bcrypt.hash(password, 12);
-    console.log('✅ Password hashed');
 
-    // Create user data
+    // Create user
     const userData = {
       id: require('crypto').randomUUID(),
       email: email.toLowerCase().trim(),
       password_hash: passwordHash,
-      first_name: firstName.trim(),
-      last_name: lastName.trim(),
-      company_name: (businessName || companyName || '').trim() || null,
       created_at: new Date().toISOString()
     };
 
-    console.log('👤 Creating user:', userData.id);
-
-    // Create user
     const createResult = await databaseOperations.createUser(userData);
 
     if (createResult.error) {
-      console.error('❌ User creation failed:', createResult.error);
       return res.status(500).json({
-        success: false,
-        error: 'Failed to create user account',
-        details: createResult.error.message
+        error: { code: "INTERNAL", message: "Unexpected error" }
       });
     }
-
-    console.log('✅ User created successfully');
-
-    // Generate JWT token
-    if (!process.env.JWT_SECRET) {
-      console.error('❌ JWT_SECRET not configured');
-      return res.status(500).json({
-        success: false,
-        error: 'Server configuration error'
-      });
-    }
-
-    const token = jwt.sign(
-      { userId: userData.id, email: userData.email },
-      process.env.JWT_SECRET,
-      { expiresIn: '24h' }
-    );
-
-    console.log('✅ JWT token generated');
 
     // Success response
     res.status(201).json({
-      success: true,
-      message: 'Account created successfully',
-      user: {
-        id: createResult.data.id,
-        email: createResult.data.email,
-        firstName: createResult.data.first_name,
-        lastName: createResult.data.last_name,
-        companyName: createResult.data.company_name
-      },
-      token,
-      expiresIn: '24h'
+      userId: createResult.data.id
     });
 
-    console.log('🎉 Registration completed successfully');
-
   } catch (error) {
-    console.error('💥 Registration error:', error.message);
-    console.error('Stack:', error.stack);
-
-    // Safe error response
+    console.error('Registration error:', error);
     res.status(500).json({
-      success: false,
-      error: 'Registration failed due to server error',
-      details: process.env.NODE_ENV === 'development' ? error.message : 'Internal server error'
+      error: { code: "INTERNAL", message: "Unexpected error" }
     });
   }
 });

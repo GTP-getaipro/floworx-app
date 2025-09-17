@@ -62,14 +62,6 @@ export const commonValidationRules = {
     return null;
   },
 
-  match: (fieldName, errorMessage = 'Fields do not match') => (value, allValues) => {
-    if (!value) return null;
-    if (value !== allValues[fieldName]) {
-      return errorMessage;
-    }
-    return null;
-  },
-
   phone: (value) => {
     if (!value) return null;
     const phoneRegex = /^\+?[\d\s\-\(\)]{10,}$/;

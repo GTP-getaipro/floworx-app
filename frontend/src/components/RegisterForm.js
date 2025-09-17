@@ -30,7 +30,13 @@ const validationRules = {
   ],
   confirmPassword: [
     commonValidationRules.required,
-    commonValidationRules.match('password', 'Passwords do not match'),
+    (value, allValues) => {
+      if (!value) return null;
+      if (value !== allValues?.password) {
+        return 'Passwords do not match';
+      }
+      return null;
+    },
   ],
   firstName: [commonValidationRules.required],
   lastName: [commonValidationRules.required],

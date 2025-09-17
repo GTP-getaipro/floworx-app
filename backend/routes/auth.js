@@ -735,6 +735,128 @@ router.post('/resend-verification', asyncHandler(async (req, res) => {
   });
 }));
 
+// POST /api/auth/resend
+// Resend verification email with throttling (1/min per user)
+router.post('/resend', asyncHandler(async (req, res) => {
+  const { email } = req.body;
+
+  if (!email) {
+    return res.status(400).json({
+      error: { code: "MISSING_EMAIL", message: "Email address is required" }
+    });
+  }
+
+  // Check throttling (1/min per user)
+  const throttleKey = `resend_throttle:${email}`;
+  try {
+    const lastResend = await redisManager.get(throttleKey);
+    if (lastResend) {
+      return res.status(429).json({
+        error: { code: "THROTTLED", message: "Please wait before requesting another verification email" }
+      });
+    }
+  } catch (error) {
+    // Continue if Redis is unavailable
+    logger.warn('Redis unavailable for throttling check', { error: error.message });
+  }
+
+  const userResult = await databaseOperations.getUserByEmail(email.toLowerCase());
+
+  if (!userResult.data) {
+    // Always return 202 for security (don't reveal user existence)
+    return res.status(202).json({
+      message: "If this email is registered, a verification email will be sent"
+    });
+  }
+
+  const user = userResult.data;
+
+  if (user.email_verified) {
+    // Still return 202 to not reveal user status
+    return res.status(202).json({
+      message: "If this email is registered, a verification email will be sent"
+    });
+  }
+
+  // Set throttle (1 minute)
+  try {
+    await redisManager.setex(throttleKey, 60, Date.now().toString());
+  } catch (error) {
+    logger.warn('Redis unavailable for throttling', { error: error.message });
+  }
+
+  // Invalidate any existing tokens for this user
+  try {
+    await query('DELETE FROM email_verification_tokens WHERE user_id = $1', [user.id]);
+  } catch (error) {
+    logger.warn('Failed to invalidate existing tokens', { error: error.message });
+  }
+
+  // Generate new verification token (15 minutes expiry)
+  const verificationToken = emailService.generateVerificationToken();
+  const expiresAt = new Date(Date.now() + 15 * 60 * 1000); // 15 minutes
+
+  await databaseOperations.createEmailVerificationToken(user.id, verificationToken, expiresAt.toISOString());
+
+  // Send verification email (use fake mailer in test)
+  try {
+    await emailService.sendVerificationEmail(email, user.first_name, verificationToken);
+  } catch (error) {
+    logger.warn('Email sending failed', { error: error.message });
+    // Don't fail the request - token is still created
+  }
+
+  res.status(202).json({
+    message: "If this email is registered, a verification email will be sent"
+  });
+}));
+
+// POST /api/auth/verify
+// Verify email with token
+router.post('/verify', asyncHandler(async (req, res) => {
+  const { token } = req.body;
+
+  if (!token) {
+    return res.status(400).json({
+      error: { code: "MISSING_TOKEN", message: "Verification token is required" }
+    });
+  }
+
+  // Get verification token from database
+  const tokenResult = await databaseOperations.getEmailVerificationToken(token);
+
+  if (!tokenResult.data) {
+    return res.status(401).json({
+      error: { code: "INVALID_TOKEN", message: "Invalid verification token" }
+    });
+  }
+
+  const { user_id, expires_at } = tokenResult.data;
+
+  // Check if token is expired
+  if (new Date() > new Date(expires_at)) {
+    return res.status(410).json({
+      error: { code: "EXPIRED_TOKEN", message: "Verification token has expired" }
+    });
+  }
+
+  // Update user's email verification status
+  const updateResult = await databaseOperations.markEmailAsVerified(user_id);
+
+  if (updateResult.error) {
+    return res.status(500).json({
+      error: { code: "VERIFICATION_FAILED", message: "Unable to verify email address" }
+    });
+  }
+
+  // Delete used token (single-use)
+  await databaseOperations.deleteEmailVerificationToken(token);
+
+  res.status(200).json({
+    message: "Email verified successfully"
+  });
+}));
+
 // POST /api/auth/complete-onboarding
 // Mark user's onboarding as completed
 router.post('/complete-onboarding', authenticateToken, async (req, res) => {

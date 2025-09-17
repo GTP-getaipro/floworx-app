@@ -1,8 +1,13 @@
-# Multi-stage build for FloWorx
+# Multi-stage build for FloWorx - FORCE DOCKER MODE
 FROM node:20-alpine AS base
 
 # Install bash and other necessary tools
 RUN apk add --no-cache bash curl git
+
+# Set environment variables to prevent browser downloads
+ENV PLAYWRIGHT_SKIP_BROWSER_DOWNLOAD=1
+ENV PUPPETEER_SKIP_CHROMIUM_DOWNLOAD=1
+ENV NODE_ENV=production
 
 # Install dependencies only when needed
 FROM base AS deps
@@ -13,9 +18,9 @@ COPY backend/package*.json ./backend/
 COPY frontend/package*.json ./frontend/
 COPY package*.json ./
 
-# Install dependencies
-RUN cd backend && npm ci --omit=dev
-RUN cd frontend && npm ci
+# Install dependencies with browser skip flags
+RUN cd backend && PLAYWRIGHT_SKIP_BROWSER_DOWNLOAD=1 npm ci --omit=dev
+RUN cd frontend && PLAYWRIGHT_SKIP_BROWSER_DOWNLOAD=1 npm ci
 
 # Build frontend
 FROM base AS frontend-builder

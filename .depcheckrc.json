@@ -1,0 +1,31 @@
+{
+  "ignores": [
+    "compression",
+    "express-rate-limit", 
+    "express-slow-down",
+    "express-validator",
+    "helmet",
+    "lucide-react",
+    "node-cache",
+    "node-cron",
+    "@babel/core",
+    "depcheck",
+    "eslint",
+    "jest",
+    "jest-environment-jsdom",
+    "jest-environment-node", 
+    "joi",
+    "knip",
+    "madge",
+    "prettier",
+    "ts-prune"
+  ],
+  "skip-missing": true,
+  "ignore-patterns": [
+    "node_modules",
+    "dist",
+    "build",
+    "coverage",
+    "__deprecated__"
+  ]
+}

@@ -1,4 +1,5 @@
 const rateLimit = require('express-rate-limit');
+const { ipKeyGenerator } = require('express-rate-limit');
 const slowDown = require('express-slow-down');
 
 // Rate limiting configuration for different endpoint types
@@ -16,8 +17,8 @@ const rateLimitConfig = {
     legacyHeaders: false,
     // Skip successful requests
     skipSuccessfulRequests: true,
-    // Simple key generator for IPv4
-    keyGenerator: (req) => req.ip || 'unknown'
+    // IPv4/IPv6 compatible key generator
+    keyGenerator: (req) => ipKeyGenerator(req)
   },
 
   // Moderate rate limiting for password reset
@@ -31,8 +32,8 @@ const rateLimitConfig = {
     },
     standardHeaders: true,
     legacyHeaders: false,
-    // Simple key generator for password reset
-    keyGenerator: (req) => `password-reset-${req.ip || 'unknown'}`
+    // IPv4/IPv6 compatible key generator for password reset
+    keyGenerator: (req) => `password-reset-${ipKeyGenerator(req)}`
   },
 
   // General API rate limiting
@@ -46,8 +47,8 @@ const rateLimitConfig = {
     },
     standardHeaders: true,
     legacyHeaders: false,
-    // Simple key generator for API
-    keyGenerator: (req) => `api-${req.ip || 'unknown'}`
+    // IPv4/IPv6 compatible key generator for API
+    keyGenerator: (req) => `api-${ipKeyGenerator(req)}`
   },
 
   // Strict rate limiting for registration
@@ -61,8 +62,8 @@ const rateLimitConfig = {
     },
     standardHeaders: true,
     legacyHeaders: false,
-    // Simple key generator for registration
-    keyGenerator: (req) => `registration-${req.ip || 'unknown'}`
+    // IPv4/IPv6 compatible key generator for registration
+    keyGenerator: (req) => `registration-${ipKeyGenerator(req)}`
   }
 };
 

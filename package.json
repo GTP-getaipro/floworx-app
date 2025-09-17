@@ -109,7 +109,7 @@
     "audit:deps": "npx depcheck --skip-missing=true",
     "audit:cycles": "npx madge --extensions js,jsx --circular backend frontend/src",
     "audit:exports": "npx ts-prune || true",
-    "audit:imports": "eslint . --ext .js,.jsx --max-warnings=0",
+    "audit:imports": "npx eslint . --ext .js,.jsx --max-warnings=0",
     "audit:code-full": "npm run audit:unused && npm run audit:deps && npm run audit:cycles",
     "verify:audit": "npm run audit:deps && npm run audit:imports"
   },
@@ -134,15 +134,21 @@
     "babel-jest": "^30.1.2",
     "chai": "^4.3.7",
     "chalk": "^5.6.0",
+
     "cypress": "^15.0.0",
     "cypress-mochawesome-reporter": "^4.0.2",
     "depcheck": "^1.4.7",
     "dotenv": "^17.2.2",
+
     "eslint": "^8.57.0",
+
     "eslint-plugin-import": "^2.29.1",
+
     "eslint-plugin-unused-imports": "^4.2.0",
     "express": "^5.1.0",
+
     "jest": "^30.1.3",
+
     "jest-environment-jsdom": "^30.1.2",
     "jest-environment-node": "^30.1.2",
     "jest-html-reporters": "^3.1.7",
@@ -156,6 +162,7 @@
     "mocha": "^10.2.0",
     "mongodb-memory-server": "^10.1.2",
     "mongoose": "^8.8.4",
+
     "prettier": "^3.2.5",
     "prom-client": "^15.1.3",
     "puppeteer": "^24.19.0",
@@ -179,6 +186,7 @@
     "express-rate-limit": "^8.1.0",
     "express-slow-down": "^2.1.0",
     "express-validator": "^7.2.1",
+
     "globby": "^14.1.0",
     "googleapis": "^159.0.0",
     "helmet": "^8.1.0",

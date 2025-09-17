@@ -63,11 +63,20 @@ class DatabaseManager {
       let parsedUrl;
       try {
         parsedUrl = new URL(process.env.DATABASE_URL);
-        console.log(`   Protocol: ${parsedUrl.protocol}`);
-        console.log(`   Hostname: ${parsedUrl.hostname}`);
-        console.log(`   Port: ${parsedUrl.port}`);
-        console.log(`   Database: ${parsedUrl.pathname.substring(1)}`);
-        console.log(`   Username: ${parsedUrl.username}`);
+        if (isProduction) {
+          console.log('   Connection:', JSON.stringify({
+            host: parsedUrl.hostname,
+            db: parsedUrl.pathname.substring(1),
+            mode: 'postgres',
+            hasPassword: !!parsedUrl.password
+          }));
+        } else {
+          console.log(`   Protocol: ${parsedUrl.protocol}`);
+          console.log(`   Hostname: ${parsedUrl.hostname}`);
+          console.log(`   Port: ${parsedUrl.port}`);
+          console.log(`   Database: ${parsedUrl.pathname.substring(1)}`);
+          console.log(`   Username: ${parsedUrl.username}`);
+        }
       } catch (parseError) {
         console.error('❌ Failed to parse DATABASE_URL:', parseError.message);
       }
@@ -134,10 +143,19 @@ class DatabaseManager {
 
     // Priority 2: Fallback to individual DB_* variables
     console.log('🔗 Using individual DB_* environment variables');
-    console.log(`   DB_HOST: ${process.env.DB_HOST || 'localhost'}`);
-    console.log(`   DB_PORT: ${process.env.DB_PORT || 5432}`);
-    console.log(`   DB_NAME: ${process.env.DB_NAME || 'not set'}`);
-    console.log(`   DB_USER: ${process.env.DB_USER || 'not set'}`);
+    if (isProduction) {
+      console.log('   Connection:', JSON.stringify({
+        host: process.env.DB_HOST || 'localhost',
+        db: process.env.DB_NAME || 'not set',
+        mode: 'postgres',
+        hasPassword: !!process.env.DB_PASSWORD
+      }));
+    } else {
+      console.log(`   DB_HOST: ${process.env.DB_HOST || 'localhost'}`);
+      console.log(`   DB_PORT: ${process.env.DB_PORT || 5432}`);
+      console.log(`   DB_NAME: ${process.env.DB_NAME || 'not set'}`);
+      console.log(`   DB_USER: ${process.env.DB_USER || 'not set'}`);
+    }
 
     return {
       host: process.env.DB_HOST || 'localhost',
@@ -570,7 +588,20 @@ function getKeyDB() {
   }
 
   try {
-    console.log('🔄 Initializing KeyDB connection...');
+    const isProduction = process.env.NODE_ENV === 'production';
+
+    if (isProduction) {
+      const keydbUrl = new URL(process.env.KEYDB_URL);
+      console.log('🔄 Initializing KeyDB connection...');
+      console.log('   Connection:', JSON.stringify({
+        host: keydbUrl.hostname,
+        db: keydbUrl.pathname.substring(1) || '0',
+        mode: 'keydb',
+        hasPassword: !!keydbUrl.password
+      }));
+    } else {
+      console.log('🔄 Initializing KeyDB connection...');
+    }
 
     keydbInstance = new Redis(process.env.KEYDB_URL, {
       maxRetriesPerRequest: 3,

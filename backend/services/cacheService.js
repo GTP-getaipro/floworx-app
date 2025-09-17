@@ -1,6 +1,6 @@
 /**
  * KeyDB Cache Service for FloWorx SaaS - FIXED VERSION
- * High-performance caching layer with KeyDB (Redis-compatible) and in-memory fallback
+ * High-performance caching layer with KeyDB and in-memory fallback
  * KeyDB is faster and more efficient than Redis while being 100% compatible
  */
 
@@ -11,7 +11,7 @@ const NodeCache = require('node-cache');
 const redisManager = require('./redis-connection-manager');
 
 /**
- * Multi-tier caching service with KeyDB (Redis-compatible) and in-memory fallback
+ * Multi-tier caching service with KeyDB and in-memory fallback
  * KeyDB provides better performance and lower memory usage than Redis
  */
 class CacheService {
@@ -46,7 +46,7 @@ class CacheService {
 
   /**
    * Initialize KeyDB connection with enhanced retry logic
-   * KeyDB is 100% Redis-compatible but faster and more efficient
+   * KeyDB is 100% compatible but faster and more efficient
    */
   async initializeKeyDB() {
     // Prevent multiple initialization attempts
@@ -66,13 +66,13 @@ class CacheService {
     // Skip KeyDB initialization if disabled or not configured
     if (process.env.DISABLE_REDIS === 'true') {
       if (!isDevelopment) {
-        console.log('⚠️ Redis disabled in production mode');
+        console.log('⚠️ KeyDB disabled in production mode');
       }
       this.isRedisConnected = false;
       return;
     }
 
-    // In test mode, skip Redis entirely unless explicitly enabled
+    // In test mode, skip KeyDB entirely unless explicitly enabled
     if (process.env.NODE_ENV === 'test' && process.env.ENABLE_REDIS_IN_TESTS !== 'true') {
       this.isRedisConnected = false;
       return;
@@ -80,9 +80,9 @@ class CacheService {
 
     if (!process.env.REDIS_HOST && !process.env.REDIS_URL) {
       if (!isDevelopment) {
-        console.warn('⚠️ Redis not configured - using in-memory cache');
+        console.warn('⚠️ KeyDB not configured - using in-memory cache');
         console.warn('   Set REDIS_HOST or REDIS_URL for production caching');
-        console.warn('   Performance may be degraded without Redis');
+        console.warn('   Performance may be degraded without KeyDB');
       }
       this.isRedisConnected = false;
       return;
@@ -119,7 +119,7 @@ class CacheService {
           }
         }
 
-        console.log('⚠️ CacheService: Redis client not available, using fallback');
+        console.log('⚠️ CacheService: KeyDB client not available, using fallback');
         this.redis = null;
         this.isRedisConnected = false;
 
@@ -136,7 +136,7 @@ class CacheService {
   }
 
   /**
-   * Reset Redis connection state and attempt reconnection
+   * Reset KeyDB connection state and attempt reconnection
    */
   async resetConnection() {
     console.log('🔄 Resetting KeyDB connection...');
@@ -151,7 +151,7 @@ class CacheService {
       try {
         await this.redis.quit();
       } catch (error) {
-        console.log('Error closing Redis connection:', error.message);
+        console.log('Error closing KeyDB connection:', error.message);
       }
       this.redis = null;
     }
@@ -174,16 +174,16 @@ class CacheService {
       let value = null;
       let source = 'miss';
 
-      // Try Redis first if available
+      // Try KeyDB first if available
       if (this.isRedisConnected && this.redis) {
         try {
           const redisValue = await this.redis.get(key);
           if (redisValue !== null) {
             value = this.deserialize(redisValue);
-            source = 'redis';
+            source = 'keydb';
           }
         } catch (error) {
-          console.warn(`Redis get error for key ${key}:`, error.message);
+          console.warn(`KeyDB get error for key ${key}:`, error.message);
           this.stats.errors++;
         }
       }
@@ -221,7 +221,7 @@ class CacheService {
     try {
       const serializedValue = this.serialize(value);
 
-      // Set in Redis if available
+      // Set in KeyDB if available
       if (this.isRedisConnected && this.redis) {
         try {
           if (ttl > 0) {
@@ -230,7 +230,7 @@ class CacheService {
             await this.redis.set(key, serializedValue);
           }
         } catch (error) {
-          console.warn(`Redis set error for key ${key}:`, error.message);
+          console.warn(`KeyDB set error for key ${key}:`, error.message);
           this.stats.errors++;
         }
       }
@@ -259,12 +259,12 @@ class CacheService {
    */
   async delete(key) {
     try {
-      // Delete from Redis
+      // Delete from KeyDB
       if (this.isRedisConnected && this.redis) {
         try {
           await this.redis.del(key);
         } catch (error) {
-          console.warn(`Redis delete error for key ${key}:`, error.message);
+          console.warn(`KeyDB delete error for key ${key}:`, error.message);
         }
       }
 
@@ -287,7 +287,7 @@ class CacheService {
     try {
       let deletedCount = 0;
 
-      // Delete from Redis using pattern
+      // Delete from KeyDB using pattern
       if (this.isRedisConnected && this.redis) {
         try {
           const keys = await this.redis.keys(pattern);
@@ -296,7 +296,7 @@ class CacheService {
             deletedCount += keys.length;
           }
         } catch (error) {
-          console.warn(`Redis pattern delete error for ${pattern}:`, error.message);
+          console.warn(`KeyDB pattern delete error for ${pattern}:`, error.message);
         }
       }
 
@@ -378,7 +378,7 @@ class CacheService {
     const memoryStats = this.memoryCache.getStats();
 
     return {
-      redis: {
+      keydb: {
         connected: this.isRedisConnected,
         host: process.env.REDIS_HOST || 'localhost',
         port: process.env.REDIS_PORT || 6379
@@ -406,7 +406,7 @@ class CacheService {
    */
   async clear() {
     try {
-      // Clear Redis
+      // Clear KeyDB
       if (this.isRedisConnected && this.redis) {
         await this.redis.flushdb();
       }
@@ -431,12 +431,12 @@ class CacheService {
   }
 
   /**
-   * Health check with improved Redis monitoring
+   * Health check with improved KeyDB monitoring
    */
   async healthCheck() {
     const isDevelopment = process.env.NODE_ENV === 'development' || process.env.NODE_ENV === 'test';
     const health = {
-      redis: {
+      keydb: {
         status: 'disconnected',
         latency: null,
         configured: !!(process.env.REDIS_URL || process.env.REDIS_HOST),
@@ -450,7 +450,7 @@ class CacheService {
       overall: 'degraded'
     };
 
-    // Test Redis connection
+    // Test KeyDB connection
     if (this.isRedisConnected && this.redis) {
       try {
         const start = performance.now();
@@ -458,28 +458,28 @@ class CacheService {
           this.redis.ping(),
           new Promise((_, reject) => setTimeout(() => reject(new Error('Health check timeout')), 2000))
         ]);
-        health.redis.status = 'connected';
-        health.redis.latency = Math.round(performance.now() - start);
+        health.keydb.status = 'connected';
+        health.keydb.latency = Math.round(performance.now() - start);
       } catch (error) {
         if (!isDevelopment) {
-          console.warn('⚠️ Redis health check failed:', error.message);
+          console.warn('⚠️ KeyDB health check failed:', error.message);
         }
-        health.redis.status = 'error';
+        health.keydb.status = 'error';
         this.isRedisConnected = false;
       }
-    } else if (health.redis.configured && !this.isInitializing) {
-      health.redis.status = 'disconnected';
-    } else if (!health.redis.configured) {
-      health.redis.status = 'not_configured';
+    } else if (health.keydb.configured && !this.isInitializing) {
+      health.keydb.status = 'disconnected';
+    } else if (!health.keydb.configured) {
+      health.keydb.status = 'not_configured';
     }
 
     // Overall health assessment
-    if (health.redis.status === 'connected') {
+    if (health.keydb.status === 'connected') {
       health.overall = 'healthy';
-    } else if (health.redis.status === 'not_configured' && isDevelopment) {
-      health.overall = 'healthy'; // OK in development without Redis
+    } else if (health.keydb.status === 'not_configured' && isDevelopment) {
+      health.overall = 'healthy'; // OK in development without KeyDB
     } else if (health.memory.status === 'ok') {
-      health.overall = 'degraded'; // Memory cache working but Redis down
+      health.overall = 'degraded'; // Memory cache working but KeyDB down
     } else {
       health.overall = 'unhealthy';
     }
@@ -488,7 +488,7 @@ class CacheService {
   }
 
   /**
-   * Attempt to reconnect to Redis (for manual recovery)
+   * Attempt to reconnect to KeyDB (for manual recovery)
    */
   async reconnect() {
     if (this.isInitializing) {
@@ -501,12 +501,12 @@ class CacheService {
       return true;
     }
 
-    console.log('🔄 Attempting Redis reconnection...');
+    console.log('🔄 Attempting KeyDB reconnection...');
     try {
       await this.initializeKeyDB();
       return this.isRedisConnected;
     } catch (error) {
-      console.warn('⚠️ Redis reconnection failed:', error.message);
+      console.warn('⚠️ KeyDB reconnection failed:', error.message);
       return false;
     }
   }

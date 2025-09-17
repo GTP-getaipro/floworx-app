@@ -1,6 +1,10 @@
 // app.js - Express app for testing (without server startup)
 require('dotenv').config();
 
+// Validate environment variables early (fail-fast in dev, warn in prod)
+const { validateEnvironment } = require('./utils/env');
+validateEnvironment();
+
 const express = require('express');
 const cors = require('cors');
 const helmet = require('helmet');
@@ -104,11 +108,17 @@ app.get('/health', (req, res) => {
 
 app.get('/healthz', (req, res) => {
   const { getKeyDBStatus } = require('./database/unified-connection');
+  const { getDbStatus, getEnvStatus } = require('./utils/env');
+
   const cacheStatus = getKeyDBStatus();
+  const dbStatus = getDbStatus();
+  const envStatus = getEnvStatus();
 
   res.status(200).json({
     ok: true,
-    cache: cacheStatus
+    cache: cacheStatus,
+    db: dbStatus,
+    env: envStatus
   });
 });
 

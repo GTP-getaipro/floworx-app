@@ -330,97 +330,101 @@ router.post('/register', async (req, res) => {
   }
 });
 
+// TEST-ONLY helper route to mark users as verified
+// Only mounted in NODE_ENV === 'test'
+if (process.env.NODE_ENV === 'test') {
+  router.post('/mark-verified', async (req, res) => {
+    try {
+      const { email } = req.body;
+
+      if (!email) {
+        return res.status(400).json({
+          error: { code: "BAD_REQUEST", message: "Email is required" }
+        });
+      }
+
+      // Get user by email
+      const userResult = await databaseOperations.getUserByEmail(email);
+      if (!userResult.data) {
+        return res.status(404).json({
+          error: { code: "USER_NOT_FOUND", message: "User not found" }
+        });
+      }
+
+      // Mark user as verified by updating email_verified
+      const updateResult = await databaseOperations.updateUser(userResult.data.id, {
+        email_verified: true
+      });
+
+      if (updateResult.error) {
+        return res.status(500).json({
+          error: { code: "INTERNAL", message: "Failed to verify user" }
+        });
+      }
+
+      res.status(200).json({ success: true });
+
+    } catch (error) {
+      console.error('Test mark-verified error:', error);
+      res.status(500).json({
+        error: { code: "INTERNAL", message: "Unexpected error" }
+      });
+    }
+  });
+}
 
 // POST /api/auth/login
-// Authenticate user and return JWT - Simplified working version
 router.post('/login', async (req, res) => {
   try {
-    console.log('Login called with body:', { ...req.body, password: '[HIDDEN]' });
-
     const { email, password } = req.body;
 
     // Basic validation
     if (!email || !password) {
       return res.status(400).json({
-        success: false,
-        error: 'Email and password are required'
+        error: { code: "BAD_REQUEST", message: "Email and password are required" }
       });
     }
-
-    // Email format validation
-    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-    if (!emailRegex.test(email)) {
-      return res.status(400).json({
-        success: false,
-        error: 'Please provide a valid email address'
-      });
-    }
-
-    console.log('Login validation passed');
 
     // Find user by email
-    console.log('Looking up user...');
     const userResult = await databaseOperations.getUserByEmail(email);
-    console.log('User lookup result:', userResult.data ? 'User found' : 'User not found');
 
     if (userResult.error || !userResult.data) {
       return res.status(401).json({
-        success: false,
-        error: 'Invalid credentials'
+        error: { code: "INVALID_CREDENTIALS", message: "Invalid email or password" }
       });
     }
 
     const user = userResult.data;
 
     // Verify password
-    console.log('Verifying password...');
     const passwordMatch = await bcrypt.compare(password, user.password_hash);
-    console.log('Password verification result:', passwordMatch ? 'Match' : 'No match');
 
     if (!passwordMatch) {
       return res.status(401).json({
-        success: false,
-        error: 'Invalid credentials'
+        error: { code: "INVALID_CREDENTIALS", message: "Invalid email or password" }
       });
     }
 
-    // Generate JWT token
-    console.log('Generating JWT token...');
-    const token = jwt.sign(
-      { userId: user.id, email: user.email },
-      process.env.JWT_SECRET,
-      { expiresIn: '24h' }
-    );
-    console.log('Token generated successfully');
-
-    // Note: Last login time update removed to prevent crashes
-    // Can be re-implemented later with proper database operations
-
-    console.log('Login completed successfully');
-
-    res.status(200).json({
-      success: true,
-      data: {
-        token,
-        user: {
-          id: user.id,
-          email: user.email,
-          firstName: user.first_name,
-          lastName: user.last_name,
-          companyName: user.company_name
+    // Check if user is verified
+    if (!user.email_verified) {
+      return res.status(409).json({
+        error: {
+          code: "UNVERIFIED",
+          message: "Email not verified",
+          resendUrl: "/api/auth/resend-verification"
         }
-      },
-      message: 'Login successful'
+      });
+    }
+
+    // Success - return userId only
+    res.status(200).json({
+      userId: user.id
     });
 
   } catch (error) {
-    console.error('💥 Login error:', error.message);
-    console.error('Stack:', error.stack);
-
+    console.error('Login error:', error);
     res.status(500).json({
-      success: false,
-      error: 'Login failed due to server error',
-      details: process.env.NODE_ENV === 'development' ? error.message : 'Internal server error'
+      error: { code: "INTERNAL", message: "Unexpected error" }
     });
   }
 });

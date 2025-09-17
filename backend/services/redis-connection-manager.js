@@ -1,5 +1,5 @@
 /**
- * Redis Connection Manager with Retry Logic
+ * KeyDB Connection Manager with Retry Logic
  * Handles network delays and connection failures gracefully
  */
 
@@ -18,18 +18,18 @@ class RedisConnectionManager {
   }
 
   /**
-   * Initialize Redis connection with retry logic
+   * Initialize KeyDB connection with retry logic
    */
   connect() {
     const redisConfig = this.getRedisConfig();
 
-    // If Redis is disabled or no config, return resolved promise
+    // If KeyDB is disabled or no config, return resolved promise
     if (!redisConfig) {
-      console.log('🔴 Redis connection skipped (disabled or no config)');
+      console.log('🔴 KeyDB connection skipped (disabled or no config)');
       return Promise.resolve(null);
     }
 
-    console.log('🔴 Attempting Redis connection...');
+    console.log('🔴 Attempting KeyDB connection...');
     console.log(`   Host: ${redisConfig.host}`);
     console.log(`   Port: ${redisConfig.port}`);
     console.log(`   Password: ${redisConfig.password ? '[SET]' : '[NOT SET]'}`);
@@ -40,12 +40,12 @@ class RedisConnectionManager {
   }
 
   /**
-   * Get Redis configuration from environment
+   * Get KeyDB configuration from environment
    */
   getRedisConfig() {
-    // Check if Redis is disabled
+    // Check if KeyDB is disabled
     if (process.env.DISABLE_REDIS === 'true') {
-      console.log('🔴 Redis is disabled via DISABLE_REDIS environment variable');
+      console.log('🔴 KeyDB is disabled via DISABLE_REDIS environment variable');
       return null;
     }
 
@@ -69,7 +69,7 @@ class RedisConnectionManager {
           // Retry strategy
           retryStrategy: (times) => {
             const delay = Math.min(times * 50, 2000);
-            console.log(`🔄 Redis retry attempt ${times}, waiting ${delay}ms`);
+            console.log(`🔄 KeyDB retry attempt ${times}, waiting ${delay}ms`);
             return delay;
           }
         };
@@ -107,12 +107,12 @@ class RedisConnectionManager {
       // Retry strategy
       retryStrategy: (times) => {
         const delay = Math.min(times * 50, 2000);
-        console.log(`🔄 Redis retry attempt ${times}, waiting ${delay}ms`);
+        console.log(`🔄 KeyDB retry attempt ${times}, waiting ${delay}ms`);
         return delay;
       }
     };
 
-    console.log(`🔧 Using individual Redis config: ${config.host}:${config.port}`);
+    console.log(`🔧 Using individual KeyDB config: ${config.host}:${config.port}`);
     return config;
   }
 
@@ -122,7 +122,7 @@ class RedisConnectionManager {
   attemptConnection(config, resolve, reject) {
     this.connectionAttempts++;
 
-    console.log(`🔄 Redis connection attempt ${this.connectionAttempts}/${this.maxRetries}`);
+    console.log(`🔄 KeyDB connection attempt ${this.connectionAttempts}/${this.maxRetries}`);
 
     // Try different hosts if previous attempts failed
     if (this.connectionAttempts > 1) {
@@ -153,7 +153,7 @@ class RedisConnectionManager {
 
     // Connection ready
     this.client.on('ready', () => {
-      console.log('🚀 Redis ready for commands');
+      console.log('🚀 KeyDB ready for commands');
     });
 
     // Connection error
@@ -165,41 +165,41 @@ class RedisConnectionManager {
           this.retryDelay * Math.pow(2, this.connectionAttempts - 1),
           this.maxRetryDelay
         );
-        
+
         console.log(`⏳ Retrying in ${delay}ms...`);
-        
+
         setTimeout(() => {
           this.client.disconnect();
           this.attemptConnection(config, resolve, reject);
         }, delay);
       } else {
-        
-        reject(new Error(`Redis connection failed after ${this.maxRetries} attempts: ${error.message}`));
+
+        reject(new Error(`KeyDB connection failed after ${this.maxRetries} attempts: ${error.message}`));
       }
     });
 
     // Connection close
     this.client.on('close', () => {
-      console.log('🔴 Redis connection closed');
+      console.log('🔴 KeyDB connection closed');
       this.isConnected = false;
     });
 
     // Attempt to connect
     this.client.connect().catch((error) => {
-      logger.error(`Redis connection failed: ${error.message}`);
+      logger.error(`KeyDB connection failed: ${error.message}`);
     });
   }
 
   /**
-   * Get the Redis client (with fallback)
+   * Get the KeyDB client (with fallback)
    */
   getClient() {
     if (this.isConnected && this.client) {
       return this.client;
     }
-    
-    // Return a mock client if Redis is not available
-    
+
+    // Return a mock client if KeyDB is not available
+
     return this.createFallbackClient();
   }
 
@@ -225,7 +225,7 @@ class RedisConnectionManager {
   }
 
   /**
-   * Test Redis connection
+   * Test KeyDB connection
    */
   async testConnection() {
     try {
@@ -244,7 +244,7 @@ class RedisConnectionManager {
    */
   async disconnect() {
     if (this.client) {
-      console.log('🔴 Disconnecting Redis...');
+      console.log('🔴 Disconnecting KeyDB...');
       await this.client.quit();
       this.isConnected = false;
     }

@@ -10,59 +10,141 @@
   --shadow: 0 10px 20px rgba(2, 6, 23, 0.08);
   --radius: 16px;
   --space: 14px;
+  --error: #dc2626;
+  --success: #16a34a;
+  --success-bg: #f0fdf4;
+  --success-border: #bbf7d0;
+  --error-bg: #fef2f2;
+  --error-border: #fecaca;
 }
 
 /* Layout Components */
-.auth-root {
+.auth-container {
   min-height: 100vh;
   background: var(--bg);
+  display: flex;
+  flex-direction: column;
 }
 
-.brand {
+.brand-bar {
   height: 56px;
+  background: var(--card-bg);
+  border-bottom: 1px solid #e5e7eb;
   display: flex;
   align-items: center;
   justify-content: center;
-  background: linear-gradient(90deg, #4f46e5, #7c3aed);
-  color: #fff;
+  flex-shrink: 0;
 }
 
-.brand .brand-content {
+.brand-content {
   display: flex;
-  gap: 10px;
   align-items: center;
-  font-weight: 600;
+  gap: 12px;
 }
 
-.auth-wrap {
+.brand-logo {
+  display: flex;
+  align-items: center;
+}
+
+.brand-name {
+  font-weight: 700;
+  color: var(--brand);
+  font-size: 20px;
+  letter-spacing: -0.025em;
+}
+
+.brand-tagline {
+  font-weight: 500;
+  color: var(--muted);
+  font-size: 14px;
+  opacity: 0.85;
+}
+
+.auth-content {
+  flex: 1;
   display: flex;
   align-items: center;
   justify-content: center;
   padding: 24px;
 }
 
-.card {
+.auth-card {
   background: var(--card-bg);
+  border-radius: 12px;
   box-shadow: var(--shadow);
-  border-radius: var(--radius);
-  padding: 28px;
-  max-width: 480px;
+  padding: 32px;
   width: 100%;
+  max-width: 480px;
 }
 
-/* Typography */
-.h1 {
+.auth-header {
+  text-align: center;
+  margin-bottom: 24px;
+}
+
+.auth-title {
   font-size: 28px;
   line-height: 1.2;
-  margin: 0 0 6px;
+  margin: 0 0 8px;
   color: var(--text);
   font-weight: 700;
 }
 
-.sub {
+.auth-subtitle {
   color: var(--muted);
   font-size: 14px;
-  margin-bottom: 18px;
+  margin: 0;
+}
+
+.auth-body {
+  /* Container for form content */
+}
+
+/* Form Elements */
+.auth-form {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.form-group {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.form-label {
+  font-size: 14px;
+  font-weight: 500;
+  color: var(--text);
+  margin-bottom: 4px;
+}
+
+.form-input {
+  width: 100%;
+  height: 44px;
+  padding: 0 12px;
+  border: 1px solid #d1d5db;
+  border-radius: 8px;
+  font-size: 14px;
+  background: var(--card-bg);
+  color: var(--text);
+  transition: border-color 0.2s, box-shadow 0.2s;
+}
+
+.form-input:focus {
+  outline: none;
+  border-color: var(--brand);
+  box-shadow: 0 0 0 3px var(--ring);
+}
+
+.form-input.error {
+  border-color: var(--error);
+}
+
+.form-input.error:focus {
+  box-shadow: 0 0 0 3px rgba(220, 38, 38, 0.1);
 }
 
 /* Form Elements */
@@ -195,4 +277,106 @@
     gap: 8px;
     text-align: center;
   }
+
+  /* AuthLayout responsive adjustments */
+  .auth-content {
+    padding: 16px;
+  }
+
+  .auth-card {
+    padding: 24px;
+  }
+
+  .auth-title {
+    font-size: 24px;
+  }
+
+  .brand-content {
+    flex-direction: column;
+    gap: 4px;
+    text-align: center;
+  }
+
+  .brand-tagline {
+    font-size: 12px;
+  }
+
+  .form-row {
+    flex-direction: column;
+    gap: 14px;
+  }
+}
+
+/* Additional AuthLayout Styles */
+.btn-primary {
+  height: 44px;
+  border-radius: 8px;
+  border: none;
+  cursor: pointer;
+  width: 100%;
+  background: var(--brand);
+  color: #fff;
+  font-weight: 500;
+  font-size: 14px;
+  transition: all 0.2s ease;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+}
+
+.btn-primary:hover:not(:disabled) {
+  background: var(--brand-600);
+}
+
+.btn-primary:focus {
+  outline: none;
+  box-shadow: 0 0 0 3px var(--ring);
+}
+
+.btn-primary:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+.btn-secondary {
+  height: 44px;
+  border-radius: 8px;
+  border: 1px solid #d1d5db;
+  cursor: pointer;
+  width: 100%;
+  background: var(--card-bg);
+  color: var(--text);
+  font-weight: 500;
+  font-size: 14px;
+  transition: all 0.2s ease;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+}
+
+.btn-secondary:hover:not(:disabled) {
+  background: #f9fafb;
+  border-color: #9ca3af;
+}
+
+.success-callout {
+  background: var(--success-bg);
+  border: 1px solid var(--success-border);
+  border-radius: 8px;
+  padding: 12px 16px;
+  margin-bottom: 16px;
+  color: var(--success);
+  font-size: 14px;
+}
+
+.error-callout {
+  background: var(--error-bg);
+  border: 1px solid var(--error-border);
+  border-radius: 8px;
+  padding: 12px 16px;
+  margin-bottom: 16px;
+  color: var(--error);
+  font-size: 14px;
 }

@@ -1,4 +1,5 @@
 import React, { Suspense } from 'react';
+import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom';
 
 // Critical components loaded immediately
 import ErrorBoundary from './components/ErrorBoundary';

@@ -1,0 +1,34 @@
+import React from 'react';
+import { Link as RouterLink } from 'react-router-dom';
+
+const Link = ({ children, to, href, external = false, variant = 'default', className = '', ...props }) => {
+  const variantClasses = {
+    default: 'text-blue-600 hover:text-blue-800 hover:underline',
+    primary: 'text-blue-600 hover:text-blue-800 hover:underline',
+    muted: 'text-gray-600 hover:text-gray-800 hover:underline'
+  };
+  
+  const classes = `${variantClasses[variant]} ${className}`;
+  
+  if (external || href) {
+    return (
+      <a 
+        href={href || to} 
+        className={classes}
+        target={external ? '_blank' : undefined}
+        rel={external ? 'noopener noreferrer' : undefined}
+        {...props}
+      >
+        {children}
+      </a>
+    );
+  }
+  
+  return (
+    <RouterLink to={to} className={classes} {...props}>
+      {children}
+    </RouterLink>
+  );
+};
+
+export default Link;

@@ -3,7 +3,8 @@ import { useNavigate } from 'react-router-dom';
 
 import { useAuth } from '../contexts/AuthContext';
 import { useToast } from '../contexts/ToastContext';
-import useFormValidation, { commonValidationRules } from '../hooks/useFormValidation';
+import useFormValidation from '../hooks/useFormValidation';
+import { required, email, minLength, passwordStrong, matches } from '../utils/validationRules';
 import useFormPersistence from '../hooks/useFormPersistence';
 import ValidatedInput from './ui/ValidatedInput';
 import ProtectedButton from './ui/ProtectedButton';
@@ -13,27 +14,11 @@ import { parseError, logError, ERROR_MESSAGES } from '../utils/errorHandling';
 import { Alert, Card, Link, Logo } from './ui';
 
 const validationRules = {
-  email: [commonValidationRules.required, commonValidationRules.email],
-  password: [
-    commonValidationRules.required,
-    commonValidationRules.minLength(8),
-    value => {
-      const hasUpperCase = /[A-Z]/.test(value);
-      const hasLowerCase = /[a-z]/.test(value);
-      const hasNumbers = /\d/.test(value);
-      const hasSpecialChar = /[@$!%*?&]/.test(value);
-      if (!hasUpperCase || !hasLowerCase || !hasNumbers || !hasSpecialChar) {
-        return 'Password must contain at least one uppercase letter, one lowercase letter, one number, and one special character (@$!%*?&)';
-      }
-      return '';
-    },
-  ],
-  confirmPassword: [
-    commonValidationRules.required,
-    commonValidationRules.match('password', 'Passwords do not match'),
-  ],
-  firstName: [commonValidationRules.required],
-  lastName: [commonValidationRules.required],
+  email: [required(), email()],
+  password: [required(), minLength(8), passwordStrong()],
+  confirmPassword: [required(), matches('password', 'Passwords do not match')],
+  firstName: [required()],
+  lastName: [required()],
   companyName: [], // Optional field
 };
 

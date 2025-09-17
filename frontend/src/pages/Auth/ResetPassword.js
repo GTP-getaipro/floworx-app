@@ -1,20 +1,34 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate, useSearchParams, Link } from 'react-router-dom';
 import AuthLayout from '../../components/AuthLayout';
+import useFormValidation from '../../hooks/useFormValidation';
+import { required, minLength, passwordStrong, matches } from '../../utils/validationRules';
 
 const ResetPassword = () => {
-  const [formData, setFormData] = useState({
-    password: '',
-    confirmPassword: ''
-  });
   const [errors, setErrors] = useState({});
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [isValidToken, setIsValidToken] = useState(null);
   const [isSuccess, setIsSuccess] = useState(false);
-  
+
   const [searchParams] = useSearchParams();
   const navigate = useNavigate();
   const token = searchParams.get('token');
+
+  const {
+    values: formValues,
+    errors: formErrors,
+    touched,
+    handleChange,
+    handleBlur,
+    validate,
+    isValid
+  } = useFormValidation({
+    initialValues: { password: '', confirm: '' },
+    rules: {
+      password: [required(), minLength(8), passwordStrong()],
+      confirm: [required(), matches('password')]
+    }
+  });
 
   useEffect(() => {
     if (!token) {
@@ -49,43 +63,13 @@ const ResetPassword = () => {
     verifyToken();
   }, [token, navigate]);
 
-  const handleInputChange = (e) => {
-    const { name, value } = e.target;
-    setFormData(prev => ({ ...prev, [name]: value }));
-    
-    // Clear error when user starts typing
-    if (errors[name]) {
-      setErrors(prev => ({ ...prev, [name]: '' }));
-    }
-  };
-
-  const validateForm = () => {
-    const newErrors = {};
-
-    if (!formData.password) {
-      newErrors.password = 'Password is required';
-    } else if (formData.password.length < 8) {
-      newErrors.password = 'Password must be at least 8 characters';
-    }
-
-    if (formData.password !== formData.confirmPassword) {
-      newErrors.confirmPassword = 'Passwords do not match';
-    }
-
-    return newErrors;
-  };
-
   const handleSubmit = async (e) => {
     e.preventDefault();
+    const { valid } = validate();
+    if (!valid) return;
+
     setIsSubmitting(true);
     setErrors({});
-
-    const validationErrors = validateForm();
-    if (Object.keys(validationErrors).length > 0) {
-      setErrors(validationErrors);
-      setIsSubmitting(false);
-      return;
-    }
 
     try {
       const response = await fetch('/api/auth/reset-password', {
@@ -95,7 +79,7 @@ const ResetPassword = () => {
         },
         body: JSON.stringify({
           token,
-          password: formData.password
+          password: formValues.password
         }),
       });
 
@@ -182,38 +166,42 @@ const ResetPassword = () => {
             id="password"
             name="password"
             type="password"
-            className={`form-input ${errors.password ? 'error' : ''}`}
-            value={formData.password}
-            onChange={handleInputChange}
+            className={`form-input ${formErrors.password ? 'error' : ''}`}
+            value={formValues.password}
+            onChange={handleChange}
+            onBlur={handleBlur}
             placeholder="••••••••"
             disabled={isSubmitting}
             autoComplete="new-password"
+            aria-invalid={!!formErrors.password}
             required
           />
-          {errors.password && <div className="error-message">{errors.password}</div>}
+          {formErrors.password && <div className="error-message">{formErrors.password}</div>}
         </div>
 
         <div className="form-group">
-          <label htmlFor="confirmPassword" className="form-label">Confirm New Password</label>
+          <label htmlFor="confirm" className="form-label">Confirm New Password</label>
           <input
-            id="confirmPassword"
-            name="confirmPassword"
+            id="confirm"
+            name="confirm"
             type="password"
-            className={`form-input ${errors.confirmPassword ? 'error' : ''}`}
-            value={formData.confirmPassword}
-            onChange={handleInputChange}
+            className={`form-input ${formErrors.confirm ? 'error' : ''}`}
+            value={formValues.confirm}
+            onChange={handleChange}
+            onBlur={handleBlur}
             placeholder="••••••••"
             disabled={isSubmitting}
             autoComplete="new-password"
+            aria-invalid={!!formErrors.confirm}
             required
           />
-          {errors.confirmPassword && <div className="error-message">{errors.confirmPassword}</div>}
+          {formErrors.confirm && <div className="error-message">{formErrors.confirm}</div>}
         </div>
 
         <button
           type="submit"
           className="btn-primary"
-          disabled={isSubmitting}
+          disabled={isSubmitting || (!isValid && Object.keys(touched).length > 0)}
         >
           {isSubmitting ? 'Updating Password...' : 'Update Password'}
         </button>

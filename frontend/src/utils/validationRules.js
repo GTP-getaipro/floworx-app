@@ -1,37 +1,14 @@
-// Simple validation rules
-export const validationRules = {
-  required: (value) => !value || value.trim() === '' ? 'This field is required' : '',
-  
-  email: (value) => {
-    if (!value) return '';
-    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-    return !emailRegex.test(value) ? 'Please enter a valid email address' : '';
-  },
-  
-  minLength: (min) => (value) => {
-    if (!value) return '';
-    return value.length < min ? `Must be at least ${min} characters` : '';
-  },
-  
-  maxLength: (max) => (value) => {
-    if (!value) return '';
-    return value.length > max ? `Must be no more than ${max} characters` : '';
-  },
-  
-  password: (value) => {
-    if (!value) return '';
-    if (value.length < 8) return 'Password must be at least 8 characters';
-    if (!/[A-Z]/.test(value)) return 'Password must contain at least one uppercase letter';
-    if (!/[a-z]/.test(value)) return 'Password must contain at least one lowercase letter';
-    if (!/\d/.test(value)) return 'Password must contain at least one number';
-    if (!/[@$!%*?&]/.test(value)) return 'Password must contain at least one special character';
-    return '';
-  },
-  
-  confirmPassword: (password) => (value, allValues) => {
-    if (!value) return '';
-    return value !== allValues[password] ? 'Passwords do not match' : '';
-  }
-};
+export const required = (msg = "This field is required") => v =>
+  (v == null || String(v).trim() === "" ? msg : null);
 
-export default validationRules;
+export const email = (msg = "Enter a valid email") => v =>
+  /.+@.+\..+/.test(String(v || "").trim()) ? null : msg;
+
+export const minLength = (n, msg = `Must be at least ${n} characters`) => v =>
+  (String(v || "").length >= n ? null : msg);
+
+export const passwordStrong = (msg = "Use 8+ chars incl. upper, lower, number, symbol") => v =>
+  /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[^\w\s]).{8,}$/.test(String(v || "")) ? null : msg;
+
+export const matches = (field, msg = "Does not match") => (v, all) =>
+  (v === all?.[field] ? null : msg);

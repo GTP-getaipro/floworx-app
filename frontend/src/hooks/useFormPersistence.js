@@ -1,60 +1,42 @@
-import { useEffect } from 'react';
+import { useCallback, useRef } from 'react';
 
-// Simple placeholder hook for form persistence
-const useFormPersistence = (values, options = {}) => {
-  const { 
-    excludeFields = [], 
-    storage = 'localStorage',
-    debounceMs = 300,
-    key = 'form-data'
-  } = options;
+const KEY_PREFIX = "floworx:";
 
-  useEffect(() => {
-    // Load persisted data on mount
+export default function useFormPersistence(storageKey) {
+  const debounceRef = useRef(null);
+  const fullKey = KEY_PREFIX + storageKey;
+
+  const load = useCallback(() => {
     try {
-      const storageObj = storage === 'sessionStorage' ? sessionStorage : localStorage;
-      const saved = storageObj.getItem(key);
-      if (saved) {
-        const parsedData = JSON.parse(saved);
-        // You would typically merge this with initial values
-        console.log('Loaded persisted form data:', parsedData);
-      }
+      const stored = window.localStorage.getItem(fullKey);
+      return stored ? JSON.parse(stored) : null;
     } catch (error) {
-      console.warn('Failed to load persisted form data:', error);
+      console.warn('Failed to load persisted data:', error);
+      return null;
     }
-  }, [key, storage]);
+  }, [fullKey]);
 
-  useEffect(() => {
-    // Save data when values change (with debounce)
-    const timeoutId = setTimeout(() => {
-      try {
-        const storageObj = storage === 'sessionStorage' ? sessionStorage : localStorage;
-        const dataToSave = { ...values };
-        
-        // Remove excluded fields
-        excludeFields.forEach(field => {
-          delete dataToSave[field];
-        });
-        
-        storageObj.setItem(key, JSON.stringify(dataToSave));
-      } catch (error) {
-        console.warn('Failed to persist form data:', error);
-      }
-    }, debounceMs);
-
-    return () => clearTimeout(timeoutId);
-  }, [values, excludeFields, storage, debounceMs, key]);
-
-  return {
-    clearPersistedData: () => {
-      try {
-        const storageObj = storage === 'sessionStorage' ? sessionStorage : localStorage;
-        storageObj.removeItem(key);
-      } catch (error) {
-        console.warn('Failed to clear persisted form data:', error);
-      }
+  const save = useCallback((obj) => {
+    if (debounceRef.current) {
+      clearTimeout(debounceRef.current);
     }
-  };
-};
 
-export default useFormPersistence;
+    debounceRef.current = setTimeout(() => {
+      try {
+        window.localStorage.setItem(fullKey, JSON.stringify(obj));
+      } catch (error) {
+        console.warn('Failed to save persisted data:', error);
+      }
+    }, 300);
+  }, [fullKey]);
+
+  const clear = useCallback(() => {
+    try {
+      window.localStorage.removeItem(fullKey);
+    } catch (error) {
+      console.warn('Failed to clear persisted data:', error);
+    }
+  }, [fullKey]);
+
+  return { load, save, clear };
+}

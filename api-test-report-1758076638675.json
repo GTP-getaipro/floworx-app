@@ -1,0 +1,435 @@
+{
+  "timestamp": "2025-09-17T02:37:18.675Z",
+  "baseUrl": "https://app.floworx-iq.com",
+  "summary": {
+    "totalTests": 22,
+    "successfulTests": 13,
+    "failedTests": 9,
+    "errorTests": 0,
+    "successRate": 59.09090909090909,
+    "criticalIssues": 2,
+    "categories": {
+      "Health": [
+        {
+          "method": "GET",
+          "path": "/health",
+          "status": 200,
+          "success": true,
+          "contentType": "application/json; charset=utf-8",
+          "responseSize": "254",
+          "error": null
+        },
+        {
+          "method": "GET",
+          "path": "/health/database",
+          "status": 404,
+          "success": false,
+          "contentType": "application/json; charset=utf-8",
+          "responseSize": "111",
+          "error": "Unexpected status: 404"
+        },
+        {
+          "method": "GET",
+          "path": "/health/oauth",
+          "status": 404,
+          "success": false,
+          "contentType": "application/json; charset=utf-8",
+          "responseSize": "108",
+          "error": "Unexpected status: 404"
+        }
+      ],
+      "Authentication": [
+        {
+          "method": "POST",
+          "path": "/auth/login",
+          "status": 400,
+          "success": true,
+          "contentType": "application/json; charset=utf-8",
+          "responseSize": "59",
+          "error": null
+        },
+        {
+          "method": "POST",
+          "path": "/auth/register",
+          "status": 400,
+          "success": true,
+          "contentType": "application/json; charset=utf-8",
+          "responseSize": "137",
+          "error": null
+        },
+        {
+          "method": "GET",
+          "path": "/auth/verify",
+          "status": 401,
+          "success": true,
+          "contentType": "application/json; charset=utf-8",
+          "responseSize": "102",
+          "error": null
+        },
+        {
+          "method": "POST",
+          "path": "/auth/register",
+          "status": 201,
+          "success": true,
+          "contentType": "application/json; charset=utf-8",
+          "responseSize": "493",
+          "error": null
+        },
+        {
+          "method": "POST",
+          "path": "/auth/login",
+          "status": 401,
+          "success": true,
+          "contentType": "application/json; charset=utf-8",
+          "responseSize": "47",
+          "error": null
+        },
+        {
+          "method": "POST",
+          "path": "/auth/login",
+          "status": 200,
+          "success": true,
+          "contentType": "application/json; charset=utf-8",
+          "responseSize": "472",
+          "error": null
+        },
+        {
+          "method": "POST",
+          "path": "/auth/forgot-password",
+          "status": 200,
+          "success": true,
+          "contentType": "application/json; charset=utf-8",
+          "responseSize": "117",
+          "error": null
+        }
+      ],
+      "User Management": [
+        {
+          "method": "GET",
+          "path": "/user/status",
+          "status": 401,
+          "success": false,
+          "contentType": "application/json; charset=utf-8",
+          "responseSize": "102",
+          "error": "Unexpected status: 401"
+        },
+        {
+          "method": "GET",
+          "path": "/user/profile",
+          "status": 401,
+          "success": false,
+          "contentType": "application/json; charset=utf-8",
+          "responseSize": "40",
+          "error": "Unexpected status: 401"
+        }
+      ],
+      "OAuth": [
+        {
+          "method": "GET",
+          "path": "/health/oauth",
+          "status": 404,
+          "success": false,
+          "contentType": "application/json; charset=utf-8",
+          "responseSize": "108",
+          "error": "Unexpected status: 404"
+        },
+        {
+          "method": "GET",
+          "path": "/oauth/google",
+          "status": 302,
+          "success": true,
+          "contentType": "text/plain; charset=utf-8",
+          "responseSize": "78",
+          "error": null
+        },
+        {
+          "method": "GET",
+          "path": "/oauth/status",
+          "status": 401,
+          "success": false,
+          "contentType": "application/json; charset=utf-8",
+          "responseSize": "102",
+          "error": "Unexpected status: 401"
+        }
+      ],
+      "Dashboard": [
+        {
+          "method": "GET",
+          "path": "/dashboard/status",
+          "status": 401,
+          "success": false,
+          "contentType": "application/json; charset=utf-8",
+          "responseSize": "102",
+          "error": "Unexpected status: 401"
+        }
+      ],
+      "Business": [
+        {
+          "method": "GET",
+          "path": "/business-types",
+          "status": 200,
+          "success": true,
+          "contentType": "application/json; charset=utf-8",
+          "responseSize": "unknown",
+          "error": null
+        }
+      ],
+      "Other": [
+        {
+          "method": "GET",
+          "path": "/onboarding/status",
+          "status": 401,
+          "success": false,
+          "contentType": "application/json; charset=utf-8",
+          "responseSize": "102",
+          "error": "Unexpected status: 401"
+        },
+        {
+          "method": "POST",
+          "path": "/onboarding/complete",
+          "status": 401,
+          "success": false,
+          "contentType": "application/json; charset=utf-8",
+          "responseSize": "102",
+          "error": "Unexpected status: 401"
+        },
+        {
+          "method": "GET",
+          "path": "/workflows",
+          "status": 401,
+          "success": true,
+          "contentType": "application/json; charset=utf-8",
+          "responseSize": "102",
+          "error": null
+        },
+        {
+          "method": "GET",
+          "path": "/analytics",
+          "status": 401,
+          "success": true,
+          "contentType": "application/json; charset=utf-8",
+          "responseSize": "102",
+          "error": null
+        },
+        {
+          "method": "GET",
+          "path": "/performance",
+          "status": 404,
+          "success": false,
+          "contentType": "application/json; charset=utf-8",
+          "responseSize": "107",
+          "error": "Unexpected status: 404"
+        },
+        {
+          "method": "POST",
+          "path": "/recovery/initiate",
+          "status": 200,
+          "success": true,
+          "contentType": "application/json; charset=utf-8",
+          "responseSize": "87",
+          "error": null
+        }
+      ]
+    }
+  },
+  "detailedResults": [
+    {
+      "method": "GET",
+      "path": "/health",
+      "status": 200,
+      "success": true,
+      "contentType": "application/json; charset=utf-8",
+      "responseSize": "254",
+      "error": null
+    },
+    {
+      "method": "GET",
+      "path": "/health/database",
+      "status": 404,
+      "success": false,
+      "contentType": "application/json; charset=utf-8",
+      "responseSize": "111",
+      "error": "Unexpected status: 404"
+    },
+    {
+      "method": "GET",
+      "path": "/health/oauth",
+      "status": 404,
+      "success": false,
+      "contentType": "application/json; charset=utf-8",
+      "responseSize": "108",
+      "error": "Unexpected status: 404"
+    },
+    {
+      "method": "GET",
+      "path": "/business-types",
+      "status": 200,
+      "success": true,
+      "contentType": "application/json; charset=utf-8",
+      "responseSize": "unknown",
+      "error": null
+    },
+    {
+      "method": "POST",
+      "path": "/auth/login",
+      "status": 400,
+      "success": true,
+      "contentType": "application/json; charset=utf-8",
+      "responseSize": "59",
+      "error": null
+    },
+    {
+      "method": "POST",
+      "path": "/auth/register",
+      "status": 400,
+      "success": true,
+      "contentType": "application/json; charset=utf-8",
+      "responseSize": "137",
+      "error": null
+    },
+    {
+      "method": "GET",
+      "path": "/auth/verify",
+      "status": 401,
+      "success": true,
+      "contentType": "application/json; charset=utf-8",
+      "responseSize": "102",
+      "error": null
+    },
+    {
+      "method": "POST",
+      "path": "/auth/register",
+      "status": 201,
+      "success": true,
+      "contentType": "application/json; charset=utf-8",
+      "responseSize": "493",
+      "error": null
+    },
+    {
+      "method": "POST",
+      "path": "/auth/login",
+      "status": 401,
+      "success": true,
+      "contentType": "application/json; charset=utf-8",
+      "responseSize": "47",
+      "error": null
+    },
+    {
+      "method": "POST",
+      "path": "/auth/login",
+      "status": 200,
+      "success": true,
+      "contentType": "application/json; charset=utf-8",
+      "responseSize": "472",
+      "error": null
+    },
+    {
+      "method": "GET",
+      "path": "/user/status",
+      "status": 401,
+      "success": false,
+      "contentType": "application/json; charset=utf-8",
+      "responseSize": "102",
+      "error": "Unexpected status: 401"
+    },
+    {
+      "method": "GET",
+      "path": "/user/profile",
+      "status": 401,
+      "success": false,
+      "contentType": "application/json; charset=utf-8",
+      "responseSize": "40",
+      "error": "Unexpected status: 401"
+    },
+    {
+      "method": "GET",
+      "path": "/dashboard/status",
+      "status": 401,
+      "success": false,
+      "contentType": "application/json; charset=utf-8",
+      "responseSize": "102",
+      "error": "Unexpected status: 401"
+    },
+    {
+      "method": "GET",
+      "path": "/oauth/google",
+      "status": 302,
+      "success": true,
+      "contentType": "text/plain; charset=utf-8",
+      "responseSize": "78",
+      "error": null
+    },
+    {
+      "method": "GET",
+      "path": "/oauth/status",
+      "status": 401,
+      "success": false,
+      "contentType": "application/json; charset=utf-8",
+      "responseSize": "102",
+      "error": "Unexpected status: 401"
+    },
+    {
+      "method": "GET",
+      "path": "/onboarding/status",
+      "status": 401,
+      "success": false,
+      "contentType": "application/json; charset=utf-8",
+      "responseSize": "102",
+      "error": "Unexpected status: 401"
+    },
+    {
+      "method": "POST",
+      "path": "/onboarding/complete",
+      "status": 401,
+      "success": false,
+      "contentType": "application/json; charset=utf-8",
+      "responseSize": "102",
+      "error": "Unexpected status: 401"
+    },
+    {
+      "method": "GET",
+      "path": "/workflows",
+      "status": 401,
+      "success": true,
+      "contentType": "application/json; charset=utf-8",
+      "responseSize": "102",
+      "error": null
+    },
+    {
+      "method": "GET",
+      "path": "/analytics",
+      "status": 401,
+      "success": true,
+      "contentType": "application/json; charset=utf-8",
+      "responseSize": "102",
+      "error": null
+    },
+    {
+      "method": "GET",
+      "path": "/performance",
+      "status": 404,
+      "success": false,
+      "contentType": "application/json; charset=utf-8",
+      "responseSize": "107",
+      "error": "Unexpected status: 404"
+    },
+    {
+      "method": "POST",
+      "path": "/recovery/initiate",
+      "status": 200,
+      "success": true,
+      "contentType": "application/json; charset=utf-8",
+      "responseSize": "87",
+      "error": null
+    },
+    {
+      "method": "POST",
+      "path": "/auth/forgot-password",
+      "status": 200,
+      "success": true,
+      "contentType": "application/json; charset=utf-8",
+      "responseSize": "117",
+      "error": null
+    }
+  ]
+}

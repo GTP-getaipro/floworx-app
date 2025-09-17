@@ -15,7 +15,8 @@ module.exports = {
     // 'prettier' // Temporarily disabled for deployment
   ],
   plugins: [
-    'import'
+    'import',
+    'unused-imports'
     // 'prettier' // Temporarily disabled for deployment
   ],
   parserOptions: {
@@ -92,6 +93,19 @@ module.exports = {
     'no-new-wrappers': 'error',
     'no-throw-literal': 'error',
     'radix': 'error',
+
+    // Code audit rules
+    'no-restricted-imports': ['error', {
+      patterns: ['**/__deprecated__/*']
+    }],
+    'unused-imports/no-unused-imports': 'warn',
+    'unused-imports/no-unused-vars': [
+      'warn',
+      {
+        args: 'after-used',
+        argsIgnorePattern: '^_'
+      }
+    ],
 
     // Prettier integration - disabled for deployment
     // 'prettier/prettier': 'error'
@@ -171,6 +185,7 @@ module.exports = {
     'backend/backup-imports/',
     'playwright-report/',
     'test-results/',
-    'test-reports/'
+    'test-reports/',
+    '__deprecated__/**'
   ]
 };

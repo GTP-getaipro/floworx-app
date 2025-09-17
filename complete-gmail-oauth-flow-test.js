@@ -6,7 +6,7 @@
 const axios = require('axios');
 const readline = require('readline');
 
-const BASE_URL = 'https://app.floworx-iq.com';
+const BASE_URL = 'http://localhost:5001';
 const TEST_EMAIL = 'test-email-verification@floworx-iq.com';
 const TEST_PASSWORD = 'TestPassword123!';
 const GMAIL_ACCOUNT = 'dizelll2007@gmail.com';

@@ -1,0 +1,4081 @@
+{
+  "timestamp": "2025-09-17T13:26:19.516Z",
+  "summary": {
+    "files_scanned": 47874,
+    "total_references": 543,
+    "unique_tables": 151,
+    "unique_rpcs": 3,
+    "unique_storage_buckets": 0
+  },
+  "most_referenced_tables": [
+    {
+      "name": "users",
+      "count": 95
+    },
+    {
+      "name": "*",
+      "count": 43
+    },
+    {
+      "name": "password_reset_tokens",
+      "count": 25
+    },
+    {
+      "name": "business_types",
+      "count": 20
+    },
+    {
+      "name": "count",
+      "count": 16
+    },
+    {
+      "name": "string",
+      "count": 16
+    },
+    {
+      "name": "credentials",
+      "count": 15
+    },
+    {
+      "name": "buffer",
+      "count": 10
+    },
+    {
+      "name": "email_verification_tokens",
+      "count": 9
+    },
+    {
+      "name": "onboarding_progress",
+      "count": 8
+    }
+  ],
+  "most_referenced_rpcs": [
+    {
+      "name": "function_name",
+      "count": 4
+    },
+    {
+      "name": "get_active_business_types",
+      "count": 4
+    },
+    {
+      "name": "reset_policies",
+      "count": 1
+    }
+  ],
+  "files_with_most_references": [
+    {
+      "file": "backend/database/supabase-rest-client.js",
+      "count": 47
+    },
+    {
+      "file": "api/index.js",
+      "count": 39
+    },
+    {
+      "file": "backend/database/database-operations.js",
+      "count": 38
+    },
+    {
+      "file": "tests/integration/database.test.js",
+      "count": 31
+    },
+    {
+      "file": "debug-password-reset.js",
+      "count": 15
+    },
+    {
+      "file": "tests/integration/database-mock.test.js",
+      "count": 15
+    },
+    {
+      "file": "backend/node_modules/safer-buffer/tests.js",
+      "count": 13
+    },
+    {
+      "file": "frontend/node_modules/safer-buffer/tests.js",
+      "count": 13
+    },
+    {
+      "file": "supabase-admin-cleanup.js",
+      "count": 12
+    },
+    {
+      "file": "test-password-reset-comprehensive.js",
+      "count": 12
+    }
+  ],
+  "data": {
+    "tables": [
+      "\n          *,\n          users (\n            id,\n            email,\n            first_name,\n            last_name\n          )\n        ",
+      "\n          id,\n          email,\n          business_type_id,\n          business_types (\n            id,\n            name,\n            slug,\n            default_categories\n          )\n        ",
+      "\n          id,\n          n8n_workflow_id,\n          workflow_name,\n          webhook_url,\n          status,\n          deployment_data,\n          last_execution,\n          execution_count,\n          business_config_id,\n          created_at,\n          updated_at\n        ",
+      "\n          id, \n          email, \n          first_name, \n          last_name, \n          company_name, \n          created_at, \n          last_login,\n          email_verified,\n          profile_picture_url,\n          timezone,\n          notification_preferences\n        ",
+      "\n          id, \n          email, \n          first_name, \n          last_name, \n          company_name, \n          timezone,\n          notification_preferences,\n          updated_at\n        ",
+      "\n        id, \n        email, \n        first_name, \n        last_name, \n        company_name, \n        created_at, \n        last_login\n      ",
+      "\r\n          *,\r\n          users!inner(id, email, first_name)\r\n        ",
+      "\r\n          id,\r\n          email,\r\n          business_type_id,\r\n          business_types (\r\n            id,\r\n            name\r\n          )\r\n        ",
+      "\r\n          id,\r\n          email,\r\n          business_type_id,\r\n          business_types (\r\n            id,\r\n            name,\r\n            slug,\r\n            default_categories\r\n          )\r\n        ",
+      "\r\n          id,\r\n          email,\r\n          business_types (name, slug)\r\n        ",
+      "\r\n          id,\r\n          email,\r\n          first_name,\r\n          last_name,\r\n          company_name,\r\n          timezone,\r\n          notification_preferences,\r\n          updated_at\r\n        ",
+      "*",
+      "--",
+      ".",
+      "0123",
+      "1",
+      "1234",
+      "2",
+      "ABC",
+      "ABCD",
+      "AmdLibraryPlugin",
+      "AssignLibraryPlugin",
+      "BCD",
+      "ConcatSource",
+      "Hawaii",
+      "I",
+      "JsonpLibraryPlugin",
+      "OK",
+      "OriginalSource",
+      "PrefixSource",
+      "RESET",
+      "RawSource",
+      "ReplaceSource",
+      "SourceMapSource",
+      "SystemLibraryPlugin",
+      "TerserPlugin",
+      "_temp_migration",
+      "abc",
+      "abcdef",
+      "abcdefgh",
+      "access_token, refresh_token",
+      "access_token, refresh_token, expiry_date, scope, created_at, updated_at",
+      "action, ip_address, created_at",
+      "activity_type, description, created_at, metadata",
+      "amdContainer",
+      "bar",
+      "buffer",
+      "business_configs",
+      "business_configurations",
+      "business_types",
+      "bytes",
+      "column_name",
+      "companies",
+      "config, version, created_at, updated_at",
+      "copy",
+      "count",
+      "credentials",
+      "current_step, completed_steps, step_data, google_connected, completed",
+      "d",
+      "data-url",
+      "default_categories",
+      "email, email_verified, onboarding_completed, first_name, company_name",
+      "email_verification_tokens",
+      "email_verified, onboarding_completed, first_name, company_name",
+      "emails_processed, workflows_active, last_activity, total_automations",
+      "exportsConvention",
+      "f",
+      "filename",
+      "foo",
+      "foo2",
+      "hi",
+      "id",
+      "id, config_json, version, created_at, updated_at",
+      "id, created_at",
+      "id, created_at, updated_at",
+      "id, email, business_types (name, slug)",
+      "id, email, created_at",
+      "id, email, first_name",
+      "id, email, first_name, last_name",
+      "id, email, first_name, last_name, account_locked_until",
+      "id, email, first_name, last_name, company_name, created_at, last_login",
+      "id, email, first_name, last_name, company_name, created_at, last_login, email_verified",
+      "id, email, first_name, last_name, company_name, email_verified, onboarding_completed, created_at, last_login",
+      "id, email, first_name, last_name, created_at",
+      "id, email, password_hash, email_verified, first_name, last_name",
+      "id, email, password_hash, first_name, last_name, company_name, created_at",
+      "id, service_name, created_at",
+      "id, version, created_at",
+      "information_schema.columns",
+      "information_schema.tables",
+      "invitations",
+      "kokok",
+      "message",
+      "meta",
+      "n",
+      "named",
+      "no-path",
+      "null",
+      "oauth_connections",
+      "oauth_credentials",
+      "oauth_tokens",
+      "okoko",
+      "onboarding_progress",
+      "one",
+      "onetwothree",
+      "ooooo",
+      "password_reset_tokens",
+      "path",
+      "pmessage",
+      "pong",
+      "profiles",
+      "provider, connected_at, status",
+      "provider, connected_at, status, last_sync",
+      "provider, created_at",
+      "psubscribe",
+      "punsubscribe",
+      "requireAsWrapper",
+      "resource",
+      "role",
+      "security_audit_log",
+      "service_name, created_at, expiry_date",
+      "service_name, created_at, expiry_date, status",
+      "smessage",
+      "source",
+      "ssubscribe",
+      "step_completed, step_data, completed_at",
+      "step_data",
+      "string",
+      "subscribe",
+      "sunsubscribe",
+      "table_name",
+      "template_json",
+      "test",
+      "three",
+      "token",
+      "two",
+      "unsubscribe",
+      "used, used_at",
+      "user_activities",
+      "user_analytics",
+      "user_id, expires_at, email",
+      "user_onboarding_progress",
+      "user_onboarding_status",
+      "user_stats",
+      "users",
+      "wahoo",
+      "workflow_deployments",
+      "workflow_templates",
+      "x",
+      "yolo",
+      "zing"
+    ],
+    "rpcs": [
+      "function_name",
+      "get_active_business_types",
+      "reset_policies"
+    ],
+    "storage_buckets": [],
+    "sql_references": [],
+    "hits": [
+      {
+        "file": "apply-security-fixes.js",
+        "type": "table",
+        "name": "information_schema.tables",
+        "line": 84,
+        "context": "les, error: tablesError } = await supabase       .from('information_schema.tables')       .select('t"
+      },
+      {
+        "file": "apply-security-fixes.js",
+        "type": "table",
+        "name": "table_name",
+        "line": 85,
+        "context": "se       .from('information_schema.tables')       .select('table_name')       .eq('table_schema', 'p"
+      },
+      {
+        "file": "debug-password-reset.js",
+        "type": "table",
+        "name": "password_reset_tokens",
+        "line": 95,
+        "context": "st { data, error } = await this.supabase         .from('password_reset_tokens')         .select('*')"
+      },
+      {
+        "file": "debug-password-reset.js",
+        "type": "table",
+        "name": "users",
+        "line": 111,
+        "context": "error: userError } = await this.supabase         .from('users')         .select('id, email, first_na"
+      },
+      {
+        "file": "debug-password-reset.js",
+        "type": "table",
+        "name": "users",
+        "line": 262,
+        "context": "ta: existingUser } = await this.supabase         .from('users')         .select('*')         .eq('em"
+      },
+      {
+        "file": "debug-password-reset.js",
+        "type": "table",
+        "name": "users",
+        "line": 270,
+        "context": "newUser, error } = await this.supabase           .from('users')           .insert({             emai"
+      },
+      {
+        "file": "debug-password-reset.js",
+        "type": "table",
+        "name": "users",
+        "line": 309,
+        "context": "nst { data: user } = await this.supabase         .from('users')         .select('id')         .eq('e"
+      },
+      {
+        "file": "debug-password-reset.js",
+        "type": "table",
+        "name": "password_reset_tokens",
+        "line": 321,
+        "context": "ror: insertError } = await this.supabase         .from('password_reset_tokens')         .insert({"
+      },
+      {
+        "file": "debug-password-reset.js",
+        "type": "table",
+        "name": "password_reset_tokens",
+        "line": 361,
+        "context": "up test token       await this.supabase         .from('password_reset_tokens')         .delete()"
+      },
+      {
+        "file": "debug-password-reset.js",
+        "type": "table",
+        "name": "users",
+        "line": 382,
+        "context": "nst { data: user } = await this.supabase         .from('users')         .select('id')         .eq('e"
+      },
+      {
+        "file": "debug-password-reset.js",
+        "type": "table",
+        "name": "password_reset_tokens",
+        "line": 394,
+        "context": "ror: insertError } = await this.supabase         .from('password_reset_tokens')         .insert({"
+      },
+      {
+        "file": "debug-password-reset.js",
+        "type": "table",
+        "name": "password_reset_tokens",
+        "line": 439,
+        "context": "up test token       await this.supabase         .from('password_reset_tokens')         .delete()"
+      },
+      {
+        "file": "debug-password-reset.js",
+        "type": "table",
+        "name": "*",
+        "line": 96,
+        "context": "se         .from('password_reset_tokens')         .select('*')         .limit(1);        if (error)"
+      },
+      {
+        "file": "debug-password-reset.js",
+        "type": "table",
+        "name": "id, email, first_name",
+        "line": 112,
+        "context": "wait this.supabase         .from('users')         .select('id, email, first_name')         .limit(1)"
+      },
+      {
+        "file": "debug-password-reset.js",
+        "type": "table",
+        "name": "*",
+        "line": 263,
+        "context": "wait this.supabase         .from('users')         .select('*')         .eq('email', config.testEmail"
+      },
+      {
+        "file": "debug-password-reset.js",
+        "type": "table",
+        "name": "id",
+        "line": 310,
+        "context": "wait this.supabase         .from('users')         .select('id')         .eq('email', config.testEmai"
+      },
+      {
+        "file": "debug-password-reset.js",
+        "type": "table",
+        "name": "id",
+        "line": 383,
+        "context": "wait this.supabase         .from('users')         .select('id')         .eq('email', config.testEmai"
+      },
+      {
+        "file": "debug-user-registration.js",
+        "type": "table",
+        "name": "users",
+        "line": 65,
+        "context": "ta, error: usersError } = await supabase         .from('users')         .select('*')         .limit("
+      },
+      {
+        "file": "debug-user-registration.js",
+        "type": "table",
+        "name": "email_verification_tokens",
+        "line": 77,
+        "context": "a, error: tokensError } = await supabase         .from('email_verification_tokens')         .select("
+      },
+      {
+        "file": "debug-user-registration.js",
+        "type": "table",
+        "name": "users",
+        "line": 278,
+        "context": "const { error } = await supabase           .from('users')           .delete()           .eq('e"
+      },
+      {
+        "file": "debug-user-registration.js",
+        "type": "table",
+        "name": "*",
+        "line": 66,
+        "context": "} = await supabase         .from('users')         .select('*')         .limit(1);        if (usersEr"
+      },
+      {
+        "file": "debug-user-registration.js",
+        "type": "table",
+        "name": "*",
+        "line": 78,
+        "context": ".from('email_verification_tokens')         .select('*')         .limit(1);        if (tokensE"
+      },
+      {
+        "file": "deployment-aware-test.js",
+        "type": "table",
+        "name": "users",
+        "line": 112,
+        "context": "const { data, error } = await supabase           .from('users')           .select('count')"
+      },
+      {
+        "file": "deployment-aware-test.js",
+        "type": "table",
+        "name": "count",
+        "line": 113,
+        "context": "await supabase           .from('users')           .select('count')           .limit(1);          rea"
+      },
+      {
+        "file": "fix-password-reset-issues.js",
+        "type": "table",
+        "name": "password_reset_tokens",
+        "line": 77,
+        "context": "st { data, error } = await this.supabase         .from('password_reset_tokens')         .select('*')"
+      },
+      {
+        "file": "fix-password-reset-issues.js",
+        "type": "table",
+        "name": "*",
+        "line": 78,
+        "context": "se         .from('password_reset_tokens')         .select('*')         .limit(1);        if (error)"
+      },
+      {
+        "file": "production-readiness-test.js",
+        "type": "table",
+        "name": "users",
+        "line": 145,
+        "context": "t { data: user, error } = await supabase         .from('users')         .select('id, email, created_"
+      },
+      {
+        "file": "production-readiness-test.js",
+        "type": "table",
+        "name": "users",
+        "line": 158,
+        "context": "const { data, error } = await supabase           .from('users')           .select('count')"
+      },
+      {
+        "file": "production-readiness-test.js",
+        "type": "table",
+        "name": "id, email, created_at",
+        "line": 146,
+        "context": "} = await supabase         .from('users')         .select('id, email, created_at')         .eq('emai"
+      },
+      {
+        "file": "production-readiness-test.js",
+        "type": "table",
+        "name": "count",
+        "line": 159,
+        "context": "await supabase           .from('users')           .select('count')           .limit(1);         poli"
+      },
+      {
+        "file": "supabase-admin-cleanup.js",
+        "type": "table",
+        "name": "business_configs",
+        "line": 109,
+        "context": "{ data: businessConfigs } = await supabase       .from('business_configs')       .select('*')"
+      },
+      {
+        "file": "supabase-admin-cleanup.js",
+        "type": "table",
+        "name": "workflow_deployments",
+        "line": 120,
+        "context": "ta: workflowDeployments } = await supabase       .from('workflow_deployments')       .select('*')"
+      },
+      {
+        "file": "supabase-admin-cleanup.js",
+        "type": "table",
+        "name": "user_onboarding_progress",
+        "line": 131,
+        "context": "ata: onboardingProgress } = await supabase       .from('user_onboarding_progress')       .select('*'"
+      },
+      {
+        "file": "supabase-admin-cleanup.js",
+        "type": "table",
+        "name": "oauth_credentials",
+        "line": 142,
+        "context": "data: oauthCredentials } = await supabase       .from('oauth_credentials')       .select('*')"
+      },
+      {
+        "file": "supabase-admin-cleanup.js",
+        "type": "table",
+        "name": "oauth_credentials",
+        "line": 170,
+        "context": "{       const { error } = await supabase         .from('oauth_credentials')         .delete()"
+      },
+      {
+        "file": "supabase-admin-cleanup.js",
+        "type": "table",
+        "name": "user_onboarding_progress",
+        "line": 185,
+        "context": "{       const { error } = await supabase         .from('user_onboarding_progress')         .delete()"
+      },
+      {
+        "file": "supabase-admin-cleanup.js",
+        "type": "table",
+        "name": "workflow_deployments",
+        "line": 200,
+        "context": "{       const { error } = await supabase         .from('workflow_deployments')         .delete()"
+      },
+      {
+        "file": "supabase-admin-cleanup.js",
+        "type": "table",
+        "name": "business_configs",
+        "line": 215,
+        "context": "{       const { error } = await supabase         .from('business_configs')         .delete()"
+      },
+      {
+        "file": "supabase-admin-cleanup.js",
+        "type": "table",
+        "name": "*",
+        "line": 110,
+        "context": "it supabase       .from('business_configs')       .select('*')       .in('user_id', testUserIds);"
+      },
+      {
+        "file": "supabase-admin-cleanup.js",
+        "type": "table",
+        "name": "*",
+        "line": 121,
+        "context": "upabase       .from('workflow_deployments')       .select('*')       .in('user_id', testUserIds);"
+      },
+      {
+        "file": "supabase-admin-cleanup.js",
+        "type": "table",
+        "name": "*",
+        "line": 132,
+        "context": "ase       .from('user_onboarding_progress')       .select('*')       .in('user_id', testUserIds);"
+      },
+      {
+        "file": "supabase-admin-cleanup.js",
+        "type": "table",
+        "name": "*",
+        "line": 143,
+        "context": "t supabase       .from('oauth_credentials')       .select('*')       .in('user_id', testUserIds);"
+      },
+      {
+        "file": "supabase-maintenance.js",
+        "type": "table",
+        "name": "oauth_credentials",
+        "line": 111,
+        "context": "kens, error: tokenError } = await supabase       .from('oauth_credentials')       .delete()       .l"
+      },
+      {
+        "file": "supabase-maintenance.js",
+        "type": "table",
+        "name": "user_onboarding_progress",
+        "line": 126,
+        "context": "error: onboardingError } = await supabase       .from('user_onboarding_progress')       .delete()"
+      },
+      {
+        "file": "test-env-supabase.js",
+        "type": "table",
+        "name": "users",
+        "line": 90,
+        "context": "nst { data, error } = await supabase             .from('users')             .select('count')"
+      },
+      {
+        "file": "test-env-supabase.js",
+        "type": "table",
+        "name": "users",
+        "line": 131,
+        "context": "nst { data, error } = await supabase             .from('users')             .select('*')"
+      },
+      {
+        "file": "test-env-supabase.js",
+        "type": "table",
+        "name": "count",
+        "line": 91,
+        "context": "t supabase             .from('users')             .select('count')             .limit(1);          i"
+      },
+      {
+        "file": "test-env-supabase.js",
+        "type": "table",
+        "name": "*",
+        "line": 132,
+        "context": "t supabase             .from('users')             .select('*')             .limit(1);          if (e"
+      },
+      {
+        "file": "test-password-reset-comprehensive.js",
+        "type": "table",
+        "name": "users",
+        "line": 75,
+        "context": "ta: existingUser } = await this.supabase         .from('users')         .select('*')         .eq('em"
+      },
+      {
+        "file": "test-password-reset-comprehensive.js",
+        "type": "table",
+        "name": "users",
+        "line": 86,
+        "context": "newUser, error } = await this.supabase           .from('users')           .insert({             emai"
+      },
+      {
+        "file": "test-password-reset-comprehensive.js",
+        "type": "table",
+        "name": "password_reset_tokens",
+        "line": 187,
+        "context": "kens for test user     await this.supabase       .from('password_reset_tokens')       .delete()"
+      },
+      {
+        "file": "test-password-reset-comprehensive.js",
+        "type": "table",
+        "name": "password_reset_tokens",
+        "line": 198,
+        "context": "nst { data: tokens } = await this.supabase       .from('password_reset_tokens')       .select('*')"
+      },
+      {
+        "file": "test-password-reset-comprehensive.js",
+        "type": "table",
+        "name": "password_reset_tokens",
+        "line": 279,
+        "context": "{ data: usedToken } = await this.supabase       .from('password_reset_tokens')       .select('used,"
+      },
+      {
+        "file": "test-password-reset-comprehensive.js",
+        "type": "table",
+        "name": "password_reset_tokens",
+        "line": 298,
+        "context": "60 * 60 * 1000);      await this.supabase       .from('password_reset_tokens')       .insert({"
+      },
+      {
+        "file": "test-password-reset-comprehensive.js",
+        "type": "table",
+        "name": "password_reset_tokens",
+        "line": 358,
+        "context": "0); // 1 hour ago      await this.supabase       .from('password_reset_tokens')       .insert({"
+      },
+      {
+        "file": "test-password-reset-comprehensive.js",
+        "type": "table",
+        "name": "password_reset_tokens",
+        "line": 408,
+        "context": "ve test tokens       await this.supabase         .from('password_reset_tokens')         .delete()"
+      },
+      {
+        "file": "test-password-reset-comprehensive.js",
+        "type": "table",
+        "name": "users",
+        "line": 414,
+        "context": "e tests)       // await this.supabase       //   .from('users')       //   .delete()       //   .eq("
+      },
+      {
+        "file": "test-password-reset-comprehensive.js",
+        "type": "table",
+        "name": "*",
+        "line": 76,
+        "context": "wait this.supabase         .from('users')         .select('*')         .eq('email', config.testEmail"
+      },
+      {
+        "file": "test-password-reset-comprehensive.js",
+        "type": "table",
+        "name": "*",
+        "line": 199,
+        "context": "pabase       .from('password_reset_tokens')       .select('*')       .eq('user_id', this.testUserId)"
+      },
+      {
+        "file": "test-password-reset-comprehensive.js",
+        "type": "table",
+        "name": "used, used_at",
+        "line": 280,
+        "context": "pabase       .from('password_reset_tokens')       .select('used, used_at')       .eq('token', this.t"
+      },
+      {
+        "file": "test-supabase-credentials.js",
+        "type": "table",
+        "name": "users",
+        "line": 33,
+        "context": "t { data, error } = await supabaseAdmin\r         .from('users')\r         .select('count')\r         ."
+      },
+      {
+        "file": "test-supabase-credentials.js",
+        "type": "table",
+        "name": "count",
+        "line": 34,
+        "context": "it supabaseAdmin\r         .from('users')\r         .select('count')\r         .limit(1);"
+      },
+      {
+        "file": "ultimate-validation-test.js",
+        "type": "table",
+        "name": "users",
+        "line": 183,
+        "context": "error: existingError } = await supabase         .from('users')         .select('id, email, first_na"
+      },
+      {
+        "file": "ultimate-validation-test.js",
+        "type": "table",
+        "name": "users",
+        "line": 190,
+        "context": "User, error: newError } = await supabase         .from('users')         .select('id, email, first_na"
+      },
+      {
+        "file": "ultimate-validation-test.js",
+        "type": "table",
+        "name": "users",
+        "line": 197,
+        "context": "nt, error: countError } = await supabase         .from('users')         .select('*', { count: 'exact"
+      },
+      {
+        "file": "ultimate-validation-test.js",
+        "type": "table",
+        "name": "id, email, first_name, last_name, created_at",
+        "line": 184,
+        "context": "} = await supabase         .from('users')         .select('id, email, first_name, last_name, created"
+      },
+      {
+        "file": "ultimate-validation-test.js",
+        "type": "table",
+        "name": "id, email, first_name, last_name, created_at",
+        "line": 191,
+        "context": "} = await supabase         .from('users')         .select('id, email, first_name, last_name, created"
+      },
+      {
+        "file": "api/dashboard.js",
+        "type": "table",
+        "name": "users",
+        "line": 36,
+        "context": "user, error: userError } = await supabase       .from('users')       .select(`         id,"
+      },
+      {
+        "file": "api/dashboard.js",
+        "type": "table",
+        "name": "oauth_connections",
+        "line": 58,
+        "context": "ions, error: oauthError } = await supabase       .from('oauth_connections')       .select('provider,"
+      },
+      {
+        "file": "api/dashboard.js",
+        "type": "table",
+        "name": "credentials",
+        "line": 64,
+        "context": "error: credentialsError } = await supabase       .from('credentials')       .select('service_name, c"
+      },
+      {
+        "file": "api/dashboard.js",
+        "type": "table",
+        "name": "user_stats",
+        "line": 70,
+        "context": "tats, error: statsError } = await supabase       .from('user_stats')       .select('emails_processed"
+      },
+      {
+        "file": "api/dashboard.js",
+        "type": "table",
+        "name": "user_activities",
+        "line": 77,
+        "context": "error: activitiesError } = await supabase       .from('user_activities')       .select('activity_ty"
+      },
+      {
+        "file": "api/dashboard.js",
+        "type": "table",
+        "name": "\n        id, \n        email, \n        first_name, \n        last_name, \n        company_name, \n        created_at, \n        last_login\n      ",
+        "line": 37,
+        "context": "ror } = await supabase       .from('users')       .select(`         id,          email,          fir"
+      },
+      {
+        "file": "api/dashboard.js",
+        "type": "table",
+        "name": "provider, connected_at, status, last_sync",
+        "line": 59,
+        "context": "t supabase       .from('oauth_connections')       .select('provider, connected_at, status, last_sync"
+      },
+      {
+        "file": "api/dashboard.js",
+        "type": "table",
+        "name": "service_name, created_at, expiry_date, status",
+        "line": 65,
+        "context": "= await supabase       .from('credentials')       .select('service_name, created_at, expiry_date, st"
+      },
+      {
+        "file": "api/dashboard.js",
+        "type": "table",
+        "name": "emails_processed, workflows_active, last_activity, total_automations",
+        "line": 71,
+        "context": "= await supabase       .from('user_stats')       .select('emails_processed, workflows_active, last_"
+      },
+      {
+        "file": "api/dashboard.js",
+        "type": "table",
+        "name": "activity_type, description, created_at, metadata",
+        "line": 78,
+        "context": "ait supabase       .from('user_activities')       .select('activity_type, description, created_at, m"
+      },
+      {
+        "file": "api/health.js",
+        "type": "table",
+        "name": "users",
+        "line": 27,
+        "context": "const { data, error } = await supabase       .from('users')       .select('count')       .limit("
+      },
+      {
+        "file": "api/health.js",
+        "type": "table",
+        "name": "count",
+        "line": 28,
+        "context": "ror } = await supabase       .from('users')       .select('count')       .limit(1);      // RLS erro"
+      },
+      {
+        "file": "api/index.js",
+        "type": "table",
+        "name": "users",
+        "line": 65,
+        "context": "nt();\r       const { data: _data, error } = await supabase.from('users').select('count').limit(1);"
+      },
+      {
+        "file": "api/index.js",
+        "type": "table",
+        "name": "users",
+        "line": 91,
+        "context": "nt();\r       const { data: _data, error } = await supabase.from('users').select('count').limit(1);"
+      },
+      {
+        "file": "api/index.js",
+        "type": "table",
+        "name": "users",
+        "line": 208,
+        "context": "r, error: checkError } = await supabase\r         .from('users')\r         .select('id')\r         .eq("
+      },
+      {
+        "file": "api/index.js",
+        "type": "table",
+        "name": "users",
+        "line": 235,
+        "context": ", error: insertError } = await supabase\r         .from('users')\r         .insert([{\r           email"
+      },
+      {
+        "file": "api/index.js",
+        "type": "table",
+        "name": "users",
+        "line": 308,
+        "context": "er, error: findError } = await supabase\r         .from('users')\r         .select('*')\r         .eq('"
+      },
+      {
+        "file": "api/index.js",
+        "type": "table",
+        "name": "users",
+        "line": 330,
+        "context": "{ error: updateError } = await supabase\r         .from('users')\r         .update({\r           email_"
+      },
+      {
+        "file": "api/index.js",
+        "type": "table",
+        "name": "users",
+        "line": 399,
+        "context": "er, error: findError } = await supabase\r         .from('users')\r         .select('id, email, passwor"
+      },
+      {
+        "file": "api/index.js",
+        "type": "table",
+        "name": "users",
+        "line": 427,
+        "context": "iry }\r       );\r \r       await supabase\r         .from('users')\r         .update({ last_login: new D"
+      },
+      {
+        "file": "api/index.js",
+        "type": "table",
+        "name": "users",
+        "line": 461,
+        "context": "eAdmin();\r           await supabase\r             .from('users')\r             .update({ last_logout:"
+      },
+      {
+        "file": "api/index.js",
+        "type": "table",
+        "name": "users",
+        "line": 518,
+        "context": "ls, error: userError } = await supabase\r         .from('users')\r         .select('id, email, first_n"
+      },
+      {
+        "file": "api/index.js",
+        "type": "table",
+        "name": "users",
+        "line": 599,
+        "context": "ls, error: userError } = await supabase\r         .from('users')\r         .select('id, email, first_n"
+      },
+      {
+        "file": "api/index.js",
+        "type": "table",
+        "name": "users",
+        "line": 668,
+        "context": "const userDataPromise = supabase\r         .from('users')\r         .select('email, email_verif"
+      },
+      {
+        "file": "api/index.js",
+        "type": "table",
+        "name": "credentials",
+        "line": 684,
+        "context": "const credentialsPromise = supabase\r         .from('credentials')\r         .select('id, service_"
+      },
+      {
+        "file": "api/index.js",
+        "type": "table",
+        "name": "onboarding_progress",
+        "line": 700,
+        "context": "const progressPromise = supabase\r           .from('onboarding_progress')\r           .select('cu"
+      },
+      {
+        "file": "api/index.js",
+        "type": "table",
+        "name": "business_configs",
+        "line": 723,
+        "context": "const configPromise = supabase\r           .from('business_configs')\r           .select('confi"
+      },
+      {
+        "file": "api/index.js",
+        "type": "table",
+        "name": "users",
+        "line": 847,
+        "context": ", error: updateError } = await supabase\r         .from('users')\r         .update(updates)\r         ."
+      },
+      {
+        "file": "api/index.js",
+        "type": "table",
+        "name": "users",
+        "line": 904,
+        "context": "ls, error: userError } = await supabase\r         .from('users')\r         .select('id, email, first_n"
+      },
+      {
+        "file": "api/index.js",
+        "type": "table",
+        "name": "oauth_credentials",
+        "line": 1911,
+        "context": "{ data: credentials } = await supabase\r         .from('oauth_credentials')\r         .select('access"
+      },
+      {
+        "file": "api/index.js",
+        "type": "table",
+        "name": "users",
+        "line": 2021,
+        "context": "with company name\r       await supabase\r         .from('users')\r         .update({\r           compan"
+      },
+      {
+        "file": "api/index.js",
+        "type": "table",
+        "name": "business_configurations",
+        "line": 2031,
+        "context": "error: businessError } = await supabase\r         .from('business_configurations')\r         .upsert(b"
+      },
+      {
+        "file": "api/index.js",
+        "type": "table",
+        "name": "onboarding_progress",
+        "line": 2046,
+        "context": "ding as completed\r       await supabase\r         .from('onboarding_progress')\r         .upsert({"
+      },
+      {
+        "file": "api/index.js",
+        "type": "table",
+        "name": "business_configurations",
+        "line": 2083,
+        "context": "usinessConfig, error } = await supabase\r         .from('business_configurations')\r         .select('"
+      },
+      {
+        "file": "api/index.js",
+        "type": "table",
+        "name": "business_configurations",
+        "line": 2159,
+        "context": ", error: updateError } = await supabase\r         .from('business_configurations')\r         .upsert(u"
+      },
+      {
+        "file": "api/index.js",
+        "type": "table",
+        "name": "users",
+        "line": 2175,
+        "context": "mpany_name) {\r         await supabase\r           .from('users')\r           .update({\r             co"
+      },
+      {
+        "file": "api/index.js",
+        "type": "table",
+        "name": "count",
+        "line": 65,
+        "context": "ata: _data, error } = await supabase.from('users').select('count').limit(1);\r       const databaseCo"
+      },
+      {
+        "file": "api/index.js",
+        "type": "table",
+        "name": "count",
+        "line": 91,
+        "context": "ata: _data, error } = await supabase.from('users').select('count').limit(1);\r       const databaseCo"
+      },
+      {
+        "file": "api/index.js",
+        "type": "table",
+        "name": "id",
+        "line": 209,
+        "context": "= await supabase\r         .from('users')\r         .select('id')\r         .eq('email', email.toLowerC"
+      },
+      {
+        "file": "api/index.js",
+        "type": "table",
+        "name": "*",
+        "line": 309,
+        "context": "= await supabase\r         .from('users')\r         .select('*')\r         .eq('email', decoded.email)"
+      },
+      {
+        "file": "api/index.js",
+        "type": "table",
+        "name": "id, email, password_hash, first_name, last_name, company_name, created_at",
+        "line": 400,
+        "context": "= await supabase\r         .from('users')\r         .select('id, email, password_hash, first_name, las"
+      },
+      {
+        "file": "api/index.js",
+        "type": "table",
+        "name": "id, email, first_name, last_name, company_name, created_at, last_login, email_verified",
+        "line": 519,
+        "context": "= await supabase\r         .from('users')\r         .select('id, email, first_name, last_name, company"
+      },
+      {
+        "file": "api/index.js",
+        "type": "table",
+        "name": "id, email, first_name, last_name, company_name, created_at, last_login, email_verified",
+        "line": 600,
+        "context": "= await supabase\r         .from('users')\r         .select('id, email, first_name, last_name, company"
+      },
+      {
+        "file": "api/index.js",
+        "type": "table",
+        "name": "email, email_verified, onboarding_completed, first_name, company_name",
+        "line": 669,
+        "context": "omise = supabase\r         .from('users')\r         .select('email, email_verified, onboarding_complet"
+      },
+      {
+        "file": "api/index.js",
+        "type": "table",
+        "name": "id, service_name, created_at",
+        "line": 685,
+        "context": "= supabase\r         .from('credentials')\r         .select('id, service_name, created_at')\r         ."
+      },
+      {
+        "file": "api/index.js",
+        "type": "table",
+        "name": "current_step, completed_steps, step_data, google_connected, completed",
+        "line": 701,
+        "context": ".from('onboarding_progress')\r           .select('current_step, completed_steps, step_data,"
+      },
+      {
+        "file": "api/index.js",
+        "type": "table",
+        "name": "config, version, created_at, updated_at",
+        "line": 724,
+        "context": "e\r           .from('business_configs')\r           .select('config, version, created_at, updated_at')"
+      },
+      {
+        "file": "api/index.js",
+        "type": "table",
+        "name": "\r\n          id,\r\n          email,\r\n          first_name,\r\n          last_name,\r\n          company_name,\r\n          timezone,\r\n          notification_preferences,\r\n          updated_at\r\n        ",
+        "line": 850,
+        "context": "ate(updates)\r         .eq('id', user.id)\r         .select(`\r           id,\r           email,"
+      },
+      {
+        "file": "api/index.js",
+        "type": "table",
+        "name": "id, email, first_name, last_name, company_name, created_at, last_login",
+        "line": 905,
+        "context": "= await supabase\r         .from('users')\r         .select('id, email, first_name, last_name, company"
+      },
+      {
+        "file": "api/index.js",
+        "type": "table",
+        "name": "access_token, refresh_token",
+        "line": 1912,
+        "context": "base\r         .from('oauth_credentials')\r         .select('access_token, refresh_token')\r         .e"
+      },
+      {
+        "file": "api/index.js",
+        "type": "table",
+        "name": "*",
+        "line": 2084,
+        "context": ".from('business_configurations')\r         .select('*')\r         .eq('user_id', user.id)"
+      },
+      {
+        "file": "scripts/cleanup-test-db.js",
+        "type": "table",
+        "name": "users",
+        "line": 41,
+        "context": "const { error } = await supabase           .from('users')           .delete()           .like("
+      },
+      {
+        "file": "scripts/cleanup-test-db.js",
+        "type": "table",
+        "name": "users",
+        "line": 47,
+        "context": "const { error } = await supabase           .from('users')           .delete()           .eq('e"
+      },
+      {
+        "file": "scripts/cleanup-test-db.js",
+        "type": "table",
+        "name": "password_reset_tokens",
+        "line": 57,
+        "context": "nst { error: tokenError } = await supabase       .from('password_reset_tokens')       .delete()"
+      },
+      {
+        "file": "scripts/cleanup-test-db.js",
+        "type": "table",
+        "name": "onboarding_progress",
+        "line": 63,
+        "context": "{ error: progressError } = await supabase       .from('onboarding_progress')       .delete()"
+      },
+      {
+        "file": "scripts/configure-rls-security.js",
+        "type": "table",
+        "name": "*",
+        "line": 215,
+        "context": "ait supabaseAnon           .from(table)           .select('*')           .limit(1);          if (err"
+      },
+      {
+        "file": "scripts/find-supabase-refs.mjs",
+        "type": "table",
+        "name": "table_name",
+        "line": 10,
+        "context": "in code.  *   * Searches for patterns like:  * - supabase.from('table_name')  * - .from('table_name"
+      },
+      {
+        "file": "scripts/find-supabase-refs.mjs",
+        "type": "table",
+        "name": "table_name",
+        "line": 11,
+        "context": "erns like:  * - supabase.from('table_name')  * - .from('table_name')  * - supabase.rpc('function_nam"
+      },
+      {
+        "file": "scripts/find-supabase-refs.mjs",
+        "type": "table",
+        "name": "table_name",
+        "line": 30,
+        "context": "find Supabase references const patterns = {   // .from('table_name') or supabase.from('table_name')"
+      },
+      {
+        "file": "scripts/find-supabase-refs.mjs",
+        "type": "table",
+        "name": "table_name",
+        "line": 30,
+        "context": "es const patterns = {   // .from('table_name') or supabase.from('table_name')   table: /(?:supabase\\"
+      },
+      {
+        "file": "scripts/find-supabase-refs.mjs",
+        "type": "rpc",
+        "name": "function_name",
+        "line": 12,
+        "context": ".from('table_name')  * - .from('table_name')  * - supabase.rpc('function_name')  * - .rpc('function_"
+      },
+      {
+        "file": "scripts/find-supabase-refs.mjs",
+        "type": "rpc",
+        "name": "function_name",
+        "line": 13,
+        "context": "e_name')  * - supabase.rpc('function_name')  * - .rpc('function_name')  *   * Usage: node scripts/fi"
+      },
+      {
+        "file": "scripts/find-supabase-refs.mjs",
+        "type": "rpc",
+        "name": "function_name",
+        "line": 33,
+        "context": "?from\\s*\\(\\s*['\"`]([\\w.-]+)['\"`]\\s*\\)/g,      // .rpc('function_name') or supabase.rpc('function_nam"
+      },
+      {
+        "file": "scripts/find-supabase-refs.mjs",
+        "type": "rpc",
+        "name": "function_name",
+        "line": 33,
+        "context": "]+)['\"`]\\s*\\)/g,      // .rpc('function_name') or supabase.rpc('function_name')   rpc: /(?:supabase\\"
+      },
+      {
+        "file": "scripts/fix-rls-configuration.js",
+        "type": "table",
+        "name": "credentials",
+        "line": 135,
+        "context": "const { data, error } = await supabaseAnon       .from('credentials')       .select('*')       .limi"
+      },
+      {
+        "file": "scripts/fix-rls-configuration.js",
+        "type": "table",
+        "name": "*",
+        "line": 136,
+        "context": "ait supabaseAnon       .from('credentials')       .select('*')       .limit(1);      if (error) {"
+      },
+      {
+        "file": "scripts/fix-rls-configuration.js",
+        "type": "table",
+        "name": "*",
+        "line": 242,
+        "context": "= await supabaseAnon         .from(table)         .select('*')         .limit(1);        if (error &"
+      },
+      {
+        "file": "scripts/migrate-test-db.js",
+        "type": "table",
+        "name": "business_types",
+        "line": 31,
+        "context": "ssTypes, error: btError } = await supabase       .from('business_types')       .select('count')"
+      },
+      {
+        "file": "scripts/migrate-test-db.js",
+        "type": "table",
+        "name": "count",
+        "line": 32,
+        "context": "wait supabase       .from('business_types')       .select('count')       .limit(1);          if (btE"
+      },
+      {
+        "file": "scripts/migrate-test-db.js",
+        "type": "table",
+        "name": "count",
+        "line": 52,
+        "context": "r } = await supabase         .from(table)         .select('count')         .limit(1);              i"
+      },
+      {
+        "file": "scripts/run-database-migration.js",
+        "type": "table",
+        "name": "_temp_migration",
+        "line": 52,
+        "context": "error: execError } = await supabase             .from('_temp_migration')             .select('*')"
+      },
+      {
+        "file": "scripts/run-database-migration.js",
+        "type": "table",
+        "name": "users",
+        "line": 96,
+        "context": "rData, error: userError } = await supabase       .from('users')       .select('role')       .limit(1"
+      },
+      {
+        "file": "scripts/run-database-migration.js",
+        "type": "table",
+        "name": "*",
+        "line": 53,
+        "context": ".from('_temp_migration')             .select('*')             .limit(0); // This will f"
+      },
+      {
+        "file": "scripts/run-database-migration.js",
+        "type": "table",
+        "name": "*",
+        "line": 84,
+        "context": "r } = await supabase         .from(table)         .select('*')         .limit(1);        if (tableEr"
+      },
+      {
+        "file": "scripts/run-database-migration.js",
+        "type": "table",
+        "name": "role",
+        "line": 97,
+        "context": "ror } = await supabase       .from('users')       .select('role')       .limit(1);      if (userErro"
+      },
+      {
+        "file": "scripts/seed-test-db.js",
+        "type": "table",
+        "name": "business_types",
+        "line": 30,
+        "context": "ssTypes, error: btError } = await supabase       .from('business_types')       .select('*')       .e"
+      },
+      {
+        "file": "scripts/seed-test-db.js",
+        "type": "table",
+        "name": "business_types",
+        "line": 45,
+        "context": "st { error: seedError } = await supabase         .from('business_types')         .insert({"
+      },
+      {
+        "file": "scripts/seed-test-db.js",
+        "type": "table",
+        "name": "users",
+        "line": 95,
+        "context": "{       const { error } = await supabase         .from('users')         .delete()         .eq('email"
+      },
+      {
+        "file": "scripts/seed-test-db.js",
+        "type": "table",
+        "name": "*",
+        "line": 31,
+        "context": "wait supabase       .from('business_types')       .select('*')       .eq('slug', 'hot-tub-spa');"
+      },
+      {
+        "file": "scripts/setup-test-db.js",
+        "type": "table",
+        "name": "users",
+        "line": 31,
+        "context": "const { data, error } = await supabase       .from('users')       .select('count')       .limit("
+      },
+      {
+        "file": "scripts/setup-test-db.js",
+        "type": "table",
+        "name": "business_types",
+        "line": 44,
+        "context": "ssTypes, error: btError } = await supabase       .from('business_types')       .select('count')"
+      },
+      {
+        "file": "scripts/setup-test-db.js",
+        "type": "table",
+        "name": "password_reset_tokens",
+        "line": 60,
+        "context": "tTokens, error: rtError } = await supabase       .from('password_reset_tokens')       .select('count"
+      },
+      {
+        "file": "scripts/setup-test-db.js",
+        "type": "table",
+        "name": "count",
+        "line": 32,
+        "context": "ror } = await supabase       .from('users')       .select('count')       .limit(1);      if (error &"
+      },
+      {
+        "file": "scripts/setup-test-db.js",
+        "type": "table",
+        "name": "count",
+        "line": 45,
+        "context": "wait supabase       .from('business_types')       .select('count')       .limit(1);      if (btError"
+      },
+      {
+        "file": "scripts/setup-test-db.js",
+        "type": "table",
+        "name": "count",
+        "line": 61,
+        "context": "pabase       .from('password_reset_tokens')       .select('count')       .limit(1);      if (rtError"
+      },
+      {
+        "file": "scripts/test-rls-properly.js",
+        "type": "table",
+        "name": "credentials",
+        "line": 54,
+        "context": "error: insertError } = await supabaseAdmin       .from('credentials')       .insert([testCredential,"
+      },
+      {
+        "file": "scripts/test-rls-properly.js",
+        "type": "table",
+        "name": "credentials",
+        "line": 81,
+        "context": "const { data, error } = await supabaseAnon       .from('credentials')       .select('*');      if (e"
+      },
+      {
+        "file": "scripts/test-rls-properly.js",
+        "type": "table",
+        "name": "credentials",
+        "line": 113,
+        "context": "a, error: allError } = await supabaseAdmin       .from('credentials')       .select('*')       .in('"
+      },
+      {
+        "file": "scripts/test-rls-properly.js",
+        "type": "table",
+        "name": "credentials",
+        "line": 193,
+        "context": "error: deleteError } = await supabaseAdmin       .from('credentials')       .delete()       .in('ser"
+      },
+      {
+        "file": "scripts/test-rls-properly.js",
+        "type": "table",
+        "name": "*",
+        "line": 82,
+        "context": "ait supabaseAnon       .from('credentials')       .select('*');      if (error) {       console.log("
+      },
+      {
+        "file": "scripts/test-rls-properly.js",
+        "type": "table",
+        "name": "*",
+        "line": 114,
+        "context": "it supabaseAdmin       .from('credentials')       .select('*')       .in('service_name', ['test_serv"
+      },
+      {
+        "file": "scripts/test-supabase-connection.js",
+        "type": "table",
+        "name": "users",
+        "line": 38,
+        "context": "const { data, error } = await supabase\r       .from('users')\r       .select('count')\r       .limi"
+      },
+      {
+        "file": "scripts/test-supabase-connection.js",
+        "type": "table",
+        "name": "users",
+        "line": 66,
+        "context": "const { data, error } = await supabase\r       .from('users')\r       .select('*')\r       .limit(1)"
+      },
+      {
+        "file": "scripts/test-supabase-connection.js",
+        "type": "table",
+        "name": "count",
+        "line": 39,
+        "context": "r } = await supabase\r       .from('users')\r       .select('count')\r       .limit(1);\r \r     if (erro"
+      },
+      {
+        "file": "scripts/test-supabase-connection.js",
+        "type": "table",
+        "name": "*",
+        "line": 67,
+        "context": "r } = await supabase\r       .from('users')\r       .select('*')\r       .limit(1);\r \r     if (error) {"
+      },
+      {
+        "file": "scripts/test-supabase-integration.js",
+        "type": "table",
+        "name": "credentials",
+        "line": 64,
+        "context": "const { data, error } = await supabase       .from('credentials')       .select('count')       ."
+      },
+      {
+        "file": "scripts/test-supabase-integration.js",
+        "type": "table",
+        "name": "credentials",
+        "line": 167,
+        "context": "const { data, error } = await supabase       .from('credentials')       .select('*')       .limi"
+      },
+      {
+        "file": "scripts/test-supabase-integration.js",
+        "type": "table",
+        "name": "count",
+        "line": 65,
+        "context": "= await supabase       .from('credentials')       .select('count')       .limit(1);      if (error)"
+      },
+      {
+        "file": "scripts/test-supabase-integration.js",
+        "type": "table",
+        "name": "*",
+        "line": 168,
+        "context": "= await supabase       .from('credentials')       .select('*')       .limit(1);      // This should"
+      },
+      {
+        "file": "api/auth/login.js",
+        "type": "table",
+        "name": "users",
+        "line": 52,
+        "context": "user, error: findError } = await supabase       .from('users')       .select('id, email, password_h"
+      },
+      {
+        "file": "api/auth/login.js",
+        "type": "table",
+        "name": "users",
+        "line": 83,
+        "context": "te last login timestamp     await supabase       .from('users')       .update({ last_login: new Date"
+      },
+      {
+        "file": "api/auth/login.js",
+        "type": "table",
+        "name": "id, email, password_hash, first_name, last_name, company_name, created_at",
+        "line": 53,
+        "context": "ror } = await supabase       .from('users')       .select('id, email, password_hash, first_name, las"
+      },
+      {
+        "file": "api/auth/logout.js",
+        "type": "table",
+        "name": "users",
+        "line": 38,
+        "context": "baseAdmin();              await supabase         .from('users')         .update({            last_lo"
+      },
+      {
+        "file": "api/auth/register.js",
+        "type": "table",
+        "name": "users",
+        "line": 72,
+        "context": "User, error: checkError } = await supabase       .from('users')       .select('id')       .eq('email"
+      },
+      {
+        "file": "api/auth/register.js",
+        "type": "table",
+        "name": "users",
+        "line": 90,
+        "context": "ser, error: insertError } = await supabase       .from('users')       .insert([{         email: emai"
+      },
+      {
+        "file": "api/auth/register.js",
+        "type": "table",
+        "name": "id",
+        "line": 73,
+        "context": "ror } = await supabase       .from('users')       .select('id')       .eq('email', email.toLowerCase"
+      },
+      {
+        "file": "api/_lib/auth.js",
+        "type": "table",
+        "name": "users",
+        "line": 23,
+        "context": "user, error: userError } = await supabase       .from('users')       .select('id, email, first_name"
+      },
+      {
+        "file": "api/_lib/auth.js",
+        "type": "table",
+        "name": "id, email, first_name, last_name",
+        "line": 24,
+        "context": "ror } = await supabase       .from('users')       .select('id, email, first_name, last_name')"
+      },
+      {
+        "file": "api/onboarding/status.js",
+        "type": "table",
+        "name": "users",
+        "line": 32,
+        "context": "er, error: userError } = await supabase\r         .from('users')\r         .select('email, email_verif"
+      },
+      {
+        "file": "api/onboarding/status.js",
+        "type": "table",
+        "name": "credentials",
+        "line": 43,
+        "context": "ls, error: credError } = await supabase\r         .from('credentials')\r         .select('id, service_"
+      },
+      {
+        "file": "api/onboarding/status.js",
+        "type": "table",
+        "name": "onboarding_progress",
+        "line": 54,
+        "context": "ror: progressError } = await supabase\r           .from('onboarding_progress')\r           .select('cu"
+      },
+      {
+        "file": "api/onboarding/status.js",
+        "type": "table",
+        "name": "business_configs",
+        "line": 71,
+        "context": "error: configError } = await supabase\r           .from('business_configs')\r           .select('confi"
+      },
+      {
+        "file": "api/onboarding/status.js",
+        "type": "table",
+        "name": "email, email_verified, onboarding_completed, first_name, company_name",
+        "line": 33,
+        "context": "= await supabase\r         .from('users')\r         .select('email, email_verified, onboarding_complet"
+      },
+      {
+        "file": "api/onboarding/status.js",
+        "type": "table",
+        "name": "id, service_name, created_at",
+        "line": 44,
+        "context": "t supabase\r         .from('credentials')\r         .select('id, service_name, created_at')\r         ."
+      },
+      {
+        "file": "api/onboarding/status.js",
+        "type": "table",
+        "name": "current_step, completed_steps, step_data, google_connected, completed",
+        "line": 55,
+        "context": ".from('onboarding_progress')\r           .select('current_step, completed_steps, step_data,"
+      },
+      {
+        "file": "api/onboarding/status.js",
+        "type": "table",
+        "name": "config, version, created_at, updated_at",
+        "line": 72,
+        "context": "e\r           .from('business_configs')\r           .select('config, version, created_at, updated_at')"
+      },
+      {
+        "file": "archive/debug-files/check-user-account.js",
+        "type": "table",
+        "name": "users",
+        "line": 29,
+        "context": "sers, error: userError } = await supabase\r       .from('users')\r       .select('*')\r       .eq('emai"
+      },
+      {
+        "file": "archive/debug-files/check-user-account.js",
+        "type": "table",
+        "name": "email_verification_tokens",
+        "line": 63,
+        "context": "s, error: tokenError } = await supabase\r         .from('email_verification_tokens')\r         .select"
+      },
+      {
+        "file": "archive/debug-files/check-user-account.js",
+        "type": "table",
+        "name": "oauth_tokens",
+        "line": 93,
+        "context": "ens, error: oauthError } = await supabase\r       .from('oauth_tokens')\r       .select('*')\r       .e"
+      },
+      {
+        "file": "archive/debug-files/check-user-account.js",
+        "type": "table",
+        "name": "users",
+        "line": 115,
+        "context": "const { data, error } = await supabase\r       .from('users')\r       .update({ email_verified: tru"
+      },
+      {
+        "file": "archive/debug-files/check-user-account.js",
+        "type": "table",
+        "name": "*",
+        "line": 30,
+        "context": "r } = await supabase\r       .from('users')\r       .select('*')\r       .eq('email', 'dizell2007@gmail"
+      },
+      {
+        "file": "archive/debug-files/check-user-account.js",
+        "type": "table",
+        "name": "*",
+        "line": 64,
+        "context": ".from('email_verification_tokens')\r         .select('*')\r         .eq('user_id', user.id)"
+      },
+      {
+        "file": "archive/debug-files/check-user-account.js",
+        "type": "table",
+        "name": "*",
+        "line": 94,
+        "context": "wait supabase\r       .from('oauth_tokens')\r       .select('*')\r       .eq('user_id', user.id);"
+      },
+      {
+        "file": "api/user/profile.js",
+        "type": "table",
+        "name": "users",
+        "line": 43,
+        "context": "ser, error: userError } = await supabase         .from('users')         .select(`           id,"
+      },
+      {
+        "file": "api/user/profile.js",
+        "type": "table",
+        "name": "users",
+        "line": 140,
+        "context": "r, error: updateError } = await supabase         .from('users')         .update(updates)         .eq"
+      },
+      {
+        "file": "api/user/profile.js",
+        "type": "table",
+        "name": "\n          id, \n          email, \n          first_name, \n          last_name, \n          company_name, \n          created_at, \n          last_login,\n          email_verified,\n          profile_picture_url,\n          timezone,\n          notification_preferences\n        ",
+        "line": 44,
+        "context": "} = await supabase         .from('users')         .select(`           id,            email,"
+      },
+      {
+        "file": "api/user/profile.js",
+        "type": "table",
+        "name": "\n          id, \n          email, \n          first_name, \n          last_name, \n          company_name, \n          timezone,\n          notification_preferences,\n          updated_at\n        ",
+        "line": 143,
+        "context": "e(updates)         .eq('id', req.user.id)         .select(`           id,            email,"
+      },
+      {
+        "file": "api/user/status.js",
+        "type": "table",
+        "name": "users",
+        "line": 32,
+        "context": "ils, error: userError } = await supabase         .from('users')         .select('id, email, first_na"
+      },
+      {
+        "file": "api/user/status.js",
+        "type": "table",
+        "name": "credentials",
+        "line": 43,
+        "context": "ror: credentialsError } = await supabase         .from('credentials')         .select('service_name,"
+      },
+      {
+        "file": "api/user/status.js",
+        "type": "table",
+        "name": "oauth_connections",
+        "line": 55,
+        "context": "ns, error: oauthError } = await supabase         .from('oauth_connections')         .select('provide"
+      },
+      {
+        "file": "api/user/status.js",
+        "type": "table",
+        "name": "id, email, first_name, last_name, company_name, created_at, last_login, email_verified",
+        "line": 33,
+        "context": "} = await supabase         .from('users')         .select('id, email, first_name, last_name, company"
+      },
+      {
+        "file": "api/user/status.js",
+        "type": "table",
+        "name": "service_name, created_at, expiry_date",
+        "line": 44,
+        "context": "ait supabase         .from('credentials')         .select('service_name, created_at, expiry_date')"
+      },
+      {
+        "file": "api/user/status.js",
+        "type": "table",
+        "name": "provider, connected_at, status",
+        "line": 56,
+        "context": "pabase         .from('oauth_connections')         .select('provider, connected_at, status')"
+      },
+      {
+        "file": "backend/database/database-operations.js",
+        "type": "table",
+        "name": "users",
+        "line": 41,
+        "context": "return await client.getAdminClient()\r         .from('users')\r         .insert(userData)"
+      },
+      {
+        "file": "backend/database/database-operations.js",
+        "type": "table",
+        "name": "users",
+        "line": 63,
+        "context": "return await client.getAdminClient()\r         .from('users')\r         .select('*')\r         .eq('"
+      },
+      {
+        "file": "backend/database/database-operations.js",
+        "type": "table",
+        "name": "users",
+        "line": 83,
+        "context": "return await client.getAdminClient()\r         .from('users')\r         .select('*')\r         .eq('"
+      },
+      {
+        "file": "backend/database/database-operations.js",
+        "type": "table",
+        "name": "users",
+        "line": 103,
+        "context": "return await client.getAdminClient()\r         .from('users')\r         .update(updates)\r         ."
+      },
+      {
+        "file": "backend/database/database-operations.js",
+        "type": "table",
+        "name": "business_types",
+        "line": 278,
+        "context": "return await client.getAdminClient()\r         .from('business_types')\r         .select('*')"
+      },
+      {
+        "file": "backend/database/database-operations.js",
+        "type": "table",
+        "name": "business_types",
+        "line": 295,
+        "context": "return await client.getAdminClient()\r         .from('business_types')\r         .select('*')"
+      },
+      {
+        "file": "backend/database/database-operations.js",
+        "type": "table",
+        "name": "business_types",
+        "line": 316,
+        "context": "return await client.getAdminClient()\r         .from('business_types')\r         .select('*')"
+      },
+      {
+        "file": "backend/database/database-operations.js",
+        "type": "table",
+        "name": "business_types",
+        "line": 337,
+        "context": "return await client.getAdminClient()\r         .from('business_types')\r         .insert(businessTy"
+      },
+      {
+        "file": "backend/database/database-operations.js",
+        "type": "table",
+        "name": "business_types",
+        "line": 366,
+        "context": "return await client.getAdminClient()\r         .from('business_types')\r         .delete()"
+      },
+      {
+        "file": "backend/database/database-operations.js",
+        "type": "table",
+        "name": "users",
+        "line": 382,
+        "context": "return await client.getAdminClient()\r         .from('users')\r         .delete()\r         .eq('id'"
+      },
+      {
+        "file": "backend/database/database-operations.js",
+        "type": "table",
+        "name": "users",
+        "line": 398,
+        "context": "return await client.getAdminClient()\r         .from('users')\r         .update({\r           busine"
+      },
+      {
+        "file": "backend/database/database-operations.js",
+        "type": "table",
+        "name": "onboarding_progress",
+        "line": 428,
+        "context": "xisting = await client.getAdminClient()\r         .from('onboarding_progress')\r         .select('step"
+      },
+      {
+        "file": "backend/database/database-operations.js",
+        "type": "table",
+        "name": "onboarding_progress",
+        "line": 441,
+        "context": "return await client.getAdminClient()\r         .from('onboarding_progress')\r         .upsert({"
+      },
+      {
+        "file": "backend/database/database-operations.js",
+        "type": "table",
+        "name": "users",
+        "line": 490,
+        "context": "return await client.getAdminClient()\r         .from('users')\r         .select('id, email, first_n"
+      },
+      {
+        "file": "backend/database/database-operations.js",
+        "type": "table",
+        "name": "password_reset_tokens",
+        "line": 510,
+        "context": "return await client.getAdminClient()\r         .from('password_reset_tokens')\r         .insert({"
+      },
+      {
+        "file": "backend/database/database-operations.js",
+        "type": "table",
+        "name": "password_reset_tokens",
+        "line": 536,
+        "context": "return await client.getAdminClient()\r         .from('password_reset_tokens')\r         .select(`"
+      },
+      {
+        "file": "backend/database/database-operations.js",
+        "type": "table",
+        "name": "password_reset_tokens",
+        "line": 566,
+        "context": "return await client.getAdminClient()\r         .from('password_reset_tokens')\r         .select(`"
+      },
+      {
+        "file": "backend/database/database-operations.js",
+        "type": "table",
+        "name": "password_reset_tokens",
+        "line": 596,
+        "context": "return await client.getAdminClient()\r         .from('password_reset_tokens')\r         .update({"
+      },
+      {
+        "file": "backend/database/database-operations.js",
+        "type": "table",
+        "name": "users",
+        "line": 622,
+        "context": "return await client.getAdminClient()\r         .from('users')\r         .update({\r           passwo"
+      },
+      {
+        "file": "backend/database/database-operations.js",
+        "type": "table",
+        "name": "email_verification_tokens",
+        "line": 651,
+        "context": "return await client.getAdminClient()\r         .from('email_verification_tokens')\r         .select"
+      },
+      {
+        "file": "backend/database/database-operations.js",
+        "type": "table",
+        "name": "users",
+        "line": 680,
+        "context": "return await client.getAdminClient()\r         .from('users')\r         .update({\r           email_"
+      },
+      {
+        "file": "backend/database/database-operations.js",
+        "type": "table",
+        "name": "email_verification_tokens",
+        "line": 701,
+        "context": "return await client.getAdminClient()\r         .from('email_verification_tokens')\r         .delete"
+      },
+      {
+        "file": "backend/database/database-operations.js",
+        "type": "table",
+        "name": "email_verification_tokens",
+        "line": 717,
+        "context": "return await client.getAdminClient()\r         .from('email_verification_tokens')\r         .insert"
+      },
+      {
+        "file": "backend/database/database-operations.js",
+        "type": "table",
+        "name": "users",
+        "line": 746,
+        "context": "return await client.getAdminClient()\r         .from('users')\r         .select('id, email, first_n"
+      },
+      {
+        "file": "backend/database/database-operations.js",
+        "type": "table",
+        "name": "users",
+        "line": 770,
+        "context": "return await client.getAdminClient()\r         .from('users')\r         .update({\r           ...pro"
+      },
+      {
+        "file": "backend/database/database-operations.js",
+        "type": "table",
+        "name": "credentials",
+        "line": 802,
+        "context": "esult = await client.getAdminClient()\r           .from('credentials')\r           .select('service_na"
+      },
+      {
+        "file": "backend/database/database-operations.js",
+        "type": "table",
+        "name": "*",
+        "line": 64,
+        "context": "getAdminClient()\r         .from('users')\r         .select('*')\r         .eq('id', userId)\r         ."
+      },
+      {
+        "file": "backend/database/database-operations.js",
+        "type": "table",
+        "name": "*",
+        "line": 84,
+        "context": "getAdminClient()\r         .from('users')\r         .select('*')\r         .eq('email', email.toLowerCa"
+      },
+      {
+        "file": "backend/database/database-operations.js",
+        "type": "table",
+        "name": "*",
+        "line": 279,
+        "context": "lient()\r         .from('business_types')\r         .select('*')\r         .eq('is_active', true)"
+      },
+      {
+        "file": "backend/database/database-operations.js",
+        "type": "table",
+        "name": "*",
+        "line": 296,
+        "context": "lient()\r         .from('business_types')\r         .select('*')\r         .eq('slug', slug)\r         ."
+      },
+      {
+        "file": "backend/database/database-operations.js",
+        "type": "table",
+        "name": "*",
+        "line": 317,
+        "context": "lient()\r         .from('business_types')\r         .select('*')\r         .eq('id', id)\r         .eq('"
+      },
+      {
+        "file": "backend/database/database-operations.js",
+        "type": "table",
+        "name": "step_data",
+        "line": 429,
+        "context": "()\r         .from('onboarding_progress')\r         .select('step_data')\r         .eq('user_id', userI"
+      },
+      {
+        "file": "backend/database/database-operations.js",
+        "type": "table",
+        "name": "id, email, first_name",
+        "line": 491,
+        "context": "getAdminClient()\r         .from('users')\r         .select('id, email, first_name')\r         .eq('ema"
+      },
+      {
+        "file": "backend/database/database-operations.js",
+        "type": "table",
+        "name": "\r\n          *,\r\n          users!inner(id, email, first_name)\r\n        ",
+        "line": 537,
+        "context": ".from('password_reset_tokens')\r         .select(`\r           *,\r           users!inner(id,"
+      },
+      {
+        "file": "backend/database/database-operations.js",
+        "type": "table",
+        "name": "\r\n          *,\r\n          users!inner(id, email, first_name)\r\n        ",
+        "line": 567,
+        "context": ".from('password_reset_tokens')\r         .select(`\r           *,\r           users!inner(id,"
+      },
+      {
+        "file": "backend/database/database-operations.js",
+        "type": "table",
+        "name": "\r\n          *,\r\n          users!inner(id, email, first_name)\r\n        ",
+        "line": 652,
+        "context": ".from('email_verification_tokens')\r         .select(`\r           *,\r           users!inner(id,"
+      },
+      {
+        "file": "backend/database/database-operations.js",
+        "type": "table",
+        "name": "id, email, first_name, last_name, company_name, created_at, last_login, email_verified",
+        "line": 747,
+        "context": "getAdminClient()\r         .from('users')\r         .select('id, email, first_name, last_name, company"
+      },
+      {
+        "file": "backend/database/database-operations.js",
+        "type": "table",
+        "name": "service_name, created_at, expiry_date",
+        "line": 803,
+        "context": "ient()\r           .from('credentials')\r           .select('service_name, created_at, expiry_date')"
+      },
+      {
+        "file": "backend/database/supabase-rest-client.js",
+        "type": "table",
+        "name": "credentials",
+        "line": 113,
+        "context": "a, error } = await this.getAdminClient()         .from('credentials')         .upsert(           {"
+      },
+      {
+        "file": "backend/database/supabase-rest-client.js",
+        "type": "table",
+        "name": "credentials",
+        "line": 145,
+        "context": "a, error } = await this.getAdminClient()         .from('credentials')         .select('access_token,"
+      },
+      {
+        "file": "backend/database/supabase-rest-client.js",
+        "type": "table",
+        "name": "business_configs",
+        "line": 176,
+        "context": "revious configs       await this.getAdminClient().from('business_configs').update({ is_active: false"
+      },
+      {
+        "file": "backend/database/supabase-rest-client.js",
+        "type": "table",
+        "name": "business_configs",
+        "line": 180,
+        "context": "a, error } = await this.getAdminClient()         .from('business_configs')         .insert({"
+      },
+      {
+        "file": "backend/database/supabase-rest-client.js",
+        "type": "table",
+        "name": "business_configs",
+        "line": 202,
+        "context": "a, error } = await this.getAdminClient()         .from('business_configs')         .select('id, conf"
+      },
+      {
+        "file": "backend/database/supabase-rest-client.js",
+        "type": "table",
+        "name": "workflow_deployments",
+        "line": 235,
+        "context": "a, error } = await this.getAdminClient()         .from('workflow_deployments')         .insert({"
+      },
+      {
+        "file": "backend/database/supabase-rest-client.js",
+        "type": "table",
+        "name": "workflow_deployments",
+        "line": 261,
+        "context": "a, error } = await this.getAdminClient()         .from('workflow_deployments')         .select("
+      },
+      {
+        "file": "backend/database/supabase-rest-client.js",
+        "type": "table",
+        "name": "onboarding_progress",
+        "line": 303,
+        "context": "a, error } = await this.getAdminClient()         .from('onboarding_progress')         .upsert("
+      },
+      {
+        "file": "backend/database/supabase-rest-client.js",
+        "type": "table",
+        "name": "onboarding_progress",
+        "line": 333,
+        "context": "a, error } = await this.getAdminClient()         .from('onboarding_progress')         .select('*')"
+      },
+      {
+        "file": "backend/database/supabase-rest-client.js",
+        "type": "table",
+        "name": "user_onboarding_status",
+        "line": 356,
+        "context": "epsError } = await this.getAdminClient()         .from('user_onboarding_status')         .select('st"
+      },
+      {
+        "file": "backend/database/supabase-rest-client.js",
+        "type": "table",
+        "name": "users",
+        "line": 367,
+        "context": "serError } = await this.getAdminClient()         .from('users')         .select('email_verified, onb"
+      },
+      {
+        "file": "backend/database/supabase-rest-client.js",
+        "type": "table",
+        "name": "credentials",
+        "line": 378,
+        "context": "redError } = await this.getAdminClient()         .from('credentials')         .select('id')"
+      },
+      {
+        "file": "backend/database/supabase-rest-client.js",
+        "type": "table",
+        "name": "user_analytics",
+        "line": 414,
+        "context": "a, error } = await this.getAdminClient()         .from('user_analytics')         .insert({"
+      },
+      {
+        "file": "backend/database/supabase-rest-client.js",
+        "type": "table",
+        "name": "users",
+        "line": 440,
+        "context": "a, error } = await this.getAdminClient()         .from('users')         .select('id, email, first_na"
+      },
+      {
+        "file": "backend/database/supabase-rest-client.js",
+        "type": "table",
+        "name": "users",
+        "line": 462,
+        "context": "a, error } = await this.getAdminClient()         .from('users')         .select('id, email, password"
+      },
+      {
+        "file": "backend/database/supabase-rest-client.js",
+        "type": "table",
+        "name": "users",
+        "line": 484,
+        "context": "a, error } = await this.getAdminClient()         .from('users')         .insert(userData)         .s"
+      },
+      {
+        "file": "backend/database/supabase-rest-client.js",
+        "type": "table",
+        "name": "security_audit_log",
+        "line": 502,
+        "context": "a, error } = await this.getAdminClient()         .from('security_audit_log')         .select('action"
+      },
+      {
+        "file": "backend/database/supabase-rest-client.js",
+        "type": "table",
+        "name": "oauth_tokens",
+        "line": 526,
+        "context": "a, error } = await this.getAdminClient()         .from('oauth_tokens')         .select('provider, cr"
+      },
+      {
+        "file": "backend/database/supabase-rest-client.js",
+        "type": "table",
+        "name": "users",
+        "line": 557,
+        "context": "a, error } = await this.getAdminClient()         .from('users')         .select('id, email, first_na"
+      },
+      {
+        "file": "backend/database/supabase-rest-client.js",
+        "type": "table",
+        "name": "password_reset_tokens",
+        "line": 579,
+        "context": "a, error } = await this.getAdminClient()         .from('password_reset_tokens')         .insert({"
+      },
+      {
+        "file": "backend/database/supabase-rest-client.js",
+        "type": "table",
+        "name": "password_reset_tokens",
+        "line": 604,
+        "context": "a, error } = await this.getAdminClient()         .from('password_reset_tokens')         .select(`"
+      },
+      {
+        "file": "backend/database/supabase-rest-client.js",
+        "type": "table",
+        "name": "users",
+        "line": 636,
+        "context": "a, error } = await this.getAdminClient()         .from('users')         .update({           password"
+      },
+      {
+        "file": "backend/database/supabase-rest-client.js",
+        "type": "table",
+        "name": "password_reset_tokens",
+        "line": 658,
+        "context": "a, error } = await this.getAdminClient()         .from('password_reset_tokens')         .update({"
+      },
+      {
+        "file": "backend/database/supabase-rest-client.js",
+        "type": "table",
+        "name": "email_verification_tokens",
+        "line": 687,
+        "context": "lation       await this.getAdminClient()         .from('email_verification_tokens')         .delete("
+      },
+      {
+        "file": "backend/database/supabase-rest-client.js",
+        "type": "table",
+        "name": "email_verification_tokens",
+        "line": 692,
+        "context": "a, error } = await this.getAdminClient()         .from('email_verification_tokens')         .insert("
+      },
+      {
+        "file": "backend/database/supabase-rest-client.js",
+        "type": "table",
+        "name": "email_verification_tokens",
+        "line": 717,
+        "context": "a, error } = await this.getAdminClient()         .from('email_verification_tokens')         .select("
+      },
+      {
+        "file": "backend/database/supabase-rest-client.js",
+        "type": "table",
+        "name": "email_verification_tokens",
+        "line": 740,
+        "context": "{ error } = await this.getAdminClient()         .from('email_verification_tokens')         .update("
+      },
+      {
+        "file": "backend/database/supabase-rest-client.js",
+        "type": "table",
+        "name": "users",
+        "line": 758,
+        "context": "a, error } = await this.getAdminClient()         .from('users')         .update({           email_ve"
+      },
+      {
+        "file": "backend/database/supabase-rest-client.js",
+        "type": "table",
+        "name": "users",
+        "line": 781,
+        "context": "const { data: _data, error } = await this.client.from('users').select('count', { count: 'exact', he"
+      },
+      {
+        "file": "backend/database/supabase-rest-client.js",
+        "type": "table",
+        "name": "id, created_at, updated_at",
+        "line": 129,
+        "context": "reDuplicates: false           }         )         .select('id, created_at, updated_at')         .sin"
+      },
+      {
+        "file": "backend/database/supabase-rest-client.js",
+        "type": "table",
+        "name": "access_token, refresh_token, expiry_date, scope, created_at, updated_at",
+        "line": 146,
+        "context": "dminClient()         .from('credentials')         .select('access_token, refresh_token, expiry_date,"
+      },
+      {
+        "file": "backend/database/supabase-rest-client.js",
+        "type": "table",
+        "name": "id, version, created_at",
+        "line": 186,
+        "context": "ata,           is_active: true         })         .select('id, version, created_at')         .single"
+      },
+      {
+        "file": "backend/database/supabase-rest-client.js",
+        "type": "table",
+        "name": "id, config_json, version, created_at, updated_at",
+        "line": 203,
+        "context": "lient()         .from('business_configs')         .select('id, config_json, version, created_at, upd"
+      },
+      {
+        "file": "backend/database/supabase-rest-client.js",
+        "type": "table",
+        "name": "id, created_at",
+        "line": 245,
+        "context": "ta,           status: 'active'         })         .select('id, created_at')         .single();"
+      },
+      {
+        "file": "backend/database/supabase-rest-client.js",
+        "type": "table",
+        "name": "\n          id,\n          n8n_workflow_id,\n          workflow_name,\n          webhook_url,\n          status,\n          deployment_data,\n          last_execution,\n          execution_count,\n          business_config_id,\n          created_at,\n          updated_at\n        ",
+        "line": 262,
+        "context": "t()         .from('workflow_deployments')         .select(           `           id,           n8n_w"
+      },
+      {
+        "file": "backend/database/supabase-rest-client.js",
+        "type": "table",
+        "name": "*",
+        "line": 334,
+        "context": "nt()         .from('onboarding_progress')         .select('*')         .eq('user_id', userId)"
+      },
+      {
+        "file": "backend/database/supabase-rest-client.js",
+        "type": "table",
+        "name": "step_completed, step_data, completed_at",
+        "line": 357,
+        "context": ")         .from('user_onboarding_status')         .select('step_completed, step_data, completed_at')"
+      },
+      {
+        "file": "backend/database/supabase-rest-client.js",
+        "type": "table",
+        "name": "email_verified, onboarding_completed, first_name, company_name",
+        "line": 368,
+        "context": "s.getAdminClient()         .from('users')         .select('email_verified, onboarding_completed, fir"
+      },
+      {
+        "file": "backend/database/supabase-rest-client.js",
+        "type": "table",
+        "name": "id",
+        "line": 379,
+        "context": "dminClient()         .from('credentials')         .select('id')         .eq('user_id', userId)"
+      },
+      {
+        "file": "backend/database/supabase-rest-client.js",
+        "type": "table",
+        "name": "id, created_at",
+        "line": 423,
+        "context": "user_agent: userAgent         })         .select('id, created_at')         .single();"
+      },
+      {
+        "file": "backend/database/supabase-rest-client.js",
+        "type": "table",
+        "name": "id, email, first_name, last_name, company_name, email_verified, onboarding_completed, created_at, last_login",
+        "line": 441,
+        "context": "s.getAdminClient()         .from('users')         .select('id, email, first_name, last_name, company"
+      },
+      {
+        "file": "backend/database/supabase-rest-client.js",
+        "type": "table",
+        "name": "id, email, password_hash, email_verified, first_name, last_name",
+        "line": 463,
+        "context": "s.getAdminClient()         .from('users')         .select('id, email, password_hash, email_verified,"
+      },
+      {
+        "file": "backend/database/supabase-rest-client.js",
+        "type": "table",
+        "name": "action, ip_address, created_at",
+        "line": 503,
+        "context": "ent()         .from('security_audit_log')         .select('action, ip_address, created_at')"
+      },
+      {
+        "file": "backend/database/supabase-rest-client.js",
+        "type": "table",
+        "name": "provider, created_at",
+        "line": 527,
+        "context": "minClient()         .from('oauth_tokens')         .select('provider, created_at')         .eq('user_"
+      },
+      {
+        "file": "backend/database/supabase-rest-client.js",
+        "type": "table",
+        "name": "id, email, first_name, last_name, account_locked_until",
+        "line": 558,
+        "context": "s.getAdminClient()         .from('users')         .select('id, email, first_name, last_name, account"
+      },
+      {
+        "file": "backend/database/supabase-rest-client.js",
+        "type": "table",
+        "name": "\n          *,\n          users (\n            id,\n            email,\n            first_name,\n            last_name\n          )\n        ",
+        "line": 605,
+        "context": "()         .from('password_reset_tokens')         .select(`           *,           users ("
+      },
+      {
+        "file": "backend/database/supabase-rest-client.js",
+        "type": "table",
+        "name": "user_id, expires_at, email",
+        "line": 718,
+        "context": ".from('email_verification_tokens')         .select('user_id, expires_at, email')         .eq("
+      },
+      {
+        "file": "backend/scripts/apply-migration-direct.js",
+        "type": "table",
+        "name": "information_schema.columns",
+        "line": 73,
+        "context": "s, error: columnsError } = await supabase\r       .from('information_schema.columns')\r       .select("
+      },
+      {
+        "file": "backend/scripts/apply-migration-direct.js",
+        "type": "table",
+        "name": "information_schema.tables",
+        "line": 88,
+        "context": "es, error: tablesError } = await supabase\r       .from('information_schema.tables')\r       .select('"
+      },
+      {
+        "file": "backend/scripts/apply-migration-direct.js",
+        "type": "table",
+        "name": "column_name",
+        "line": 74,
+        "context": ".from('information_schema.columns')\r       .select('column_name')\r       .eq('table_name', 'u"
+      },
+      {
+        "file": "backend/scripts/apply-migration-direct.js",
+        "type": "table",
+        "name": "table_name",
+        "line": 89,
+        "context": ".from('information_schema.tables')\r       .select('table_name')\r       .eq('table_name', 'us"
+      },
+      {
+        "file": "src/models/user.ts",
+        "type": "table",
+        "name": "users",
+        "line": 20,
+        "context": "const { data, error } = await supabase       .from('users')       .select('*')       .eq('email'"
+      },
+      {
+        "file": "src/models/user.ts",
+        "type": "table",
+        "name": "users",
+        "line": 47,
+        "context": "const { data, error } = await supabase       .from('users')       .insert([{         id: userId,"
+      },
+      {
+        "file": "src/models/user.ts",
+        "type": "table",
+        "name": "*",
+        "line": 21,
+        "context": "ror } = await supabase       .from('users')       .select('*')       .eq('email', email.toLowerCase("
+      },
+      {
+        "file": "src/models/user.ts",
+        "type": "table",
+        "name": "id",
+        "line": 54,
+        "context": "ated_at: new Date().toISOString()       }])       .select('id')       .single();      if (error) {"
+      },
+      {
+        "file": "tests/integration/database-mock.test.js",
+        "type": "table",
+        "name": "business_types",
+        "line": 49,
+        "context": "const result = await mockSupabaseClient         .from('business_types')         .insert(businessTyp"
+      },
+      {
+        "file": "tests/integration/database-mock.test.js",
+        "type": "table",
+        "name": "business_types",
+        "line": 73,
+        "context": "const result = await mockSupabaseClient         .from('business_types')         .insert(duplicateDa"
+      },
+      {
+        "file": "tests/integration/database-mock.test.js",
+        "type": "table",
+        "name": "business_types",
+        "line": 106,
+        "context": "const result = await mockSupabaseClient         .from('business_types')         .select('default_ca"
+      },
+      {
+        "file": "tests/integration/database-mock.test.js",
+        "type": "table",
+        "name": "users",
+        "line": 134,
+        "context": "const result = await mockSupabaseClient         .from('users')         .update({ business_type_id:"
+      },
+      {
+        "file": "tests/integration/database-mock.test.js",
+        "type": "table",
+        "name": "users",
+        "line": 156,
+        "context": "const result = await mockSupabaseClient         .from('users')         .select(`           id,"
+      },
+      {
+        "file": "tests/integration/database-mock.test.js",
+        "type": "table",
+        "name": "users",
+        "line": 250,
+        "context": "const result = await mockSupabaseClient         .from('users')         .select('id, email, business"
+      },
+      {
+        "file": "tests/integration/database-mock.test.js",
+        "type": "table",
+        "name": "business_types",
+        "line": 275,
+        "context": "const result = await mockSupabaseClient         .from('business_types')         .select('*')"
+      },
+      {
+        "file": "tests/integration/database-mock.test.js",
+        "type": "table",
+        "name": "password_reset_tokens",
+        "line": 291,
+        "context": "const result = await mockSupabaseClient         .from('password_reset_tokens')         .select('*')"
+      },
+      {
+        "file": "tests/integration/database-mock.test.js",
+        "type": "rpc",
+        "name": "get_active_business_types",
+        "line": 90,
+        "context": ");        const result = await mockSupabaseClient.rpc('get_active_business_types');        expect(re"
+      },
+      {
+        "file": "tests/integration/database-mock.test.js",
+        "type": "rpc",
+        "name": "get_active_business_types",
+        "line": 229,
+        "context": ");        const result = await mockSupabaseClient.rpc('get_active_business_types');              con"
+      },
+      {
+        "file": "tests/integration/database-mock.test.js",
+        "type": "table",
+        "name": "default_categories",
+        "line": 107,
+        "context": "aseClient         .from('business_types')         .select('default_categories')         .eq('id', 1)"
+      },
+      {
+        "file": "tests/integration/database-mock.test.js",
+        "type": "table",
+        "name": "\n          id,\n          email,\n          business_type_id,\n          business_types (\n            id,\n            name,\n            slug,\n            default_categories\n          )\n        ",
+        "line": 157,
+        "context": "mockSupabaseClient         .from('users')         .select(`           id,           email,"
+      },
+      {
+        "file": "tests/integration/database-mock.test.js",
+        "type": "table",
+        "name": "id, email, business_types (name, slug)",
+        "line": 251,
+        "context": "mockSupabaseClient         .from('users')         .select('id, email, business_types (name, slug)')"
+      },
+      {
+        "file": "tests/integration/database-mock.test.js",
+        "type": "table",
+        "name": "*",
+        "line": 276,
+        "context": "aseClient         .from('business_types')         .select('*')         .eq('is_active', true);"
+      },
+      {
+        "file": "tests/integration/database-mock.test.js",
+        "type": "table",
+        "name": "*",
+        "line": 292,
+        "context": "nt         .from('password_reset_tokens')         .select('*')         .eq('user_id', 'different-use"
+      },
+      {
+        "file": "tests/integration/database.test.js",
+        "type": "table",
+        "name": "workflow_templates",
+        "line": 32,
+        "context": "}\r     if (testWorkflowTemplateId) {\r       await supabase.from('workflow_templates').delete().eq('i"
+      },
+      {
+        "file": "tests/integration/database.test.js",
+        "type": "table",
+        "name": "business_types",
+        "line": 35,
+        "context": "}\r     if (testBusinessTypeId) {\r       await supabase.from('business_types').delete().eq('id',"
+      },
+      {
+        "file": "tests/integration/database.test.js",
+        "type": "table",
+        "name": "business_types",
+        "line": 53,
+        "context": "const { data, error } = await supabase\r         .from('business_types')\r         .insert(businessTy"
+      },
+      {
+        "file": "tests/integration/database.test.js",
+        "type": "table",
+        "name": "business_types",
+        "line": 75,
+        "context": "const { error } = await supabase\r         .from('business_types')\r         .insert(duplicateD"
+      },
+      {
+        "file": "tests/integration/database.test.js",
+        "type": "table",
+        "name": "business_types",
+        "line": 84,
+        "context": "const { data, error } = await supabase\r         .from('business_types')\r         .update({ is_activ"
+      },
+      {
+        "file": "tests/integration/database.test.js",
+        "type": "table",
+        "name": "business_types",
+        "line": 95,
+        "context": "e for other tests\r       await supabase\r         .from('business_types')\r         .update({ is_activ"
+      },
+      {
+        "file": "tests/integration/database.test.js",
+        "type": "table",
+        "name": "business_types",
+        "line": 117,
+        "context": "const { data, error } = await supabase\r         .from('business_types')\r         .select('default_c"
+      },
+      {
+        "file": "tests/integration/database.test.js",
+        "type": "table",
+        "name": "workflow_templates",
+        "line": 163,
+        "context": "const { data, error } = await supabase\r         .from('workflow_templates')\r         .insert(templa"
+      },
+      {
+        "file": "tests/integration/database.test.js",
+        "type": "table",
+        "name": "workflow_templates",
+        "line": 185,
+        "context": "const { error } = await supabase\r         .from('workflow_templates')\r         .insert(invali"
+      },
+      {
+        "file": "tests/integration/database.test.js",
+        "type": "table",
+        "name": "workflow_templates",
+        "line": 210,
+        "context": "const { data, error } = await supabase\r         .from('workflow_templates')\r         .select('templ"
+      },
+      {
+        "file": "tests/integration/database.test.js",
+        "type": "table",
+        "name": "users",
+        "line": 225,
+        "context": "const { data, error } = await supabase\r         .from('users')\r         .update({ business_type_id:"
+      },
+      {
+        "file": "tests/integration/database.test.js",
+        "type": "table",
+        "name": "users",
+        "line": 237,
+        "context": "const { data, error } = await supabase\r         .from('users')\r         .select(`\r           id,"
+      },
+      {
+        "file": "tests/integration/database.test.js",
+        "type": "table",
+        "name": "users",
+        "line": 261,
+        "context": "s_type_id to NULL\r       await supabase\r         .from('users')\r         .update({ business_type_id:"
+      },
+      {
+        "file": "tests/integration/database.test.js",
+        "type": "table",
+        "name": "users",
+        "line": 266,
+        "context": "const { data, error } = await supabase\r         .from('users')\r         .select(`\r           id,"
+      },
+      {
+        "file": "tests/integration/database.test.js",
+        "type": "table",
+        "name": "users",
+        "line": 285,
+        "context": "e for other tests\r       await supabase\r         .from('users')\r         .update({ business_type_id:"
+      },
+      {
+        "file": "tests/integration/database.test.js",
+        "type": "table",
+        "name": "password_reset_tokens",
+        "line": 314,
+        "context": "data: tokens, error } = await supabase\r         .from('password_reset_tokens')\r         .select('*'"
+      },
+      {
+        "file": "tests/integration/database.test.js",
+        "type": "table",
+        "name": "password_reset_tokens",
+        "line": 327,
+        "context": "st { data: tokenData } = await supabase\r         .from('password_reset_tokens')\r         .select('to"
+      },
+      {
+        "file": "tests/integration/database.test.js",
+        "type": "table",
+        "name": "business_types",
+        "line": 370,
+        "context": "const { data, error } = await supabase\r         .from('business_types')\r         .select('*')"
+      },
+      {
+        "file": "tests/integration/database.test.js",
+        "type": "table",
+        "name": "password_reset_tokens",
+        "line": 384,
+        "context": "onst { data, error } = await userClient\r         .from('password_reset_tokens')\r         .select('*'"
+      },
+      {
+        "file": "tests/integration/database.test.js",
+        "type": "table",
+        "name": "users",
+        "line": 412,
+        "context": "const { data, error } = await supabase\r         .from('users')\r         .select(`\r           id,"
+      },
+      {
+        "file": "tests/integration/database.test.js",
+        "type": "rpc",
+        "name": "get_active_business_types",
+        "line": 102,
+        "context": "const { data, error } = await supabase\r         .rpc('get_active_business_types');\r \r       expect("
+      },
+      {
+        "file": "tests/integration/database.test.js",
+        "type": "rpc",
+        "name": "get_active_business_types",
+        "line": 399,
+        "context": "const { data, error } = await supabase\r         .rpc('get_active_business_types');\r       \r       c"
+      },
+      {
+        "file": "tests/integration/database.test.js",
+        "type": "table",
+        "name": "default_categories",
+        "line": 118,
+        "context": "upabase\r         .from('business_types')\r         .select('default_categories')\r         .eq('id', t"
+      },
+      {
+        "file": "tests/integration/database.test.js",
+        "type": "table",
+        "name": "template_json",
+        "line": 211,
+        "context": "ase\r         .from('workflow_templates')\r         .select('template_json')\r         .eq('id', testWo"
+      },
+      {
+        "file": "tests/integration/database.test.js",
+        "type": "table",
+        "name": "\r\n          id,\r\n          email,\r\n          business_type_id,\r\n          business_types (\r\n            id,\r\n            name,\r\n            slug,\r\n            default_categories\r\n          )\r\n        ",
+        "line": 238,
+        "context": "= await supabase\r         .from('users')\r         .select(`\r           id,\r           email,"
+      },
+      {
+        "file": "tests/integration/database.test.js",
+        "type": "table",
+        "name": "\r\n          id,\r\n          email,\r\n          business_type_id,\r\n          business_types (\r\n            id,\r\n            name\r\n          )\r\n        ",
+        "line": 267,
+        "context": "= await supabase\r         .from('users')\r         .select(`\r           id,\r           email,"
+      },
+      {
+        "file": "tests/integration/database.test.js",
+        "type": "table",
+        "name": "*",
+        "line": 315,
+        "context": ".from('password_reset_tokens')\r         .select('*')\r         .eq('id', testTokenId)"
+      },
+      {
+        "file": "tests/integration/database.test.js",
+        "type": "table",
+        "name": "token",
+        "line": 328,
+        "context": ".from('password_reset_tokens')\r         .select('token')\r         .eq('id', testTokenId)"
+      },
+      {
+        "file": "tests/integration/database.test.js",
+        "type": "table",
+        "name": "*",
+        "line": 371,
+        "context": "upabase\r         .from('business_types')\r         .select('*')\r         .eq('is_active', true);"
+      },
+      {
+        "file": "tests/integration/database.test.js",
+        "type": "table",
+        "name": "*",
+        "line": 385,
+        "context": ".from('password_reset_tokens')\r         .select('*')\r         .eq('user_id', testUserId);"
+      },
+      {
+        "file": "tests/integration/database.test.js",
+        "type": "table",
+        "name": "\r\n          id,\r\n          email,\r\n          business_types (name, slug)\r\n        ",
+        "line": 413,
+        "context": "= await supabase\r         .from('users')\r         .select(`\r           id,\r           email,"
+      },
+      {
+        "file": "tests/setup/database.setup.js",
+        "type": "table",
+        "name": "users",
+        "line": 33,
+        "context": "const { data, error } = await supabase       .from('users')       .select('count')       .limit("
+      },
+      {
+        "file": "tests/setup/database.setup.js",
+        "type": "table",
+        "name": "users",
+        "line": 66,
+        "context": "estEmailPatterns) {       await supabase         .from('users')         .delete()         .eq('email"
+      },
+      {
+        "file": "tests/setup/database.setup.js",
+        "type": "table",
+        "name": "count",
+        "line": 34,
+        "context": "ror } = await supabase       .from('users')       .select('count')       .limit(1);          if (err"
+      },
+      {
+        "file": "tests/utils/rest-api-test-helpers.js",
+        "type": "table",
+        "name": "users",
+        "line": 175,
+        "context": "result = await client.getAdminClient()           .from('users')           .select('count')"
+      },
+      {
+        "file": "tests/utils/rest-api-test-helpers.js",
+        "type": "table",
+        "name": "count",
+        "line": 176,
+        "context": "tAdminClient()           .from('users')           .select('count')           .limit(1);"
+      },
+      {
+        "file": "tests/utils/supabaseTest.js",
+        "type": "table",
+        "name": "profiles",
+        "line": 80,
+        "context": "r: profileError } = await this.supabase\r         .from('profiles')\r         .upsert({\r           id:"
+      },
+      {
+        "file": "tests/utils/supabaseTest.js",
+        "type": "rpc",
+        "name": "reset_policies",
+        "line": 194,
+        "context": "RLSPolicies() {\r     const { error } = await this.supabase.rpc('reset_policies');\r     if (error) th"
+      },
+      {
+        "file": "tests/utils/testServer.js",
+        "type": "table",
+        "name": "profiles",
+        "line": 132,
+        "context": "r: profileError } = await this.supabase\r         .from('profiles')\r         .select('*')\r         .e"
+      },
+      {
+        "file": "tests/utils/testServer.js",
+        "type": "table",
+        "name": "companies",
+        "line": 171,
+        "context": "companiesError } = await this.supabase\r         .from('companies')\r         .select('*')\r         ."
+      },
+      {
+        "file": "tests/utils/testServer.js",
+        "type": "table",
+        "name": "invitations",
+        "line": 218,
+        "context": "or: inviteError } = await this.supabase\r         .from('invitations')\r         .insert({"
+      },
+      {
+        "file": "tests/utils/testServer.js",
+        "type": "table",
+        "name": "invitations",
+        "line": 256,
+        "context": "or: inviteError } = await this.supabase\r         .from('invitations')\r         .select('*')"
+      },
+      {
+        "file": "tests/utils/testServer.js",
+        "type": "table",
+        "name": "invitations",
+        "line": 278,
+        "context": "or: inviteError } = await this.supabase\r         .from('invitations')\r         .select('*')"
+      },
+      {
+        "file": "tests/utils/testServer.js",
+        "type": "table",
+        "name": "invitations",
+        "line": 293,
+        "context": "or: updateError } = await this.supabase\r         .from('invitations')\r         .update({ status: 'ac"
+      },
+      {
+        "file": "tests/utils/testServer.js",
+        "type": "table",
+        "name": "invitations",
+        "line": 323,
+        "context": "or: deleteError } = await this.supabase\r         .from('invitations')\r         .delete()\r         .e"
+      },
+      {
+        "file": "tests/utils/testServer.js",
+        "type": "table",
+        "name": "*",
+        "line": 133,
+        "context": "this.supabase\r         .from('profiles')\r         .select('*')\r         .eq('id', user.id)"
+      },
+      {
+        "file": "tests/utils/testServer.js",
+        "type": "table",
+        "name": "*",
+        "line": 172,
+        "context": "his.supabase\r         .from('companies')\r         .select('*')\r         .eq('user_id', user.id);"
+      },
+      {
+        "file": "tests/utils/testServer.js",
+        "type": "table",
+        "name": "*",
+        "line": 257,
+        "context": "s.supabase\r         .from('invitations')\r         .select('*')\r         .eq('company_id', companyId)"
+      },
+      {
+        "file": "tests/utils/testServer.js",
+        "type": "table",
+        "name": "*",
+        "line": 279,
+        "context": "s.supabase\r         .from('invitations')\r         .select('*')\r         .eq('id', id)\r         .eq('"
+      },
+      {
+        "file": "backend/node_modules/safer-buffer/tests.js",
+        "type": "table",
+        "name": "string",
+        "line": 158,
+        "context": "'')))     t.ok(buffer.Buffer.isBuffer(impl.Buffer.from('string')))     t.ok(buffer.Buffer.isBuffer(i"
+      },
+      {
+        "file": "backend/node_modules/safer-buffer/tests.js",
+        "type": "table",
+        "name": "string",
+        "line": 181,
+        "context": "nstructor, buffer.Buffer)     t.equal(impl.Buffer.from('string').constructor, buffer.Buffer)     t.e"
+      },
+      {
+        "file": "backend/node_modules/safer-buffer/tests.js",
+        "type": "table",
+        "name": "string",
+        "line": 254,
+        "context": "uffer.from('').length, 0)     t.equal(impl.Buffer.from('string').length, 6)     t.equal(impl.Buffer."
+      },
+      {
+        "file": "backend/node_modules/safer-buffer/tests.js",
+        "type": "table",
+        "name": "ooooo",
+        "line": 372,
+        "context": "epEqual(index.Buffer.alloc(5, 'ok'), index.Buffer.from('ooooo'))   } else {     t.deepEqual(index.Bu"
+      },
+      {
+        "file": "backend/node_modules/safer-buffer/tests.js",
+        "type": "table",
+        "name": "okoko",
+        "line": 374,
+        "context": "epEqual(index.Buffer.alloc(5, 'ok'), index.Buffer.from('okoko'))   }   t.notDeepEqual(index.Buffer.a"
+      },
+      {
+        "file": "backend/node_modules/safer-buffer/tests.js",
+        "type": "table",
+        "name": "kokok",
+        "line": 376,
+        "context": "epEqual(index.Buffer.alloc(5, 'ok'), index.Buffer.from('kokok'))    t.end() })  test('safer.Buffer.f"
+      },
+      {
+        "file": "backend/node_modules/safer-buffer/tests.js",
+        "type": "table",
+        "name": "string",
+        "line": 384,
+        "context": "ew buffer.Buffer(''))     t.deepEqual(impl.Buffer.from('string'), new buffer.Buffer('string'))     t"
+      },
+      {
+        "file": "backend/node_modules/safer-buffer/tests.js",
+        "type": "table",
+        "name": "string",
+        "line": 399,
+        "context": "(impl.Buffer.from('string', 'utf-8'), impl.Buffer.from('string'))     t.deepEqual(impl.Buffer.from('"
+      },
+      {
+        "file": "backend/node_modules/safer-buffer/tests.js",
+        "type": "table",
+        "name": "string",
+        "line": 400,
+        "context": "uffer.from('string'))     t.deepEqual(impl.Buffer.from('string'), impl.Buffer.from([115, 116, 114, 1"
+      },
+      {
+        "file": "backend/node_modules/safer-buffer/tests.js",
+        "type": "table",
+        "name": "string",
+        "line": 401,
+        "context": "114, 105, 110, 103]))     t.deepEqual(impl.Buffer.from('string'), impl.Buffer.from(impl.Buffer.from("
+      },
+      {
+        "file": "backend/node_modules/safer-buffer/tests.js",
+        "type": "table",
+        "name": "string",
+        "line": 401,
+        "context": "ffer.from('string'), impl.Buffer.from(impl.Buffer.from('string')))     t.deepEqual(impl.Buffer.from("
+      },
+      {
+        "file": "backend/node_modules/safer-buffer/tests.js",
+        "type": "table",
+        "name": "onetwothree",
+        "line": 402,
+        "context": "r.from('b25ldHdvdGhyZWU=', 'base64'), impl.Buffer.from('onetwothree'))     t.notDeepEqual(impl.Buffe"
+      },
+      {
+        "file": "backend/node_modules/safer-buffer/tests.js",
+        "type": "table",
+        "name": "onetwothree",
+        "line": 403,
+        "context": "impl.Buffer.from('b25ldHdvdGhyZWU='), impl.Buffer.from('onetwothree'))   })   t.end() })"
+      },
+      {
+        "file": "frontend/node_modules/safer-buffer/tests.js",
+        "type": "table",
+        "name": "string",
+        "line": 158,
+        "context": "'')))     t.ok(buffer.Buffer.isBuffer(impl.Buffer.from('string')))     t.ok(buffer.Buffer.isBuffer(i"
+      },
+      {
+        "file": "frontend/node_modules/safer-buffer/tests.js",
+        "type": "table",
+        "name": "string",
+        "line": 181,
+        "context": "nstructor, buffer.Buffer)     t.equal(impl.Buffer.from('string').constructor, buffer.Buffer)     t.e"
+      },
+      {
+        "file": "frontend/node_modules/safer-buffer/tests.js",
+        "type": "table",
+        "name": "string",
+        "line": 254,
+        "context": "uffer.from('').length, 0)     t.equal(impl.Buffer.from('string').length, 6)     t.equal(impl.Buffer."
+      },
+      {
+        "file": "frontend/node_modules/safer-buffer/tests.js",
+        "type": "table",
+        "name": "ooooo",
+        "line": 372,
+        "context": "epEqual(index.Buffer.alloc(5, 'ok'), index.Buffer.from('ooooo'))   } else {     t.deepEqual(index.Bu"
+      },
+      {
+        "file": "frontend/node_modules/safer-buffer/tests.js",
+        "type": "table",
+        "name": "okoko",
+        "line": 374,
+        "context": "epEqual(index.Buffer.alloc(5, 'ok'), index.Buffer.from('okoko'))   }   t.notDeepEqual(index.Buffer.a"
+      },
+      {
+        "file": "frontend/node_modules/safer-buffer/tests.js",
+        "type": "table",
+        "name": "kokok",
+        "line": 376,
+        "context": "epEqual(index.Buffer.alloc(5, 'ok'), index.Buffer.from('kokok'))    t.end() })  test('safer.Buffer.f"
+      },
+      {
+        "file": "frontend/node_modules/safer-buffer/tests.js",
+        "type": "table",
+        "name": "string",
+        "line": 384,
+        "context": "ew buffer.Buffer(''))     t.deepEqual(impl.Buffer.from('string'), new buffer.Buffer('string'))     t"
+      },
+      {
+        "file": "frontend/node_modules/safer-buffer/tests.js",
+        "type": "table",
+        "name": "string",
+        "line": 399,
+        "context": "(impl.Buffer.from('string', 'utf-8'), impl.Buffer.from('string'))     t.deepEqual(impl.Buffer.from('"
+      },
+      {
+        "file": "frontend/node_modules/safer-buffer/tests.js",
+        "type": "table",
+        "name": "string",
+        "line": 400,
+        "context": "uffer.from('string'))     t.deepEqual(impl.Buffer.from('string'), impl.Buffer.from([115, 116, 114, 1"
+      },
+      {
+        "file": "frontend/node_modules/safer-buffer/tests.js",
+        "type": "table",
+        "name": "string",
+        "line": 401,
+        "context": "114, 105, 110, 103]))     t.deepEqual(impl.Buffer.from('string'), impl.Buffer.from(impl.Buffer.from("
+      },
+      {
+        "file": "frontend/node_modules/safer-buffer/tests.js",
+        "type": "table",
+        "name": "string",
+        "line": 401,
+        "context": "ffer.from('string'), impl.Buffer.from(impl.Buffer.from('string')))     t.deepEqual(impl.Buffer.from("
+      },
+      {
+        "file": "frontend/node_modules/safer-buffer/tests.js",
+        "type": "table",
+        "name": "onetwothree",
+        "line": 402,
+        "context": "r.from('b25ldHdvdGhyZWU=', 'base64'), impl.Buffer.from('onetwothree'))     t.notDeepEqual(impl.Buffe"
+      },
+      {
+        "file": "frontend/node_modules/safer-buffer/tests.js",
+        "type": "table",
+        "name": "onetwothree",
+        "line": 403,
+        "context": "impl.Buffer.from('b25ldHdvdGhyZWU='), impl.Buffer.from('onetwothree'))   })   t.end() })"
+      },
+      {
+        "file": "backend/node_modules/@types/node/buffer.buffer.d.ts",
+        "type": "table",
+        "name": "buffer",
+        "line": 369,
+        "context": "*              * const buf = Buffer.from('buffer');              *              * cons"
+      },
+      {
+        "file": "backend/node_modules/@types/node/buffer.buffer.d.ts",
+        "type": "table",
+        "name": "buffer",
+        "line": 434,
+        "context": "*              * const buf = Buffer.from('buffer');              *              * cons"
+      },
+      {
+        "file": "backend/node_modules/@types/node/buffer.d.ts",
+        "type": "table",
+        "name": "foo",
+        "line": 272,
+        "context": ")); // true              * Buffer.isBuffer(Buffer.from('foo')); // true              * Buffer.isBuff"
+      },
+      {
+        "file": "backend/node_modules/@types/node/buffer.d.ts",
+        "type": "table",
+        "name": "1234",
+        "line": 342,
+        "context": "*              * const buf1 = Buffer.from('1234');              * const buf2 = Buffer.f"
+      },
+      {
+        "file": "backend/node_modules/@types/node/buffer.d.ts",
+        "type": "table",
+        "name": "0123",
+        "line": 343,
+        "context": ".from('1234');              * const buf2 = Buffer.from('0123');              * const arr = [buf1, bu"
+      },
+      {
+        "file": "backend/node_modules/@types/node/buffer.d.ts",
+        "type": "table",
+        "name": "ABC",
+        "line": 473,
+        "context": "*              * const buf1 = Buffer.from('ABC');              * const buf2 = Buffer.fr"
+      },
+      {
+        "file": "backend/node_modules/@types/node/buffer.d.ts",
+        "type": "table",
+        "name": "ABCD",
+        "line": 475,
+        "context": "4243', 'hex');              * const buf3 = Buffer.from('ABCD');              *              * consol"
+      },
+      {
+        "file": "backend/node_modules/@types/node/buffer.d.ts",
+        "type": "table",
+        "name": "ABC",
+        "line": 497,
+        "context": "*              * const buf1 = Buffer.from('ABC');              * const buf2 = Buffer.fr"
+      },
+      {
+        "file": "backend/node_modules/@types/node/buffer.d.ts",
+        "type": "table",
+        "name": "BCD",
+        "line": 498,
+        "context": "r.from('ABC');              * const buf2 = Buffer.from('BCD');              * const buf3 = Buffer.fr"
+      },
+      {
+        "file": "backend/node_modules/@types/node/buffer.d.ts",
+        "type": "table",
+        "name": "ABCD",
+        "line": 499,
+        "context": "r.from('BCD');              * const buf3 = Buffer.from('ABCD');              *              * consol"
+      },
+      {
+        "file": "backend/node_modules/@types/node/buffer.d.ts",
+        "type": "table",
+        "name": "abcdef",
+        "line": 1751,
+        "context": "';              *              * const b = Buffer.from('abcdef');              *              * // P"
+      },
+      {
+        "file": "backend/node_modules/@types/node/buffer.d.ts",
+        "type": "table",
+        "name": "buffer",
+        "line": 1789,
+        "context": "* console.log(buf.lastIndexOf(Buffer.from('buffer')));              * // Prints: 17"
+      },
+      {
+        "file": "backend/node_modules/@types/node/buffer.d.ts",
+        "type": "table",
+        "name": "yolo",
+        "line": 1793,
+        "context": "* console.log(buf.lastIndexOf(Buffer.from('yolo')));              * // Prints: -1"
+      },
+      {
+        "file": "backend/node_modules/@types/node/buffer.d.ts",
+        "type": "table",
+        "name": "abcdef",
+        "line": 1818,
+        "context": "';              *              * const b = Buffer.from('abcdef');              *              * // P"
+      },
+      {
+        "file": "backend/node_modules/@types/node/crypto.d.ts",
+        "type": "table",
+        "name": "one",
+        "line": 368,
+        "context": "= createHash('sha256');          *          * hash.update('one');          * console.log(hash.copy()"
+      },
+      {
+        "file": "backend/node_modules/@types/node/crypto.d.ts",
+        "type": "table",
+        "name": "two",
+        "line": 371,
+        "context": ".copy().digest('hex'));          *          * hash.update('two');          * console.log(hash.copy()"
+      },
+      {
+        "file": "backend/node_modules/@types/node/crypto.d.ts",
+        "type": "table",
+        "name": "three",
+        "line": 374,
+        "context": ".copy().digest('hex'));          *          * hash.update('three');          * console.log(hash.copy"
+      },
+      {
+        "file": "backend/node_modules/@types/node/dgram.d.ts",
+        "type": "table",
+        "name": "bytes",
+        "line": 323,
+        "context": "fer.from('Some ');          * const buf2 = Buffer.from('bytes');          * const client = dgram.cre"
+      },
+      {
+        "file": "backend/node_modules/@types/node/http2.d.ts",
+        "type": "table",
+        "name": "abcdefgh",
+        "line": 773,
+        "context": "*          * ```js          * session.ping(Buffer.from('abcdefgh'), (err, duration, payload) => {"
+      },
+      {
+        "file": "backend/node_modules/express/lib/response.js",
+        "type": "table",
+        "name": "wahoo",
+        "line": 103,
+        "context": "sponse.  *  * Examples:  *  *     res.send(Buffer.from('wahoo'));  *     res.send({ some: 'json' });"
+      },
+      {
+        "file": "backend/node_modules/ioredis/built/Redis.js",
+        "type": "table",
+        "name": "OK",
+        "line": 368,
+        "context": "connect();                 command.resolve(Buffer.from(\"OK\"));                 return command.promis"
+      },
+      {
+        "file": "backend/node_modules/json-buffer/test/index.js",
+        "type": "table",
+        "name": "foo",
+        "line": 21,
+        "context": "ean: true,     boolean2: false   },   foo: Buffer.from('foo'),   foo2: Buffer.from('foo2'),   escape"
+      },
+      {
+        "file": "backend/node_modules/json-buffer/test/index.js",
+        "type": "table",
+        "name": "foo2",
+        "line": 22,
+        "context": "se   },   foo: Buffer.from('foo'),   foo2: Buffer.from('foo2'),   escape: {     buffer: Buffer.from("
+      },
+      {
+        "file": "backend/node_modules/json-buffer/test/index.js",
+        "type": "table",
+        "name": "x",
+        "line": 24,
+        "context": "ffer.from('foo2'),   escape: {     buffer: Buffer.from('x'),     string: _JSON.stringify(Buffer.from"
+      },
+      {
+        "file": "backend/node_modules/json-buffer/test/index.js",
+        "type": "table",
+        "name": "x",
+        "line": 25,
+        "context": "fer.from('x'),     string: _JSON.stringify(Buffer.from('x'))   },   escape2: {     buffer: Buffer.fr"
+      },
+      {
+        "file": "backend/node_modules/json-buffer/test/index.js",
+        "type": "table",
+        "name": "x",
+        "line": 28,
+        "context": "r.from('x'))   },   escape2: {     buffer: Buffer.from('x'),     string: ':base64:'+ Buffer.from('x'"
+      },
+      {
+        "file": "backend/node_modules/json-buffer/test/index.js",
+        "type": "table",
+        "name": "x",
+        "line": 29,
+        "context": "Buffer.from('x'),     string: ':base64:'+ Buffer.from('x').toString('base64')   },   undefined: {"
+      },
+      {
+        "file": "backend/node_modules/node-fetch-native/dist/proxy.cjs",
+        "type": "table",
+        "name": "--",
+        "line": 2,
+        "context": "ta; name=\"'),r=Buffer.from(\"; filename\"),o=Buffer.from(\"--\"),N=Buffer.from(`--\\r `);function l(q){fo"
+      },
+      {
+        "file": "backend/node_modules/object-inspect/example/all.js",
+        "type": "table",
+        "name": "abc",
+        "line": 17,
+        "context": "e: {         regex: /^x/i,         buf: Buffer.from('abc'),         holes: holes     },     now:"
+      },
+      {
+        "file": "backend/node_modules/pg-protocol/dist/outbound-serializer.test.js",
+        "type": "table",
+        "name": "1",
+        "line": 111,
+        "context": ".addInt32(1)                 .add(Buffer.from('1'))                 .addInt32(2)"
+      },
+      {
+        "file": "backend/node_modules/pg-protocol/dist/outbound-serializer.test.js",
+        "type": "table",
+        "name": "hi",
+        "line": 113,
+        "context": ".addInt32(2)                 .add(Buffer.from('hi'))                 .addInt32(-1)"
+      },
+      {
+        "file": "backend/node_modules/pg-protocol/dist/outbound-serializer.test.js",
+        "type": "table",
+        "name": "zing",
+        "line": 116,
+        "context": ".addInt32(4)                 .add(Buffer.from('zing'))                 .addInt16(1)"
+      },
+      {
+        "file": "backend/node_modules/pg-protocol/dist/outbound-serializer.test.js",
+        "type": "table",
+        "name": "1",
+        "line": 164,
+        "context": ".addInt32(1)             .add(Buffer.from('1'))             .addInt32(2)             .a"
+      },
+      {
+        "file": "backend/node_modules/pg-protocol/dist/outbound-serializer.test.js",
+        "type": "table",
+        "name": "hi",
+        "line": 166,
+        "context": ".addInt32(2)             .add(Buffer.from('hi'))             .addInt32(-1)"
+      },
+      {
+        "file": "backend/node_modules/pg-protocol/src/outbound-serializer.test.ts",
+        "type": "table",
+        "name": "1",
+        "line": 121,
+        "context": "Int16(4)         .addInt32(1)         .add(Buffer.from('1'))         .addInt32(2)         .add(Buffe"
+      },
+      {
+        "file": "backend/node_modules/pg-protocol/src/outbound-serializer.test.ts",
+        "type": "table",
+        "name": "hi",
+        "line": 123,
+        "context": "om('1'))         .addInt32(2)         .add(Buffer.from('hi'))         .addInt32(-1)         .addInt3"
+      },
+      {
+        "file": "backend/node_modules/pg-protocol/src/outbound-serializer.test.ts",
+        "type": "table",
+        "name": "zing",
+        "line": 126,
+        "context": "nt32(-1)         .addInt32(4)         .add(Buffer.from('zing'))         .addInt16(1)         .addInt"
+      },
+      {
+        "file": "backend/node_modules/pg-protocol/src/outbound-serializer.test.ts",
+        "type": "table",
+        "name": "1",
+        "line": 176,
+        "context": ".addInt16(4)       .addInt32(1)       .add(Buffer.from('1'))       .addInt32(2)       .add(Buffer.fr"
+      },
+      {
+        "file": "backend/node_modules/pg-protocol/src/outbound-serializer.test.ts",
+        "type": "table",
+        "name": "hi",
+        "line": 178,
+        "context": "r.from('1'))       .addInt32(2)       .add(Buffer.from('hi'))       .addInt32(-1)       .addInt32(4)"
+      },
+      {
+        "file": "backend/node_modules/qs/test/parse.js",
+        "type": "table",
+        "name": "test",
+        "line": 413,
+        "context": "tly', function (st) {         var b = SaferBuffer.from('test');         st.deepEqual(qs.parse({ a: b"
+      },
+      {
+        "file": "backend/node_modules/qs/test/stringify.js",
+        "type": "table",
+        "name": "test",
+        "line": 720,
+        "context": "{         st.equal(qs.stringify({ a: SaferBuffer.from('test') }), 'a=test');         st.equal(qs.st"
+      },
+      {
+        "file": "backend/node_modules/qs/test/stringify.js",
+        "type": "table",
+        "name": "test",
+        "line": 721,
+        "context": "st.equal(qs.stringify({ a: { b: SaferBuffer.from('test') } }), 'a%5Bb%5D=test');         st.en"
+      },
+      {
+        "file": "backend/node_modules/qs/test/utils.js",
+        "type": "table",
+        "name": "abc",
+        "line": 130,
+        "context": "ot a buffer');      var saferBuffer = SaferBuffer.from('abc');     t.equal(utils.isBuffer(saferBuffe"
+      },
+      {
+        "file": "backend/node_modules/qs/test/utils.js",
+        "type": "table",
+        "name": "abc",
+        "line": 133,
+        "context": "var buffer = Buffer.from && Buffer.alloc ? Buffer.from('abc') : new Buffer('abc');     t.equal(utils"
+      },
+      {
+        "file": "frontend/node_modules/@types/node/buffer.buffer.d.ts",
+        "type": "table",
+        "name": "buffer",
+        "line": 369,
+        "context": "*              * const buf = Buffer.from('buffer');              *              * cons"
+      },
+      {
+        "file": "frontend/node_modules/@types/node/buffer.buffer.d.ts",
+        "type": "table",
+        "name": "buffer",
+        "line": 434,
+        "context": "*              * const buf = Buffer.from('buffer');              *              * cons"
+      },
+      {
+        "file": "frontend/node_modules/@types/node/buffer.d.ts",
+        "type": "table",
+        "name": "foo",
+        "line": 272,
+        "context": ")); // true              * Buffer.isBuffer(Buffer.from('foo')); // true              * Buffer.isBuff"
+      },
+      {
+        "file": "frontend/node_modules/@types/node/buffer.d.ts",
+        "type": "table",
+        "name": "1234",
+        "line": 342,
+        "context": "*              * const buf1 = Buffer.from('1234');              * const buf2 = Buffer.f"
+      },
+      {
+        "file": "frontend/node_modules/@types/node/buffer.d.ts",
+        "type": "table",
+        "name": "0123",
+        "line": 343,
+        "context": ".from('1234');              * const buf2 = Buffer.from('0123');              * const arr = [buf1, bu"
+      },
+      {
+        "file": "frontend/node_modules/@types/node/buffer.d.ts",
+        "type": "table",
+        "name": "ABC",
+        "line": 473,
+        "context": "*              * const buf1 = Buffer.from('ABC');              * const buf2 = Buffer.fr"
+      },
+      {
+        "file": "frontend/node_modules/@types/node/buffer.d.ts",
+        "type": "table",
+        "name": "ABCD",
+        "line": 475,
+        "context": "4243', 'hex');              * const buf3 = Buffer.from('ABCD');              *              * consol"
+      },
+      {
+        "file": "frontend/node_modules/@types/node/buffer.d.ts",
+        "type": "table",
+        "name": "ABC",
+        "line": 497,
+        "context": "*              * const buf1 = Buffer.from('ABC');              * const buf2 = Buffer.fr"
+      },
+      {
+        "file": "frontend/node_modules/@types/node/buffer.d.ts",
+        "type": "table",
+        "name": "BCD",
+        "line": 498,
+        "context": "r.from('ABC');              * const buf2 = Buffer.from('BCD');              * const buf3 = Buffer.fr"
+      },
+      {
+        "file": "frontend/node_modules/@types/node/buffer.d.ts",
+        "type": "table",
+        "name": "ABCD",
+        "line": 499,
+        "context": "r.from('BCD');              * const buf3 = Buffer.from('ABCD');              *              * consol"
+      },
+      {
+        "file": "frontend/node_modules/@types/node/buffer.d.ts",
+        "type": "table",
+        "name": "abcdef",
+        "line": 1751,
+        "context": "';              *              * const b = Buffer.from('abcdef');              *              * // P"
+      },
+      {
+        "file": "frontend/node_modules/@types/node/buffer.d.ts",
+        "type": "table",
+        "name": "buffer",
+        "line": 1789,
+        "context": "* console.log(buf.lastIndexOf(Buffer.from('buffer')));              * // Prints: 17"
+      },
+      {
+        "file": "frontend/node_modules/@types/node/buffer.d.ts",
+        "type": "table",
+        "name": "yolo",
+        "line": 1793,
+        "context": "* console.log(buf.lastIndexOf(Buffer.from('yolo')));              * // Prints: -1"
+      },
+      {
+        "file": "frontend/node_modules/@types/node/buffer.d.ts",
+        "type": "table",
+        "name": "abcdef",
+        "line": 1818,
+        "context": "';              *              * const b = Buffer.from('abcdef');              *              * // P"
+      },
+      {
+        "file": "frontend/node_modules/@types/node/crypto.d.ts",
+        "type": "table",
+        "name": "one",
+        "line": 368,
+        "context": "= createHash('sha256');          *          * hash.update('one');          * console.log(hash.copy()"
+      },
+      {
+        "file": "frontend/node_modules/@types/node/crypto.d.ts",
+        "type": "table",
+        "name": "two",
+        "line": 371,
+        "context": ".copy().digest('hex'));          *          * hash.update('two');          * console.log(hash.copy()"
+      },
+      {
+        "file": "frontend/node_modules/@types/node/crypto.d.ts",
+        "type": "table",
+        "name": "three",
+        "line": 374,
+        "context": ".copy().digest('hex'));          *          * hash.update('three');          * console.log(hash.copy"
+      },
+      {
+        "file": "frontend/node_modules/@types/node/dgram.d.ts",
+        "type": "table",
+        "name": "bytes",
+        "line": 323,
+        "context": "fer.from('Some ');          * const buf2 = Buffer.from('bytes');          * const client = dgram.cre"
+      },
+      {
+        "file": "frontend/node_modules/@types/node/http2.d.ts",
+        "type": "table",
+        "name": "abcdefgh",
+        "line": 773,
+        "context": "*          * ```js          * session.ping(Buffer.from('abcdefgh'), (err, duration, payload) => {"
+      },
+      {
+        "file": "frontend/node_modules/express/lib/response.js",
+        "type": "table",
+        "name": "wahoo",
+        "line": 103,
+        "context": "sponse.  *  * Examples:  *  *     res.send(Buffer.from('wahoo'));  *     res.send({ some: 'json' });"
+      },
+      {
+        "file": "frontend/node_modules/json-buffer/test/index.js",
+        "type": "table",
+        "name": "foo",
+        "line": 21,
+        "context": "ean: true,     boolean2: false   },   foo: Buffer.from('foo'),   foo2: Buffer.from('foo2'),   escape"
+      },
+      {
+        "file": "frontend/node_modules/json-buffer/test/index.js",
+        "type": "table",
+        "name": "foo2",
+        "line": 22,
+        "context": "se   },   foo: Buffer.from('foo'),   foo2: Buffer.from('foo2'),   escape: {     buffer: Buffer.from("
+      },
+      {
+        "file": "frontend/node_modules/json-buffer/test/index.js",
+        "type": "table",
+        "name": "x",
+        "line": 24,
+        "context": "ffer.from('foo2'),   escape: {     buffer: Buffer.from('x'),     string: _JSON.stringify(Buffer.from"
+      },
+      {
+        "file": "frontend/node_modules/json-buffer/test/index.js",
+        "type": "table",
+        "name": "x",
+        "line": 25,
+        "context": "fer.from('x'),     string: _JSON.stringify(Buffer.from('x'))   },   escape2: {     buffer: Buffer.fr"
+      },
+      {
+        "file": "frontend/node_modules/json-buffer/test/index.js",
+        "type": "table",
+        "name": "x",
+        "line": 28,
+        "context": "r.from('x'))   },   escape2: {     buffer: Buffer.from('x'),     string: ':base64:'+ Buffer.from('x'"
+      },
+      {
+        "file": "frontend/node_modules/json-buffer/test/index.js",
+        "type": "table",
+        "name": "x",
+        "line": 29,
+        "context": "Buffer.from('x'),     string: ':base64:'+ Buffer.from('x').toString('base64')   },   undefined: {"
+      },
+      {
+        "file": "frontend/node_modules/object-inspect/example/all.js",
+        "type": "table",
+        "name": "abc",
+        "line": 17,
+        "context": "e: {         regex: /^x/i,         buf: Buffer.from('abc'),         holes: holes     },     now:"
+      },
+      {
+        "file": "frontend/node_modules/qs/test/parse.js",
+        "type": "table",
+        "name": "test",
+        "line": 413,
+        "context": "tly', function (st) {         var b = SaferBuffer.from('test');         st.deepEqual(qs.parse({ a: b"
+      },
+      {
+        "file": "frontend/node_modules/qs/test/stringify.js",
+        "type": "table",
+        "name": "test",
+        "line": 720,
+        "context": "{         st.equal(qs.stringify({ a: SaferBuffer.from('test') }), 'a=test');         st.equal(qs.st"
+      },
+      {
+        "file": "frontend/node_modules/qs/test/stringify.js",
+        "type": "table",
+        "name": "test",
+        "line": 721,
+        "context": "st.equal(qs.stringify({ a: { b: SaferBuffer.from('test') } }), 'a%5Bb%5D=test');         st.en"
+      },
+      {
+        "file": "frontend/node_modules/qs/test/utils.js",
+        "type": "table",
+        "name": "abc",
+        "line": 130,
+        "context": "ot a buffer');      var saferBuffer = SaferBuffer.from('abc');     t.equal(utils.isBuffer(saferBuffe"
+      },
+      {
+        "file": "frontend/node_modules/qs/test/utils.js",
+        "type": "table",
+        "name": "abc",
+        "line": 133,
+        "context": "var buffer = Buffer.from && Buffer.alloc ? Buffer.from('abc') : new Buffer('abc');     t.equal(utils"
+      },
+      {
+        "file": "frontend/node_modules/react-scripts/config/getHttpsConfig.js",
+        "type": "table",
+        "name": "test",
+        "line": 23,
+        "context": "encrypted = crypto.publicEncrypt(cert, Buffer.from('test'));   } catch (err) {     throw new Err"
+      },
+      {
+        "file": "frontend/node_modules/terser-webpack-plugin/dist/index.js",
+        "type": "table",
+        "name": "TerserPlugin",
+        "line": 674,
+        "context": "sh.tap(pluginName, (chunk, hash) => {         hash.update(\"TerserPlugin\");         hash.update(data)"
+      },
+      {
+        "file": "frontend/node_modules/webpack/lib/EvalDevToolModulePlugin.js",
+        "type": "table",
+        "name": "2",
+        "line": 117,
+        "context": "hash) => { \t\t\t\thash.update(PLUGIN_NAME); \t\t\t\thash.update(\"2\"); \t\t\t}); \t\t\tif (compilation.outputOpti"
+      },
+      {
+        "file": "frontend/node_modules/webpack/lib/EvalSourceMapDevToolPlugin.js",
+        "type": "table",
+        "name": "2",
+        "line": 212,
+        "context": "hash) => { \t\t\t\thash.update(PLUGIN_NAME); \t\t\t\thash.update(\"2\"); \t\t\t}); \t\t\tif (compilation.outputOpti"
+      },
+      {
+        "file": "frontend/node_modules/webpack/lib/FileSystemInfo.js",
+        "type": "table",
+        "name": "n",
+        "line": 3567,
+        "context": "st _e of tsEntries) { \t\t\t\t\t\tif (!_e) { \t\t\t\t\t\t\thash.update(\"n\"); \t\t\t\t\t\t\tcontinue; \t\t\t\t\t\t} \t\t\t\t\t\tconst"
+      },
+      {
+        "file": "frontend/node_modules/webpack/lib/FileSystemInfo.js",
+        "type": "table",
+        "name": "f",
+        "line": 3574,
+        "context": "stemInfoEntry} */ (entry).timestamp) { \t\t\t\t\t\t\thash.update(\"f\"); \t\t\t\t\t\t\thash.update( \t\t\t\t\t\t\t\t`${/** @"
+      },
+      {
+        "file": "frontend/node_modules/webpack/lib/FileSystemInfo.js",
+        "type": "table",
+        "name": "d",
+        "line": 3581,
+        "context": "ry} */ (entry).timestampHash \t\t\t\t\t\t) { \t\t\t\t\t\t\thash.update(\"d\"); \t\t\t\t\t\t\thash.update( \t\t\t\t\t\t\t\t`${/** @"
+      },
+      {
+        "file": "frontend/node_modules/webpack/lib/FileSystemInfo.js",
+        "type": "table",
+        "name": "n",
+        "line": 3867,
+        "context": "of results) { \t\t\t\t\t\t\tif (!entry) { \t\t\t\t\t\t\t\ttsHash.update(\"n\"); \t\t\t\t\t\t\t\tcontinue; \t\t\t\t\t\t\t} \t\t\t\t\t\t\tif"
+      },
+      {
+        "file": "frontend/node_modules/webpack/lib/FileSystemInfo.js",
+        "type": "table",
+        "name": "n",
+        "line": 3871,
+        "context": "if (typeof entry === \"string\") { \t\t\t\t\t\t\t\ttsHash.update(\"n\"); \t\t\t\t\t\t\t\thash.update(entry);"
+      },
+      {
+        "file": "frontend/node_modules/webpack/lib/FileSystemInfo.js",
+        "type": "table",
+        "name": "f",
+        "line": 3876,
+        "context": "} \t\t\t\t\t\t\tif (entry.timestamp) { \t\t\t\t\t\t\t\ttsHash.update(\"f\"); \t\t\t\t\t\t\t\ttsHash.update(`${entry.times"
+      },
+      {
+        "file": "frontend/node_modules/webpack/lib/FileSystemInfo.js",
+        "type": "table",
+        "name": "d",
+        "line": 3879,
+        "context": "} else if (entry.timestampHash) { \t\t\t\t\t\t\t\ttsHash.update(\"d\"); \t\t\t\t\t\t\t\ttsHash.update(`${entry.times"
+      },
+      {
+        "file": "frontend/node_modules/webpack/lib/ModuleInfoHeaderPlugin.js",
+        "type": "table",
+        "name": "1",
+        "line": 253,
+        "context": "hash) => { \t\t\t\thash.update(PLUGIN_NAME); \t\t\t\thash.update(\"1\"); \t\t\t}); \t\t\tconst cssHooks = CssModule"
+      },
+      {
+        "file": "frontend/node_modules/webpack/lib/ModuleInfoHeaderPlugin.js",
+        "type": "table",
+        "name": "1",
+        "line": 295,
+        "context": "hash) => { \t\t\t\thash.update(PLUGIN_NAME); \t\t\t\thash.update(\"1\"); \t\t\t}); \t\t}); \t}  \t/** \t * @param {Mo"
+      },
+      {
+        "file": "frontend/node_modules/webpack/lib/NormalModule.js",
+        "type": "table",
+        "name": "source",
+        "line": 1149,
+        "context": "s.hashFunction) \t\t); \t\tif (this._source) { \t\t\thash.update(\"source\"); \t\t\tthis._source.updateHash(hash"
+      },
+      {
+        "file": "frontend/node_modules/webpack/lib/NormalModule.js",
+        "type": "table",
+        "name": "meta",
+        "line": 1152,
+        "context": "ce\"); \t\t\tthis._source.updateHash(hash); \t\t} \t\thash.update(\"meta\"); \t\thash.update(JSON.stringify(this"
+      },
+      {
+        "file": "frontend/node_modules/webpack-sources/lib/ConcatSource.js",
+        "type": "table",
+        "name": "ConcatSource",
+        "line": 292,
+        "context": "if (!this._isOptimized) this._optimize(); \t\thash.update(\"ConcatSource\"); \t\tfor (const item of this"
+      },
+      {
+        "file": "frontend/node_modules/webpack-sources/lib/OriginalSource.js",
+        "type": "table",
+        "name": "OriginalSource",
+        "line": 192,
+        "context": "* @returns {void} \t */ \tupdateHash(hash) { \t\thash.update(\"OriginalSource\"); \t\thash.update(this.buff"
+      },
+      {
+        "file": "frontend/node_modules/webpack-sources/lib/PrefixSource.js",
+        "type": "table",
+        "name": "PrefixSource",
+        "line": 152,
+        "context": "* @returns {void} \t */ \tupdateHash(hash) { \t\thash.update(\"PrefixSource\"); \t\tthis._source.updateHash"
+      },
+      {
+        "file": "frontend/node_modules/webpack-sources/lib/RawSource.js",
+        "type": "table",
+        "name": "RawSource",
+        "line": 131,
+        "context": "* @returns {void} \t */ \tupdateHash(hash) { \t\thash.update(\"RawSource\"); \t\thash.update(this.buffer())"
+      },
+      {
+        "file": "frontend/node_modules/webpack-sources/lib/ReplaceSource.js",
+        "type": "table",
+        "name": "ReplaceSource",
+        "line": 533,
+        "context": "ateHash(hash) { \t\tthis._sortReplacements(); \t\thash.update(\"ReplaceSource\"); \t\tthis._source.updateHas"
+      },
+      {
+        "file": "frontend/node_modules/webpack-sources/lib/SourceMapSource.js",
+        "type": "table",
+        "name": "SourceMapSource",
+        "line": 344,
+        "context": "* @returns {void} \t */ \tupdateHash(hash) { \t\thash.update(\"SourceMapSource\"); \t\thash.update(this.buf"
+      },
+      {
+        "file": "backend/node_modules/@prisma/client/runtime/binary.js",
+        "type": "table",
+        "name": "filename",
+        "line": 7,
+        "context": "?tP,nP=Buffer.from('form-data; name=\"'),AP=Buffer.from(\"filename\"),iP=Buffer.from(\"--\"),sP=Buffer.fr"
+      },
+      {
+        "file": "backend/node_modules/@prisma/client/runtime/binary.js",
+        "type": "table",
+        "name": "--",
+        "line": 7,
+        "context": "ta; name=\"'),AP=Buffer.from(\"filename\"),iP=Buffer.from(\"--\"),sP=Buffer.from(`--\\r `);function oP(t){"
+      },
+      {
+        "file": "backend/node_modules/@prisma/client/runtime/binary.mjs",
+        "type": "table",
+        "name": "filename",
+        "line": 14,
+        "context": "?jv,Xv=Buffer.from('form-data; name=\"'),Kv=Buffer.from(\"filename\"),$v=Buffer.from(\"--\"),zv=Buffer.fr"
+      },
+      {
+        "file": "backend/node_modules/@prisma/client/runtime/binary.mjs",
+        "type": "table",
+        "name": "--",
+        "line": 14,
+        "context": "ta; name=\"'),Kv=Buffer.from(\"filename\"),$v=Buffer.from(\"--\"),zv=Buffer.from(`--\\r `);function eP(t){"
+      },
+      {
+        "file": "backend/node_modules/@supabase/postgrest-js/src/PostgrestBuilder.ts",
+        "type": "table",
+        "name": "users",
+        "line": 264,
+        "context": "ult behavior)    * const query = supabase    *   .from('users')    *   .select()    *   .overrideTyp"
+      },
+      {
+        "file": "backend/node_modules/@supabase/postgrest-js/src/PostgrestBuilder.ts",
+        "type": "table",
+        "name": "users",
+        "line": 270,
+        "context": "letely    * const replaceQuery = supabase    *   .from('users')    *   .select()    *   .overrideTyp"
+      },
+      {
+        "file": "backend/node_modules/@types/node/ts5.6/buffer.buffer.d.ts",
+        "type": "table",
+        "name": "buffer",
+        "line": 366,
+        "context": "*              * const buf = Buffer.from('buffer');              *              * cons"
+      },
+      {
+        "file": "backend/node_modules/@types/node/ts5.6/buffer.buffer.d.ts",
+        "type": "table",
+        "name": "buffer",
+        "line": 431,
+        "context": "*              * const buf = Buffer.from('buffer');              *              * cons"
+      },
+      {
+        "file": "backend/node_modules/ioredis/built/utils/index.d.ts",
+        "type": "table",
+        "name": "foo",
+        "line": 10,
+        "context": "*  * @example  * ```js  * const input = [Buffer.from('foo'), [Buffer.from('bar')]]  * const res ="
+      },
+      {
+        "file": "backend/node_modules/ioredis/built/utils/index.d.ts",
+        "type": "table",
+        "name": "bar",
+        "line": 10,
+        "context": "`js  * const input = [Buffer.from('foo'), [Buffer.from('bar')]]  * const res = convertBufferToString"
+      },
+      {
+        "file": "backend/node_modules/ioredis/built/utils/index.js",
+        "type": "table",
+        "name": "foo",
+        "line": 16,
+        "context": "*  * @example  * ```js  * const input = [Buffer.from('foo'), [Buffer.from('bar')]]  * const res ="
+      },
+      {
+        "file": "backend/node_modules/ioredis/built/utils/index.js",
+        "type": "table",
+        "name": "bar",
+        "line": 16,
+        "context": "`js  * const input = [Buffer.from('foo'), [Buffer.from('bar')]]  * const res = convertBufferToString"
+      },
+      {
+        "file": "backend/node_modules/nodemailer/lib/smtp-connection/data-stream.js",
+        "type": "table",
+        "name": ".",
+        "line": 51,
+        "context": "push(buf);                     chunks.push(Buffer.from('.'));                     chunklen += buf.le"
+      },
+      {
+        "file": "backend/node_modules/pg-protocol/src/testing/test-buffers.ts",
+        "type": "table",
+        "name": "I",
+        "line": 6,
+        "context": "ction () {     return new BufferList().add(Buffer.from('I')).join(true, 'Z')   },    authenticationO"
+      },
+      {
+        "file": "backend/node_modules/prisma/prisma-client/runtime/binary.js",
+        "type": "table",
+        "name": "filename",
+        "line": 7,
+        "context": "?tP,nP=Buffer.from('form-data; name=\"'),AP=Buffer.from(\"filename\"),iP=Buffer.from(\"--\"),sP=Buffer.fr"
+      },
+      {
+        "file": "backend/node_modules/prisma/prisma-client/runtime/binary.js",
+        "type": "table",
+        "name": "--",
+        "line": 7,
+        "context": "ta; name=\"'),AP=Buffer.from(\"filename\"),iP=Buffer.from(\"--\"),sP=Buffer.from(`--\\r `);function oP(t){"
+      },
+      {
+        "file": "backend/node_modules/prisma/prisma-client/runtime/binary.mjs",
+        "type": "table",
+        "name": "filename",
+        "line": 14,
+        "context": "?jv,Xv=Buffer.from('form-data; name=\"'),Kv=Buffer.from(\"filename\"),$v=Buffer.from(\"--\"),zv=Buffer.fr"
+      },
+      {
+        "file": "backend/node_modules/prisma/prisma-client/runtime/binary.mjs",
+        "type": "table",
+        "name": "--",
+        "line": 14,
+        "context": "ta; name=\"'),Kv=Buffer.from(\"filename\"),$v=Buffer.from(\"--\"),zv=Buffer.from(`--\\r `);function eP(t){"
+      },
+      {
+        "file": "frontend/node_modules/@types/node/ts5.6/buffer.buffer.d.ts",
+        "type": "table",
+        "name": "buffer",
+        "line": 366,
+        "context": "*              * const buf = Buffer.from('buffer');              *              * cons"
+      },
+      {
+        "file": "frontend/node_modules/@types/node/ts5.6/buffer.buffer.d.ts",
+        "type": "table",
+        "name": "buffer",
+        "line": 431,
+        "context": "*              * const buf = Buffer.from('buffer');              *              * cons"
+      },
+      {
+        "file": "frontend/node_modules/webpack/lib/asset/AssetGenerator.js",
+        "type": "table",
+        "name": "data-url",
+        "line": 748,
+        "context": "fo} */ \t\t\t(module.buildInfo).dataUrl \t\t) { \t\t\thash.update(\"data-url\"); \t\t\t// this.dataUrlOptions as"
+      },
+      {
+        "file": "frontend/node_modules/webpack/lib/asset/AssetGenerator.js",
+        "type": "table",
+        "name": "resource",
+        "line": 769,
+        "context": "s already part of the hash \t\t\t} \t\t} else { \t\t\thash.update(\"resource\");  \t\t\tconst { module, chunkGrap"
+      },
+      {
+        "file": "frontend/node_modules/webpack/lib/asset/AssetGenerator.js",
+        "type": "table",
+        "name": "path",
+        "line": 785,
+        "context": "(typeof this.publicPath === \"function\") { \t\t\t\thash.update(\"path\"); \t\t\t\tconst assetInfo = {}; \t\t\t\thas"
+      },
+      {
+        "file": "frontend/node_modules/webpack/lib/asset/AssetGenerator.js",
+        "type": "table",
+        "name": "path",
+        "line": 790,
+        "context": "tInfo)); \t\t\t} else if (this.publicPath) { \t\t\t\thash.update(\"path\"); \t\t\t\thash.update(this.publicPath);"
+      },
+      {
+        "file": "frontend/node_modules/webpack/lib/asset/AssetGenerator.js",
+        "type": "table",
+        "name": "no-path",
+        "line": 793,
+        "context": "hash.update(this.publicPath); \t\t\t} else { \t\t\t\thash.update(\"no-path\"); \t\t\t}  \t\t\tconst assetModuleFile"
+      },
+      {
+        "file": "frontend/node_modules/webpack/lib/dependencies/CssIcssExportDependency.js",
+        "type": "table",
+        "name": "exportsConvention",
+        "line": 95,
+        "context": "is._hashUpdate = JSON.stringify(names); \t\t} \t\thash.update(\"exportsConvention\"); \t\thash.update(this._"
+      },
+      {
+        "file": "frontend/node_modules/webpack/lib/dependencies/PureExpressionDependency.js",
+        "type": "table",
+        "name": "null",
+        "line": 77,
+        "context": "} else if (runtimeCondition === false) { \t\t\thash.update(\"null\"); \t\t} else { \t\t\thash.update( \t\t\t\t`$"
+      },
+      {
+        "file": "frontend/node_modules/webpack/lib/javascript/ChunkFormatHelpers.js",
+        "type": "table",
+        "name": "1",
+        "line": 55,
+        "context": "fo(chunk, chunkGraph); \t\thash.update(name); \t\thash.update(\"1\"); \t\tif (runtimeChunk && runtimeChunk.h"
+      },
+      {
+        "file": "frontend/node_modules/webpack/lib/library/AmdLibraryPlugin.js",
+        "type": "table",
+        "name": "AmdLibraryPlugin",
+        "line": 162,
+        "context": "unkHashContext, { options, compilation }) { \t\thash.update(\"AmdLibraryPlugin\"); \t\tif (this.requireAsW"
+      },
+      {
+        "file": "frontend/node_modules/webpack/lib/library/AmdLibraryPlugin.js",
+        "type": "table",
+        "name": "requireAsWrapper",
+        "line": 164,
+        "context": "ryPlugin\"); \t\tif (this.requireAsWrapper) { \t\t\thash.update(\"requireAsWrapper\"); \t\t} else if (options."
+      },
+      {
+        "file": "frontend/node_modules/webpack/lib/library/AmdLibraryPlugin.js",
+        "type": "table",
+        "name": "named",
+        "line": 166,
+        "context": "eAsWrapper\"); \t\t} else if (options.name) { \t\t\thash.update(\"named\"); \t\t\tconst name = compilation.getP"
+      },
+      {
+        "file": "frontend/node_modules/webpack/lib/library/AmdLibraryPlugin.js",
+        "type": "table",
+        "name": "amdContainer",
+        "line": 172,
+        "context": "ame); \t\t} else if (options.amdContainer) { \t\t\thash.update(\"amdContainer\"); \t\t\thash.update(options.am"
+      },
+      {
+        "file": "frontend/node_modules/webpack/lib/library/AssignLibraryPlugin.js",
+        "type": "table",
+        "name": "AssignLibraryPlugin",
+        "line": 411,
+        "context": "unkHashContext, { options, compilation }) { \t\thash.update(\"AssignLibraryPlugin\"); \t\tconst fullNameRe"
+      },
+      {
+        "file": "frontend/node_modules/webpack/lib/library/AssignLibraryPlugin.js",
+        "type": "table",
+        "name": "copy",
+        "line": 418,
+        "context": "ed === \"copy\" : this.unnamed === \"copy\") { \t\t\thash.update(\"copy\"); \t\t} \t\tif (this.declare) { \t\t\thash"
+      },
+      {
+        "file": "frontend/node_modules/webpack/lib/library/JsonpLibraryPlugin.js",
+        "type": "table",
+        "name": "JsonpLibraryPlugin",
+        "line": 84,
+        "context": "unkHashContext, { options, compilation }) { \t\thash.update(\"JsonpLibraryPlugin\"); \t\thash.update(compi"
+      },
+      {
+        "file": "frontend/node_modules/webpack/lib/library/SystemLibraryPlugin.js",
+        "type": "table",
+        "name": "SystemLibraryPlugin",
+        "line": 230,
+        "context": "unkHashContext, { options, compilation }) { \t\thash.update(\"SystemLibraryPlugin\"); \t\tif (options.name"
+      },
+      {
+        "file": "backend/node_modules/@supabase/postgrest-js/dist/cjs/PostgrestBuilder.d.ts",
+        "type": "table",
+        "name": "users",
+        "line": 53,
+        "context": "behavior)      * const query = supabase      *   .from('users')      *   .select()      *   .overrid"
+      },
+      {
+        "file": "backend/node_modules/@supabase/postgrest-js/dist/cjs/PostgrestBuilder.d.ts",
+        "type": "table",
+        "name": "users",
+        "line": 59,
+        "context": "ly      * const replaceQuery = supabase      *   .from('users')      *   .select()      *   .overrid"
+      },
+      {
+        "file": "backend/node_modules/@supabase/postgrest-js/dist/cjs/PostgrestBuilder.js",
+        "type": "table",
+        "name": "users",
+        "line": 205,
+        "context": "behavior)      * const query = supabase      *   .from('users')      *   .select()      *   .overrid"
+      },
+      {
+        "file": "backend/node_modules/@supabase/postgrest-js/dist/cjs/PostgrestBuilder.js",
+        "type": "table",
+        "name": "users",
+        "line": 211,
+        "context": "ly      * const replaceQuery = supabase      *   .from('users')      *   .select()      *   .overrid"
+      },
+      {
+        "file": "frontend/node_modules/webpack-manifest-plugin/node_modules/webpack-sources/lib/ConcatSource.js",
+        "type": "table",
+        "name": "ConcatSource",
+        "line": 144,
+        "context": "if (!this._isOptimized) this._optimize(); \t\thash.update(\"ConcatSource\"); \t\tfor (const item of this"
+      },
+      {
+        "file": "frontend/node_modules/webpack-manifest-plugin/node_modules/webpack-sources/lib/OriginalSource.js",
+        "type": "table",
+        "name": "OriginalSource",
+        "line": 103,
+        "context": "er = Buffer.from(this._value, \"utf-8\"); \t\t} \t\thash.update(\"OriginalSource\"); \t\thash.update(this._val"
+      },
+      {
+        "file": "frontend/node_modules/webpack-manifest-plugin/node_modules/webpack-sources/lib/PrefixSource.js",
+        "type": "table",
+        "name": "PrefixSource",
+        "line": 96,
+        "context": "updatedCode; \t\t}); \t}  \tupdateHash(hash) { \t\thash.update(\"PrefixSource\"); \t\tthis._source.updateHash"
+      },
+      {
+        "file": "frontend/node_modules/webpack-manifest-plugin/node_modules/webpack-sources/lib/RawSource.js",
+        "type": "table",
+        "name": "RawSource",
+        "line": 63,
+        "context": "er = Buffer.from(this._value, \"utf-8\"); \t\t} \t\thash.update(\"RawSource\"); \t\thash.update(this._valueAsB"
+      },
+      {
+        "file": "frontend/node_modules/webpack-manifest-plugin/node_modules/webpack-sources/lib/ReplaceSource.js",
+        "type": "table",
+        "name": "ReplaceSource",
+        "line": 338,
+        "context": "ateHash(hash) { \t\tthis._sortReplacements(); \t\thash.update(\"ReplaceSource\"); \t\tthis._source.updateHas"
+      },
+      {
+        "file": "frontend/node_modules/webpack-manifest-plugin/node_modules/webpack-sources/lib/SourceMapSource.js",
+        "type": "table",
+        "name": "SourceMapSource",
+        "line": 231,
+        "context": "r(); \t\tthis._ensureInnerSourceMapBuffer();  \t\thash.update(\"SourceMapSource\");  \t\thash.update(this._v"
+      },
+      {
+        "file": "backend/node_modules/@redis/client/dist/lib/client/commands-queue.js",
+        "type": "table",
+        "name": "pong",
+        "line": 11,
+        "context": "ors_1 = require(\"../errors\"); const PONG = Buffer.from('pong'), RESET = Buffer.from('RESET'); const"
+      },
+      {
+        "file": "backend/node_modules/@redis/client/dist/lib/client/commands-queue.js",
+        "type": "table",
+        "name": "RESET",
+        "line": 11,
+        "context": "const PONG = Buffer.from('pong'), RESET = Buffer.from('RESET'); const RESP2_PUSH_TYPE_MAPPING = {"
+      },
+      {
+        "file": "backend/node_modules/@redis/client/dist/lib/client/pub-sub.js",
+        "type": "table",
+        "name": "subscribe",
+        "line": 11,
+        "context": "UBSUB_TYPE.CHANNELS]: {         subscribe: Buffer.from('subscribe'),         unsubscribe: Buffer.fro"
+      },
+      {
+        "file": "backend/node_modules/@redis/client/dist/lib/client/pub-sub.js",
+        "type": "table",
+        "name": "unsubscribe",
+        "line": 12,
+        "context": "er.from('subscribe'),         unsubscribe: Buffer.from('unsubscribe'),         message: Buffer.from("
+      },
+      {
+        "file": "backend/node_modules/@redis/client/dist/lib/client/pub-sub.js",
+        "type": "table",
+        "name": "message",
+        "line": 13,
+        "context": "ffer.from('unsubscribe'),         message: Buffer.from('message')     },     [exports.PUBSUB_TYPE.PA"
+      },
+      {
+        "file": "backend/node_modules/@redis/client/dist/lib/client/pub-sub.js",
+        "type": "table",
+        "name": "psubscribe",
+        "line": 16,
+        "context": "UBSUB_TYPE.PATTERNS]: {         subscribe: Buffer.from('psubscribe'),         unsubscribe: Buffer.fr"
+      },
+      {
+        "file": "backend/node_modules/@redis/client/dist/lib/client/pub-sub.js",
+        "type": "table",
+        "name": "punsubscribe",
+        "line": 17,
+        "context": "r.from('psubscribe'),         unsubscribe: Buffer.from('punsubscribe'),         message: Buffer.from"
+      },
+      {
+        "file": "backend/node_modules/@redis/client/dist/lib/client/pub-sub.js",
+        "type": "table",
+        "name": "pmessage",
+        "line": 18,
+        "context": "fer.from('punsubscribe'),         message: Buffer.from('pmessage')     },     [exports.PUBSUB_TYPE.S"
+      },
+      {
+        "file": "backend/node_modules/@redis/client/dist/lib/client/pub-sub.js",
+        "type": "table",
+        "name": "ssubscribe",
+        "line": 21,
+        "context": "PUBSUB_TYPE.SHARDED]: {         subscribe: Buffer.from('ssubscribe'),         unsubscribe: Buffer.fr"
+      },
+      {
+        "file": "backend/node_modules/@redis/client/dist/lib/client/pub-sub.js",
+        "type": "table",
+        "name": "sunsubscribe",
+        "line": 22,
+        "context": "r.from('ssubscribe'),         unsubscribe: Buffer.from('sunsubscribe'),         message: Buffer.from"
+      },
+      {
+        "file": "backend/node_modules/@redis/client/dist/lib/client/pub-sub.js",
+        "type": "table",
+        "name": "smessage",
+        "line": 23,
+        "context": "fer.from('sunsubscribe'),         message: Buffer.from('smessage')     } }; class PubSub {     stati"
+      },
+      {
+        "file": "backend/node_modules/googleapis/build/src/apis/jobs/v3p1beta1.d.ts",
+        "type": "table",
+        "name": "Hawaii",
+        "line": 1206,
+        "context": "cial syntax to order jobs by distance: \"`distance_from('Hawaii')`\": Order by distance from Hawaii. \""
+      },
+      {
+        "file": "backend/node_modules/googleapis/build/src/apis/jobs/v3p1beta1.d.ts",
+        "type": "table",
+        "name": "Hawaii",
+        "line": 1206,
+        "context": ": Order by distance from a coordinate. \"`distance_from('Hawaii'), distance_from('Puerto Rico')`\": Or"
+      },
+      {
+        "file": "backend/node_modules/googleapis/build/src/apis/jobs/v3p1beta1.d.ts",
+        "type": "table",
+        "name": "Hawaii",
+        "line": 1206,
+        "context": "multiple locations. See details below. \"`distance_from('Hawaii'), distance_from(19.89, 155.5)`\": Ord"
+      },
+      {
+        "file": "backend/node_modules/googleapis/build/src/apis/jobs/v4.d.ts",
+        "type": "table",
+        "name": "Hawaii",
+        "line": 1134,
+        "context": "cial syntax to order jobs by distance: `\"distance_from('Hawaii')\"`: Order by distance from Hawaii. `"
+      },
+      {
+        "file": "backend/node_modules/googleapis/build/src/apis/jobs/v4.d.ts",
+        "type": "table",
+        "name": "Hawaii",
+        "line": 1134,
+        "context": ": Order by distance from a coordinate. `\"distance_from('Hawaii'), distance_from('Puerto Rico')\"`: Or"
+      },
+      {
+        "file": "backend/node_modules/googleapis/build/src/apis/jobs/v4.d.ts",
+        "type": "table",
+        "name": "Hawaii",
+        "line": 1134,
+        "context": "multiple locations. See details below. `\"distance_from('Hawaii'), distance_from(19.89, 155.5)\"`: Ord"
+      }
+    ],
+    "stats": {
+      "files_scanned": 47874,
+      "total_files": 47874,
+      "total_hits": 543,
+      "unique_tables": 151,
+      "unique_rpcs": 3,
+      "unique_storage_buckets": 0
+    }
+  }
+}

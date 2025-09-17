@@ -5,7 +5,7 @@
 
 const axios = require('axios');
 
-const BASE_URL = 'https://app.floworx-iq.com';
+const BASE_URL = 'http://localhost:5001';
 const TEST_EMAIL = 'test-email-verification@floworx-iq.com';
 const TEST_PASSWORD = 'TestPassword123!';
 
@@ -163,7 +163,7 @@ async function createManualOAuthTest() {
       `include_granted_scopes=true&` +
       `response_type=code&` +
       `client_id=636568831348-komtul497r7lg9eacu09n1ghtso6revc.apps.googleusercontent.com&` +
-      `redirect_uri=${encodeURIComponent('https://app.floworx-iq.com/api/oauth/google/callback')}`;
+      `redirect_uri=${encodeURIComponent('http://localhost:5001/api/oauth/google/callback')}`;
     
     console.log('\n🔗 **LOCALHOST OAUTH URL FOR TESTING:**');
     console.log('='.repeat(80));

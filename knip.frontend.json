@@ -1,0 +1,22 @@
+{
+  "$schema": "https://unpkg.com/knip@latest/schema.json",
+  "project": ["frontend/src/**/*.{js,jsx}"],
+  "ignore": [
+    "frontend/src/**/__tests__/**",
+    "frontend/src/**/stories/**",
+    "frontend/src/**/test/**",
+    "frontend/build/**",
+    "frontend/public/**",
+    "**/__deprecated__/**"
+  ],
+  "entry": [
+    "frontend/src/index.js",
+    "frontend/src/App.js"
+  ],
+  "ignoreDependencies": [
+    "@testing-library/jest-dom",
+    "@testing-library/react",
+    "@testing-library/user-event",
+    "web-vitals"
+  ]
+}

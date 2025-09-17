@@ -5,7 +5,7 @@
 
 const axios = require('axios');
 
-const BASE_URL = 'https://app.floworx-iq.com';
+const BASE_URL = 'http://localhost:5001';
 const TEST_EMAIL = 'test-email-verification@floworx-iq.com';
 const TEST_PASSWORD = 'TestPassword123!';
 
@@ -47,7 +47,7 @@ async function createLocalhostOAuthTest() {
       `include_granted_scopes=true&` +
       `response_type=code&` +
       `client_id=636568831348-komtul497r7lg9eacu09n1ghtso6revc.apps.googleusercontent.com&` +
-      `redirect_uri=${encodeURIComponent('https://app.floworx-iq.com/api/oauth/google/callback')}`;
+      `redirect_uri=${encodeURIComponent('http://localhost:5001/api/oauth/google/callback')}`;
     
     console.log('✅ Localhost OAuth URL created');
     
@@ -63,19 +63,19 @@ async function createLocalhostOAuthTest() {
     console.log('2. 📝 Paste it into your browser');
     console.log('3. 📧 Sign in with: dizelll2007@gmail.com');
     console.log('4. ✅ Grant the Gmail permissions');
-    console.log('5. 📋 You should be redirected to app.floworx-iq.com');
+    console.log('5. 📋 You should be redirected to localhost:5001');
     console.log('6. 📄 Copy the FULL callback URL from your browser');
     console.log('7. 🧪 Share the callback URL to complete the test');
     
     console.log('\n⚠️  **IMPORTANT NOTES:**');
     console.log('• 🏠 This uses localhost instead of production domain');
-    console.log('• 🔧 Make sure your server is running on app.floworx-iq.com');
+    console.log('• 🔧 Make sure your server is running on localhost:5001');
     console.log('• 📧 Use dizelll2007@gmail.com for testing');
     console.log('• 🔐 The callback URL will contain the authorization code');
     
     console.log('\n🔧 **GOOGLE CONSOLE REQUIREMENT:**');
     console.log('Make sure your Google Console has this redirect URI:');
-    console.log('https://app.floworx-iq.com/api/oauth/google/callback');
+    console.log('http://localhost:5001/api/oauth/google/callback');
     
     return {
       success: true,

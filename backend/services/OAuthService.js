@@ -5,13 +5,12 @@
  */
 
 const { google } = require('googleapis');
-const axios = require('axios');
 const { databaseOperations } = require('../database/database-operations');
 const { encrypt, decrypt } = require('../utils/encryption');
 
 class OAuthService {
   constructor() {
-    this.supportedProviders = ['google', 'microsoft'];
+    this.supportedProviders = ['google'];
     this.scopes = {
       google: [
         'https://www.googleapis.com/auth/userinfo.email',
@@ -19,18 +18,12 @@ class OAuthService {
         'https://www.googleapis.com/auth/gmail.readonly',
         'https://www.googleapis.com/auth/gmail.modify',
         'https://www.googleapis.com/auth/calendar.readonly'
-      ],
-      microsoft: [
-        'User.Read',
-        'Mail.Read',
-        'Mail.ReadWrite',
-        'offline_access'
       ]
     };
   }
 
   // =====================================================
-  // OAUTH CLIENT MANAGEMENT
+  // GOOGLE OAUTH CLIENT MANAGEMENT
   // =====================================================
 
   /**
@@ -74,48 +67,13 @@ class OAuthService {
     );
   }
 
-  /**
-   * Get Microsoft OAuth configuration
-   * @returns {Object} Microsoft OAuth configuration
-   */
-  getMicrosoftOAuthConfig() {
-    // Detailed environment variable validation
-    const requiredVars = {
-      MICROSOFT_CLIENT_ID: process.env.MICROSOFT_CLIENT_ID,
-      MICROSOFT_CLIENT_SECRET: process.env.MICROSOFT_CLIENT_SECRET,
-      MICROSOFT_REDIRECT_URI: process.env.MICROSOFT_REDIRECT_URI
-    };
-
-    const missingVars = Object.entries(requiredVars)
-      .filter(([, value]) => !value)
-      .map(([key]) => key);
-
-    if (missingVars.length > 0) {
-      const errorMsg = `Microsoft OAuth configuration missing: ${missingVars.join(', ')}. ` +
-        'Please configure these environment variables in Coolify.';
-      console.error('❌ Microsoft OAuth Configuration Error:', errorMsg);
-      throw new Error(errorMsg);
-    }
-
-    console.log('✅ Microsoft OAuth configuration validated successfully');
-
-    return {
-      clientId: process.env.MICROSOFT_CLIENT_ID,
-      clientSecret: process.env.MICROSOFT_CLIENT_SECRET,
-      redirectUri: process.env.MICROSOFT_REDIRECT_URI,
-      authority: 'https://login.microsoftonline.com/common',
-      tokenEndpoint: 'https://login.microsoftonline.com/common/oauth2/v2.0/token',
-      authEndpoint: 'https://login.microsoftonline.com/common/oauth2/v2.0/authorize'
-    };
-  }
-
   // =====================================================
   // OAUTH FLOW MANAGEMENT
   // =====================================================
 
   /**
    * Generate OAuth authorization URL
-   * @param {string} provider - OAuth provider (google, microsoft)
+   * @param {string} provider - OAuth provider (google)
    * @param {string} userId - User ID for state parameter
    * @returns {string} Authorization URL
    */
@@ -126,7 +84,7 @@ class OAuthService {
 
     if (provider === 'google') {
       const oauth2Client = this.getGoogleOAuth2Client();
-
+      
       return oauth2Client.generateAuthUrl({
         access_type: 'offline', // Required for refresh token
         scope: this.scopes.google,
@@ -134,22 +92,6 @@ class OAuthService {
         prompt: 'consent', // Force consent to ensure refresh token
         include_granted_scopes: true
       });
-    }
-
-    if (provider === 'microsoft') {
-      const config = this.getMicrosoftOAuthConfig();
-
-      const params = new URLSearchParams({
-        client_id: config.clientId,
-        response_type: 'code',
-        redirect_uri: config.redirectUri,
-        scope: this.scopes.microsoft.join(' '),
-        state: userId,
-        response_mode: 'query',
-        prompt: 'consent' // Force consent to ensure refresh token
-      });
-
-      return `${config.authEndpoint}?${params.toString()}`;
     }
 
     throw new Error(`Authorization URL generation not implemented for ${provider}`);
@@ -193,59 +135,6 @@ class OAuthService {
             hasAccessToken: !!tokens.access_token,
             hasRefreshToken: !!tokens.refresh_token,
             expiryDate: tokens.expiry_date
-          }
-        };
-      } catch (error) {
-        console.error(`${provider} token exchange error:`, error);
-        throw new Error(`Failed to exchange authorization code: ${error.message}`);
-      }
-    }
-
-    if (provider === 'microsoft') {
-      const config = this.getMicrosoftOAuthConfig();
-
-      try {
-        // Exchange code for tokens
-        const tokenResponse = await axios.post(config.tokenEndpoint, new URLSearchParams({
-          client_id: config.clientId,
-          client_secret: config.clientSecret,
-          code: code,
-          redirect_uri: config.redirectUri,
-          grant_type: 'authorization_code'
-        }), {
-          headers: {
-            'Content-Type': 'application/x-www-form-urlencoded'
-          }
-        });
-
-        const tokens = tokenResponse.data;
-
-        if (!tokens.access_token) {
-          throw new Error('No access token received from Microsoft');
-        }
-
-        // Get user info to verify the connection
-        const userInfoResponse = await axios.get('https://graph.microsoft.com/v1.0/me', {
-          headers: {
-            'Authorization': `Bearer ${tokens.access_token}`
-          }
-        });
-
-        // Store encrypted tokens in database
-        await this.storeTokens(userId, provider, {
-          access_token: tokens.access_token,
-          refresh_token: tokens.refresh_token,
-          expiry_date: tokens.expires_in ? Date.now() + (tokens.expires_in * 1000) : null,
-          scope: tokens.scope
-        });
-
-        return {
-          success: true,
-          userInfo: userInfoResponse.data,
-          tokens: {
-            hasAccessToken: !!tokens.access_token,
-            hasRefreshToken: !!tokens.refresh_token,
-            expiryDate: tokens.expires_in ? Date.now() + (tokens.expires_in * 1000) : null
           }
         };
       } catch (error) {

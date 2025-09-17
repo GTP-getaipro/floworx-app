@@ -2,7 +2,8 @@ import { useEffect } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
 import { useAuth } from '../contexts/AuthContext';
 import { useToast } from '../contexts/ToastContext';
-import useFormValidation, { commonValidationRules } from '../hooks/useFormValidation';
+import useFormValidation from '../hooks/useFormValidation';
+import { validationRules } from '../utils/validationRules';
 import { parseError, logError, ERROR_MESSAGES } from '../utils/errorHandling';
 import Input from './ui/Input';
 import Button from './ui/Button';
@@ -18,8 +19,8 @@ const Login = () => {
   const location = useLocation();
 
   const formValidationRules = {
-    email: [commonValidationRules.required, commonValidationRules.email],
-    password: [commonValidationRules.required, commonValidationRules.minLength(8)],
+    email: [validationRules.required, validationRules.email],
+    password: [validationRules.required, validationRules.minLength(8)],
   };
 
   const { values, errors, isSubmitting, handleChange, handleBlur, handleSubmit, setErrors } =

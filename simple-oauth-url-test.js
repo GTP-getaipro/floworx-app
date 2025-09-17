@@ -5,7 +5,7 @@
 
 const axios = require('axios');
 
-const BASE_URL = 'https://app.floworx-iq.com';
+const BASE_URL = 'http://localhost:5001';
 const TEST_EMAIL = 'test-email-verification@floworx-iq.com';
 const TEST_PASSWORD = 'TestPassword123!';
 

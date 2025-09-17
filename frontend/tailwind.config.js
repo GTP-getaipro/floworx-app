@@ -44,10 +44,6 @@ module.exports = {
         danger:    "#EF4444",
         info:      "#06B6D4",
 
-        // Ring and background colors for focus states
-        ring: "#3B82F6", // matches brand.primary.hover for consistent focus styling
-        background: "#FFFFFF", // matches surface.DEFAULT
-
         // Legacy colors for backward compatibility
         primary: {
           50: '#eff6ff',

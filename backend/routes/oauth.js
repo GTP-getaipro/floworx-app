@@ -293,103 +293,144 @@ router.get('/status', authenticateToken, asyncHandler(async (req, res) => {
 // Initiate Microsoft OAuth flow
 router.get('/microsoft', (req, res) => {
   try {
-    // Handle token from query parameter (for frontend redirects) or Authorization header
-    let token = req.query.token;
-    if (!token) {
-      const authHeader = req.headers.authorization;
-      if (authHeader && authHeader.startsWith('Bearer ')) {
-        token = authHeader.substring(7);
-      }
-    }
+    // Generate state parameter for security
+    const state = uuidv4();
 
-    if (!token) {
-      return res.redirect(`${process.env.FRONTEND_URL || 'http://localhost:3000'}/dashboard?error=auth_required`);
-    }
+    // Store state in session for validation
+    req.session.oauthState = state;
 
-    // Verify JWT token to get user ID
-    const jwt = require('jsonwebtoken');
-    const decoded = jwt.verify(token, process.env.JWT_SECRET);
-    const userId = decoded.userId;
+    // Generate Microsoft OAuth URL
+    const authUrl = oauthService.generateAuthUrl('microsoft', state);
 
-    // Generate Microsoft OAuth URL using OAuth service
-    const authUrl = oauthService.generateAuthUrl('microsoft', userId);
-
-    logger.info('Microsoft OAuth flow initiated', { userId, authUrl: authUrl.substring(0, 100) + '...' });
-
-    res.json({
-      success: true,
-      authUrl,
-      provider: 'microsoft'
+    logger.info('Microsoft OAuth initiated', {
+      state,
+      userAgent: req.get('User-Agent'),
+      ip: req.ip
     });
+
+    res.redirect(authUrl);
   } catch (error) {
-    logger.error('Microsoft OAuth initiation failed', { error: error.message });
-    res.status(500).json({
-      success: false,
-      error: 'Failed to initiate Microsoft OAuth',
-      message: error.message
+    logger.error('Microsoft OAuth initiation failed', {
+      error: error.message,
+      stack: error.stack
     });
+
+    // Enhanced error handling
+    const errorType = error.message.includes('configuration') ? 'config_error' : 'oauth_failed';
+    res.redirect(`${process.env.FRONTEND_URL || 'http://localhost:3000'}/dashboard?error=${errorType}`);
   }
 });
 
 // GET /api/oauth/microsoft/callback
 // Handle Microsoft OAuth callback
-router.get('/microsoft/callback', asyncHandler(async (req, res) => {
-  const { code, state: userId, error } = req.query;
-
-  if (error) {
-    logger.error('Microsoft OAuth callback error', { error, userId });
-    return res.redirect(`${process.env.FRONTEND_URL || 'http://localhost:3000'}/dashboard?error=oauth_error&message=${encodeURIComponent(error)}`);
-  }
-
-  if (!code || !userId) {
-    logger.error('Microsoft OAuth callback missing parameters', { code: !!code, userId: !!userId });
-    return res.redirect(`${process.env.FRONTEND_URL || 'http://localhost:3000'}/dashboard?error=missing_parameters`);
-  }
-
+router.get('/microsoft/callback', async (req, res) => {
   try {
+    const { code, state, error } = req.query;
+
+    // Handle OAuth errors
+    if (error) {
+      logger.warn('OAuth error from Microsoft', {
+        error,
+        state,
+        userAgent: req.get('User-Agent')
+      });
+      const errorMap = {
+        'access_denied': 'oauth_denied',
+        'invalid_request': 'oauth_invalid',
+        'server_error': 'oauth_server_error'
+      };
+      const errorType = errorMap[error] || 'oauth_failed';
+      return res.redirect(`${process.env.FRONTEND_URL}/dashboard?error=${errorType}`);
+    }
+
+    // Validate state parameter
+    if (!state || state !== req.session.oauthState) {
+      logger.warn('Invalid OAuth state parameter', {
+        received: state,
+        expected: req.session.oauthState
+      });
+      return res.redirect(`${process.env.FRONTEND_URL}/dashboard?error=invalid_state`);
+    }
+
+    // Clear state from session
+    delete req.session.oauthState;
+
+    if (!code) {
+      logger.warn('No authorization code received from Microsoft');
+      return res.redirect(`${process.env.FRONTEND_URL}/dashboard?error=no_code`);
+    }
+
     // Exchange code for tokens using OAuth service
-    const result = await oauthService.exchangeCodeForTokens('microsoft', code, userId);
+    const result = await oauthService.exchangeCodeForTokens('microsoft', code, state);
 
     if (result.success) {
-      logger.info('Microsoft OAuth connection successful', {
-        userId,
-        userEmail: result.userInfo?.mail || result.userInfo?.userPrincipalName,
-        hasRefreshToken: result.tokens.hasRefreshToken
+      logger.info('Microsoft OAuth successful', {
+        userId: result.user.id,
+        email: result.user.email,
+        provider: 'microsoft'
       });
 
-      res.redirect(`${process.env.FRONTEND_URL || 'http://localhost:3000'}/dashboard?success=microsoft_connected`);
+      // Redirect to dashboard with success
+      res.redirect(`${process.env.FRONTEND_URL}/dashboard?oauth=success&provider=microsoft`);
     } else {
-      throw new Error('Token exchange failed');
+      logger.error('Microsoft OAuth failed', {
+        error: result.error,
+        state
+      });
+      res.redirect(`${process.env.FRONTEND_URL}/dashboard?error=oauth_failed`);
+    }
+
+  } catch (error) {
+    logger.error('Microsoft OAuth callback error', {
+      error: error.message,
+      stack: error.stack,
+      query: req.query
+    });
+
+    // Determine error type for better user experience
+    let errorType = 'oauth_failed';
+    if (error.message.includes('configuration')) {
+      errorType = 'config_error';
+    } else if (error.message.includes('Token exchange')) {
+      errorType = 'token_exchange_failed';
+    } else if (error.message.includes('User info')) {
+      errorType = 'user_info_failed';
+    }
+
+    res.redirect(`${process.env.FRONTEND_URL}/dashboard?error=${errorType}`);
+  }
+});
+
+// DELETE /api/oauth/microsoft
+// Disconnect Microsoft account
+router.delete('/microsoft', authenticateToken, asyncHandler(async (req, res) => {
+  try {
+    // Use OAuth service to revoke connection
+    const result = await oauthService.revokeConnection(req.user.id, 'microsoft');
+
+    if (result.success) {
+      res.json({
+        success: true,
+        message: result.message
+      });
+    } else {
+      res.status(400).json({
+        success: false,
+        error: result.error
+      });
     }
   } catch (error) {
-    logger.error('Microsoft OAuth callback processing failed', { error: error.message, userId });
-    res.redirect(`${process.env.FRONTEND_URL || 'http://localhost:3000'}/dashboard?error=connection_failed&message=${encodeURIComponent(error.message)}`);
-  }
-}));
-
-// GET /api/oauth/test/microsoft
-// Test Microsoft OAuth configuration
-router.get('/test/microsoft', (req, res) => {
-  try {
-    const config = oauthService.getMicrosoftOAuthConfig();
-
-    res.json({
-      success: true,
-      message: 'Microsoft OAuth configuration is valid',
-      config: {
-        clientId: config.clientId ? `${config.clientId.substring(0, 8)}...` : 'Not set',
-        redirectUri: config.redirectUri,
-        authority: config.authority,
-        scopes: oauthService.scopes.microsoft
-      }
+    logger.error('Microsoft OAuth disconnect failed', {
+      error: error.message,
+      userId: req.user.id
     });
-  } catch (error) {
+
     res.status(500).json({
       success: false,
-      error: 'Microsoft OAuth configuration error',
+      error: 'Failed to disconnect Microsoft account',
       message: error.message
     });
   }
-});
+}));
 
 module.exports = router;

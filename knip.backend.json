@@ -1,0 +1,22 @@
+{
+  "$schema": "https://unpkg.com/knip@latest/schema.json",
+  "project": ["backend/**/*.js"],
+  "ignore": [
+    "**/__tests__/**",
+    "backend/**/test/**",
+    "backend/**/fixtures/**",
+    "backend/**/coverage/**",
+    "**/__deprecated__/**"
+  ],
+  "entry": [
+    "backend/app.js",
+    "backend/server.js",
+    "backend/index.js"
+  ],
+  "ignoreDependencies": [
+    "dotenv",
+    "nodemon",
+    "jest",
+    "supertest"
+  ]
+}

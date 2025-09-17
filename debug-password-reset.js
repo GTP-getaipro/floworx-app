@@ -21,7 +21,7 @@ require('dotenv').config();
 
 // Configuration
 const config = {
-  apiUrl: process.env.API_URL || 'https://app.floworx-iq.com/api',
+  apiUrl: process.env.REACT_APP_API_URL || 'http://localhost:5001/api',
   frontendUrl: process.env.FRONTEND_URL || 'https://app.floworx-iq.com',
   supabaseUrl: process.env.SUPABASE_URL,
   supabaseServiceKey: process.env.SUPABASE_SERVICE_ROLE_KEY,

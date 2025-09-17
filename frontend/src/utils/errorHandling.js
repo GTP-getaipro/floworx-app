@@ -4,7 +4,10 @@ export const ERROR_MESSAGES = {
   NETWORK_ERROR: 'Network error. Please check your connection and try again.',
   SERVER_ERROR: 'Server error. Please try again later.',
   VALIDATION_ERROR: 'Please check your input and try again.',
-  AUTHENTICATION_ERROR: 'Authentication failed. Please check your credentials.'
+  AUTHENTICATION_ERROR: 'Authentication failed. Please check your credentials.',
+  EMAIL_ALREADY_EXISTS: 'This email is already registered. Please sign in or use a different email address.',
+  REGISTRATION_FAILED: 'Registration failed. Please try again.',
+  CONFLICT_ERROR: 'There was a conflict with your request. Please try again.'
 };
 
 export const parseError = (error) => {
@@ -34,14 +37,27 @@ export const parseError = (error) => {
         message: data?.message || 'Authentication failed'
       };
     }
-    
+
+    if (status === 409) {
+      // Handle conflict errors (e.g., duplicate email)
+      const errorMessage = data?.error?.message || data?.message || 'Resource conflict';
+      return {
+        type: 'CONFLICT_ERROR',
+        message: errorMessage,
+        suggestLogin: errorMessage.toLowerCase().includes('email') && errorMessage.toLowerCase().includes('already'),
+        userFriendlyMessage: errorMessage.toLowerCase().includes('email already registered')
+          ? 'This email is already registered. Please sign in or use a different email address.'
+          : errorMessage
+      };
+    }
+
     if (status >= 500) {
       return {
         type: 'SERVER_ERROR',
         message: data?.message || 'Server error occurred'
       };
     }
-    
+
     return {
       type: 'HTTP_ERROR',
       message: data?.message || `HTTP ${status} error`

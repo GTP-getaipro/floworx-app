@@ -171,12 +171,15 @@ const RegisterForm = () => {
         marketingConsent: false,
       });
 
+      // Ensure result is an object to prevent TypeError
+      if (!result || typeof result !== 'object') {
+        throw new Error('Invalid response from registration service');
+      }
 
-
-      if (result.success) {
+      if (result.success === true) {
         const successResult = {
           success: true,
-          requiresVerification: result.requiresVerification,
+          requiresVerification: result.requiresVerification || false,
           email: values.email,
         };
 
@@ -209,14 +212,25 @@ const RegisterForm = () => {
         return successResult;
       }
 
-      // Show detailed error feedback
+      // Handle registration failure
       const errorMessage = result.error || 'Registration failed. Please try again.';
-      showError(`❌ ${errorMessage}`);
 
       // Reset progress on error
       setCurrentStep(1);
 
-      throw new Error(result.error || 'Registration failed');
+      // Create a proper error object for the catch block to handle
+      const registrationError = new Error(errorMessage);
+      registrationError.response = {
+        status: result.status || 400,
+        data: {
+          error: {
+            code: result.code || 'REGISTRATION_FAILED',
+            message: errorMessage
+          }
+        }
+      };
+
+      throw registrationError;
     } catch (error) {
       // Log error for debugging
       logError(error, 'Registration');
@@ -224,14 +238,29 @@ const RegisterForm = () => {
       // Parse error and show user-friendly message
       const parsedError = parseError(error);
 
-      // Show appropriate error message
-      if (parsedError.type === 'VALIDATION_ERROR' && parsedError.suggestLogin) {
+      // Handle specific error types with appropriate user feedback
+      if (parsedError.type === 'CONFLICT_ERROR') {
+        // Handle 409 conflicts (duplicate email, etc.)
+        const userMessage = parsedError.userFriendlyMessage || parsedError.message;
+        showError(`❌ ${userMessage}`);
+
+        if (parsedError.suggestLogin) {
+          setTimeout(() => {
+            showInfo('💡 You can sign in with your existing account instead.');
+          }, 2000);
+        }
+      } else if (parsedError.type === 'VALIDATION_ERROR') {
         showError(`❌ ${parsedError.message}`);
-        // Optionally show login suggestion
-        setTimeout(() => {
-          showInfo('💡 You can try logging in with your existing account instead.');
-        }, 2000);
+
+        if (parsedError.suggestLogin) {
+          setTimeout(() => {
+            showInfo('💡 You can try logging in with your existing account instead.');
+          }, 2000);
+        }
+      } else if (parsedError.type === 'NETWORK_ERROR') {
+        showError('❌ Network error. Please check your connection and try again.');
       } else {
+        // Generic error handling
         showError(`❌ ${parsedError.message}`);
 
         // Show additional help for server errors

@@ -100,8 +100,40 @@ export const AuthProvider = ({ children }) => {
         user: response.data.user,
       };
     } catch (error) {
-      const message = error.response?.data?.message || 'Registration failed';
-      return { success: false, error: message };
+      console.error('Registration error:', error);
+
+      // Extract error message from different possible response structures
+      let message = 'Registration failed';
+
+      if (error.response?.data) {
+        const data = error.response.data;
+        // Handle backend error structure: { error: { code: "EMAIL_EXISTS", message: "Email already registered" } }
+        if (data.error?.message) {
+          message = data.error.message;
+        }
+        // Handle simple message structure: { message: "..." }
+        else if (data.message) {
+          message = data.message;
+        }
+        // Handle direct error string: { error: "..." }
+        else if (typeof data.error === 'string') {
+          message = data.error;
+        }
+      }
+
+      // Provide user-friendly messages for common errors
+      if (error.response?.status === 409) {
+        if (message.toLowerCase().includes('email already registered') || message.toLowerCase().includes('email exists')) {
+          message = 'This email is already registered. Please sign in or use a different email address.';
+        }
+      }
+
+      return {
+        success: false,
+        error: message,
+        status: error.response?.status,
+        code: error.response?.data?.error?.code
+      };
     }
   };
 

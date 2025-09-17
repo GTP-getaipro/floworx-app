@@ -2,10 +2,10 @@
 import { render, screen, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { BrowserRouter } from 'react-router-dom';
-import Login from '../../src/components/Login';
-import { useAuth } from '../../src/contexts/AuthContext';
+import Login from '../../frontend/src/components/Login';
+import { useAuth } from '../../frontend/src/contexts/AuthContext';
 // Mock the useAuth hook
-jest.mock('../../src/contexts/AuthContext');
+jest.mock('../../frontend/src/contexts/AuthContext');
 
 // Mock react-router-dom's useNavigate
 const mockNavigate = jest.fn();

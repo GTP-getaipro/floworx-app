@@ -189,6 +189,7 @@ const SimpleRegisterForm = () => {
                   errors.firstName ? 'border-red-300' : 'border-gray-300'
                 }`}
                 placeholder="Your first name"
+                autoComplete="given-name"
                 disabled={isSubmitting}
               />
               {errors.firstName && (
@@ -209,6 +210,7 @@ const SimpleRegisterForm = () => {
                   errors.lastName ? 'border-red-300' : 'border-gray-300'
                 }`}
                 placeholder="Your last name"
+                autoComplete="family-name"
                 disabled={isSubmitting}
               />
               {errors.lastName && (
@@ -228,6 +230,7 @@ const SimpleRegisterForm = () => {
               onChange={handleInputChange}
               className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
               placeholder="Your company name (optional)"
+              autoComplete="organization"
               disabled={isSubmitting}
             />
           </div>
@@ -245,6 +248,7 @@ const SimpleRegisterForm = () => {
                 errors.email ? 'border-red-300' : 'border-gray-300'
               }`}
               placeholder="Enter your business email"
+              autoComplete="email"
               disabled={isSubmitting}
             />
             {errors.email && (
@@ -265,6 +269,7 @@ const SimpleRegisterForm = () => {
                 errors.password ? 'border-red-300' : 'border-gray-300'
               }`}
               placeholder="Create a password (min. 8 characters)"
+              autoComplete="new-password"
               disabled={isSubmitting}
             />
             {errors.password && (
@@ -288,6 +293,7 @@ const SimpleRegisterForm = () => {
                 errors.confirmPassword ? 'border-red-300' : 'border-gray-300'
               }`}
               placeholder="Confirm your password"
+              autoComplete="new-password"
               disabled={isSubmitting}
             />
             {errors.confirmPassword && (

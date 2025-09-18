@@ -1,0 +1,81 @@
+{
+  "timestamp": "2025-09-18T19:16:50.961Z",
+  "tests": [
+    {
+      "name": "SMTP Configuration Test",
+      "success": false,
+      "details": [
+        "Environment Variables:",
+        "  ❌ SMTP_HOST: NOT SET",
+        "  ❌ SMTP_PORT: NOT SET",
+        "  ❌ SMTP_USER: NOT SET",
+        "  ❌ SMTP_PASS: NOT SET",
+        "  ❌ FROM_EMAIL: NOT SET"
+      ],
+      "timestamp": "2025-09-18T19:16:50.963Z"
+    },
+    {
+      "name": "SMTP Connection Test",
+      "success": false,
+      "details": [
+        "❌ SMTP connection failed: nodemailer.createTransporter is not a function"
+      ],
+      "timestamp": "2025-09-18T19:16:50.964Z"
+    },
+    {
+      "name": "Email Template Test",
+      "success": true,
+      "details": [
+        "✅ Template loaded (5194 characters)",
+        "✅ Replaced {{reset_url}} with https://app.floworx-iq.com/reset-password?token=test123",
+        "✅ Replaced {{current_year}} with 2025",
+        "✅ Replaced {{expiry_hours}} with 1",
+        "✅ All placeholders properly replaced"
+      ],
+      "timestamp": "2025-09-18T19:16:50.964Z"
+    },
+    {
+      "name": "Email Sending Test",
+      "success": false,
+      "details": [
+        "⚠️ Skipping email send test - SMTP not properly configured",
+        "Configure SMTP_HOST and SMTP_PASS to test actual email sending"
+      ],
+      "timestamp": "2025-09-18T19:16:50.966Z"
+    }
+  ],
+  "issues": [
+    {
+      "issue": "Missing SMTP environment variables: SMTP_HOST, SMTP_PORT, SMTP_USER, SMTP_PASS, FROM_EMAIL",
+      "severity": "critical",
+      "recommendation": "Configure all required SMTP environment variables in production",
+      "timestamp": "2025-09-18T19:16:50.964Z"
+    },
+    {
+      "issue": "SMTP connection error: nodemailer.createTransporter is not a function",
+      "severity": "high",
+      "recommendation": "Review SMTP configuration and check server logs for more details.",
+      "timestamp": "2025-09-18T19:16:50.964Z"
+    },
+    {
+      "issue": "Cannot test email sending - SMTP credentials not configured",
+      "severity": "critical",
+      "recommendation": "Set proper SMTP credentials in environment variables to enable email functionality.",
+      "timestamp": "2025-09-18T19:16:50.966Z"
+    }
+  ],
+  "recommendations": [],
+  "summary": {
+    "total": 4,
+    "passed": 1,
+    "failed": 3,
+    "successRate": "25.0%",
+    "issues": {
+      "critical": 2,
+      "high": 1,
+      "medium": 0,
+      "total": 3
+    },
+    "status": "CRITICAL_ISSUES"
+  }
+}

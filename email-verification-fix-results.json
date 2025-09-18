@@ -1,0 +1,76 @@
+{
+  "timestamp": "2025-09-18T18:59:15.434Z",
+  "environment": "production",
+  "baseURL": "https://app.floworx-iq.com",
+  "tests": [
+    {
+      "name": "Registration Email Verification",
+      "success": false,
+      "details": [
+        "Registration response status: 201",
+        "Registration response: {\n  \"success\": true,\n  \"message\": \"Account created successfully. Please check your email to verify your account.\",\n  \"userId\": \"15db7186-0291-464d-acd4-7d1d99ec7ebc\",\n  \"requiresVerification\": true,\n  \"email\": \"verification-fix-test-1758221955437@example.com\",\n  \"emailSent\": true\n}",
+        "✅ Registration successful",
+        "⚠️ No verification email indication in response"
+      ],
+      "timestamp": "2025-09-18T18:59:15.437Z"
+    },
+    {
+      "name": "Verification Endpoint Response",
+      "success": true,
+      "details": [
+        "Verification endpoint status: 400",
+        "Verification response: {\n  \"error\": {\n    \"code\": \"INVALID_TOKEN\",\n    \"message\": \"Invalid verification token\"\n  }\n}",
+        "✅ Verification endpoint properly rejects invalid tokens"
+      ],
+      "timestamp": "2025-09-18T18:59:16.898Z"
+    },
+    {
+      "name": "Email Template URL Generation",
+      "success": true,
+      "details": [
+        "Mock token: eyJhbGciOiJIUzI1NiIs...",
+        "Expected URL format: https://app.floworx-iq.com/verify-email?token=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ0ZXN0IjoidG9rZW4ifQ.test",
+        "Base URL: https://app.floworx-iq.com/verify-email",
+        "Token parameter: eyJhbGciOiJIUzI1NiIs...",
+        "✅ Token parameter contains only token - NO DOUBLE ENCODING"
+      ],
+      "timestamp": "2025-09-18T18:59:17.152Z"
+    },
+    {
+      "name": "Frontend Verification Page",
+      "success": true,
+      "details": [
+        "Frontend page status: 200",
+        "✅ Verification page loads correctly"
+      ],
+      "timestamp": "2025-09-18T18:59:17.152Z"
+    },
+    {
+      "name": "URL Encoding Scenarios",
+      "success": true,
+      "details": [
+        "\nScenario: Simple JWT Token",
+        "Token: eyJhbGciOiJIUzI1NiIsInR5cCI6Ik...",
+        "Generated URL: https://app.floworx-iq.com/verify-email?token=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVC...",
+        "✅ Scenario passed - proper URL structure",
+        "\nScenario: Token with Special Characters",
+        "Token: eyJhbGciOiJIUzI1NiIsInR5cCI6Ik...",
+        "Generated URL: https://app.floworx-iq.com/verify-email?token=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVC...",
+        "✅ Scenario passed - proper URL structure",
+        "\nScenario: Double-Encoded URL (Bug Case)",
+        "Token: https://app.floworx-iq.com/ver...",
+        "Generated URL: https://app.floworx-iq.com/verify-email?token=https%3A%2F%2Fapp.floworx-iq.com%2...",
+        "✅ Scenario passed - correctly identified as problematic",
+        "\nPassed scenarios: 3/3"
+      ],
+      "timestamp": "2025-09-18T18:59:17.239Z"
+    }
+  ],
+  "summary": {
+    "total": 5,
+    "passed": 4,
+    "failed": 1,
+    "successRate": "80.0%",
+    "fixStatus": "ISSUES_DETECTED"
+  }
+}

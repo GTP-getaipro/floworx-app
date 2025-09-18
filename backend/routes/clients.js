@@ -9,6 +9,7 @@ const router = express.Router();
 const requireAuth = require('../middleware/requireAuth');
 const { csrfProtection } = require('../middleware/csrf');
 const configService = require('../services/configService');
+const { provisionEmail } = require('../services/provisionService');
 
 /**
  * GET /api/clients/:id/config
@@ -82,6 +83,38 @@ router.put('/:id/config', requireAuth, csrfProtection, async (req, res) => {
       error: {
         code: 'INTERNAL_ERROR',
         message: 'Failed to save client configuration'
+      }
+    });
+  }
+});
+
+/**
+ * POST /api/clients/:id/provision
+ * Provision email infrastructure (Gmail labels, Outlook folders)
+ */
+router.post('/:id/provision', requireAuth, csrfProtection, async (req, res) => {
+  try {
+    const clientId = req.params.id;
+
+    if (!clientId || typeof clientId !== 'string' || clientId.trim() === '') {
+      return res.status(400).json({
+        error: {
+          code: 'INVALID_CLIENT_ID',
+          message: 'Client ID is required and must be a non-empty string'
+        }
+      });
+    }
+
+    await provisionEmail(clientId.trim());
+
+    res.status(202).json({ ok: true });
+  } catch (error) {
+    console.error('Error in POST /api/clients/:id/provision:', error);
+
+    res.status(500).json({
+      error: {
+        code: 'PROVISION_FAILED',
+        message: error.message
       }
     });
   }

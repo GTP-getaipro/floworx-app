@@ -2059,6 +2059,35 @@ class DatabaseOperations {
       };
     }
   }
+
+  /**
+   * Get user connection by provider
+   * @param {string} userId - User ID
+   * @param {string} provider - OAuth provider
+   * @returns {Promise<{success: boolean, data?: object, error?: string}>}
+   */
+  async getUserConnectionByProvider(userId, provider) {
+    try {
+      const { type, client } = await this.getClient();
+
+      if (type === 'REST_API') {
+        const { data, error } = await client
+          .from('user_connections')
+          .select('*')
+          .eq('user_id', userId)
+          .eq('provider', provider)
+          .single();
+
+        return { data, error: error?.message };
+      } else {
+        const query = 'SELECT * FROM user_connections WHERE user_id = $1 AND provider = $2';
+        const result = await client.query(query, [userId, provider]);
+        return { data: result.rows[0] || null, error: null };
+      }
+    } catch (error) {
+      return { error: error.message };
+    }
+  }
 }
 
 // Create singleton instance

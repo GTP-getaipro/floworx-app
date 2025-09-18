@@ -1,6 +1,6 @@
-const databaseOperations = require('../database/database-operations');
+const { databaseOperations } = require('../database/database-operations');
 const fetch = require('node-fetch');
-const { decrypt } = require('../utils/crypto');
+const { decrypt } = require('../utils/encryption');
 
 const COLOR_MAP = {
   red: { backgroundColor: "#d93025", textColor: "#ffffff" },
@@ -51,7 +51,7 @@ async function provisionEmail(clientId) {
       throw new Error('no google connection');
     }
 
-    const accessToken = decrypt(conn.access_token_encrypted);
+    const accessToken = decrypt(conn.access_token_enc);
 
     // List existing labels
     const listRes = await fetch('https://gmail.googleapis.com/gmail/v1/users/me/labels', {

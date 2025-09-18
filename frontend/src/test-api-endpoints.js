@@ -3,7 +3,7 @@
  * Tests all backend endpoints from the frontend perspective
  */
 
-const API_BASE_URL = process.env.REACT_APP_API_URL || 'https://app.floworx-iq.com/api';
+const API_BASE_URL = process.env.REACT_APP_API_URL || 'https://app.floworx-iq.com';
 
 class APITester {
   constructor() {

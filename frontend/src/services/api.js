@@ -15,7 +15,7 @@ class ApiError extends Error {
 
 class ApiService {
   constructor() {
-    this.baseURL = process.env.REACT_APP_API_URL || 'https://app.floworx-iq.com/api';
+    this.baseURL = process.env.REACT_APP_API_URL || 'https://app.floworx-iq.com';
     this.token = this.getStoredToken();
   }
 

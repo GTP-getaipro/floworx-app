@@ -1,0 +1,28 @@
+{
+  "timestamp": "2025-09-18T16:53:14.543Z",
+  "environment": "staging",
+  "totalTests": 1,
+  "passed": 0,
+  "failed": 1,
+  "errors": [
+    {
+      "test": "User Login Flow",
+      "error": "page.fill: Timeout 30000ms exceeded.\nCall log:\n\u001b[2m  - waiting for locator('input[name=\"email\"], input[type=\"email\"]')\u001b[22m\n",
+      "stack": "page.fill: Timeout 30000ms exceeded.\nCall log:\n\u001b[2m  - waiting for locator('input[name=\"email\"], input[type=\"email\"]')\u001b[22m\n\n    at C:\\FloworxInvite\\browser-staging-validation.js:91:23\n    at async BrowserStagingValidator.runTest (C:\\FloworxInvite\\browser-staging-validation.js:50:22)\n    at async BrowserStagingValidator.testAuthentication (C:\\FloworxInvite\\browser-staging-validation.js:87:5)\n    at async BrowserStagingValidator.run (C:\\FloworxInvite\\browser-staging-validation.js:202:7)"
+    }
+  ],
+  "details": {
+    "User Login Flow": {
+      "status": "FAIL",
+      "error": "page.fill: Timeout 30000ms exceeded.\nCall log:\n\u001b[2m  - waiting for locator('input[name=\"email\"], input[type=\"email\"]')\u001b[22m\n"
+    }
+  },
+  "criticalError": "page.fill: Timeout 30000ms exceeded.\nCall log:\n\u001b[2m  - waiting for locator('input[name=\"email\"], input[type=\"email\"]')\u001b[22m\n",
+  "summary": {
+    "totalTests": 1,
+    "passed": 0,
+    "failed": 1,
+    "successRate": "0.0%",
+    "status": "TESTS_FAILED"
+  }
+}

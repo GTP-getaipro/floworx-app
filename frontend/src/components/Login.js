@@ -20,7 +20,7 @@ const Login = () => {
     // Clear any previous auth errors when component mounts
     clearErrors();
 
-    if (isAuthenticated()) {
+    if (isAuthenticated) {
       const from = location.state?.from?.pathname || '/dashboard';
       navigate(from, { replace: true });
     }

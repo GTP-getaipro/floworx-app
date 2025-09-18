@@ -1,0 +1,127 @@
+{
+  "timestamp": "2025-09-18T17:05:22.063Z",
+  "environment": "production",
+  "deployment": "Client Config, Mailbox Provisioning & n8n Integration v1.0",
+  "totalTests": 12,
+  "passed": 8,
+  "failed": 4,
+  "errors": [
+    {
+      "test": "Config Retrieval",
+      "error": "HTTP 401: {\"error\":{\"code\":\"UNAUTHORIZED\",\"message\":\"Authentication required\"}}",
+      "critical": false
+    },
+    {
+      "test": "Config Update",
+      "error": "HTTP 401: {\"error\":{\"code\":\"UNAUTHORIZED\",\"message\":\"Authentication required\"}}",
+      "critical": false
+    },
+    {
+      "test": "Mailbox Discovery",
+      "error": "HTTP 401: {\"success\":false,\"error\":{\"type\":\"AUTHENTICATION_ERROR\",\"message\":\"Access token required\",\"code\":401}}",
+      "critical": false
+    },
+    {
+      "test": "Mailbox Mapping",
+      "error": "HTTP 401: {\"success\":false,\"error\":{\"type\":\"AUTHENTICATION_ERROR\",\"message\":\"Access token required\",\"code\":401}}",
+      "critical": false
+    }
+  ],
+  "details": {
+    "Application Accessibility": {
+      "status": "PASS",
+      "result": {
+        "status": 200,
+        "accessible": true
+      },
+      "critical": true
+    },
+    "API Health Check": {
+      "status": "PASS",
+      "result": {
+        "status": 200,
+        "healthy": true
+      },
+      "critical": true
+    },
+    "Database Connectivity": {
+      "status": "PASS",
+      "result": {
+        "status": 200,
+        "dbConnected": true
+      },
+      "critical": true
+    },
+    "User Login": {
+      "status": "PASS",
+      "result": {
+        "status": 200,
+        "loginSuccessful": true
+      },
+      "critical": true
+    },
+    "Registration Flow": {
+      "status": "PASS",
+      "result": {
+        "status": 201,
+        "registrationWorking": true
+      },
+      "critical": false
+    },
+    "Password Reset": {
+      "status": "PASS",
+      "result": {
+        "status": 200,
+        "resetWorking": true
+      },
+      "critical": false
+    },
+    "Config Retrieval": {
+      "status": "FAIL",
+      "error": "HTTP 401: {\"error\":{\"code\":\"UNAUTHORIZED\",\"message\":\"Authentication required\"}}",
+      "critical": false
+    },
+    "Config Update": {
+      "status": "FAIL",
+      "error": "HTTP 401: {\"error\":{\"code\":\"UNAUTHORIZED\",\"message\":\"Authentication required\"}}",
+      "critical": false
+    },
+    "Mailbox Discovery": {
+      "status": "FAIL",
+      "error": "HTTP 401: {\"success\":false,\"error\":{\"type\":\"AUTHENTICATION_ERROR\",\"message\":\"Access token required\",\"code\":401}}",
+      "critical": false
+    },
+    "Mailbox Mapping": {
+      "status": "FAIL",
+      "error": "HTTP 401: {\"success\":false,\"error\":{\"type\":\"AUTHENTICATION_ERROR\",\"message\":\"Access token required\",\"code\":401}}",
+      "critical": false
+    },
+    "Frontend Bundle Loading": {
+      "status": "PASS",
+      "result": {
+        "status": 200,
+        "bundleLoaded": true,
+        "size": "799"
+      },
+      "critical": false
+    },
+    "CSS Loading": {
+      "status": "PASS",
+      "result": {
+        "status": 200,
+        "cssLoaded": true
+      },
+      "critical": false
+    }
+  },
+  "criticalIssues": [],
+  "warnings": [],
+  "summary": {
+    "totalTests": 12,
+    "passed": 8,
+    "failed": 4,
+    "successRate": "66.7%",
+    "criticalIssues": 0,
+    "status": "PRODUCTION_STABLE_WITH_WARNINGS"
+  }
+}

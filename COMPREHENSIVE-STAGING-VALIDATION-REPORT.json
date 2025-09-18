@@ -1,0 +1,51 @@
+{
+  "timestamp": "2025-09-18T16:52:10.186Z",
+  "environment": "staging",
+  "totalTests": 4,
+  "passed": 3,
+  "failed": 1,
+  "errors": [
+    {
+      "test": "Get Client Config",
+      "error": "HTTP 401: {\"error\":{\"code\":\"UNAUTHORIZED\",\"message\":\"Authentication required\"}}",
+      "stack": "Error: HTTP 401: {\"error\":{\"code\":\"UNAUTHORIZED\",\"message\":\"Authentication required\"}}\n    at ComprehensiveStagingValidator.makeRequest (C:\\FloworxInvite\\comprehensive-staging-validation.js:101:15)\n    at process.processTicksAndRejections (node:internal/process/task_queues:105:5)\n    at async C:\\FloworxInvite\\comprehensive-staging-validation.js:180:24\n    at async ComprehensiveStagingValidator.runTest (C:\\FloworxInvite\\comprehensive-staging-validation.js:62:22)\n    at async ComprehensiveStagingValidator.testClientConfig (C:\\FloworxInvite\\comprehensive-staging-validation.js:179:5)\n    at async ComprehensiveStagingValidator.run (C:\\FloworxInvite\\comprehensive-staging-validation.js:388:7)"
+    }
+  ],
+  "details": {
+    "User Registration": {
+      "status": "PASS",
+      "result": {
+        "status": "existing",
+        "message": "User already exists"
+      }
+    },
+    "User Login": {
+      "status": "PASS",
+      "result": {
+        "status": 200,
+        "hasToken": false,
+        "isLoggedIn": "2a2ff4ac-38f6-429c-bfc2-92bd416c277c"
+      }
+    },
+    "Session Verification": {
+      "status": "PASS",
+      "result": {
+        "status": "auth_issue",
+        "message": "Neither cookie nor token auth working",
+        "error": "HTTP 401: {\"error\":{\"code\":\"UNAUTHORIZED\",\"message\":\"Authentication required\"}}"
+      }
+    },
+    "Get Client Config": {
+      "status": "FAIL",
+      "error": "HTTP 401: {\"error\":{\"code\":\"UNAUTHORIZED\",\"message\":\"Authentication required\"}}"
+    }
+  },
+  "criticalError": "HTTP 401: {\"error\":{\"code\":\"UNAUTHORIZED\",\"message\":\"Authentication required\"}}",
+  "summary": {
+    "totalTests": 4,
+    "passed": 3,
+    "failed": 1,
+    "successRate": "75.0%",
+    "status": "TESTS_FAILED"
+  }
+}

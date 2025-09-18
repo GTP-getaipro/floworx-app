@@ -34,6 +34,7 @@ const passwordResetRoutes = require('./routes/passwordReset');
 const recoveryRoutes = require('./routes/recovery');
 const errorRoutes = require('./routes/errors');
 const healthRoutes = require('./routes/health');
+const clientsRoutes = require('./routes/clients');
 
 // Test routes (only in test environment)
 let testRoutes = null;
@@ -127,6 +128,7 @@ app.use('/api/monitoring', monitoringRoutes);
 app.use('/api/password-reset', passwordResetRoutes);
 app.use('/api/recovery', recoveryRoutes);
 app.use('/api/errors', errorRoutes);
+app.use('/api/clients', clientsRoutes);
 
 // Mount test routes only in test environment
 if (process.env.NODE_ENV === 'test' && testRoutes) {

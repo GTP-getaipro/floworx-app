@@ -1943,6 +1943,122 @@ class DatabaseOperations {
       };
     }
   }
+
+  // =====================================================
+  // CLIENT CONFIG OPERATIONS
+  // =====================================================
+
+  /**
+   * Get client configuration by client ID
+   * @param {string} clientId - Client identifier
+   * @returns {Promise<{success: boolean, data?: object, error?: string}>}
+   */
+  async getClientConfigRow(clientId) {
+    try {
+      const { type, client } = await this.getClient();
+
+      if (type === 'REST_API') {
+        const response = await client.select('*').from('client_config').eq('client_id', clientId).single();
+
+        if (response.error) {
+          if (response.error.code === 'PGRST116') {
+            // No rows found - this is expected for new clients
+            return {
+              success: false,
+              error: 'Client config not found'
+            };
+          }
+          throw new Error(response.error.message);
+        }
+
+        return {
+          success: true,
+          data: response.data
+        };
+      } else {
+        const query = `
+          SELECT client_id, version, config_json, updated_at
+          FROM client_config
+          WHERE client_id = $1
+        `;
+        const result = await client.query(query, [clientId]);
+
+        if (result.rows.length === 0) {
+          return {
+            success: false,
+            error: 'Client config not found'
+          };
+        }
+
+        return {
+          success: true,
+          data: result.rows[0]
+        };
+      }
+    } catch (error) {
+      console.error('Error getting client config:', error);
+      return {
+        success: false,
+        error: error.message
+      };
+    }
+  }
+
+  /**
+   * Insert or update client configuration
+   * @param {string} clientId - Client identifier
+   * @param {number} version - Version number
+   * @param {object} configJson - Configuration data
+   * @returns {Promise<{success: boolean, data?: object, error?: string}>}
+   */
+  async upsertClientConfigRow(clientId, version, configJson) {
+    try {
+      const { type, client } = await this.getClient();
+
+      if (type === 'REST_API') {
+        const response = await client.upsert({
+          client_id: clientId,
+          version: version,
+          config_json: configJson,
+          updated_at: new Date().toISOString()
+        }, {
+          onConflict: 'client_id'
+        }).from('client_config');
+
+        if (response.error) {
+          throw new Error(response.error.message);
+        }
+
+        return {
+          success: true,
+          data: { client_id: clientId, version: version }
+        };
+      } else {
+        const query = `
+          INSERT INTO client_config (client_id, version, config_json, updated_at)
+          VALUES ($1, $2, $3, NOW())
+          ON CONFLICT (client_id)
+          DO UPDATE SET
+            version = EXCLUDED.version,
+            config_json = EXCLUDED.config_json,
+            updated_at = NOW()
+          RETURNING client_id, version, updated_at
+        `;
+        const result = await client.query(query, [clientId, version, JSON.stringify(configJson)]);
+
+        return {
+          success: true,
+          data: result.rows[0]
+        };
+      }
+    } catch (error) {
+      console.error('Error upserting client config:', error);
+      return {
+        success: false,
+        error: error.message
+      };
+    }
+  }
 }
 
 // Create singleton instance

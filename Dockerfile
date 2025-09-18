@@ -60,8 +60,11 @@ COPY --from=frontend-builder /app/frontend/build ./frontend/build
 # Copy API files for serverless functions
 COPY api/ ./api/
 
+# Copy startup script
+COPY start.sh ./start.sh
+
 # Set permissions
-RUN chown -R nextjs:nodejs /app
+RUN chmod +x ./start.sh && chown -R nextjs:nodejs /app
 USER nextjs
 
 EXPOSE 5001
@@ -70,4 +73,4 @@ EXPOSE 5001
 HEALTHCHECK --interval=30s --timeout=3s --start-period=5s --retries=3 \
   CMD curl -f http://localhost:5001/api/health || exit 1
 
-CMD ["node", "backend/server.js"]
+CMD ["./start.sh"]

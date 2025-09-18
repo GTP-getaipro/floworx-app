@@ -156,6 +156,7 @@ const RegisterForm = () => {
   const handleRegistration = async values => {
     try {
       // Starting registration process
+      console.log('Starting registration process...');
 
       // Show processing feedback
       showInfo('Creating your account...');
@@ -174,6 +175,7 @@ const RegisterForm = () => {
 
       // Ensure result is an object to prevent TypeError
       if (!result || typeof result !== 'object') {
+        console.error('Invalid registration result:', result);
         throw new Error('Invalid response from registration service');
       }
 
@@ -270,6 +272,9 @@ const RegisterForm = () => {
 
       // Don't re-throw the error to prevent unhandled promise rejections
       console.error('Unexpected registration error:', error);
+
+      // Show user-friendly error message
+      showError('Registration failed. Please try again or contact support if the problem persists.');
     }
   };
 

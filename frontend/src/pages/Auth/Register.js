@@ -78,14 +78,22 @@ const Register = () => {
       });
 
       if (result.success) {
-        navigate('/verify-email', { 
-          state: { 
+        navigate('/verify-email', {
+          state: {
             email: formData.email,
-            message: 'Account created successfully! Please check your email to verify your account.' 
+            message: 'Account created successfully! Please check your email to verify your account.'
           }
         });
       } else {
-        setErrors({ submit: result.error?.message || 'Registration failed. Please try again.' });
+        // Handle different error types appropriately
+        let errorMessage = result.error || 'Registration failed. Please try again.';
+
+        // Provide user-friendly message for duplicate email
+        if (result.status === 409 || result.code === 'EMAIL_EXISTS') {
+          errorMessage = 'This email is already registered. Please sign in or use a different email address.';
+        }
+
+        setErrors({ submit: errorMessage });
       }
     } catch (error) {
       console.error('Registration error:', error);

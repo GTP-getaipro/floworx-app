@@ -213,69 +213,63 @@ const RegisterForm = () => {
         return successResult;
       }
 
-      // Handle registration failure
+      // Handle registration failure directly without throwing
       const errorMessage = result.error || 'Registration failed. Please try again.';
 
       // Reset progress on error
       setCurrentStep(1);
 
-      // Create a proper error object for the catch block to handle
-      const registrationError = new Error(errorMessage);
-      registrationError.response = {
-        status: result.status || 400,
-        data: {
-          error: {
-            code: result.code || 'REGISTRATION_FAILED',
-            message: errorMessage
-          }
-        }
-      };
-
-      throw registrationError;
-    } catch (error) {
-      // Log error for debugging
-      logError(error, 'Registration');
-
-      // Parse error and show user-friendly message
-      const parsedError = parseError(error);
-
-      // Handle specific error types with appropriate user feedback
-      if (parsedError.type === 'CONFLICT_ERROR') {
+      // Handle specific error types based on status code and error code
+      if (result.status === 409 || result.code === 'EMAIL_EXISTS') {
         // Handle 409 conflicts (duplicate email, etc.)
-        const userMessage = parsedError.userFriendlyMessage || parsedError.message;
+        const userMessage = errorMessage.toLowerCase().includes('email already registered')
+          ? 'This email is already registered. Please sign in or use a different email address.'
+          : errorMessage;
+
         showError(`❌ ${userMessage}`);
 
-        if (parsedError.suggestLogin) {
-          setTimeout(() => {
-            showInfo('💡 You can sign in with your existing account instead.');
-          }, 2000);
-        }
-      } else if (parsedError.type === 'VALIDATION_ERROR') {
-        showError(`❌ ${parsedError.message}`);
-
-        if (parsedError.suggestLogin) {
-          setTimeout(() => {
-            showInfo('💡 You can try logging in with your existing account instead.');
-          }, 2000);
-        }
-      } else if (parsedError.type === 'NETWORK_ERROR') {
-        showError('❌ Network error. Please check your connection and try again.');
+        // Suggest login for duplicate email
+        setTimeout(() => {
+          showInfo('💡 You can sign in with your existing account instead.');
+        }, 2000);
+      } else if (result.status === 400) {
+        // Handle validation errors
+        showError(`❌ ${errorMessage}`);
+      } else if (result.status >= 500) {
+        // Handle server errors
+        showError(`❌ ${errorMessage}`);
+        setTimeout(() => {
+          showInfo(`💡 ${ERROR_MESSAGES.CONTACT_SUPPORT}`);
+        }, 3000);
       } else {
         // Generic error handling
-        showError(`❌ ${parsedError.message}`);
-
-        // Show additional help for server errors
-        if (parsedError.type === 'SERVER_ERROR' || parsedError.type === 'UNKNOWN_ERROR') {
-          setTimeout(() => {
-            showInfo(`💡 ${ERROR_MESSAGES.CONTACT_SUPPORT}`);
-          }, 3000);
-        }
+        showError(`❌ ${errorMessage}`);
       }
+
+      // Don't throw - just return to stop execution
+      return;
+    } catch (error) {
+      // Log error for debugging - only for unexpected errors now
+      logError(error, 'Registration');
 
       // Reset progress on error
       setCurrentStep(1);
 
-      throw error;
+      // Handle unexpected errors (network issues, etc.)
+      if (error.name === 'TypeError' || error.message.includes('fetch')) {
+        showError('❌ Network error. Please check your connection and try again.');
+      } else if (error.message.includes('Invalid response')) {
+        showError('❌ Server error. Please try again or contact support.');
+      } else {
+        // Generic error for truly unexpected issues
+        showError(`❌ An unexpected error occurred: ${error.message}`);
+        setTimeout(() => {
+          showInfo(`💡 ${ERROR_MESSAGES.CONTACT_SUPPORT}`);
+        }, 3000);
+      }
+
+      // Don't re-throw the error to prevent unhandled promise rejections
+      console.error('Unexpected registration error:', error);
     }
   };
 

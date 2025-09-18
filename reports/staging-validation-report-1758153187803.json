@@ -1,0 +1,105 @@
+{
+  "timestamp": "2025-09-17T23:53:07.703Z",
+  "environment": "staging",
+  "url": "https://staging.app.floworx-iq.com",
+  "tests": [
+    {
+      "name": "Registration - Valid Data",
+      "status": "FAIL",
+      "error": "Request failed: getaddrinfo ENOTFOUND staging.app.floworx-iq.com",
+      "details": null
+    },
+    {
+      "name": "Registration - Duplicate Email (409 Conflict)",
+      "status": "FAIL",
+      "error": "Request failed: getaddrinfo ENOTFOUND staging.app.floworx-iq.com",
+      "details": null
+    },
+    {
+      "name": "Registration - Invalid Data Validation",
+      "status": "FAIL",
+      "error": "Request failed: getaddrinfo ENOTFOUND staging.app.floworx-iq.com",
+      "details": null
+    },
+    {
+      "name": "Login - Invalid Credentials (401 Unauthorized)",
+      "status": "FAIL",
+      "error": "Request failed: getaddrinfo ENOTFOUND staging.app.floworx-iq.com",
+      "details": null
+    },
+    {
+      "name": "Login - Non-existent Email",
+      "status": "FAIL",
+      "error": "Request failed: getaddrinfo ENOTFOUND staging.app.floworx-iq.com",
+      "details": null
+    },
+    {
+      "name": "Login - Missing Required Fields",
+      "status": "FAIL",
+      "error": "Request failed: getaddrinfo ENOTFOUND staging.app.floworx-iq.com",
+      "details": null
+    },
+    {
+      "name": "Forgot Password - Valid Email",
+      "status": "FAIL",
+      "error": "Request failed: getaddrinfo ENOTFOUND staging.app.floworx-iq.com",
+      "details": null
+    },
+    {
+      "name": "Forgot Password - Invalid Email Format",
+      "status": "FAIL",
+      "error": "Request failed: getaddrinfo ENOTFOUND staging.app.floworx-iq.com",
+      "details": null
+    },
+    {
+      "name": "Logout - Endpoint Availability",
+      "status": "FAIL",
+      "error": "Request failed: getaddrinfo ENOTFOUND staging.app.floworx-iq.com",
+      "details": null
+    }
+  ],
+  "summary": {
+    "total": 9,
+    "passed": 0,
+    "failed": 9,
+    "errors": [
+      {
+        "test": "Registration - Valid Data",
+        "error": "Request failed: getaddrinfo ENOTFOUND staging.app.floworx-iq.com"
+      },
+      {
+        "test": "Registration - Duplicate Email (409 Conflict)",
+        "error": "Request failed: getaddrinfo ENOTFOUND staging.app.floworx-iq.com"
+      },
+      {
+        "test": "Registration - Invalid Data Validation",
+        "error": "Request failed: getaddrinfo ENOTFOUND staging.app.floworx-iq.com"
+      },
+      {
+        "test": "Login - Invalid Credentials (401 Unauthorized)",
+        "error": "Request failed: getaddrinfo ENOTFOUND staging.app.floworx-iq.com"
+      },
+      {
+        "test": "Login - Non-existent Email",
+        "error": "Request failed: getaddrinfo ENOTFOUND staging.app.floworx-iq.com"
+      },
+      {
+        "test": "Login - Missing Required Fields",
+        "error": "Request failed: getaddrinfo ENOTFOUND staging.app.floworx-iq.com"
+      },
+      {
+        "test": "Forgot Password - Valid Email",
+        "error": "Request failed: getaddrinfo ENOTFOUND staging.app.floworx-iq.com"
+      },
+      {
+        "test": "Forgot Password - Invalid Email Format",
+        "error": "Request failed: getaddrinfo ENOTFOUND staging.app.floworx-iq.com"
+      },
+      {
+        "test": "Logout - Endpoint Availability",
+        "error": "Request failed: getaddrinfo ENOTFOUND staging.app.floworx-iq.com"
+      }
+    ]
+  },
+  "recommendation": "REJECTED_NEEDS_FIXES"
+}

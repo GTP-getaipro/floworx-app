@@ -43,6 +43,71 @@ router.get('/profile', authenticateToken, asyncHandler(async (req, res) => {
   });
 }));
 
+// GET /api/user/settings
+// Get user's settings and preferences
+router.get('/settings', authenticateToken, asyncHandler(async (req, res) => {
+  logger.debug('Getting user settings', { userId: req.user?.id });
+
+  // Get user's settings from database
+  const settingsResult = await databaseOperations.getUserSettings(req.user.id);
+
+  // If no settings exist, return default settings
+  const defaultSettings = {
+    notifications: {
+      email: true,
+      browser: true,
+      workflow: true
+    },
+    privacy: {
+      analytics: true,
+      marketing: false
+    },
+    preferences: {
+      theme: 'light',
+      language: 'en',
+      timezone: 'UTC'
+    }
+  };
+
+  const settings = settingsResult.data || defaultSettings;
+
+  successResponse(res, {
+    settings: settings,
+    userId: req.user.id
+  });
+}));
+
+// PUT /api/user/settings
+// Update user's settings and preferences
+router.put('/settings', authenticateToken, asyncHandler(async (req, res) => {
+  logger.debug('Updating user settings', { userId: req.user?.id });
+
+  const { notifications, privacy, preferences } = req.body;
+
+  // Validate settings structure
+  const settingsData = {
+    notifications: notifications || {},
+    privacy: privacy || {},
+    preferences: preferences || {}
+  };
+
+  // Update user settings in database
+  const updateResult = await databaseOperations.updateUserSettings(req.user.id, settingsData);
+
+  if (updateResult.error) {
+    logger.error('Failed to update user settings', {
+      userId: req.user.id,
+      error: updateResult.error
+    });
+    throw ErrorResponse.internal('Failed to update settings', req.requestId);
+  }
+
+  successResponse(res, {
+    message: 'Settings updated successfully',
+    settings: settingsData
+  });
+}));
+
 // PUT /api/user/profile
 // Update user's profile information
 router.put('/profile', authenticateToken, async (req, res) => {

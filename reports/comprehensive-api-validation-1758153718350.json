@@ -1,0 +1,395 @@
+{
+  "timestamp": "2025-09-18T00:01:53.281Z",
+  "environment": "production",
+  "url": "https://app.floworx-iq.com",
+  "endpoints": [
+    {
+      "path": "/api/auth/register",
+      "method": "POST",
+      "category": "Authentication",
+      "data": {
+        "email": "test@example.com",
+        "password": "Test123!",
+        "firstName": "Test",
+        "lastName": "User"
+      },
+      "expectedStatuses": [
+        201,
+        400,
+        409
+      ],
+      "timestamp": "2025-09-18T00:01:53.284Z",
+      "status": "PASS",
+      "statusCode": 409,
+      "statusMessage": "Conflict",
+      "responseTime": 391,
+      "contentType": "application/json; charset=utf-8",
+      "bodyLength": 70,
+      "rateLimitRemaining": "83",
+      "rateLimitLimit": "100",
+      "message": "Expected status 409",
+      "responseBody": {
+        "error": {
+          "code": "EMAIL_EXISTS",
+          "message": "Email already registered"
+        }
+      }
+    },
+    {
+      "path": "/api/auth/login",
+      "method": "POST",
+      "category": "Authentication",
+      "data": {
+        "email": "test@example.com",
+        "password": "wrongpassword"
+      },
+      "expectedStatuses": [
+        200,
+        401,
+        400
+      ],
+      "timestamp": "2025-09-18T00:01:53.884Z",
+      "status": "PASS",
+      "statusCode": 401,
+      "statusMessage": "Unauthorized",
+      "responseTime": 485,
+      "contentType": "application/json; charset=utf-8",
+      "bodyLength": 78,
+      "rateLimitRemaining": "82",
+      "rateLimitLimit": "100",
+      "message": "Expected status 401",
+      "responseBody": {
+        "error": {
+          "code": "INVALID_CREDENTIALS",
+          "message": "Invalid email or password"
+        }
+      }
+    },
+    {
+      "path": "/api/auth/logout",
+      "method": "POST",
+      "category": "Authentication",
+      "data": {},
+      "expectedStatuses": [
+        200,
+        401
+      ],
+      "timestamp": "2025-09-18T00:01:54.592Z",
+      "status": "WARN",
+      "statusCode": 204,
+      "statusMessage": "No Content",
+      "responseTime": 83,
+      "bodyLength": 0,
+      "rateLimitRemaining": "81",
+      "rateLimitLimit": "100",
+      "message": "Unexpected status 204 (not in expected list)"
+    },
+    {
+      "path": "/api/auth/refresh",
+      "method": "POST",
+      "category": "Authentication",
+      "data": {},
+      "expectedStatuses": [
+        200,
+        401
+      ],
+      "timestamp": "2025-09-18T00:01:54.883Z",
+      "status": "PASS",
+      "statusCode": 401,
+      "statusMessage": "Unauthorized",
+      "responseTime": 87,
+      "contentType": "application/json; charset=utf-8",
+      "bodyLength": 78,
+      "rateLimitRemaining": "80",
+      "rateLimitLimit": "100",
+      "message": "Expected status 401",
+      "responseBody": {
+        "error": {
+          "code": "UNAUTHORIZED",
+          "message": "Invalid or expired refresh token"
+        }
+      }
+    },
+    {
+      "path": "/api/auth/forgot-password",
+      "method": "POST",
+      "category": "Authentication",
+      "data": {
+        "email": "test@example.com"
+      },
+      "expectedStatuses": [
+        200,
+        400,
+        404
+      ],
+      "timestamp": "2025-09-18T00:01:55.185Z",
+      "status": "PASS",
+      "statusCode": 404,
+      "statusMessage": "Not Found",
+      "responseTime": 84,
+      "contentType": "application/json; charset=utf-8",
+      "bodyLength": 140,
+      "rateLimitRemaining": "79",
+      "rateLimitLimit": "100",
+      "message": "Expected status 404",
+      "responseBody": {
+        "success": false,
+        "error": {
+          "message": "Route POST /api/auth/forgot-password not found",
+          "statusCode": 404,
+          "data": "req_1758153715584_piy2zbpz8"
+        }
+      }
+    },
+    {
+      "path": "/api/health",
+      "method": "GET",
+      "category": "System",
+      "expectedStatuses": [
+        200
+      ],
+      "timestamp": "2025-09-18T00:01:55.483Z",
+      "status": "PASS",
+      "statusCode": 200,
+      "statusMessage": "OK",
+      "responseTime": 83,
+      "contentType": "application/json; charset=utf-8",
+      "bodyLength": 254,
+      "rateLimitRemaining": "78",
+      "rateLimitLimit": "100",
+      "message": "Expected status 200",
+      "responseBody": {
+        "status": "ok",
+        "timestamp": "2025-09-18T00:01:55.880Z",
+        "version": "1.0.0",
+        "environment": "production",
+        "deployment": {
+          "buildTime": "2025-09-18T00:01:55.880Z",
+          "nodeVersion": "v20.19.5",
+          "platform": "unknown",
+          "staticFileServingEnabled": true,
+          "commitHash": "ee6b793"
+        }
+      }
+    },
+    {
+      "path": "/health",
+      "method": "GET",
+      "category": "System",
+      "expectedStatuses": [
+        200
+      ],
+      "timestamp": "2025-09-18T00:01:55.770Z",
+      "status": "PASS",
+      "statusCode": 200,
+      "statusMessage": "OK",
+      "responseTime": 83,
+      "contentType": "application/json; charset=utf-8",
+      "bodyLength": 77,
+      "message": "Expected status 200",
+      "responseBody": {
+        "status": "healthy",
+        "timestamp": "2025-09-18T00:01:56.168Z",
+        "version": "1.0.0"
+      }
+    },
+    {
+      "path": "/api/user/profile",
+      "method": "GET",
+      "category": "User",
+      "requiresAuth": true,
+      "expectedStatuses": [
+        200,
+        401
+      ],
+      "timestamp": "2025-09-18T00:01:56.059Z",
+      "status": "PASS",
+      "statusCode": 200,
+      "statusMessage": "OK",
+      "responseTime": 79,
+      "contentType": "application/json; charset=utf-8",
+      "bodyLength": 85,
+      "rateLimitRemaining": "77",
+      "rateLimitLimit": "100",
+      "message": "Expected status 200",
+      "responseBody": {
+        "id": "test-user-id",
+        "email": "test@example.com",
+        "firstName": "Test",
+        "lastName": "User"
+      }
+    },
+    {
+      "path": "/api/user/settings",
+      "method": "GET",
+      "category": "User",
+      "requiresAuth": true,
+      "expectedStatuses": [
+        200,
+        401
+      ],
+      "timestamp": "2025-09-18T00:01:56.339Z",
+      "status": "FAIL",
+      "statusCode": 404,
+      "statusMessage": "Not Found",
+      "responseTime": 79,
+      "contentType": "application/json; charset=utf-8",
+      "bodyLength": 109,
+      "rateLimitRemaining": "76",
+      "rateLimitLimit": "100",
+      "error": "Endpoint not found (404)",
+      "responseBody": {
+        "success": false,
+        "error": {
+          "type": "NOT_FOUND",
+          "message": "API endpoint not found",
+          "path": "/api/user/settings"
+        }
+      }
+    },
+    {
+      "path": "/api/oauth/google",
+      "method": "GET",
+      "category": "OAuth",
+      "expectedStatuses": [
+        302,
+        400
+      ],
+      "timestamp": "2025-09-18T00:01:56.634Z",
+      "status": "PASS",
+      "statusCode": 302,
+      "statusMessage": "Found",
+      "responseTime": 83,
+      "contentType": "text/html; charset=utf-8",
+      "bodyLength": 85,
+      "rateLimitRemaining": "75",
+      "rateLimitLimit": "100",
+      "message": "Expected status 302",
+      "responseBody": "<p>Found. Redirecting to https://app.floworx-iq.com/dashboard?error=auth_required</p>"
+    },
+    {
+      "path": "/api/onboarding/business-types",
+      "method": "GET",
+      "category": "Onboarding",
+      "expectedStatuses": [
+        200,
+        401
+      ],
+      "timestamp": "2025-09-18T00:01:56.919Z",
+      "status": "FAIL",
+      "statusCode": 404,
+      "statusMessage": "Not Found",
+      "responseTime": 77,
+      "contentType": "application/json; charset=utf-8",
+      "bodyLength": 121,
+      "rateLimitRemaining": "74",
+      "rateLimitLimit": "100",
+      "error": "Endpoint not found (404)",
+      "responseBody": {
+        "success": false,
+        "error": {
+          "type": "NOT_FOUND",
+          "message": "API endpoint not found",
+          "path": "/api/onboarding/business-types"
+        }
+      }
+    },
+    {
+      "path": "/api/dashboard",
+      "method": "GET",
+      "category": "Dashboard",
+      "requiresAuth": true,
+      "expectedStatuses": [
+        200,
+        401
+      ],
+      "timestamp": "2025-09-18T00:01:57.202Z",
+      "status": "PASS",
+      "statusCode": 401,
+      "statusMessage": "Unauthorized",
+      "responseTime": 79,
+      "contentType": "application/json; charset=utf-8",
+      "bodyLength": 94,
+      "rateLimitRemaining": "73",
+      "rateLimitLimit": "100",
+      "message": "Expected status 401",
+      "responseBody": {
+        "success": false,
+        "error": {
+          "type": "INVALID_TOKEN",
+          "message": "Invalid token format",
+          "code": 401
+        }
+      }
+    },
+    {
+      "path": "/",
+      "method": "GET",
+      "category": "Static",
+      "expectedStatuses": [
+        200
+      ],
+      "timestamp": "2025-09-18T00:01:57.482Z",
+      "status": "PASS",
+      "statusCode": 200,
+      "statusMessage": "OK",
+      "responseTime": 81,
+      "contentType": "text/html; charset=UTF-8",
+      "bodyLength": 799,
+      "message": "Expected status 200",
+      "responseBody": "<!doctype html><html lang=\"en\"><head><meta charset=\"utf-8\"/><link rel=\"icon\" href=\"/favicon.svg\" type=\"image/svg+xml\"/><link rel=\"icon\" href=\"/favicon.ico\"/><meta name=\"viewport\" content=\"width=device"
+    },
+    {
+      "path": "/login",
+      "method": "GET",
+      "category": "Static",
+      "expectedStatuses": [
+        200
+      ],
+      "timestamp": "2025-09-18T00:01:57.767Z",
+      "status": "PASS",
+      "statusCode": 200,
+      "statusMessage": "OK",
+      "responseTime": 79,
+      "contentType": "text/html; charset=UTF-8",
+      "bodyLength": 799,
+      "message": "Expected status 200",
+      "responseBody": "<!doctype html><html lang=\"en\"><head><meta charset=\"utf-8\"/><link rel=\"icon\" href=\"/favicon.svg\" type=\"image/svg+xml\"/><link rel=\"icon\" href=\"/favicon.ico\"/><meta name=\"viewport\" content=\"width=device"
+    },
+    {
+      "path": "/register",
+      "method": "GET",
+      "category": "Static",
+      "expectedStatuses": [
+        200
+      ],
+      "timestamp": "2025-09-18T00:01:58.061Z",
+      "status": "PASS",
+      "statusCode": 200,
+      "statusMessage": "OK",
+      "responseTime": 82,
+      "contentType": "text/html; charset=UTF-8",
+      "bodyLength": 799,
+      "message": "Expected status 200",
+      "responseBody": "<!doctype html><html lang=\"en\"><head><meta charset=\"utf-8\"/><link rel=\"icon\" href=\"/favicon.svg\" type=\"image/svg+xml\"/><link rel=\"icon\" href=\"/favicon.ico\"/><meta name=\"viewport\" content=\"width=device"
+    }
+  ],
+  "summary": {
+    "total": 15,
+    "working": 12,
+    "failing": 2,
+    "errors": [
+      {
+        "endpoint": "GET /api/user/settings",
+        "error": "Endpoint not found (404)",
+        "category": "User"
+      },
+      {
+        "endpoint": "GET /api/onboarding/business-types",
+        "error": "Endpoint not found (404)",
+        "category": "Onboarding"
+      }
+    ],
+    "warnings": 1
+  }
+}

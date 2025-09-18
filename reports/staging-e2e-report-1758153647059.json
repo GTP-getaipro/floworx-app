@@ -1,0 +1,58 @@
+{
+  "timestamp": "2025-09-18T00:00:42.672Z",
+  "environment": "staging",
+  "url": "https://staging.app.floworx-iq.com",
+  "browser": "chromium",
+  "tests": [
+    {
+      "name": "Registration Flow UI - System Error",
+      "status": "FAIL",
+      "error": "page.goto: net::ERR_NAME_NOT_RESOLVED at https://staging.app.floworx-iq.com/register\nCall log:\n\u001b[2m  - navigating to \"https://staging.app.floworx-iq.com/register\", waiting until \"networkidle\"\u001b[22m\n",
+      "details": null
+    },
+    {
+      "name": "Login Flow UI - System Error",
+      "status": "FAIL",
+      "error": "page.goto: net::ERR_NAME_NOT_RESOLVED at https://staging.app.floworx-iq.com/login\nCall log:\n\u001b[2m  - navigating to \"https://staging.app.floworx-iq.com/login\", waiting until \"networkidle\"\u001b[22m\n",
+      "details": null
+    },
+    {
+      "name": "Error Handling UI - System Error",
+      "status": "FAIL",
+      "error": "page.goto: net::ERR_NAME_NOT_RESOLVED at https://staging.app.floworx-iq.com/register\nCall log:\n\u001b[2m  - navigating to \"https://staging.app.floworx-iq.com/register\", waiting until \"networkidle\"\u001b[22m\n",
+      "details": null
+    },
+    {
+      "name": "JavaScript Error Detection - System Error",
+      "status": "FAIL",
+      "error": "page.goto: net::ERR_NAME_NOT_RESOLVED at https://staging.app.floworx-iq.com/login\nCall log:\n\u001b[2m  - navigating to \"https://staging.app.floworx-iq.com/login\", waiting until \"networkidle\"\u001b[22m\n",
+      "details": null
+    }
+  ],
+  "consoleErrors": [],
+  "jsErrors": [],
+  "summary": {
+    "total": 4,
+    "passed": 0,
+    "failed": 4,
+    "errors": [
+      {
+        "test": "Registration Flow UI - System Error",
+        "error": "page.goto: net::ERR_NAME_NOT_RESOLVED at https://staging.app.floworx-iq.com/register\nCall log:\n\u001b[2m  - navigating to \"https://staging.app.floworx-iq.com/register\", waiting until \"networkidle\"\u001b[22m\n"
+      },
+      {
+        "test": "Login Flow UI - System Error",
+        "error": "page.goto: net::ERR_NAME_NOT_RESOLVED at https://staging.app.floworx-iq.com/login\nCall log:\n\u001b[2m  - navigating to \"https://staging.app.floworx-iq.com/login\", waiting until \"networkidle\"\u001b[22m\n"
+      },
+      {
+        "test": "Error Handling UI - System Error",
+        "error": "page.goto: net::ERR_NAME_NOT_RESOLVED at https://staging.app.floworx-iq.com/register\nCall log:\n\u001b[2m  - navigating to \"https://staging.app.floworx-iq.com/register\", waiting until \"networkidle\"\u001b[22m\n"
+      },
+      {
+        "test": "JavaScript Error Detection - System Error",
+        "error": "page.goto: net::ERR_NAME_NOT_RESOLVED at https://staging.app.floworx-iq.com/login\nCall log:\n\u001b[2m  - navigating to \"https://staging.app.floworx-iq.com/login\", waiting until \"networkidle\"\u001b[22m\n"
+      }
+    ]
+  },
+  "recommendation": "REJECTED_NEEDS_FIXES"
+}

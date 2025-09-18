@@ -1,0 +1,65 @@
+{
+  "timestamp": "2025-09-18T00:00:47.095Z",
+  "type": "STAGING_VALIDATION_FAILURE",
+  "environment": "staging",
+  "results": {
+    "timestamp": "2025-09-18T00:00:42.307Z",
+    "environment": "staging",
+    "systems": {
+      "api": {
+        "success": true,
+        "exitCode": 0,
+        "stdout": "🔐 FloWorx Authentication Deployment Validation System\n======================================================================\n🛡️  SAFETY-FIRST DEPLOYMENT VALIDATION & MONITORING\n⚠️  HUMAN OVERSIGHT REQUIRED FOR ALL PRODUCTION ACTIONS\n\n🎯 COMMAND: Validate Staging Deployment\n🚀 PHASE 1: STAGING/UAT DEPLOYMENT VALIDATION\n============================================================\n🎯 Target: https://staging.app.floworx-iq.com\n⏰ Started: 2025-09-18T00:00:42.342Z\n\n📝 Testing User Registration Flow...\n🔐 Testing User Login Flow...\n🔑 Testing Forgot Password Flow...\n🚪 Testing Logout/Sign Out Flow...\n\n❌ STAGING VALIDATION: FAILED\n🚨 Critical issues detected - HALTING DEPLOYMENT PROCESS\n📋 RECOMMENDATION: REJECTED - NEEDS IMMEDIATE FIXES\n📄 Validation report saved: reports\\staging-validation-report-1758153642446.json\n",
+        "stderr": "",
+        "timestamp": "2025-09-18T00:00:42.453Z"
+      },
+      "e2e": {
+        "success": false,
+        "exitCode": 1,
+        "stdout": "🎭 FloWorx Browser E2E Authentication Validator\n============================================================\n\n🎭 BROWSER E2E VALIDATION - STAGING ENVIRONMENT\n============================================================\n🎯 Target: https://staging.app.floworx-iq.com\n⏰ Started: 2025-09-18T00:00:42.671Z\n\n🌐 Initializing browser for E2E testing...\n✅ Browser initialized successfully\n📝 Testing Registration Flow UI...\n🔐 Testing Login Flow UI...\n⚠️  Testing Error Handling UI...\n🐛 Testing JavaScript Error Detection...\n\n❌ BROWSER E2E VALIDATION: FAILED\n🚨 Critical UI/JavaScript issues detected\n🧹 Browser cleanup completed\n📄 E2E report saved: reports\\staging-e2e-report-1758153647059.json\n",
+        "stderr": "",
+        "timestamp": "2025-09-18T00:00:47.070Z"
+      },
+      "security": {
+        "timestamp": "2025-09-18T00:00:47.070Z",
+        "checks": [
+          {
+            "name": "HTTPS Enforcement",
+            "passed": true,
+            "details": {
+              "note": "HTTP connection refused - HTTPS enforced"
+            }
+          },
+          {
+            "name": "Security Headers",
+            "passed": false,
+            "error": "getaddrinfo ENOTFOUND staging.app.floworx-iq.com"
+          },
+          {
+            "name": "Auth Endpoint Security",
+            "passed": false,
+            "error": "getaddrinfo ENOTFOUND staging.app.floworx-iq.com"
+          }
+        ],
+        "success": false
+      }
+    },
+    "summary": {
+      "totalSystems": 2,
+      "passedSystems": 1,
+      "failedSystems": 2,
+      "errors": [
+        "Browser E2E validation failed",
+        "Security validation failed"
+      ]
+    },
+    "success": false
+  },
+  "recommendation": "FIX_ISSUES_BEFORE_RETRY",
+  "nextSteps": [
+    "Review individual validation system reports",
+    "Fix identified issues in codebase",
+    "Re-run staging validation",
+    "Only proceed to production after all validations pass"
+  ]
+}

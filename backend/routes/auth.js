@@ -1338,6 +1338,45 @@ router.post('/lockout-check', async (req, res) => {
   }
 });
 
+// POST /api/auth/forgot-password
+// Forgot password endpoint (redirects to password reset service)
+router.post('/forgot-password', async (req, res) => {
+  try {
+    const { email } = req.body;
+
+    if (!email) {
+      return res.status(400).json({
+        success: false,
+        error: { code: "BAD_REQUEST", message: "Email is required" }
+      });
+    }
+
+    // Email validation
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    if (!emailRegex.test(email)) {
+      return res.status(400).json({
+        success: false,
+        error: { code: "BAD_REQUEST", message: "Invalid email format" }
+      });
+    }
+
+    // Redirect to password reset service
+    const ipAddress = req.ip || req.connection.remoteAddress;
+    const userAgent = req.get('User-Agent');
+
+    const passwordResetService = require('../services/passwordResetService');
+    const result = await passwordResetService.initiatePasswordReset(email, ipAddress, userAgent);
+
+    return res.json(result);
+  } catch (error) {
+    console.error('Forgot password error:', error);
+    res.status(500).json({
+      success: false,
+      error: { code: "INTERNAL", message: "Unexpected error" }
+    });
+  }
+});
+
 // POST /api/auth/recovery
 // Account recovery endpoint (temporary endpoint for frontend compatibility)
 router.post('/recovery', async (req, res) => {

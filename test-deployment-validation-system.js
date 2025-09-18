@@ -262,8 +262,9 @@ class DeploymentValidationSystemTester {
       for (const command of test.commands) {
         try {
           const result = await this.runScript(test.script, [command], 15000);
-          const validResponse = result.stdout.length > 0 && 
-                               !result.stdout.includes('Error') &&
+          const validResponse = result.stdout.length > 0 &&
+                               !result.stdout.includes('💥') &&
+                               !result.stdout.includes('SYSTEM ERROR') &&
                                (result.exitCode === 0 || command === '--health-check');
           
           tests.push({

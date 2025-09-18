@@ -1,0 +1,240 @@
+{
+  "timestamp": "2025-09-17T23:44:09.946Z",
+  "tests": [
+    {
+      "name": "File Exists - deployment-validation-system.js",
+      "status": "PASS",
+      "error": null,
+      "details": {
+        "file": "deployment-validation-system.js",
+        "exists": true
+      }
+    },
+    {
+      "name": "File Exists - browser-e2e-validation.js",
+      "status": "PASS",
+      "error": null,
+      "details": {
+        "file": "browser-e2e-validation.js",
+        "exists": true
+      }
+    },
+    {
+      "name": "File Exists - master-deployment-orchestrator.js",
+      "status": "PASS",
+      "error": null,
+      "details": {
+        "file": "master-deployment-orchestrator.js",
+        "exists": true
+      }
+    },
+    {
+      "name": "Reports Directory - Writable",
+      "status": "PASS",
+      "error": null,
+      "details": {
+        "directory": "./reports"
+      }
+    },
+    {
+      "name": "Node Module - https",
+      "status": "PASS",
+      "error": null,
+      "details": {
+        "module": "https"
+      }
+    },
+    {
+      "name": "Node Module - fs",
+      "status": "PASS",
+      "error": null,
+      "details": {
+        "module": "fs"
+      }
+    },
+    {
+      "name": "Node Module - path",
+      "status": "PASS",
+      "error": null,
+      "details": {
+        "module": "path"
+      }
+    },
+    {
+      "name": "Node Module - child_process",
+      "status": "PASS",
+      "error": null,
+      "details": {
+        "module": "child_process"
+      }
+    },
+    {
+      "name": "Playwright - Available",
+      "status": "PASS",
+      "error": null,
+      "details": {
+        "note": "Browser E2E testing available"
+      }
+    },
+    {
+      "name": "Script Execution - deployment-validation-system.js",
+      "status": "PASS",
+      "error": null,
+      "details": {
+        "script": "deployment-validation-system.js",
+        "exitCode": 0,
+        "helpDisplayed": true,
+        "outputLength": 1012
+      }
+    },
+    {
+      "name": "Script Execution - browser-e2e-validation.js",
+      "status": "PASS",
+      "error": null,
+      "details": {
+        "script": "browser-e2e-validation.js",
+        "exitCode": 0,
+        "helpDisplayed": true,
+        "outputLength": 563
+      }
+    },
+    {
+      "name": "Script Execution - master-deployment-orchestrator.js",
+      "status": "PASS",
+      "error": null,
+      "details": {
+        "script": "master-deployment-orchestrator.js",
+        "exitCode": 0,
+        "helpDisplayed": true,
+        "outputLength": 1620
+      }
+    },
+    {
+      "name": "CLI Command - deployment-validation-system.js --help",
+      "status": "PASS",
+      "error": null,
+      "details": {
+        "script": "deployment-validation-system.js",
+        "command": "--help",
+        "exitCode": 0,
+        "outputLength": 1012,
+        "hasError": false
+      }
+    },
+    {
+      "name": "CLI Command - deployment-validation-system.js --health-check",
+      "status": "PASS",
+      "error": null,
+      "details": {
+        "script": "deployment-validation-system.js",
+        "command": "--health-check",
+        "exitCode": 0,
+        "outputLength": 799,
+        "hasError": false
+      }
+    },
+    {
+      "name": "CLI Command - browser-e2e-validation.js --help",
+      "status": "FAIL",
+      "error": "Invalid CLI response",
+      "details": {
+        "script": "browser-e2e-validation.js",
+        "command": "--help",
+        "exitCode": 0,
+        "outputLength": 563,
+        "hasError": false
+      }
+    },
+    {
+      "name": "CLI Command - master-deployment-orchestrator.js --help",
+      "status": "FAIL",
+      "error": "Invalid CLI response",
+      "details": {
+        "script": "master-deployment-orchestrator.js",
+        "command": "--help",
+        "exitCode": 0,
+        "outputLength": 1620,
+        "hasError": false
+      }
+    },
+    {
+      "name": "CLI Command - master-deployment-orchestrator.js --status",
+      "status": "PASS",
+      "error": null,
+      "details": {
+        "script": "master-deployment-orchestrator.js",
+        "command": "--status",
+        "exitCode": 0,
+        "outputLength": 425,
+        "hasError": false
+      }
+    },
+    {
+      "name": "Safety Mechanisms - deployment-validation-system.js",
+      "status": "PASS",
+      "error": null,
+      "details": {
+        "script": "deployment-validation-system.js",
+        "foundKeywords": [
+          "HUMAN",
+          "APPROVAL",
+          "NO AUTONOMOUS",
+          "STAGING",
+          "PRODUCTION"
+        ],
+        "totalKeywords": 5,
+        "requiredKeywords": 3
+      }
+    },
+    {
+      "name": "Safety Mechanisms - browser-e2e-validation.js",
+      "status": "PASS",
+      "error": null,
+      "details": {
+        "script": "browser-e2e-validation.js",
+        "foundKeywords": [
+          "HUMAN",
+          "APPROVAL",
+          "NO AUTONOMOUS",
+          "STAGING",
+          "PRODUCTION"
+        ],
+        "totalKeywords": 5,
+        "requiredKeywords": 3
+      }
+    },
+    {
+      "name": "Safety Mechanisms - master-deployment-orchestrator.js",
+      "status": "PASS",
+      "error": null,
+      "details": {
+        "script": "master-deployment-orchestrator.js",
+        "foundKeywords": [
+          "HUMAN",
+          "APPROVAL",
+          "NO AUTONOMOUS",
+          "STAGING",
+          "PRODUCTION"
+        ],
+        "totalKeywords": 5,
+        "requiredKeywords": 3
+      }
+    }
+  ],
+  "summary": {
+    "total": 20,
+    "passed": 18,
+    "failed": 2,
+    "errors": [
+      {
+        "test": "CLI Command - browser-e2e-validation.js --help",
+        "error": "Invalid CLI response"
+      },
+      {
+        "test": "CLI Command - master-deployment-orchestrator.js --help",
+        "error": "Invalid CLI response"
+      }
+    ]
+  },
+  "recommendation": "SYSTEM_NEEDS_FIXES"
+}

@@ -978,6 +978,84 @@ class DatabaseOperations {
     }
   }
 
+  // USER SETTINGS OPERATIONS
+  // =====================================================
+
+  async getUserSettings(userId) {
+    const { type, client } = await this.getClient();
+
+    if (type === 'REST_API') {
+      const result = await client.getAdminClient()
+        .from('user_settings')
+        .select('settings')
+        .eq('user_id', userId)
+        .single();
+
+      return {
+        data: result.data?.settings || null,
+        error: result.error
+      };
+    } else {
+      // PostgreSQL implementation
+      const query = `
+        SELECT settings
+        FROM user_settings
+        WHERE user_id = $1
+      `;
+      const result = await client.query(query, [userId]);
+      return {
+        data: result.rows[0]?.settings || null,
+        error: result.rows.length === 0 ? null : null // No error if no settings found
+      };
+    }
+  }
+
+  async updateUserSettings(userId, settingsData) {
+    const { type, client } = await this.getClient();
+
+    if (type === 'REST_API') {
+      // First try to update existing settings
+      const updateResult = await client.getAdminClient()
+        .from('user_settings')
+        .update({
+          settings: settingsData,
+          updated_at: new Date().toISOString()
+        })
+        .eq('user_id', userId)
+        .select();
+
+      // If no rows were updated, insert new settings
+      if (updateResult.data && updateResult.data.length === 0) {
+        const insertResult = await client.getAdminClient()
+          .from('user_settings')
+          .insert({
+            user_id: userId,
+            settings: settingsData,
+            created_at: new Date().toISOString(),
+            updated_at: new Date().toISOString()
+          })
+          .select();
+
+        return insertResult;
+      }
+
+      return updateResult;
+    } else {
+      // PostgreSQL implementation - use UPSERT
+      const query = `
+        INSERT INTO user_settings (user_id, settings, created_at, updated_at)
+        VALUES ($1, $2, NOW(), NOW())
+        ON CONFLICT (user_id)
+        DO UPDATE SET
+          settings = $2,
+          updated_at = NOW()
+        RETURNING user_id, settings, updated_at
+      `;
+      const result = await client.query(query, [userId, JSON.stringify(settingsData)]);
+      return { data: result.rows[0] || null, error: null };
+    }
+  }
+
   async getUserConnectedServices(userId) {
     const { type, client } = await this.getClient();
 

@@ -1,5 +1,6 @@
 import bcrypt from 'bcryptjs';
 import jwt from 'jsonwebtoken';
+import crypto from 'crypto';
 import { getSupabaseAdmin } from '../_lib/database.js';
 
 // Input validation helpers
@@ -33,6 +34,7 @@ export default async function handler(req, res) {
   }
 
   try {
+    console.log('Registration request received:', { body: req.body });
     const { firstName, lastName, companyName, email, password } = req.body;
 
     // Input validation
@@ -86,9 +88,6 @@ export default async function handler(req, res) {
     const passwordHash = await bcrypt.hash(password, saltRounds);
 
     // Generate verification token
-    const crypto = require('crypto');
-    const jwt = require('jsonwebtoken');
-
     // Create secure verification token
     const randomBytes = crypto.randomBytes(32).toString('hex');
     const userId = crypto.randomUUID();
@@ -152,9 +151,12 @@ export default async function handler(req, res) {
 
   } catch (error) {
     console.error('Registration error:', error);
+    console.error('Error stack:', error.stack);
     res.status(500).json({
-      error: 'Registration failed',
-      message: 'Something went wrong during registration. Please try again.'
+      error: {
+        code: 'INTERNAL',
+        message: 'Unexpected error during registration'
+      }
     });
   }
 }

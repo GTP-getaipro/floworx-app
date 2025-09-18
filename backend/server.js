@@ -40,6 +40,7 @@ const {
 const analyticsRoutes = require('./routes/analytics');
 const authRoutes = require('./routes/auth');
 const businessTypesRoutes = require('./routes/businessTypes');
+const clientsRoutes = require('./routes/clients');
 const dashboardRoutes = require('./routes/dashboard');
 // const diagnosticsRoutes = require('./routes/diagnostics'); // Removed during cleanup
 const errorRoutes = require('./routes/errors');
@@ -280,6 +281,7 @@ app.use('/api/recovery', recoveryRoutes);
 // app.use('/api/account-recovery', accountRecoveryRoutes); // Removed during cleanup
 app.use('/api/password-reset', passwordResetRoutes);
 app.use('/api/business-types', businessTypesRoutes);
+app.use('/api/clients', clientsRoutes);
 app.use('/api/workflows', workflowRoutes);
 app.use('/api/analytics', analyticsRoutes);
 // app.use('/api/performance', performanceRoutes); // Removed during cleanup

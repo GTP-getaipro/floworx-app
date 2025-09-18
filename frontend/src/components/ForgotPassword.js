@@ -41,6 +41,12 @@ const ForgotPassword = () => {
         `${process.env.REACT_APP_API_URL}/account-recovery/check-lockout`,
         {
           email: email.toLowerCase().trim(),
+        },
+        {
+          withCredentials: true,
+          headers: {
+            'Content-Type': 'application/json'
+          }
         }
       );
 
@@ -79,12 +85,22 @@ const ForgotPassword = () => {
       if (recoveryType === 'password_reset') {
         response = await axios.post(`${process.env.REACT_APP_API_URL}/auth/forgot-password`, {
           email: email.toLowerCase().trim(),
+        }, {
+          withCredentials: true,
+          headers: {
+            'Content-Type': 'application/json'
+          }
         });
       } else {
         response = await axios.post(`${process.env.REACT_APP_API_URL}/account-recovery/initiate`, {
           email: email.toLowerCase().trim(),
           recoveryType,
           recoveryData: { reason: 'user_requested' },
+        }, {
+          withCredentials: true,
+          headers: {
+            'Content-Type': 'application/json'
+          }
         });
       }
 

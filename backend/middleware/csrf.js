@@ -72,7 +72,9 @@ function csrfProtection(req, res, next) {
     '/api/auth/login',
     '/api/auth/csrf',
     '/api/auth/verify-email',
-    '/api/auth/resend-verification'
+    '/api/auth/resend-verification',
+    '/api/auth/forgot-password',
+    '/api/auth/password/request'
   ];
 
   if (publicAuthEndpoints.some(endpoint => req.path === endpoint.replace('/api', ''))) {

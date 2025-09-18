@@ -1,0 +1,91 @@
+{
+  "timestamp": "2025-09-18T17:46:18.196Z",
+  "tests": [
+    {
+      "name": "Auth Verify Endpoint",
+      "endpoint": "GET /api/auth/verify",
+      "status": 401,
+      "data": {
+        "error": {
+          "code": "UNAUTHORIZED",
+          "message": "Authentication required"
+        }
+      },
+      "headers": {
+        "access-control-allow-credentials": "true",
+        "access-control-expose-headers": "X-RateLimit-Limit,X-RateLimit-Remaining,X-RateLimit-Reset",
+        "alt-svc": "h3=\":443\"; ma=2592000",
+        "cache-control": "no-cache, no-store, must-revalidate",
+        "content-length": "69",
+        "content-type": "application/json; charset=utf-8",
+        "date": "Thu, 18 Sep 2025 17:46:19 GMT",
+        "etag": "W/\"45-JP7DVE0hDQzX+mcXoyobRGQOx68\"",
+        "ratelimit-limit": "100",
+        "ratelimit-policy": "100;w=900",
+        "ratelimit-remaining": "84",
+        "ratelimit-reset": "577",
+        "server": "FloWorx",
+        "strict-transport-security": "max-age=63072000; includeSubDomains; preload",
+        "vary": "Accept-Encoding, Origin, Accept-Encoding",
+        "x-powered-by": "Express",
+        "x-request-id": "req_1758217579156_5qvv8e8ln",
+        "x-robots-tag": "noindex, nofollow"
+      },
+      "success": true,
+      "expectedFormat": true
+    },
+    {
+      "name": "Login Endpoint",
+      "endpoint": "POST /api/auth/login",
+      "status": 401,
+      "data": {
+        "error": {
+          "code": "INVALID_CREDENTIALS",
+          "message": "Invalid email or password"
+        }
+      },
+      "success": true,
+      "expectedFormat": true
+    },
+    {
+      "name": "Register Endpoint",
+      "endpoint": "POST /api/auth/register",
+      "status": 201,
+      "data": {
+        "success": true,
+        "message": "Account created successfully. Please check your email to verify your account.",
+        "userId": "c3d6cbdf-db7b-4d73-98f5-57997527d637",
+        "requiresVerification": true,
+        "email": "test-1758217578654@floworx-test.com",
+        "emailSent": true
+      },
+      "success": true,
+      "emailSent": true
+    },
+    {
+      "name": "Password Reset Request",
+      "endpoint": "POST /api/auth/password/request",
+      "status": 202,
+      "data": {
+        "message": "If this email is registered, a password reset link will be sent"
+      },
+      "success": true,
+      "emailRequested": true
+    },
+    {
+      "name": "Cookie Handling",
+      "endpoint": "Cookie Configuration",
+      "setCookieHeaders": [],
+      "hasFxSessCookie": false,
+      "withCredentials": true,
+      "success": true
+    }
+  ],
+  "summary": {
+    "total": 5,
+    "passed": 5,
+    "failed": 0,
+    "successRate": "100.0%",
+    "status": "ALL_TESTS_PASSED"
+  }
+}

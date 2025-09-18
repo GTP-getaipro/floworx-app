@@ -1,0 +1,50 @@
+{
+  "gmail": {
+    "name": "Gmail SMTP",
+    "config": {
+      "SMTP_HOST": "smtp.gmail.com",
+      "SMTP_PORT": "587",
+      "SMTP_USER": "your-email@gmail.com",
+      "SMTP_PASS": "your-app-password",
+      "FROM_EMAIL": "noreply@floworx-iq.com",
+      "FROM_NAME": "FloWorx Team"
+    },
+    "notes": [
+      "Use App Password, not regular Gmail password",
+      "Enable 2-factor authentication first",
+      "Generate App Password in Google Account settings"
+    ]
+  },
+  "sendgrid": {
+    "name": "SendGrid",
+    "config": {
+      "SMTP_HOST": "smtp.sendgrid.net",
+      "SMTP_PORT": "587",
+      "SMTP_USER": "apikey",
+      "SMTP_PASS": "SG.your_sendgrid_api_key",
+      "FROM_EMAIL": "noreply@floworx-iq.com",
+      "FROM_NAME": "FloWorx Team"
+    },
+    "notes": [
+      "Create SendGrid account and verify domain",
+      "Generate API key with Mail Send permissions",
+      "Use \"apikey\" as username, API key as password"
+    ]
+  },
+  "outlook": {
+    "name": "Outlook/Office365",
+    "config": {
+      "SMTP_HOST": "smtp-mail.outlook.com",
+      "SMTP_PORT": "587",
+      "SMTP_USER": "your-email@outlook.com",
+      "SMTP_PASS": "your-password",
+      "FROM_EMAIL": "noreply@floworx-iq.com",
+      "FROM_NAME": "FloWorx Team"
+    },
+    "notes": [
+      "Use full email address as username",
+      "May require app-specific password",
+      "Enable SMTP in Outlook settings"
+    ]
+  }
+}

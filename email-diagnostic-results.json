@@ -1,0 +1,90 @@
+{
+  "timestamp": "2025-09-18T17:44:24.536Z",
+  "tests": [
+    {
+      "name": "Environment Variables Check",
+      "envStatus": {
+        "SMTP_HOST": {
+          "present": false,
+          "value": null,
+          "required": true
+        },
+        "SMTP_PORT": {
+          "present": false,
+          "value": null,
+          "required": true
+        },
+        "SMTP_USER": {
+          "present": false,
+          "value": null,
+          "required": true
+        },
+        "SMTP_PASS": {
+          "present": false,
+          "value": null,
+          "required": true
+        },
+        "FROM_EMAIL": {
+          "present": false,
+          "value": null,
+          "required": true
+        },
+        "FROM_NAME": {
+          "present": false,
+          "value": null,
+          "required": true
+        },
+        "REPLY_TO_EMAIL": {
+          "present": false,
+          "value": null,
+          "required": false
+        },
+        "FRONTEND_URL": {
+          "present": false,
+          "value": null,
+          "required": false
+        }
+      },
+      "missing": [
+        "SMTP_HOST",
+        "SMTP_PORT",
+        "SMTP_USER",
+        "SMTP_PASS",
+        "FROM_EMAIL",
+        "FROM_NAME"
+      ],
+      "present": [],
+      "success": false
+    },
+    {
+      "name": "SMTP Connection Test",
+      "error": "Missing SMTP configuration",
+      "success": false
+    },
+    {
+      "name": "Password Reset Email API",
+      "endpoint": "POST /api/auth/password/request",
+      "status": 202,
+      "data": {
+        "message": "If this email is registered, a password reset link will be sent"
+      },
+      "success": true
+    }
+  ],
+  "recommendations": [
+    {
+      "type": "MISSING_ENV_VARS",
+      "message": "Configure missing environment variables: SMTP_HOST, SMTP_PORT, SMTP_USER, SMTP_PASS, FROM_EMAIL, FROM_NAME",
+      "priority": "HIGH",
+      "action": "Set the missing environment variables in your production environment"
+    }
+  ],
+  "summary": {
+    "total": 3,
+    "passed": 1,
+    "failed": 2,
+    "successRate": "33.3%",
+    "status": "EMAIL_ISSUES_DETECTED",
+    "recommendations": 1
+  }
+}

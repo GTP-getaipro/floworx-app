@@ -91,7 +91,7 @@ class AuthDiagnostic {
         endpoint: 'POST /api/auth/password/request',
         status: response.status,
         data: response.data,
-        success: response.status === 200,
+        success: response.status === 200 || response.status === 202, // 202 is correct for async email operations
         emailRequested: true
       };
       

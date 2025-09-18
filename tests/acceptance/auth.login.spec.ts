@@ -16,7 +16,7 @@ async function register(email: string, password: string) {
 }
 
 describe("POST /api/auth/login", () => {
-  it("blocks unverified users with 409 and resendUrl", async () => {
+  it("blocks unverified users with 403 and resendUrl", async () => {
     const email = `${uid()}@example.com`;
     const password = "Secret123!";
 
@@ -26,9 +26,10 @@ describe("POST /api/auth/login", () => {
       .post("/api/auth/login")
       .send({ email, password });
 
-    expect(res.status).toBe(409);
-    expect(res.body?.error?.code).toBe("UNVERIFIED");
-    expect(typeof res.body?.error?.resendUrl).toBe("string");
+    expect(res.status).toBe(403);
+    expect(res.body?.error?.code).toBe("EMAIL_NOT_VERIFIED");
+    expect(typeof res.body?.resendUrl).toBe("string");
+    expect(typeof res.body?.userFriendlyMessage).toBe("string");
   });
 
   it("allows verified users to login (200 with userId)", async () => {

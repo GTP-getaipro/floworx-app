@@ -694,12 +694,13 @@ router.post('/login', loginRateLimiter, async (req, res) => {
 
     // Check if user is verified
     if (!user.email_verified) {
-      return res.status(409).json({
+      return res.status(403).json({
         error: {
-          code: "UNVERIFIED",
-          message: "Email not verified"
+          code: "EMAIL_NOT_VERIFIED",
+          message: "Please verify your email address to log in. Check your inbox for the verification link."
         },
-        resendUrl: "/api/auth/resend"
+        resendUrl: "/api/auth/resend",
+        userFriendlyMessage: "Your account is not verified. Please check your email for the verification link."
       });
     }
 

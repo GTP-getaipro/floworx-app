@@ -7,6 +7,7 @@ const rateLimit = require('express-rate-limit');
 const slowDown = require('express-slow-down');
 const { validationResult } = require('express-validator');
 const helmet = require('helmet');
+const { authConfig } = require('../config/authConfig');
 
 const { ValidationError } = require('../utils/errors');
 
@@ -124,7 +125,7 @@ const helmetConfig = {
 const rateLimitConfigs = {
   // General API rate limiting
   api: rateLimit({
-    windowMs: 15 * 60 * 1000, // 15 minutes
+    windowMs: authConfig.rateLimits.api.windowMs,
     max: process.env.NODE_ENV === 'production' ? 100 : 1000,
     message: {
       error: 'Too many requests',
@@ -152,7 +153,7 @@ const rateLimitConfigs = {
 
   // Authentication endpoints (stricter)
   auth: rateLimit({
-    windowMs: 15 * 60 * 1000, // 15 minutes
+    windowMs: authConfig.rateLimits.login.windowMs,
     max: process.env.NODE_ENV === 'production' ? 50 : 1000, // Very high for development/testing
     skipSuccessfulRequests: true,
     message: {
@@ -198,7 +199,7 @@ const rateLimitConfigs = {
 
   // OAuth callbacks
   oauth: rateLimit({
-    windowMs: 15 * 60 * 1000, // 15 minutes
+    windowMs: authConfig.rateLimits.oauth.windowMs,
     max: process.env.NODE_ENV === 'production' ? 10 : 50,
     message: {
       error: 'Too many OAuth attempts',
@@ -213,7 +214,7 @@ const rateLimitConfigs = {
  */
 const slowDownConfigs = {
   auth: slowDown({
-    windowMs: 15 * 60 * 1000, // 15 minutes
+    windowMs: authConfig.rateLimits.login.windowMs,
     delayAfter: 2, // Allow 2 requests per windowMs without delay
     delayMs: () => 500, // Add 500ms delay per request after delayAfter
     maxDelayMs: 20000, // Maximum delay of 20 seconds

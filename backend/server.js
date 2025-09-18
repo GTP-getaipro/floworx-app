@@ -8,6 +8,9 @@ const cookieParser = require('cookie-parser');
 const config = require('./config/config');
 const { logger } = require('./utils/logger');
 
+// Load and validate authentication configuration
+const { validateAuthConfig } = require('./config/authConfig');
+
 // Import configuration validation middleware
 const { validateConfigurationOnStartup, addConfigContext, configHealthCheck, viewSafeConfig } = require('./middleware/configValidation');
 
@@ -429,6 +432,15 @@ const startServer = async () => {
       }
     } else {
       logger.info('Monitoring service disabled - no database connection');
+    }
+
+    // Validate authentication configuration before starting server
+    try {
+      validateAuthConfig();
+      logger.info('✅ Authentication configuration validation passed');
+    } catch (error) {
+      logger.error('❌ Authentication configuration validation failed', { error: error.message });
+      process.exit(1);
     }
 
     // Start the server

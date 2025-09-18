@@ -112,7 +112,9 @@
     "audit:exports": "npx ts-prune || true",
     "audit:imports": "npx eslint . --ext .js,.jsx --max-warnings=0",
     "audit:code-full": "npm run audit:unused && npm run audit:deps && npm run audit:cycles",
-    "verify:audit": "npm run audit:deps && npm run audit:imports"
+    "verify:audit": "npm run audit:deps && npm run audit:imports",
+    "guardrails:validate": "node scripts/validate-guardrails.js",
+    "guardrails:check": "npm run guardrails:validate"
   },
   "keywords": [
     "saas",

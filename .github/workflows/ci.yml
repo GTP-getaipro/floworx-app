@@ -21,17 +21,112 @@ jobs:
     
     - run: npm ci
     
-    - name: Audit gates
+    - name: FloWorx Guardrails - Component Structure
       run: |
+        echo "🔍 Checking for duplicate components..."
         npm run audit:unused
         npm run audit:cycles
+
+        echo "🔍 Validating component structure..."
+        # Check for forbidden duplicate auth components
+        if find frontend/src -name "Login.js" -o -name "Register.js" -o -name "VerifyEmail.js" | grep -E "(Auth/|components/)" | head -1; then
+          echo "❌ GUARDRAIL VIOLATION: Duplicate auth components detected!"
+          echo "   Only use canonical components in frontend/src/pages/"
+          echo "   See frontend/src/pages/README.md for approved components"
+          exit 1
+        fi
+
+        echo "✅ Component structure validation passed"
     
+    - name: FloWorx Guardrails - Design System Enforcement
+      run: |
+        echo "🎨 Validating FloWorx design system compliance..."
+
+        # Check for forbidden external design library imports
+        if grep -r "@mui\|@material-ui\|bootstrap\|antd\|@ant-design\|@chakra-ui\|semantic-ui-react\|@mantine" frontend/src --include="*.js" --include="*.jsx" | head -5; then
+          echo "❌ GUARDRAIL VIOLATION: External design libraries detected!"
+          echo "   Only Tailwind CSS + FloWorx design system components are allowed"
+          echo "   See frontend/src/components/README.md for approved components"
+          exit 1
+        fi
+
+        echo "✅ Design system compliance validated"
+
+    - name: FloWorx Guardrails - Authentication Configuration
+      run: |
+        echo "🔐 Validating authentication configuration..."
+
+        # Check that authConfig.js exists and is being used
+        if [ ! -f "backend/config/authConfig.js" ]; then
+          echo "❌ GUARDRAIL VIOLATION: Missing centralized auth configuration!"
+          echo "   backend/config/authConfig.js is required for token TTL consistency"
+          exit 1
+        fi
+
+        # Check for hardcoded token TTLs (should use authConfig)
+        if grep -r "15.*60.*1000\|60.*60.*1000" backend --include="*.js" | grep -v "authConfig.js" | head -3; then
+          echo "❌ GUARDRAIL VIOLATION: Hardcoded token TTLs detected!"
+          echo "   Use authConfig.tokens.passwordResetTTL instead of hardcoded values"
+          exit 1
+        fi
+
+        echo "✅ Authentication configuration validated"
+
+    - name: FloWorx Guardrails - Email Security
+      run: |
+        echo "📧 Validating email security requirements..."
+
+        # Check for email pre-filling in auth components
+        if grep -r "defaultValue.*email\|value.*user.*email\|localStorage.*email" frontend/src/pages --include="*.jsx" | head -3; then
+          echo "❌ GUARDRAIL VIOLATION: Email pre-filling detected!"
+          echo "   Auth forms must start with empty email fields for security"
+          echo "   See frontend/src/pages/README.md for security requirements"
+          exit 1
+        fi
+
+        # Check that email service validation exists
+        if ! grep -q "validateAuthConfig" backend/server.js; then
+          echo "❌ GUARDRAIL VIOLATION: Missing email service validation!"
+          echo "   Server must validate email configuration on startup"
+          exit 1
+        fi
+
+        echo "✅ Email security requirements validated"
+
     - name: Run tests (vitest)
       run: npm run test:vitest:run
     
     - name: Run regression (jest - optional)
       run: npm run test:regression || true
     
+    - name: FloWorx Guardrails - Token TTL Consistency Test
+      run: |
+        echo "⏱️ Testing token TTL consistency..."
+
+        # Create a simple test to verify token TTL configuration
+        cat > test-token-ttl.js << 'EOF'
+        const { authConfig } = require('./backend/config/authConfig');
+
+        console.log('🔍 Testing token TTL configuration...');
+
+        // Verify password reset TTL is 15 minutes
+        if (authConfig.tokens.passwordResetTTL !== 15) {
+          console.error('❌ Password reset TTL must be 15 minutes, got:', authConfig.tokens.passwordResetTTL);
+          process.exit(1);
+        }
+
+        // Verify email verification TTL is reasonable (24 hours)
+        if (authConfig.tokens.emailVerificationTTL !== 1440) {
+          console.error('❌ Email verification TTL must be 1440 minutes (24 hours), got:', authConfig.tokens.emailVerificationTTL);
+          process.exit(1);
+        }
+
+        console.log('✅ Token TTL configuration is consistent');
+        EOF
+
+        node test-token-ttl.js
+        rm test-token-ttl.js
+
     - name: Build
       run: npm run build
     

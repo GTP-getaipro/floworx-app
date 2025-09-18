@@ -20,6 +20,7 @@ const { validateRequest } = require('../schemas/common');
 const { logger } = require('../utils/logger');
 const { databaseCircuitBreaker, authCircuitBreaker } = require('../utils/circuitBreaker');
 const { generateCSRFToken } = require('../middleware/csrf');
+const { authConfig, getTokenTTLMs } = require('../config/authConfig');
 
 const router = express.Router();
 
@@ -552,7 +553,7 @@ router.get('/verify-email', async (req, res) => {
 
 // Rate limiting for resend verification (3 requests / 15 min per IP+email)
 const resendVerificationLimiter = makeLimiter({
-  windowMs: 15 * 60 * 1000, // 15 minutes
+  windowMs: authConfig.rateLimits.emailVerification.windowMs,
   limit: 3,
   keyBy: (req) => `${req.ip}:${(req.body?.email || '').toLowerCase()}`,
   message: {
@@ -1303,7 +1304,7 @@ router.post('/resend', asyncHandler(async (req, res) => {
 
   // Generate new verification token (15 minutes expiry)
   const verificationToken = emailService.generateVerificationToken();
-  const expiresAt = new Date(Date.now() + 15 * 60 * 1000); // 15 minutes
+  const expiresAt = new Date(Date.now() + getTokenTTLMs('emailVerificationTTL'));
 
   await databaseOperations.createEmailVerificationToken(user.id, verificationToken, expiresAt.toISOString());
 
@@ -1413,7 +1414,7 @@ router.post('/complete-onboarding', authenticateToken, async (req, res) => {
 
 // Rate limiting for password reset requests (3 requests / 15 min per user)
 const passwordResetRateLimiter = makeLimiter({
-  windowMs: 15 * 60 * 1000, // 15 minutes
+  windowMs: authConfig.rateLimits.passwordReset.windowMs,
   limit: 3,
   keyBy: (req) => `${req.ip}:${(req.body?.email || '').toLowerCase()}`
 });

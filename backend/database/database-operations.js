@@ -1131,14 +1131,17 @@ class DatabaseOperations {
   /**
    * Create password reset token with hashed storage
    * @param {string} userId - User ID
-   * @param {number} ttlMinutes - Time to live in minutes (default: 15)
+   * @param {number} ttlMinutes - Time to live in minutes (uses authConfig default)
    * @returns {Object} { token } - Returns raw token; stores hash + expiresAt
    */
-  async createPasswordResetToken(userId, ttlMinutes = 15) {
+  async createPasswordResetToken(userId, ttlMinutes) {
+    const { authConfig } = require('../config/authConfig');
+    // Use centralized configuration for TTL
+    const actualTTL = ttlMinutes || authConfig.tokens.passwordResetTTL;
     const crypto = require('crypto');
     const rawToken = crypto.randomBytes(32).toString('hex');
     const tokenHash = crypto.createHash('sha256').update(rawToken).digest('hex');
-    const expiresAt = new Date(Date.now() + ttlMinutes * 60 * 1000);
+    const expiresAt = new Date(Date.now() + actualTTL * 60 * 1000);
 
     const { type, client } = await this.getClient();
 

@@ -131,6 +131,39 @@ module.exports = {
     // Import rules - disabled for build
     'import/order': 'off',
 
+    // FloWorx Design System Enforcement - CRITICAL GUARDRAIL
+    'no-restricted-imports': [
+      'error',
+      {
+        'patterns': [
+          {
+            'group': ['@mui/*', '@material-ui/*'],
+            'message': '❌ Material-UI is forbidden. Use FloWorx design system components from ../components/auth/ instead.'
+          },
+          {
+            'group': ['bootstrap*', 'react-bootstrap*'],
+            'message': '❌ Bootstrap is forbidden. Use Tailwind CSS classes and FloWorx design system components instead.'
+          },
+          {
+            'group': ['antd*', '@ant-design/*'],
+            'message': '❌ Ant Design is forbidden. Use FloWorx design system components instead.'
+          },
+          {
+            'group': ['@chakra-ui/*'],
+            'message': '❌ Chakra UI is forbidden. Use FloWorx design system components instead.'
+          },
+          {
+            'group': ['semantic-ui-react*'],
+            'message': '❌ Semantic UI is forbidden. Use FloWorx design system components instead.'
+          },
+          {
+            'group': ['@mantine/*'],
+            'message': '❌ Mantine is forbidden. Use FloWorx design system components instead.'
+          }
+        ]
+      }
+    ],
+
     // Curly braces - disabled for deployment
     'curly': 'off'
   },

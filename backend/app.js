@@ -73,8 +73,9 @@ const corsOptions = {
 app.use(cors(corsOptions));
 
 // Rate limiting
+const { authConfig } = require('./config/authConfig');
 const limiter = rateLimit({
-  windowMs: 15 * 60 * 1000, // 15 minutes
+  windowMs: authConfig.rateLimits.login.windowMs, // Use centralized rate limit config
   max: 1000, // Limit each IP to 1000 requests per windowMs
   message: 'Too many requests from this IP, please try again later.',
   standardHeaders: true,

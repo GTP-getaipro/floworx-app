@@ -2,10 +2,12 @@ const crypto = require('crypto');
 const bcrypt = require('bcryptjs');
 const { databaseOperations } = require('../database/database-operations');
 const emailService = require('./emailService');
+const { getTokenTTLMs } = require('../config/authConfig');
 
 class PasswordResetService {
   constructor() {
-    this.tokenExpiry = 15 * 60 * 1000; // 15 minutes in milliseconds (as per requirements)
+    // Use centralized configuration for token expiry
+    this.tokenExpiry = getTokenTTLMs('passwordResetTTL');
   }
 
   /**

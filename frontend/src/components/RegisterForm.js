@@ -9,6 +9,7 @@ import useFormPersistence from '../hooks/useFormPersistence';
 import ValidatedInput from './ui/ValidatedInput';
 import ProtectedButton from './ui/ProtectedButton';
 import ProgressIndicator from './ui/ProgressIndicator';
+import CheckEmailMessage from './CheckEmailMessage';
 import { parseError, logError, ERROR_MESSAGES } from '../utils/errorHandling';
 
 import { Alert, Card, Link, Logo } from './ui';
@@ -284,37 +285,23 @@ const RegisterForm = () => {
     return (
       <div className='max-w-md w-full'>
         <Card>
-          <Alert variant='success' title='Registration Successful! ✅'>
-            {requiresVerification ? (
-              <div className='space-y-4'>
-                <p>Your account has been created successfully!</p>
-                <p>
-                  <strong>Please check your email to verify your account.</strong>
-                </p>
-                <p>
-                  We've sent a verification link to <strong>{email}</strong>
-                </p>
-                <div className='mt-4 p-4 bg-surface-subtle rounded-lg'>
-                  <p className='font-medium text-ink mb-2'>Didn&apos;t receive the email?</p>
-                  <ul className='list-disc list-inside space-y-1 text-sm text-ink-sub'>
-                    <li>Check your spam/junk folder</li>
-                    <li>Make sure you entered the correct email address</li>
-                    <li>Wait a few minutes and check again</li>
-                  </ul>
-                  <div className='mt-3'>
-                    <Link to='/verify-email' variant='primary'>
-                      Need to resend verification email?
-                    </Link>
-                  </div>
-                </div>
-              </div>
-            ) : (
+          {requiresVerification ? (
+            <CheckEmailMessage
+              email={email}
+              onBack={() => setSubmitResult(null)}
+              onResend={() => {
+                // Optional: Add any additional logic after resend
+                console.log('Verification email resent');
+              }}
+            />
+          ) : (
+            <Alert variant='success' title='Registration Successful! ✅'>
               <div>
                 <p>Your account has been created successfully.</p>
                 <p>Redirecting to your dashboard...</p>
               </div>
-            )}
-          </Alert>
+            </Alert>
+          )}
         </Card>
       </div>
     );

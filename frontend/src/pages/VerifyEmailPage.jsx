@@ -30,25 +30,44 @@ export default function VerifyEmailPage() {
 
     const verifyEmail = async () => {
       try {
-        const returnTo = getReturnTo();
-        const response = await api('/api/auth/verify', {
-          method: 'POST',
-          body: { token, ...(returnTo && { returnTo }) }
+        const response = await fetch(`/api/auth/verify-email?token=${encodeURIComponent(token)}`, {
+          method: 'GET',
+          headers: {
+            'Content-Type': 'application/json',
+          },
         });
-        setIsSuccess(true);
 
-        // Redirect after successful verification
-        clearReturnTo();
-        const redirectTo = response.returnTo || returnTo || '/login?verified=1';
-        setTimeout(() => navigate(redirectTo), 2000); // Give user time to read success message
-      } catch (error) {
-        if (error.code === 'INVALID_TOKEN') {
-          setError('Verification link invalid');
-        } else if (error.code === 'TOKEN_EXPIRED') {
-          setError('Link expired. Resend verification.');
+        const data = await response.json();
+
+        if (response.ok && data.success) {
+          setIsSuccess(true);
+          setEmail(data.email || '');
+
+          // Redirect after successful verification
+          clearReturnTo();
+          const returnTo = getReturnTo();
+          const redirectTo = returnTo || '/login?verified=1';
+          setTimeout(() => navigate(redirectTo), 2000); // Give user time to read success message
         } else {
-          setError('Verification failed. Please try again.');
+          const errorCode = data.error?.code;
+
+          if (errorCode === 'INVALID_TOKEN') {
+            setError('Verification link invalid');
+          } else if (errorCode === 'TOKEN_EXPIRED') {
+            setError('Link expired. Resend verification.');
+          } else if (response.status === 200 && data.alreadyVerified) {
+            setIsSuccess(true);
+            setError('');
+            setTimeout(() => navigate('/login?verified=1'), 1000);
+          } else {
+            setError(data.error?.message || 'Verification failed. Please try again.');
+          }
+
+          setEmail(data.email || '');
         }
+      } catch (error) {
+        console.error('Verification error:', error);
+        setError('Network error. Please check your connection and try again.');
       } finally {
         setIsLoading(false);
       }
@@ -65,11 +84,22 @@ export default function VerifyEmailPage() {
     setResendSuccess(false);
 
     try {
-      await api('/api/auth/resend', { 
-        method: 'POST', 
-        body: { email } 
+      const response = await fetch('/api/auth/resend-verification', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ email }),
       });
-      setResendSuccess(true);
+
+      const data = await response.json();
+
+      if (response.ok && data.success) {
+        setResendSuccess(true);
+      } else {
+        // Don't show errors for resend to avoid revealing user existence
+        setResendSuccess(true);
+      }
     } catch (error) {
       // Don't show errors for resend to avoid revealing user existence
       setResendSuccess(true);

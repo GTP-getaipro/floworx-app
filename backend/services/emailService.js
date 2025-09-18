@@ -55,6 +55,140 @@ class EmailService {
   }
 
   /**
+   * Send email verification email to user
+   * @param {string} email - User's email address
+   * @param {string} firstName - User's first name
+   * @param {string} verificationUrl - Complete verification URL
+   * @returns {Promise<Object>} Send result
+   */
+  async sendVerificationEmail(email, firstName, verificationUrl) {
+    try {
+      const senderConfig = this.getSenderConfig();
+
+      const mailOptions = {
+        from: senderConfig.from,
+        to: email,
+        replyTo: senderConfig.replyTo,
+        subject: 'Verify Your FloWorx Account',
+        html: this.generateVerificationEmailTemplate(firstName, verificationUrl),
+        text: this.generateVerificationEmailText(firstName, verificationUrl)
+      };
+
+      const result = await this.transporter.sendMail(mailOptions);
+
+      return {
+        success: true,
+        messageId: result.messageId,
+        response: result.response
+      };
+    } catch (error) {
+      console.error('Error sending verification email:', error);
+      return {
+        success: false,
+        error: error.message,
+        code: 'EMAIL_SEND_FAILED'
+      };
+    }
+  }
+
+  /**
+   * Generate HTML template for verification email
+   * @param {string} firstName - User's first name
+   * @param {string} verificationUrl - Verification URL
+   * @returns {string} HTML email template
+   */
+  generateVerificationEmailTemplate(firstName, verificationUrl) {
+    return `
+    <!DOCTYPE html>
+    <html lang="en">
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title>Verify Your FloWorx Account</title>
+        <style>
+            body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; line-height: 1.6; color: #333; margin: 0; padding: 0; background-color: #f8fafc; }
+            .container { max-width: 600px; margin: 0 auto; background: white; border-radius: 8px; overflow: hidden; box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1); }
+            .header { background: linear-gradient(135deg, #3b82f6 0%, #1d4ed8 100%); color: white; padding: 40px 30px; text-align: center; }
+            .header h1 { margin: 0; font-size: 28px; font-weight: 700; }
+            .header p { margin: 10px 0 0; font-size: 16px; opacity: 0.9; }
+            .content { padding: 40px 30px; }
+            .greeting { font-size: 18px; margin-bottom: 20px; }
+            .message { font-size: 16px; margin-bottom: 30px; line-height: 1.7; }
+            .cta-button { display: inline-block; background: #3b82f6; color: white; text-decoration: none; padding: 16px 32px; border-radius: 6px; font-weight: 600; font-size: 16px; margin: 20px 0; transition: background-color 0.2s; }
+            .cta-button:hover { background: #2563eb; }
+            .alternative-link { margin-top: 30px; padding: 20px; background: #f8fafc; border-radius: 6px; font-size: 14px; }
+            .alternative-link a { color: #3b82f6; word-break: break-all; }
+            .footer { padding: 30px; text-align: center; font-size: 14px; color: #6b7280; border-top: 1px solid #e5e7eb; }
+            .security-note { margin-top: 30px; padding: 20px; background: #fef3c7; border-left: 4px solid #f59e0b; border-radius: 4px; font-size: 14px; }
+        </style>
+    </head>
+    <body>
+        <div class="container">
+            <div class="header">
+                <h1>🚀 FloWorx</h1>
+                <p>Email AI Built by Hot Tub Pros—For Hot Tub Pros</p>
+            </div>
+
+            <div class="content">
+                <div class="greeting">Hi ${firstName || 'there'}! 👋</div>
+
+                <div class="message">
+                    Welcome to FloWorx! We're excited to have you join our community of hot tub professionals who are revolutionizing their email workflows with AI.
+                    <br><br>
+                    To complete your account setup and start automating your email responses, please verify your email address by clicking the button below:
+                </div>
+
+                <div style="text-align: center;">
+                    <a href="${verificationUrl}" class="cta-button">Verify My Email Address</a>
+                </div>
+
+                <div class="alternative-link">
+                    <strong>Button not working?</strong> Copy and paste this link into your browser:
+                    <br><a href="${verificationUrl}">${verificationUrl}</a>
+                </div>
+
+                <div class="security-note">
+                    <strong>🔒 Security Note:</strong> This verification link will expire in 24 hours for your security. If you didn't create a FloWorx account, you can safely ignore this email.
+                </div>
+            </div>
+
+            <div class="footer">
+                <p>© 2024 FloWorx. Email AI for Hot Tub Professionals.</p>
+                <p>Need help? Contact us at <a href="mailto:support@floworx-iq.com">support@floworx-iq.com</a></p>
+            </div>
+        </div>
+    </body>
+    </html>
+    `;
+  }
+
+  /**
+   * Generate plain text version for verification email
+   * @param {string} firstName - User's first name
+   * @param {string} verificationUrl - Verification URL
+   * @returns {string} Plain text email content
+   */
+  generateVerificationEmailText(firstName, verificationUrl) {
+    return `
+Hi ${firstName || 'there'}!
+
+Welcome to FloWorx! We're excited to have you join our community of hot tub professionals who are revolutionizing their email workflows with AI.
+
+To complete your account setup and start automating your email responses, please verify your email address by visiting this link:
+
+${verificationUrl}
+
+This verification link will expire in 24 hours for your security.
+
+If you didn't create a FloWorx account, you can safely ignore this email.
+
+Need help? Contact us at support@floworx-iq.com
+
+© 2024 FloWorx. Email AI for Hot Tub Professionals.
+    `.trim();
+  }
+
+  /**
    * Generate secure password reset token
    * @returns {string} Password reset token
    */

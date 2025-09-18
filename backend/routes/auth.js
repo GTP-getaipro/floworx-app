@@ -297,10 +297,10 @@ router.post('/test-register', async (req, res) => {
   }
 });
 
-// POST /api/auth/register
+// POST /api/auth/register - Email Verification Flow
 router.post('/register', async (req, res) => {
   try {
-    const { email, password } = req.body;
+    const { email, password, firstName, lastName, businessName } = req.body;
 
     // Input validation
     if (!email || !password) {
@@ -335,36 +335,274 @@ router.post('/register', async (req, res) => {
     // Hash password
     const passwordHash = await bcrypt.hash(password, 12);
 
-    // Create user
+    // Generate verification token
+    const { generateVerificationToken, generateVerificationUrl } = require('../utils/emailVerification');
+    const userId = require('crypto').randomUUID();
+    const tokenResult = generateVerificationToken(email, userId);
+
+    if (!tokenResult.success) {
+      return res.status(500).json({
+        error: { code: "INTERNAL", message: "Failed to generate verification token" }
+      });
+    }
+
+    // Create user with verification fields
     const userData = {
-      id: require('crypto').randomUUID(),
+      id: userId,
       email: email.toLowerCase().trim(),
       password_hash: passwordHash,
+      first_name: firstName || null,
+      last_name: lastName || null,
+      company_name: businessName || null,
+      email_verified: false,
+      verification_token: tokenResult.token,
+      verification_token_expires_at: tokenResult.expiresAt.toISOString(),
       created_at: new Date().toISOString()
     };
 
     const createResult = await databaseOperations.createUser(userData);
 
     if (createResult.error) {
+      console.error('User creation error:', createResult.error);
       return res.status(500).json({
-        error: { code: "INTERNAL", message: "Unexpected error" }
+        error: { code: "INTERNAL", message: "Failed to create user account" }
       });
     }
 
-    // Success response
+    // Send verification email
+    const EmailService = require('../services/emailService');
+    const emailService = new EmailService();
+    const verificationUrl = generateVerificationUrl(tokenResult.token);
+
+    const emailResult = await emailService.sendVerificationEmail(
+      email,
+      firstName || 'there',
+      verificationUrl
+    );
+
+    // Log email sending result but don't fail registration if email fails
+    if (!emailResult.success) {
+      console.error('Failed to send verification email:', emailResult.error);
+      // Continue with success response - user can request resend later
+    }
+
+    // Success response - account created, verification email sent
     res.status(201).json({
-      userId: createResult.data.id
+      success: true,
+      message: "Account created successfully. Please check your email to verify your account.",
+      userId: createResult.data.id,
+      requiresVerification: true,
+      email: email.toLowerCase().trim(),
+      emailSent: emailResult.success
     });
 
   } catch (error) {
     console.error('Registration error:', error);
     res.status(500).json({
-      error: { code: "INTERNAL", message: "Unexpected error" }
+      error: { code: "INTERNAL", message: "Unexpected error during registration" }
     });
   }
 });
 
+// GET /api/auth/verify-email - Email Verification Endpoint
+router.get('/verify-email', async (req, res) => {
+  try {
+    const { token } = req.query;
 
+    if (!token) {
+      return res.status(400).json({
+        error: { code: "BAD_REQUEST", message: "Verification token is required" }
+      });
+    }
+
+    // Validate the verification token
+    const { validateVerificationToken, isTokenExpired } = require('../utils/emailVerification');
+    const tokenValidation = validateVerificationToken(token);
+
+    if (!tokenValidation.success) {
+      return res.status(400).json({
+        error: {
+          code: tokenValidation.code || "INVALID_TOKEN",
+          message: tokenValidation.error
+        }
+      });
+    }
+
+    const { email, userId } = tokenValidation.data;
+
+    // Find user by ID and verify token matches
+    const userResult = await databaseOperations.getUserById(userId);
+
+    if (userResult.error || !userResult.data) {
+      return res.status(404).json({
+        error: { code: "USER_NOT_FOUND", message: "User account not found" }
+      });
+    }
+
+    const user = userResult.data;
+
+    // Check if user is already verified
+    if (user.email_verified) {
+      return res.status(200).json({
+        success: true,
+        message: "Email address is already verified",
+        alreadyVerified: true
+      });
+    }
+
+    // Verify token matches the one stored in database
+    if (user.verification_token !== token) {
+      return res.status(400).json({
+        error: { code: "INVALID_TOKEN", message: "Invalid verification token" }
+      });
+    }
+
+    // Check if token has expired (database check)
+    if (isTokenExpired(user.verification_token_expires_at)) {
+      return res.status(410).json({
+        error: { code: "TOKEN_EXPIRED", message: "Verification token has expired" }
+      });
+    }
+
+    // Verify email matches
+    if (user.email.toLowerCase() !== email.toLowerCase()) {
+      return res.status(400).json({
+        error: { code: "EMAIL_MISMATCH", message: "Token email does not match user email" }
+      });
+    }
+
+    // Update user to verified status and clear verification token
+    const updateData = {
+      email_verified: true,
+      verification_token: null,
+      verification_token_expires_at: null,
+      updated_at: new Date().toISOString()
+    };
+
+    const updateResult = await databaseOperations.updateUser(userId, updateData);
+
+    if (updateResult.error) {
+      console.error('Failed to update user verification status:', updateResult.error);
+      return res.status(500).json({
+        error: { code: "INTERNAL", message: "Failed to verify email address" }
+      });
+    }
+
+    // Success response
+    res.status(200).json({
+      success: true,
+      message: "Email address verified successfully! You can now log in to your account.",
+      userId: userId,
+      email: email
+    });
+
+  } catch (error) {
+    console.error('Email verification error:', error);
+    res.status(500).json({
+      error: { code: "INTERNAL", message: "Unexpected error during verification" }
+    });
+  }
+});
+
+// Rate limiting for resend verification (3 requests / 15 min per IP+email)
+const resendVerificationLimiter = makeLimiter({
+  windowMs: 15 * 60 * 1000, // 15 minutes
+  limit: 3,
+  keyBy: (req) => `${req.ip}:${(req.body?.email || '').toLowerCase()}`,
+  message: {
+    error: { code: "RATE_LIMIT", message: "Too many verification email requests. Please wait 15 minutes before trying again." }
+  }
+});
+
+// POST /api/auth/resend-verification - Resend Verification Email
+router.post('/resend-verification', resendVerificationLimiter, async (req, res) => {
+  try {
+    const { email } = req.body;
+
+    if (!email) {
+      return res.status(400).json({
+        error: { code: "BAD_REQUEST", message: "Email address is required" }
+      });
+    }
+
+    // Find user by email
+    const userResult = await databaseOperations.getUserByEmail(email);
+
+    if (userResult.error || !userResult.data) {
+      // Don't reveal if email exists or not for security
+      return res.status(200).json({
+        success: true,
+        message: "If an account with this email exists and is unverified, a verification email has been sent."
+      });
+    }
+
+    const user = userResult.data;
+
+    // Check if user is already verified
+    if (user.email_verified) {
+      return res.status(200).json({
+        success: true,
+        message: "Email address is already verified. You can log in to your account."
+      });
+    }
+
+    // Generate new verification token
+    const { generateVerificationToken, generateVerificationUrl } = require('../utils/emailVerification');
+    const tokenResult = generateVerificationToken(email, user.id);
+
+    if (!tokenResult.success) {
+      return res.status(500).json({
+        error: { code: "INTERNAL", message: "Failed to generate verification token" }
+      });
+    }
+
+    // Update user with new verification token
+    const updateData = {
+      verification_token: tokenResult.token,
+      verification_token_expires_at: tokenResult.expiresAt.toISOString(),
+      updated_at: new Date().toISOString()
+    };
+
+    const updateResult = await databaseOperations.updateUser(user.id, updateData);
+
+    if (updateResult.error) {
+      console.error('Failed to update verification token:', updateResult.error);
+      return res.status(500).json({
+        error: { code: "INTERNAL", message: "Failed to update verification token" }
+      });
+    }
+
+    // Send verification email
+    const EmailService = require('../services/emailService');
+    const emailService = new EmailService();
+    const verificationUrl = generateVerificationUrl(tokenResult.token);
+
+    const emailResult = await emailService.sendVerificationEmail(
+      email,
+      user.first_name || 'there',
+      verificationUrl
+    );
+
+    if (!emailResult.success) {
+      console.error('Failed to send verification email:', emailResult.error);
+      return res.status(500).json({
+        error: { code: "EMAIL_SEND_FAILED", message: "Failed to send verification email. Please try again later." }
+      });
+    }
+
+    // Success response
+    res.status(200).json({
+      success: true,
+      message: "Verification email sent successfully. Please check your email and click the verification link."
+    });
+
+  } catch (error) {
+    console.error('Resend verification error:', error);
+    res.status(500).json({
+      error: { code: "INTERNAL", message: "Unexpected error while sending verification email" }
+    });
+  }
+});
 
 // Rate limiting for login requests (10 requests / min per IP+email)
 const loginRateLimiter = makeLimiter({

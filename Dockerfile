@@ -30,7 +30,7 @@ COPY --from=deps /app/frontend/node_modules ./frontend/node_modules
 
 # Set production environment for build
 ENV NODE_ENV=production
-ENV REACT_APP_API_URL=https://app.floworx-iq.com/api
+ENV REACT_APP_API_URL=https://app.floworx-iq.com
 ENV GENERATE_SOURCEMAP=false
 ENV CI=false
 

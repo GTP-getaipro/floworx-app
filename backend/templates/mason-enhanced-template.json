@@ -1,0 +1,36 @@
+{
+  "name": "{{COMPANY_NAME}} - Mason Smart Email Automation",
+  "nodes": [
+    {
+      "parameters": {
+        "functionCode": "// Masonry Business Intelligence Config Cache Manager\nconst clientId = $env.CLIENT_ID;\nconst configData = $input.first().json;\nconst cacheKey = `config:${clientId}:${configData.version}`;\n\nconst enhancedConfig = {\n  ...configData,\n  masonryIntelligence: {\n    hasEmergencyService: configData.client.phones?.length > 1,\n    serviceTypes: configData.services || ['brick_work', 'stone_work', 'concrete_work', 'chimney_repair', 'retaining_walls'],\n    workingHours: configData.client.hours || {},\n    priceRanges: configData.pricing || {},\n    serviceArea: configData.client.service_area || 'Local area',\n    managerNames: (configData.people.managers || []).map(m => m.name),\n    supplierDomains: (configData.suppliers || []).flatMap(s => s.domains || []),\n    specializations: ['residential', 'commercial', 'restoration', 'decorative'],\n    emergencyKeywords: ['structural damage', 'chimney collapse', 'retaining wall failure', 'urgent'],\n    masonryTypes: {\n      brick: ['brick_laying', 'brick_repair', 'repointing', 'brick_restoration'],\n      stone: ['natural_stone', 'cultured_stone', 'flagstone', 'stone_veneer'],\n      concrete: ['concrete_blocks', 'decorative_concrete', 'stamped_concrete', 'concrete_repair'],\n      specialty: ['chimney_work', 'fireplaces', 'outdoor_kitchens', 'pizza_ovens']\n    },\n    projectTypes: {\n      structural: ['foundation_work', 'retaining_walls', 'load_bearing_walls'],\n      decorative: ['garden_walls', 'outdoor_fireplaces', 'decorative_features'],\n      repair: ['repointing', 'crack_repair', 'structural_repairs', 'restoration'],\n      commercial: ['building_facades', 'commercial_structures', 'industrial_masonry']\n    },\n    materials: {\n      brick: ['clay_brick', 'concrete_brick', 'fire_brick', 'reclaimed_brick'],\n      stone: ['limestone', 'granite', 'sandstone', 'fieldstone', 'slate'],\n      mortar: ['type_n', 'type_s', 'type_m', 'lime_mortar', 'specialty_mortars']\n    },\n    seasonalConsiderations: {\n      spring: ['outdoor_projects', 'retaining_walls', 'landscaping_masonry'],\n      summer: ['major_construction', 'commercial_projects', 'outdoor_living'],\n      fall: ['chimney_repairs', 'winterization', 'foundation_work'],\n      winter: ['indoor_projects', 'fireplace_work', 'restoration_projects']\n    },\n    safetyProtocols: ['fall_protection', 'heavy_lifting', 'dust_protection', 'structural_safety']\n  }\n};\n\n$setStaticData(cacheKey, enhancedConfig);\nreturn [{ json: { ...enhancedConfig, cached: false, cacheKey: cacheKey } }];"
+      },
+      "type": "n8n-nodes-base.function",
+      "typeVersion": 2,
+      "position": [-5400, 3200],
+      "id": "masonry-config-cache",
+      "name": "Masonry Config Cache"
+    },
+    {
+      "parameters": {
+        "promptType": "define",
+        "text": "=Subject: {{ $('Gmail Trigger').item.json.subject }}\\nFrom: {{ $('Gmail Trigger').item.json.from }}\\nEmail Body: {{ $('Gmail Trigger').item.json.body }}",
+        "options": {
+          "systemMessage": "=You are an expert masonry contractor email classifier for {{ $json.client.name || 'a masonry service company' }}.\\n\\n🏢 MASONRY BUSINESS CONTEXT:\\n- Company: {{ $json.client.name || 'Masonry Service Company' }}\\n- Services: {{ $json.masonryIntelligence.serviceTypes.join(', ') }}\\n- Service Area: {{ $json.masonryIntelligence.serviceArea }}\\n- Specializations: {{ $json.masonryIntelligence.specializations.join(', ') }}\\n\\n🎯 MASONRY CLASSIFICATION RULES:\\n\\n**URGENT** (Immediate attention required):\\n- Structural masonry damage or failure\\n- Chimney collapse or safety hazards\\n- Retaining wall failure\\n- Foundation settlement issues\\n\\n**SALES** (Revenue opportunities):\\n- New masonry construction projects\\n- Outdoor living spaces (patios, fireplaces)\\n- Commercial masonry contracts\\n- Restoration and historic preservation\\n- Decorative stonework and features\\n\\n**SUPPORT** (Customer service):\\n- Masonry repairs and maintenance\\n- Repointing and restoration\\n- Chimney cleaning and repair\\n- Crack repair and waterproofing\\n\\n**SUPPLIERS** (Vendor communications):\\n- Brick and stone suppliers\\n- Mortar and cement suppliers\\n- Tools and equipment suppliers\\n\\n🧱 MASONRY SPECIALIZATIONS:\\n- **Brick:** Laying, repair, repointing, restoration\\n- **Stone:** Natural stone, cultured stone, flagstone\\n- **Concrete:** Blocks, decorative, stamped, repair\\n- **Specialty:** Chimneys, fireplaces, outdoor kitchens\\n\\n🏗️ PROJECT TYPES:\\n- **Structural:** Foundations, retaining walls, load-bearing\\n- **Decorative:** Garden walls, outdoor fireplaces, features\\n- **Repair:** Repointing, crack repair, restoration\\n- **Commercial:** Building facades, industrial masonry\\n\\n🌟 SEASONAL CONSIDERATIONS:\\n- **Spring/Summer:** Outdoor projects, major construction\\n- **Fall/Winter:** Indoor projects, chimney work, restoration\\n\\n⚠️ SAFETY PROTOCOLS:\\n- Fall protection for elevated work\\n- Heavy lifting and material handling\\n- Dust protection and respiratory safety\\n- Structural safety assessments\\n\\n🤖 CLASSIFICATION OUTPUT:\\n{\\n  \\\"primary_category\\\": \\\"category_name\\\",\\n  \\\"confidence\\\": 0.95,\\n  \\\"reasoning\\\": \\\"detailed explanation\\\",\\n  \\\"urgency_level\\\": \\\"low|medium|high|critical\\\",\\n  \\\"requires_draft\\\": true/false,\\n  \\\"masonry_context\\\": {\\n    \\\"is_emergency\\\": true/false,\\n    \\\"masonry_type\\\": \\\"brick|stone|concrete|specialty\\\",\\n    \\\"project_type\\\": \\\"structural|decorative|repair|commercial\\\",\\n    \\\"material_focus\\\": \\\"brick|stone|concrete|mortar\\\"\\n  }\\n}"
+        }
+      },
+      "id": "masonry-ai-classifier",
+      "name": "Masonry AI Classifier",
+      "type": "@n8n/n8n-nodes-langchain.chatOpenAi",
+      "position": [-5100, 3200],
+      "typeVersion": 1.3
+    }
+  ],
+  "versionId": "11.0.0",
+  "meta": {
+    "templateVersion": "11.0.0",
+    "industry": "Masonry",
+    "description": "Masonry contractor email automation with material and project-specific intelligence",
+    "businessIntelligence": true
+  }
+}

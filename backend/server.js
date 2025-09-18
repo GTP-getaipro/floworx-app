@@ -284,6 +284,7 @@ app.use('/api/business-types', businessTypesRoutes);
 app.use('/api/clients', clientsRoutes);
 app.use('/api/workflows', workflowRoutes);
 app.use('/api/analytics', analyticsRoutes);
+app.use('/api/mailbox', require('./routes/mailbox'));
 // app.use('/api/performance', performanceRoutes); // Removed during cleanup
 // app.use('/api/health', healthRoutes); // Removed during cleanup
 // app.use('/api/diagnostics', diagnosticsRoutes); // Removed during cleanup

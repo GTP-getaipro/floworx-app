@@ -5,15 +5,124 @@ class N8nWorkflowGenerator {
   }
 
   /**
-   * Get your existing n8n workflow template with placeholders
-   * This is based on your working hot tub template structure
+   * Get industry-specific n8n workflow template with business intelligence preservation
+   * This includes config fetching, versioned caching, and industry-specific logic
    */
-  getWorkingTemplate() {
+  getWorkingTemplate(industry = 'thtm') {
+    const industryKey = `${industry}-enhanced`;
+
     // Cache the template for performance
-    if (this.templateCache.has('base')) {
-      return this.templateCache.get('base');
+    if (this.templateCache.has(industryKey)) {
+      return this.templateCache.get(industryKey);
     }
 
+    // Load the industry-specific template from file
+    const fs = require('fs');
+    const path = require('path');
+
+    try {
+      const templatePath = path.join(__dirname, `../templates/${industryKey}-template.json`);
+      const templateContent = fs.readFileSync(templatePath, 'utf8');
+      const template = JSON.parse(templateContent);
+
+      this.templateCache.set(industryKey, template);
+      return template;
+    } catch (error) {
+      console.error(`Failed to load ${industry} enhanced template, trying fallback:`, error.message);
+      return this.getFallbackTemplate(industry);
+    }
+  }
+
+  /**
+   * Get fallback template with hierarchy: industry -> THTM -> enhanced -> basic
+   */
+  getFallbackTemplate(industry) {
+    const fallbackOrder = [
+      'thtm-enhanced',
+      'enhanced',
+      'basic'
+    ];
+
+    const fs = require('fs');
+    const path = require('path');
+
+    for (const fallback of fallbackOrder) {
+      try {
+        const templatePath = path.join(__dirname, `../templates/${fallback}-template.json`);
+        const templateContent = fs.readFileSync(templatePath, 'utf8');
+        const template = JSON.parse(templateContent);
+
+        console.log(`Using fallback template: ${fallback} for industry: ${industry}`);
+        return template;
+      } catch (error) {
+        console.error(`Failed to load ${fallback} template:`, error.message);
+        continue;
+      }
+    }
+
+    // Ultimate fallback to basic template
+    return this.getBasicTemplate();
+  }
+
+  /**
+   * Determine industry from business data
+   */
+  determineIndustry(businessData) {
+    const industry = businessData.industry?.toLowerCase() || '';
+    const businessName = businessData.business_name?.toLowerCase() || '';
+    const services = (businessData.services || []).join(' ').toLowerCase();
+
+    // Industry mapping based on keywords
+    const industryMap = {
+      'hvac': ['hvac', 'heating', 'cooling', 'air conditioning', 'furnace', 'heat pump'],
+      'electrician': ['electrical', 'electrician', 'wiring', 'panel', 'outlet', 'lighting'],
+      'plumber': ['plumbing', 'plumber', 'pipe', 'drain', 'water heater', 'sewer'],
+      'drywall': ['drywall', 'ceiling tile', 'sheetrock', 'gypsum', 'taping', 'mudding'],
+      'carpenter': ['carpenter', 'carpentry', 'framing', 'trim', 'cabinet', 'millwork'],
+      'welder': ['welding', 'welder', 'fabrication', 'structural', 'pipe welding'],
+      'roofer': ['roofing', 'roofer', 'shingles', 'roof repair', 'gutters', 'roof replacement'],
+      'painter': ['painting', 'painter', 'interior paint', 'exterior paint', 'staining'],
+      'insulation': ['insulation', 'blown in', 'spray foam', 'energy efficiency', 'attic'],
+      'mason': ['masonry', 'mason', 'brick', 'stone', 'concrete', 'chimney'],
+      'pipelayer': ['pipelayer', 'sewer line', 'water main', 'excavation', 'utilities'],
+      'locksmith': ['locksmith', 'locks', 'keys', 'security', 'lockout', 'safe']
+    };
+
+    // Check for industry matches
+    for (const [industryKey, keywords] of Object.entries(industryMap)) {
+      const searchText = `${industry} ${businessName} ${services}`;
+      if (keywords.some(keyword => searchText.includes(keyword))) {
+        return industryKey;
+      }
+    }
+
+    // Default to THTM (hot tub) if no specific industry detected
+    return 'thtm';
+  }
+
+  /**
+   * Get enhanced n8n workflow template (fallback)
+   */
+  getEnhancedTemplate() {
+    const fs = require('fs');
+    const path = require('path');
+
+    try {
+      const templatePath = path.join(__dirname, '../templates/enhanced-workflow-template.json');
+      const templateContent = fs.readFileSync(templatePath, 'utf8');
+      const template = JSON.parse(templateContent);
+
+      return template;
+    } catch (error) {
+      console.error('Failed to load enhanced template, falling back to basic template:', error.message);
+      return this.getBasicTemplate();
+    }
+  }
+
+  /**
+   * Basic fallback template (original structure)
+   */
+  getBasicTemplate() {
     const template = {
       name: "{{COMPANY_NAME}} - Email Automation Workflow",
       nodes: [
@@ -63,7 +172,6 @@ class N8nWorkflowGenerator {
       versionId: "1.0.0"
     };
 
-    this.templateCache.set('base', template);
     return template;
   }
 
@@ -123,8 +231,11 @@ class N8nWorkflowGenerator {
    */
   generatePersonalizedWorkflow(businessData, labelMappings, customManagers = [], customSuppliers = [], phoneSystem = 'RingCentral') {
     try {
-      // Start with your proven workflow template
-      const baseTemplate = this.getWorkingTemplate();
+      // Determine industry from business data
+      const industry = this.determineIndustry(businessData);
+
+      // Start with industry-specific workflow template
+      const baseTemplate = this.getWorkingTemplate(industry);
 
       // Create the personalized workflow by replacing business-specific values
       const personalizedWorkflow = JSON.parse(JSON.stringify(baseTemplate));
@@ -144,8 +255,10 @@ class N8nWorkflowGenerator {
       // Step 5: Add custom supplier nodes
       this.addCustomSupplierNodes(personalizedWorkflow, customSuppliers, businessData);
 
-      // Step 6: Connect all nodes properly
-      this.connectWorkflowNodes(personalizedWorkflow, customManagers, customSuppliers);
+      // Step 6: Connect all nodes properly (for basic template)
+      if (personalizedWorkflow.versionId === "1.0.0") {
+        this.connectWorkflowNodes(personalizedWorkflow, customManagers, customSuppliers);
+      }
 
       // Add metadata
       personalizedWorkflow.meta = {
@@ -155,7 +268,9 @@ class N8nWorkflowGenerator {
         businessType: businessData.industry || 'hot-tub-spa',
         phoneSystem: phoneSystem,
         customManagers: customManagers.slice(0, 5),
-        customSuppliers: customSuppliers.slice(0, 10)
+        customSuppliers: customSuppliers.slice(0, 10),
+        templateVersion: personalizedWorkflow.versionId || "1.0.0",
+        configDriven: personalizedWorkflow.versionId === "2.0.0"
       };
 
       // Update Gmail credentials placeholder
@@ -168,6 +283,32 @@ class N8nWorkflowGenerator {
         }
         return node;
       });
+
+      // For enhanced templates (v2.0.0 and v3.0.0), add environment variables for config fetching
+      if (personalizedWorkflow.versionId === "2.0.0" || personalizedWorkflow.versionId === "3.0.0") {
+        personalizedWorkflow.settings = {
+          ...personalizedWorkflow.settings,
+          env: {
+            CLIENT_ID: businessData.user_id,
+            FLOWORX_API_URL: process.env.FLOWORX_API_URL || 'https://app.floworx-iq.com',
+            FLOWORX_API_CREDENTIAL_ID: `floworx_api_${businessData.user_id}`
+          }
+        };
+
+        // For THTM enhanced template (v3.0.0), add business intelligence metadata
+        if (personalizedWorkflow.versionId === "3.0.0") {
+          personalizedWorkflow.meta = {
+            ...personalizedWorkflow.meta,
+            businessIntelligence: true,
+            thtmEnhanced: true,
+            configDriven: true,
+            preservesOriginalLogic: true,
+            emergencyService: customManagers.length > 0,
+            serviceTypes: ['installation', 'repair', 'maintenance', 'water_care'],
+            supplierDomains: customSuppliers.map(s => s.toLowerCase().replace(/\s+/g, '') + '.com')
+          };
+        }
+      }
 
       // Update the AI classifier system message with business-specific data
       const aiClassifierNode = personalizedWorkflow.nodes.find(node => 

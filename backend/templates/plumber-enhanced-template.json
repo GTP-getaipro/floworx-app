@@ -1,0 +1,84 @@
+{
+  "name": "{{COMPANY_NAME}} - Plumber Smart Email Automation",
+  "nodes": [
+    {
+      "parameters": {
+        "pollTimes": {
+          "item": [
+            {
+              "mode": "custom",
+              "cronExpression": "=0 */5 * * * *"
+            }
+          ]
+        },
+        "simple": false,
+        "filters": {
+          "q": "in:inbox -(from:({{BUSINESS_DOMAINS}}))"
+        },
+        "options": {
+          "downloadAttachments": true
+        }
+      },
+      "type": "n8n-nodes-base.gmailTrigger",
+      "typeVersion": 1.2,
+      "position": [-6000, 3200],
+      "id": "gmail-trigger-main",
+      "name": "Gmail Trigger",
+      "credentials": {
+        "gmailOAuth2": {
+          "id": "{{GMAIL_CREDENTIAL_ID}}",
+          "name": "{{COMPANY_NAME}} Gmail"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "url": "={{$env.FLOWORX_API_URL}}/api/clients/{{$env.CLIENT_ID}}/config",
+        "authentication": "genericCredentialType",
+        "genericAuthType": "httpHeaderAuth",
+        "options": {
+          "timeout": 10000,
+          "retry": {
+            "enabled": true,
+            "maxTries": 3
+          }
+        }
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [-5700, 3200],
+      "id": "fetch-config",
+      "name": "Fetch Config",
+      "credentials": {
+        "httpHeaderAuth": {
+          "id": "{{FLOWORX_API_CREDENTIAL_ID}}",
+          "name": "FloWorx API Auth"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "functionCode": "// Plumbing Business Intelligence Config Cache Manager\nconst clientId = $env.CLIENT_ID;\nconst configData = $input.first().json;\nconst cacheKey = `config:${clientId}:${configData.version}`;\n\n// Get existing cached config\nconst existingConfig = $getStaticData(cacheKey);\n\nif (existingConfig && existingConfig.version === configData.version) {\n  // Use cached config\n  return [{\n    json: {\n      ...configData,\n      cached: true,\n      cacheKey: cacheKey,\n      plumbingIntelligence: {\n        hasEmergencyService: configData.client.phones?.length > 1,\n        serviceTypes: configData.services || ['pipe_repair', 'drain_cleaning', 'water_heater', 'bathroom_remodel', 'emergency_plumbing'],\n        workingHours: configData.client.hours || {},\n        priceRanges: configData.pricing || {},\n        serviceArea: configData.client.service_area || 'Local area',\n        specializations: ['residential', 'commercial', 'new_construction'],\n        emergencyKeywords: ['burst pipe', 'sewage backup', 'no hot water', 'flooding', 'leak', 'clogged', 'emergency'],\n        safetyProtocols: ['water_damage', 'sewage_exposure', 'gas_water_heater', 'frozen_pipes'],\n        seasonalServices: {\n          winter: ['frozen_pipe_prevention', 'pipe_thawing', 'water_heater_maintenance'],\n          spring: ['sump_pump_service', 'outdoor_faucet_repair', 'sprinkler_system'],\n          summer: ['sewer_line_service', 'outdoor_plumbing', 'pool_plumbing'],\n          fall: ['winterization', 'water_heater_prep', 'pipe_insulation']\n        },\n        commonIssues: {\n          emergency: ['burst_pipes', 'sewage_backup', 'major_leaks', 'no_water'],\n          routine: ['clogged_drains', 'running_toilets', 'dripping_faucets', 'low_pressure'],\n          installation: ['water_heaters', 'toilets', 'faucets', 'garbage_disposals']\n        }\n      }\n    }\n  }];\n} else {\n  // Cache new config and enhance with Plumbing intelligence\n  const enhancedConfig = {\n    ...configData,\n    plumbingIntelligence: {\n      hasEmergencyService: configData.client.phones?.length > 1,\n      serviceTypes: configData.services || ['pipe_repair', 'drain_cleaning', 'water_heater', 'bathroom_remodel', 'emergency_plumbing'],\n      workingHours: configData.client.hours || {},\n      priceRanges: configData.pricing || {},\n      serviceArea: configData.client.service_area || 'Local area',\n      managerNames: (configData.people.managers || []).map(m => m.name),\n      supplierDomains: (configData.suppliers || []).flatMap(s => s.domains || []),\n      specializations: ['residential', 'commercial', 'new_construction'],\n      emergencyKeywords: ['burst pipe', 'sewage backup', 'no hot water', 'flooding', 'leak', 'clogged', 'emergency'],\n      safetyProtocols: ['water_damage', 'sewage_exposure', 'gas_water_heater', 'frozen_pipes'],\n      seasonalServices: {\n        winter: ['frozen_pipe_prevention', 'pipe_thawing', 'water_heater_maintenance'],\n        spring: ['sump_pump_service', 'outdoor_faucet_repair', 'sprinkler_system'],\n        summer: ['sewer_line_service', 'outdoor_plumbing', 'pool_plumbing'],\n        fall: ['winterization', 'water_heater_prep', 'pipe_insulation']\n      },\n      commonIssues: {\n        emergency: ['burst_pipes', 'sewage_backup', 'major_leaks', 'no_water'],\n        routine: ['clogged_drains', 'running_toilets', 'dripping_faucets', 'low_pressure'],\n        installation: ['water_heaters', 'toilets', 'faucets', 'garbage_disposals']\n      }\n    }\n  };\n  \n  $setStaticData(cacheKey, enhancedConfig);\n  \n  // Clear old cache entries for this client\n  const staticData = $getStaticData();\n  const oldKeys = Object.keys(staticData).filter(key => \n    key.startsWith(`config:${clientId}:`) && key !== cacheKey\n  );\n  \n  oldKeys.forEach(key => {\n    $setStaticData(key, undefined);\n  });\n  \n  return [{\n    json: {\n      ...enhancedConfig,\n      cached: false,\n      cacheKey: cacheKey\n    }\n  }];\n}"
+      },
+      "type": "n8n-nodes-base.function",
+      "typeVersion": 2,
+      "position": [-5400, 3200],
+      "id": "plumbing-config-cache",
+      "name": "Plumbing Config Cache"
+    },
+    {
+      "parameters": {
+        "promptType": "define",
+        "text": "=Subject: {{ $('Gmail Trigger').item.json.subject }}\\nFrom: {{ $('Gmail Trigger').item.json.from }}\\nTo: {{ $('Gmail Trigger').item.json.to }}\\nDate: {{ $now }}\\nThread ID: {{ $('Gmail Trigger').item.json.threadId }}\\nMessage ID: {{ $('Gmail Trigger').item.json.id }}\\n\\nEmail Body:\\n{{ $('Gmail Trigger').item.json.body }}",
+        "options": {
+          "systemMessage": "=You are an expert plumbing contractor email classifier for {{ $json.client.name || 'a plumbing service company' }}, specializing in residential, commercial, and emergency plumbing services.\\n\\n🏢 PLUMBING BUSINESS CONTEXT:\\n- Company: {{ $json.client.name || 'Plumbing Service Company' }}\\n- Industry: {{ $json.client.industry || 'Plumbing Services' }}\\n- Service Area: {{ $json.plumbingIntelligence.serviceArea }}\\n- Emergency Service: {{ $json.plumbingIntelligence.hasEmergencyService ? 'Available 24/7' : 'Business hours only' }}\\n- Phone: {{ $json.client.phones?.[0] || 'Contact us' }}\\n- Website: {{ $json.client.website || 'N/A' }}\\n- Working Hours: {{ JSON.stringify($json.plumbingIntelligence.workingHours) }}\\n\\n👥 PLUMBING TEAM MEMBERS:\\n{{ ($json.people.managers || []).map(m => `- ${m.name} (${m.email}) - Manager`).join('\\n') }}\\n\\n🏭 PLUMBING SUPPLIERS (Auto-route supplier emails):\\n{{ ($json.suppliers || []).map(s => `- ${s.name}: ${(s.domains || []).join(', ')}`).join('\\n') }}\\n\\n📧 EMAIL CATEGORIES (use exact labels):\\n{{ Object.keys($json.channels.email.label_map || {}).map(key => `- ${key}: ${$json.channels.email.label_map[key]}`).join('\\n') }}\\n\\n🎯 PLUMBING CLASSIFICATION RULES:\\n\\n**URGENT** (Immediate plumbing attention required):\\n- Burst pipes or major water leaks\\n- Sewage backups or overflows\\n- No hot water (especially in winter)\\n- Flooding from plumbing failures\\n- Frozen pipes (risk of bursting)\\n- Gas water heater issues\\n- Sump pump failures during storms\\n- Water main breaks\\n\\n**SALES** (Plumbing revenue opportunities):\\n- Water heater replacements\\n- Bathroom or kitchen remodeling\\n- Pipe replacements or upgrades\\n- Sewer line replacements\\n- Water filtration systems\\n- Tankless water heater installations\\n- Bathroom fixture upgrades\\n\\n**SUPPORT** (Plumbing customer service):\\n- Drain cleaning requests\\n- Toilet repairs or installations\\n- Faucet repairs or replacements\\n- Garbage disposal issues\\n- Water pressure problems\\n- Routine maintenance scheduling\\n\\n**SUPPLIERS** (Plumbing vendor communications):\\n- From domains: {{ $json.plumbingIntelligence.supplierDomains.join(', ') }}\\n- Fixture deliveries\\n- Parts availability\\n- Product warranties\\n- Technical specifications\\n\\n**MANAGER** (Internal plumbing communications):\\n- From: {{ $json.plumbingIntelligence.managerNames.join(', ') }}\\n- Job scheduling\\n- Customer escalations\\n- Technical consultations\\n\\n**MISC** (Everything else):\\n- General plumbing inquiries\\n- Unclassified emails\\n\\n🌊 SEASONAL CONSIDERATIONS:\\n- **Winter:** Frozen pipes, water heater issues, emergency heating\\n- **Spring:** Sump pump service, outdoor faucets, sprinkler systems\\n- **Summer:** Sewer line service, outdoor plumbing, pool systems\\n- **Fall:** Winterization, pipe insulation, water heater maintenance\\n\\n⚠️ SAFETY PROTOCOLS:\\n- Water damage can be extensive and costly\\n- Sewage exposure is a health hazard\\n- Gas water heaters require special safety protocols\\n- Frozen pipes can burst and cause flooding\\n\\n🤖 CLASSIFICATION OUTPUT:\\nAnalyze the plumbing email content, sender, and context. Return JSON format:\\n{\\n  \\\"primary_category\\\": \\\"category_name\\\",\\n  \\\"confidence\\\": 0.95,\\n  \\\"reasoning\\\": \\\"detailed explanation of plumbing classification\\\",\\n  \\\"urgency_level\\\": \\\"low|medium|high|critical\\\",\\n  \\\"requires_draft\\\": true/false,\\n  \\\"estimated_response_time\\\": \\\"immediate|1hour|4hours|24hours\\\",\\n  \\\"id\\\": \\\"{{ $('Gmail Trigger').item.json.id }}\\\",\\n  \\\"plumbing_context\\\": {\\n    \\\"is_emergency\\\": true/false,\\n    \\\"is_existing_customer\\\": true/false/unknown,\\n    \\\"service_type\\\": \\\"repair|installation|maintenance|emergency|remodel\\\",\\n    \\\"requires_manager\\\": true/false,\\n    \\\"water_damage_risk\\\": true/false,\\n    \\\"seasonal_priority\\\": \\\"winter_freeze|spring_flood|summer_service|fall_prep\\\"\\n  }\\n}\\n\\nALWAYS prioritize water damage prevention and emergency situations. Consider seasonal plumbing needs.\""
+        }
+      },
+      "id": "plumbing-ai-classifier",
+      "name": "Plumbing AI Classifier",
+      "type": "@n8n/n8n-nodes-langchain.chatOpenAi",
+      "position": [-5100, 3200],
+      "typeVersion": 1.3
+    }
+  ]
+}

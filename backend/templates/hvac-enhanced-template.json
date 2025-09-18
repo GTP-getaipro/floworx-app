@@ -1,0 +1,296 @@
+{
+  "name": "{{COMPANY_NAME}} - HVAC Smart Email Automation",
+  "nodes": [
+    {
+      "parameters": {
+        "pollTimes": {
+          "item": [
+            {
+              "mode": "custom",
+              "cronExpression": "=0 */5 * * * *"
+            }
+          ]
+        },
+        "simple": false,
+        "filters": {
+          "q": "in:inbox -(from:({{BUSINESS_DOMAINS}}))"
+        },
+        "options": {
+          "downloadAttachments": true
+        }
+      },
+      "type": "n8n-nodes-base.gmailTrigger",
+      "typeVersion": 1.2,
+      "position": [-6000, 3200],
+      "id": "gmail-trigger-main",
+      "name": "Gmail Trigger",
+      "credentials": {
+        "gmailOAuth2": {
+          "id": "{{GMAIL_CREDENTIAL_ID}}",
+          "name": "{{COMPANY_NAME}} Gmail"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "url": "={{$env.FLOWORX_API_URL}}/api/clients/{{$env.CLIENT_ID}}/config",
+        "authentication": "genericCredentialType",
+        "genericAuthType": "httpHeaderAuth",
+        "options": {
+          "timeout": 10000,
+          "retry": {
+            "enabled": true,
+            "maxTries": 3
+          }
+        }
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [-5700, 3200],
+      "id": "fetch-config",
+      "name": "Fetch Config",
+      "credentials": {
+        "httpHeaderAuth": {
+          "id": "{{FLOWORX_API_CREDENTIAL_ID}}",
+          "name": "FloWorx API Auth"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "functionCode": "// HVAC Business Intelligence Config Cache Manager\nconst clientId = $env.CLIENT_ID;\nconst configData = $input.first().json;\nconst cacheKey = `config:${clientId}:${configData.version}`;\n\n// Get existing cached config\nconst existingConfig = $getStaticData(cacheKey);\n\nif (existingConfig && existingConfig.version === configData.version) {\n  // Use cached config\n  return [{\n    json: {\n      ...configData,\n      cached: true,\n      cacheKey: cacheKey,\n      hvacIntelligence: {\n        hasEmergencyService: configData.client.phones?.length > 1,\n        serviceTypes: configData.services || ['installation', 'repair', 'maintenance', 'emergency_service', 'duct_cleaning'],\n        workingHours: configData.client.hours || {},\n        priceRanges: configData.pricing || {},\n        serviceArea: configData.client.service_area || 'Local area',\n        seasonalServices: {\n          winter: ['heating_repair', 'furnace_maintenance', 'emergency_heat'],\n          summer: ['ac_repair', 'cooling_maintenance', 'emergency_cooling'],\n          spring: ['system_tune_up', 'duct_cleaning', 'filter_replacement'],\n          fall: ['winterization', 'heating_prep', 'system_inspection']\n        },\n        emergencyKeywords: ['no heat', 'no cooling', 'gas leak', 'carbon monoxide', 'furnace down', 'ac not working', 'emergency'],\n        safetyProtocols: ['gas_safety', 'electrical_safety', 'carbon_monoxide_detection']\n      }\n    }\n  }];\n} else {\n  // Cache new config and enhance with HVAC intelligence\n  const enhancedConfig = {\n    ...configData,\n    hvacIntelligence: {\n      hasEmergencyService: configData.client.phones?.length > 1,\n      serviceTypes: configData.services || ['installation', 'repair', 'maintenance', 'emergency_service', 'duct_cleaning'],\n      workingHours: configData.client.hours || {},\n      priceRanges: configData.pricing || {},\n      serviceArea: configData.client.service_area || 'Local area',\n      managerNames: (configData.people.managers || []).map(m => m.name),\n      supplierDomains: (configData.suppliers || []).flatMap(s => s.domains || []),\n      seasonalServices: {\n        winter: ['heating_repair', 'furnace_maintenance', 'emergency_heat'],\n        summer: ['ac_repair', 'cooling_maintenance', 'emergency_cooling'],\n        spring: ['system_tune_up', 'duct_cleaning', 'filter_replacement'],\n        fall: ['winterization', 'heating_prep', 'system_inspection']\n      },\n      emergencyKeywords: ['no heat', 'no cooling', 'gas leak', 'carbon monoxide', 'furnace down', 'ac not working', 'emergency'],\n      safetyProtocols: ['gas_safety', 'electrical_safety', 'carbon_monoxide_detection']\n    }\n  };\n  \n  $setStaticData(cacheKey, enhancedConfig);\n  \n  // Clear old cache entries for this client\n  const staticData = $getStaticData();\n  const oldKeys = Object.keys(staticData).filter(key => \n    key.startsWith(`config:${clientId}:`) && key !== cacheKey\n  );\n  \n  oldKeys.forEach(key => {\n    $setStaticData(key, undefined);\n  });\n  \n  return [{\n    json: {\n      ...enhancedConfig,\n      cached: false,\n      cacheKey: cacheKey\n    }\n  }];\n}"
+      },
+      "type": "n8n-nodes-base.function",
+      "typeVersion": 2,
+      "position": [-5400, 3200],
+      "id": "hvac-config-cache",
+      "name": "HVAC Config Cache"
+    },
+    {
+      "parameters": {
+        "promptType": "define",
+        "text": "=Subject: {{ $('Gmail Trigger').item.json.subject }}\\nFrom: {{ $('Gmail Trigger').item.json.from }}\\nTo: {{ $('Gmail Trigger').item.json.to }}\\nDate: {{ $now }}\\nThread ID: {{ $('Gmail Trigger').item.json.threadId }}\\nMessage ID: {{ $('Gmail Trigger').item.json.id }}\\n\\nEmail Body:\\n{{ $('Gmail Trigger').item.json.body }}",
+        "options": {
+          "systemMessage": "=You are an expert HVAC email classifier for {{ $json.client.name || 'an HVAC service company' }}, specializing in heating, ventilation, and air conditioning services.\\n\\n🏢 HVAC BUSINESS CONTEXT:\\n- Company: {{ $json.client.name || 'HVAC Service Company' }}\\n- Industry: {{ $json.client.industry || 'HVAC Services' }}\\n- Service Area: {{ $json.hvacIntelligence.serviceArea }}\\n- Emergency Service: {{ $json.hvacIntelligence.hasEmergencyService ? 'Available 24/7' : 'Business hours only' }}\\n- Phone: {{ $json.client.phones?.[0] || 'Contact us' }}\\n- Website: {{ $json.client.website || 'N/A' }}\\n- Working Hours: {{ JSON.stringify($json.hvacIntelligence.workingHours) }}\\n\\n👥 HVAC TEAM MEMBERS:\\n{{ ($json.people.managers || []).map(m => `- ${m.name} (${m.email}) - Manager`).join('\\n') }}\\n\\n🏭 HVAC SUPPLIERS (Auto-route supplier emails):\\n{{ ($json.suppliers || []).map(s => `- ${s.name}: ${(s.domains || []).join(', ')}`).join('\\n') }}\\n\\n📧 EMAIL CATEGORIES (use exact labels):\\n{{ Object.keys($json.channels.email.label_map || {}).map(key => `- ${key}: ${$json.channels.email.label_map[key]}`).join('\\n') }}\\n\\n🎯 HVAC CLASSIFICATION RULES:\\n\\n**URGENT** (Immediate HVAC attention required):\\n- No heat in winter (below 32°F/0°C outside)\\n- No cooling in extreme heat (above 90°F/32°C)\\n- Gas leaks or gas odors\\n- Carbon monoxide alarms or symptoms\\n- Furnace making dangerous sounds\\n- Electrical issues with HVAC equipment\\n- Water leaks from HVAC systems\\n- Complete system failures\\n\\n**SALES** (HVAC revenue opportunities):\\n- New system installations (furnace, AC, heat pump)\\n- System replacements or upgrades\\n- Duct work installation\\n- Energy efficiency consultations\\n- Indoor air quality solutions\\n- Smart thermostat installations\\n\\n**SUPPORT** (HVAC customer service):\\n- Routine maintenance scheduling\\n- Filter replacement questions\\n- Thermostat programming help\\n- Warranty claims\\n- System performance issues\\n- Seasonal tune-up requests\\n\\n**SUPPLIERS** (HVAC vendor communications):\\n- From domains: {{ $json.hvacIntelligence.supplierDomains.join(', ') }}\\n- Equipment deliveries\\n- Parts availability\\n- Technical bulletins\\n- Warranty information\\n\\n**MANAGER** (Internal HVAC communications):\\n- From: {{ $json.hvacIntelligence.managerNames.join(', ') }}\\n- Team scheduling\\n- Technical consultations\\n- Customer escalations\\n\\n**MISC** (Everything else):\\n- General HVAC inquiries\\n- Unclassified emails\\n\\n🌡️ SEASONAL CONSIDERATIONS:\\n- **Winter Focus:** Heating systems, furnace repairs, emergency heat\\n- **Summer Focus:** Air conditioning, cooling repairs, emergency cooling\\n- **Spring/Fall:** System tune-ups, maintenance, preparation\\n\\n⚠️ SAFETY PROTOCOLS:\\n- Gas safety is CRITICAL - any gas odor is URGENT\\n- Carbon monoxide concerns are LIFE-THREATENING\\n- Electrical HVAC issues require immediate attention\\n- Frozen pipes from heating failures are urgent\\n\\n🤖 CLASSIFICATION OUTPUT:\\nAnalyze the HVAC email content, sender, and context. Return JSON format:\\n{\\n  \\\"primary_category\\\": \\\"category_name\\\",\\n  \\\"confidence\\\": 0.95,\\n  \\\"reasoning\\\": \\\"detailed explanation of HVAC classification\\\",\\n  \\\"urgency_level\\\": \\\"low|medium|high|critical\\\",\\n  \\\"requires_draft\\\": true/false,\\n  \\\"estimated_response_time\\\": \\\"immediate|1hour|4hours|24hours\\\",\\n  \\\"id\\\": \\\"{{ $('Gmail Trigger').item.json.id }}\\\",\\n  \\\"hvac_context\\\": {\\n    \\\"is_emergency\\\": true/false,\\n    \\\"is_existing_customer\\\": true/false/unknown,\\n    \\\"service_type\\\": \\\"heating|cooling|ventilation|installation|maintenance|emergency\\\",\\n    \\\"requires_manager\\\": true/false,\\n    \\\"safety_concern\\\": true/false,\\n    \\\"seasonal_priority\\\": \\\"winter_heating|summer_cooling|spring_maintenance|fall_prep\\\"\\n  }\\n}\\n\\nALWAYS prioritize safety and emergency situations. Consider weather conditions and seasonal HVAC needs.\""
+        }
+      },
+      "id": "hvac-ai-classifier",
+      "name": "HVAC AI Classifier",
+      "type": "@n8n/n8n-nodes-langchain.chatOpenAi",
+      "position": [-5100, 3200],
+      "typeVersion": 1.3
+    },
+    {
+      "parameters": {
+        "rules": {
+          "values": [
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 2
+                },
+                "conditions": [
+                  {
+                    "leftValue": "={{ $json.parsed_output.primary_category }}",
+                    "rightValue": "Urgent",
+                    "operator": {
+                      "type": "string",
+                      "operation": "equals"
+                    }
+                  }
+                ],
+                "combinator": "and"
+              },
+              "renameOutput": true,
+              "outputKey": "Urgent"
+            },
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 2
+                },
+                "conditions": [
+                  {
+                    "leftValue": "={{ $json.parsed_output.primary_category }}",
+                    "rightValue": "Sales",
+                    "operator": {
+                      "type": "string",
+                      "operation": "equals"
+                    }
+                  }
+                ],
+                "combinator": "and"
+              },
+              "renameOutput": true,
+              "outputKey": "Sales"
+            },
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 2
+                },
+                "conditions": [
+                  {
+                    "leftValue": "={{ $json.parsed_output.primary_category }}",
+                    "rightValue": "Support",
+                    "operator": {
+                      "type": "string",
+                      "operation": "equals"
+                    }
+                  }
+                ],
+                "combinator": "and"
+              },
+              "renameOutput": true,
+              "outputKey": "Support"
+            },
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 2
+                },
+                "conditions": [
+                  {
+                    "leftValue": "={{ $json.parsed_output.primary_category }}",
+                    "rightValue": "Suppliers",
+                    "operator": {
+                      "type": "string",
+                      "operation": "equals"
+                    }
+                  }
+                ],
+                "combinator": "and"
+              },
+              "renameOutput": true,
+              "outputKey": "Suppliers"
+            },
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 2
+                },
+                "conditions": [
+                  {
+                    "leftValue": "={{ $json.parsed_output.primary_category }}",
+                    "rightValue": "Manager",
+                    "operator": {
+                      "type": "string",
+                      "operation": "equals"
+                    }
+                  }
+                ],
+                "combinator": "and"
+              },
+              "renameOutput": true,
+              "outputKey": "Manager"
+            },
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 2
+                },
+                "conditions": [
+                  {
+                    "leftValue": "={{ $json.parsed_output.primary_category }}",
+                    "rightValue": "Misc",
+                    "operator": {
+                      "type": "string",
+                      "operation": "equals"
+                    }
+                  }
+                ],
+                "combinator": "and"
+              },
+              "renameOutput": true,
+              "outputKey": "Misc"
+            }
+          ]
+        }
+      },
+      "type": "n8n-nodes-base.switch",
+      "typeVersion": 3,
+      "position": [-4800, 3200],
+      "id": "hvac-category-switch",
+      "name": "HVAC Category Switch"
+    }
+  ],
+  "connections": {
+    "Gmail Trigger": {
+      "main": [
+        [
+          {
+            "node": "Fetch Config",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Fetch Config": {
+      "main": [
+        [
+          {
+            "node": "HVAC Config Cache",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "HVAC Config Cache": {
+      "main": [
+        [
+          {
+            "node": "HVAC AI Classifier",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "HVAC AI Classifier": {
+      "main": [
+        [
+          {
+            "node": "HVAC Category Switch",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": false,
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "versionId": "4.0.0",
+  "meta": {
+    "templateVersion": "4.0.0",
+    "industry": "HVAC",
+    "description": "HVAC Enhanced - Heating, ventilation, and air conditioning email automation with seasonal intelligence and safety protocols",
+    "businessIntelligence": true,
+    "preservesOriginalLogic": true,
+    "dataSource": "Client Config API",
+    "safetyProtocols": ["gas_safety", "electrical_safety", "carbon_monoxide_detection"],
+    "seasonalServices": true
+  }
+}

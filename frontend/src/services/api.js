@@ -245,6 +245,43 @@ class ApiService {
     }
   }
 
+  // Client configuration endpoints
+  async getClientConfig(clientId) {
+    try {
+      const response = await this.get(`/api/clients/${clientId}/config`);
+      return { success: true, data: response };
+    } catch (error) {
+      return { success: false, error: error.message };
+    }
+  }
+
+  async updateClientConfig(clientId, configData) {
+    try {
+      const response = await this.put(`/api/clients/${clientId}/config`, configData);
+      return { success: true, data: response };
+    } catch (error) {
+      return { success: false, error: error.message };
+    }
+  }
+
+  async provisionClient(clientId) {
+    try {
+      const response = await this.post(`/api/clients/${clientId}/provision`);
+      return { success: true, data: response };
+    } catch (error) {
+      return { success: false, error: error.message };
+    }
+  }
+
+  async redeployClient(clientId) {
+    try {
+      const response = await this.post(`/api/clients/${clientId}/redeploy`);
+      return { success: true, data: response };
+    } catch (error) {
+      return { success: false, error: error.message };
+    }
+  }
+
   // Health check
   async healthCheck() {
     try {

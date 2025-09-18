@@ -399,8 +399,6 @@ router.post('/register', async (req, res) => {
     // Send verification email
     let emailResult = { success: false };
     try {
-      const EmailService = require('../services/emailService');
-      const emailService = new EmailService();
       const verificationUrl = generateVerificationUrl(tokenResult.token);
 
       emailResult = await emailService.sendVerificationEmail(
@@ -622,8 +620,6 @@ router.post('/resend-verification', resendVerificationLimiter, async (req, res) 
     }
 
     // Send verification email
-    const EmailService = require('../services/emailService');
-    const emailService = new EmailService();
     const verificationUrl = generateVerificationUrl(tokenResult.token);
 
     const emailResult = await emailService.sendVerificationEmail(

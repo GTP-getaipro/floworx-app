@@ -1,0 +1,449 @@
+{
+  "name": "{{COMPANY_NAME}} - Enhanced Email Automation Workflow",
+  "nodes": [
+    {
+      "parameters": {
+        "pollTimes": {
+          "item": [
+            {
+              "mode": "custom",
+              "cronExpression": "=0 */2 * * * *"
+            }
+          ]
+        },
+        "simple": false,
+        "filters": {
+          "q": "in:inbox -(from:({{BUSINESS_DOMAINS}}))"
+        },
+        "options": {
+          "downloadAttachments": true
+        }
+      },
+      "type": "n8n-nodes-base.gmailTrigger",
+      "typeVersion": 1.2,
+      "position": [-5904, 3296],
+      "id": "gmail-trigger-main",
+      "name": "Gmail Trigger",
+      "credentials": {
+        "gmailOAuth2": {
+          "id": "{{GMAIL_CREDENTIAL_ID}}",
+          "name": "{{COMPANY_NAME}} Gmail"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "url": "={{$env.FLOWORX_API_URL}}/api/clients/{{$env.CLIENT_ID}}/config",
+        "authentication": "genericCredentialType",
+        "genericAuthType": "httpHeaderAuth",
+        "options": {
+          "timeout": 10000,
+          "retry": {
+            "enabled": true,
+            "maxTries": 3
+          }
+        }
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [-5600, 3296],
+      "id": "fetch-config",
+      "name": "Fetch Config",
+      "credentials": {
+        "httpHeaderAuth": {
+          "id": "{{FLOWORX_API_CREDENTIAL_ID}}",
+          "name": "FloWorx API Auth"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "functionCode": "// Check if we have cached config with same version\nconst clientId = $env.CLIENT_ID;\nconst configData = $input.first().json;\nconst cacheKey = `config:${clientId}:${configData.version}`;\n\n// Get existing cached config\nconst existingConfig = $getStaticData(cacheKey);\n\nif (existingConfig && existingConfig.version === configData.version) {\n  // Use cached config\n  return [{\n    json: {\n      ...configData,\n      cached: true,\n      cacheKey: cacheKey\n    }\n  }];\n} else {\n  // Cache new config and use it\n  $setStaticData(cacheKey, configData);\n  \n  // Clear old cache entries for this client\n  const staticData = $getStaticData();\n  const oldKeys = Object.keys(staticData).filter(key => \n    key.startsWith(`config:${clientId}:`) && key !== cacheKey\n  );\n  \n  oldKeys.forEach(key => {\n    $setStaticData(key, undefined);\n  });\n  \n  return [{\n    json: {\n      ...configData,\n      cached: false,\n      cacheKey: cacheKey\n    }\n  }];\n}"
+      },
+      "type": "n8n-nodes-base.function",
+      "typeVersion": 2,
+      "position": [-5300, 3296],
+      "id": "config-cache-manager",
+      "name": "Config Cache Manager"
+    },
+    {
+      "parameters": {
+        "promptType": "define",
+        "text": "=Subject: {{ $('Gmail Trigger').item.json.subject }}\\nFrom: {{ $('Gmail Trigger').item.json.from }}\\nTo: {{ $('Gmail Trigger').item.json.to }}\\nDate: {{ $now }}\\nThread ID: {{ $('Gmail Trigger').item.json.threadId }}\\nMessage ID: {{ $('Gmail Trigger').item.json.id }}\\n\\nEmail Body:\\n{{ $('Gmail Trigger').item.json.body }}",
+        "options": {
+          "systemMessage": "=You are an AI email classifier for {{ $json.client.name || 'a business' }}. Your role is to analyze incoming emails and categorize them accurately.\\n\\nBusiness Context:\\n- Company: {{ $json.client.name || 'Unknown' }}\\n- Industry: {{ $json.client.industry || 'Service Business' }}\\n- Timezone: {{ $json.client.timezone || 'UTC' }}\\n- Website: {{ $json.client.website || 'N/A' }}\\n\\nEmail Categories (use these exact labels):\\n{{ Object.keys($json.channels.email.label_map || {}).map(key => `- ${key}: ${$json.channels.email.label_map[key]}`).join('\\n') }}\\n\\nManagers:\\n{{ ($json.people.managers || []).map(m => `- ${m.name} (${m.email})`).join('\\n') }}\\n\\nSuppliers:\\n{{ ($json.suppliers || []).map(s => `- ${s.name}: ${(s.domains || []).join(', ')}`).join('\\n') }}\\n\\nClassify the email into ONE primary category. Return JSON format:\\n{\\n  \\\"primary_category\\\": \\\"category_name\\\",\\n  \\\"confidence\\\": 0.95,\\n  \\\"reasoning\\\": \\\"brief explanation\\\",\\n  \\\"id\\\": \\\"{{ $('Gmail Trigger').item.json.id }}\\\",\\n  \\\"requires_draft\\\": true/false\\n}\\n\\nALWAYS maintain professional tone and accuracy."
+        }
+      },
+      "id": "ai-classifier-main",
+      "name": "AI Classifier",
+      "type": "@n8n/n8n-nodes-langchain.chatOpenAi",
+      "position": [-5000, 3296],
+      "typeVersion": 1.3
+    },
+    {
+      "parameters": {
+        "rules": {
+          "values": [
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 2
+                },
+                "conditions": [
+                  {
+                    "leftValue": "={{ $json.parsed_output.primary_category }}",
+                    "rightValue": "Urgent",
+                    "operator": {
+                      "type": "string",
+                      "operation": "equals"
+                    }
+                  }
+                ],
+                "combinator": "and"
+              },
+              "renameOutput": true,
+              "outputKey": "Urgent"
+            },
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 2
+                },
+                "conditions": [
+                  {
+                    "leftValue": "={{ $json.parsed_output.primary_category }}",
+                    "rightValue": "Sales",
+                    "operator": {
+                      "type": "string",
+                      "operation": "equals"
+                    }
+                  }
+                ],
+                "combinator": "and"
+              },
+              "renameOutput": true,
+              "outputKey": "Sales"
+            },
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 2
+                },
+                "conditions": [
+                  {
+                    "leftValue": "={{ $json.parsed_output.primary_category }}",
+                    "rightValue": "Support",
+                    "operator": {
+                      "type": "string",
+                      "operation": "equals"
+                    }
+                  }
+                ],
+                "combinator": "and"
+              },
+              "renameOutput": true,
+              "outputKey": "Support"
+            }
+          ]
+        }
+      },
+      "type": "n8n-nodes-base.switch",
+      "typeVersion": 3,
+      "position": [-4700, 3296],
+      "id": "category-switch",
+      "name": "Category Switch"
+    },
+    {
+      "parameters": {
+        "operation": "addLabels",
+        "messageId": "={{ $json.parsed_output.id }}",
+        "labelIds": ["Label_Urgent"]
+      },
+      "type": "n8n-nodes-base.gmail",
+      "typeVersion": 2.1,
+      "position": [-4400, 3100],
+      "id": "urgent-label",
+      "name": "Label Urgent",
+      "credentials": {
+        "gmailOAuth2": {
+          "id": "{{GMAIL_CREDENTIAL_ID}}",
+          "name": "{{COMPANY_NAME}} Gmail"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "addLabels",
+        "messageId": "={{ $json.parsed_output.id }}",
+        "labelIds": ["Label_Sales"]
+      },
+      "type": "n8n-nodes-base.gmail",
+      "typeVersion": 2.1,
+      "position": [-4400, 3296],
+      "id": "sales-label",
+      "name": "Label Sales",
+      "credentials": {
+        "gmailOAuth2": {
+          "id": "{{GMAIL_CREDENTIAL_ID}}",
+          "name": "{{COMPANY_NAME}} Gmail"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "addLabels",
+        "messageId": "={{ $json.parsed_output.id }}",
+        "labelIds": ["Label_Support"]
+      },
+      "type": "n8n-nodes-base.gmail",
+      "typeVersion": 2.1,
+      "position": [-4400, 3492],
+      "id": "support-label",
+      "name": "Label Support",
+      "credentials": {
+        "gmailOAuth2": {
+          "id": "{{GMAIL_CREDENTIAL_ID}}",
+          "name": "{{COMPANY_NAME}} Gmail"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "rules": {
+          "values": [
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 2
+                },
+                "conditions": [
+                  {
+                    "leftValue": "={{ $json.parsed_output.requires_draft }}",
+                    "rightValue": true,
+                    "operator": {
+                      "type": "boolean",
+                      "operation": "equal"
+                    }
+                  }
+                ],
+                "combinator": "and"
+              },
+              "renameOutput": true,
+              "outputKey": "Generate Draft"
+            }
+          ]
+        }
+      },
+      "type": "n8n-nodes-base.switch",
+      "typeVersion": 3,
+      "position": [-4100, 3296],
+      "id": "draft-switch",
+      "name": "Draft Switch"
+    },
+    {
+      "parameters": {
+        "functionCode": "// Get config data from Config Cache Manager\nconst configData = $('Config Cache Manager').first().json;\nconst emailData = $('Gmail Trigger').first().json;\nconst classificationData = $json;\n\n// Determine signature based on mode\nlet signature = '';\nconst signatureMode = configData.signature?.mode || 'default';\n\nswitch (signatureMode) {\n  case 'default':\n    // Fixed default signature\n    signature = `\\n\\nBest regards,\\nThe ${configData.client.name || 'Team'} Team\\n${configData.client.name || 'Your Business'}\\n${configData.client.phones?.[0] || 'Phone: Contact us'}\\n${configData.client.website || ''}`;\n    break;\n    \n  case 'custom':\n    // Use custom signature text\n    signature = configData.signature.custom_text ? `\\n\\n${configData.signature.custom_text}` : '';\n    break;\n    \n  case 'none':\n    // No signature\n    signature = '';\n    break;\n    \n  default:\n    signature = `\\n\\nBest regards,\\nThe ${configData.client.name || 'Team'} Team`;\n}\n\n// Prepare data for draft generation\nreturn [{\n  json: {\n    ...classificationData,\n    config: configData,\n    email: emailData,\n    signature: signature,\n    signatureMode: signatureMode,\n    signatureInstruction: signatureMode === 'none' ? 'do NOT append signature' : 'append the provided signature'\n  }\n}];"
+      },
+      "type": "n8n-nodes-base.function",
+      "typeVersion": 2,
+      "position": [-3800, 3296],
+      "id": "signature-processor",
+      "name": "Signature Processor"
+    },
+    {
+      "parameters": {
+        "promptType": "define",
+        "text": "=Original Email:\\nSubject: {{ $json.email.subject }}\\nFrom: {{ $json.email.from }}\\nTo: {{ $json.email.to }}\\nBody: {{ $json.email.body }}\\n\\nClassification: {{ $json.parsed_output.primary_category }}\\nConfidence: {{ $json.parsed_output.confidence }}\\nReasoning: {{ $json.parsed_output.reasoning }}",
+        "options": {
+          "systemMessage": "=You are an AI email draft assistant for {{ $json.config.client.name || 'a business' }}.\\n\\nBusiness Context:\\n- Company: {{ $json.config.client.name || 'Unknown' }}\\n- Industry: {{ $json.config.client.industry || 'Service Business' }}\\n- Timezone: {{ $json.config.client.timezone || 'UTC' }}\\n- Website: {{ $json.config.client.website || 'N/A' }}\\n- Phone: {{ $json.config.client.phones?.[0] || 'Contact us' }}\\n\\nManagers:\\n{{ ($json.config.people.managers || []).map(m => `- ${m.name} (${m.email})`).join('\\n') }}\\n\\nEmail Category: {{ $json.parsed_output.primary_category }}\\n\\nYour task is to draft a professional, helpful email response. Follow these guidelines:\\n\\n1. TONE: Professional, friendly, and helpful\\n2. BRAND: Represent {{ $json.config.client.name || 'the business' }} professionally\\n3. ACCURACY: Only provide information you're certain about\\n4. SIGNATURE: {{ $json.signatureInstruction }}\\n\\nAI GUARDRAILS (LOCKED - DO NOT MODIFY):\\n- Model: gpt-4o-mini\\n- Temperature: 0.2\\n- Max tokens: 800\\n- Always maintain professional tone\\n- Never make promises about pricing without manager approval\\n- Always suggest contacting a manager for complex issues\\n\\nGenerate a complete email draft including:\\n- Appropriate subject line (if replying, use Re: original subject)\\n- Professional greeting\\n- Helpful response addressing the inquiry\\n- Call to action if appropriate\\n{{ $json.signatureMode !== 'none' ? '- Signature (provided below)' : '' }}\\n\\n{{ $json.signatureMode !== 'none' ? 'SIGNATURE TO APPEND:' + $json.signature : 'DO NOT INCLUDE ANY SIGNATURE.' }}\\n\\nReturn ONLY the complete email draft, ready to send."
+        }
+      },
+      "id": "ai-draft-generator",
+      "name": "AI Draft Generator",
+      "type": "@n8n/n8n-nodes-langchain.chatOpenAi",
+      "position": [-3500, 3296],
+      "typeVersion": 1.3
+    },
+    {
+      "parameters": {
+        "operation": "createDraft",
+        "subject": "=Re: {{ $('Gmail Trigger').first().json.subject }}",
+        "message": "={{ $json.response }}",
+        "replyToMessageId": "={{ $('Gmail Trigger').first().json.id }}",
+        "options": {
+          "ccList": "",
+          "bccList": ""
+        }
+      },
+      "type": "n8n-nodes-base.gmail",
+      "typeVersion": 2.1,
+      "position": [-3200, 3296],
+      "id": "create-draft",
+      "name": "Create Draft",
+      "credentials": {
+        "gmailOAuth2": {
+          "id": "{{GMAIL_CREDENTIAL_ID}}",
+          "name": "{{COMPANY_NAME}} Gmail"
+        }
+      }
+    }
+  ],
+  "connections": {
+    "Gmail Trigger": {
+      "main": [
+        [
+          {
+            "node": "Fetch Config",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Fetch Config": {
+      "main": [
+        [
+          {
+            "node": "Config Cache Manager",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Config Cache Manager": {
+      "main": [
+        [
+          {
+            "node": "AI Classifier",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "AI Classifier": {
+      "main": [
+        [
+          {
+            "node": "Category Switch",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Category Switch": {
+      "main": [
+        [
+          {
+            "node": "Label Urgent",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Label Sales",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Label Support",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Label Urgent": {
+      "main": [
+        [
+          {
+            "node": "Draft Switch",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Label Sales": {
+      "main": [
+        [
+          {
+            "node": "Draft Switch",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Label Support": {
+      "main": [
+        [
+          {
+            "node": "Draft Switch",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Draft Switch": {
+      "main": [
+        [
+          {
+            "node": "Signature Processor",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Signature Processor": {
+      "main": [
+        [
+          {
+            "node": "AI Draft Generator",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "AI Draft Generator": {
+      "main": [
+        [
+          {
+            "node": "Create Draft",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": false,
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "versionId": "2.0.0",
+  "meta": {
+    "templateVersion": "2.0.0",
+    "description": "Enhanced email automation with config fetching, versioned caching, and signature switching"
+  }
+}

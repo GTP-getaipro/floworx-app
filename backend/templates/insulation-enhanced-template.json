@@ -1,0 +1,36 @@
+{
+  "name": "{{COMPANY_NAME}} - Insulation Installer Smart Email Automation",
+  "nodes": [
+    {
+      "parameters": {
+        "functionCode": "// Insulation Business Intelligence Config Cache Manager\nconst clientId = $env.CLIENT_ID;\nconst configData = $input.first().json;\nconst cacheKey = `config:${clientId}:${configData.version}`;\n\nconst enhancedConfig = {\n  ...configData,\n  insulationIntelligence: {\n    hasEmergencyService: configData.client.phones?.length > 1,\n    serviceTypes: configData.services || ['blown_in_insulation', 'batt_insulation', 'spray_foam', 'radiant_barrier', 'air_sealing'],\n    workingHours: configData.client.hours || {},\n    priceRanges: configData.pricing || {},\n    serviceArea: configData.client.service_area || 'Local area',\n    managerNames: (configData.people.managers || []).map(m => m.name),\n    supplierDomains: (configData.suppliers || []).flatMap(s => s.domains || []),\n    specializations: ['residential', 'commercial', 'new_construction', 'retrofit'],\n    emergencyKeywords: ['energy emergency', 'frozen pipes', 'urgent', 'immediate'],\n    insulationTypes: {\n      fiberglass: ['batt_insulation', 'blown_fiberglass', 'rigid_boards'],\n      cellulose: ['blown_cellulose', 'dense_pack', 'wet_spray'],\n      spray_foam: ['open_cell', 'closed_cell', 'two_part_foam'],\n      specialty: ['radiant_barrier', 'reflective_insulation', 'mineral_wool']\n    },\n    applicationAreas: {\n      attic: ['blown_in', 'batt_installation', 'air_sealing'],\n      walls: ['dense_pack', 'spray_foam', 'batt_insulation'],\n      basement: ['rim_joist', 'foundation_walls', 'crawl_space'],\n      commercial: ['metal_buildings', 'warehouses', 'office_buildings']\n    },\n    energyBenefits: {\n      heating_savings: '20-50% reduction in heating costs',\n      cooling_savings: '10-30% reduction in cooling costs',\n      comfort: 'improved temperature consistency',\n      soundproofing: 'noise reduction between rooms'\n    },\n    seasonalConsiderations: {\n      winter: ['heating_efficiency', 'frozen_pipe_prevention', 'ice_dam_prevention'],\n      summer: ['cooling_efficiency', 'attic_heat_reduction'],\n      year_round: ['energy_savings', 'comfort_improvement', 'sound_dampening']\n    },\n    safetyProtocols: ['respiratory_protection', 'skin_protection', 'confined_space_safety']\n  }\n};\n\n$setStaticData(cacheKey, enhancedConfig);\nreturn [{ json: { ...enhancedConfig, cached: false, cacheKey: cacheKey } }];"
+      },
+      "type": "n8n-nodes-base.function",
+      "typeVersion": 2,
+      "position": [-5400, 3200],
+      "id": "insulation-config-cache",
+      "name": "Insulation Config Cache"
+    },
+    {
+      "parameters": {
+        "promptType": "define",
+        "text": "=Subject: {{ $('Gmail Trigger').item.json.subject }}\\nFrom: {{ $('Gmail Trigger').item.json.from }}\\nEmail Body: {{ $('Gmail Trigger').item.json.body }}",
+        "options": {
+          "systemMessage": "=You are an expert insulation contractor email classifier for {{ $json.client.name || 'an insulation service company' }}.\\n\\n🏢 INSULATION BUSINESS CONTEXT:\\n- Company: {{ $json.client.name || 'Insulation Service Company' }}\\n- Services: {{ $json.insulationIntelligence.serviceTypes.join(', ') }}\\n- Service Area: {{ $json.insulationIntelligence.serviceArea }}\\n- Specializations: {{ $json.insulationIntelligence.specializations.join(', ') }}\\n\\n🎯 INSULATION CLASSIFICATION RULES:\\n\\n**URGENT** (Immediate attention required):\\n- Energy emergencies with extreme temperatures\\n- Frozen pipe prevention (insulation failure)\\n- Immediate comfort issues\\n- Pre-winter emergency insulation\\n\\n**SALES** (Revenue opportunities):\\n- Whole house insulation upgrades\\n- New construction insulation\\n- Commercial insulation projects\\n- Energy efficiency improvements\\n- Spray foam installations\\n\\n**SUPPORT** (Customer service):\\n- Insulation assessments and audits\\n- Air sealing services\\n- Insulation repairs and additions\\n- Energy efficiency consultations\\n\\n**SUPPLIERS** (Vendor communications):\\n- Insulation material suppliers\\n- Equipment and tool suppliers\\n- Safety equipment providers\\n\\n🏠 INSULATION SPECIALIZATIONS:\\n- **Fiberglass:** Batts, blown-in, rigid boards\\n- **Cellulose:** Blown, dense-pack, wet spray\\n- **Spray Foam:** Open cell, closed cell, two-part\\n- **Specialty:** Radiant barrier, reflective, mineral wool\\n\\n📍 APPLICATION AREAS:\\n- **Attic:** Blown-in, batts, air sealing\\n- **Walls:** Dense-pack, spray foam, batts\\n- **Basement:** Rim joist, foundation walls, crawl space\\n- **Commercial:** Metal buildings, warehouses, offices\\n\\n💰 ENERGY BENEFITS:\\n- **Heating Savings:** 20-50% reduction in costs\\n- **Cooling Savings:** 10-30% reduction in costs\\n- **Comfort:** Improved temperature consistency\\n- **Soundproofing:** Noise reduction\\n\\n🌡️ SEASONAL CONSIDERATIONS:\\n- **Winter:** Heating efficiency, frozen pipe prevention\\n- **Summer:** Cooling efficiency, attic heat reduction\\n- **Year-round:** Energy savings, comfort improvement\\n\\n⚠️ SAFETY PROTOCOLS:\\n- Respiratory protection required\\n- Skin protection from fiberglass\\n- Confined space safety procedures\\n\\n🤖 CLASSIFICATION OUTPUT:\\n{\\n  \\\"primary_category\\\": \\\"category_name\\\",\\n  \\\"confidence\\\": 0.95,\\n  \\\"reasoning\\\": \\\"detailed explanation\\\",\\n  \\\"urgency_level\\\": \\\"low|medium|high|critical\\\",\\n  \\\"requires_draft\\\": true/false,\\n  \\\"insulation_context\\\": {\\n    \\\"is_emergency\\\": true/false,\\n    \\\"insulation_type\\\": \\\"fiberglass|cellulose|spray_foam|specialty\\\",\\n    \\\"application_area\\\": \\\"attic|walls|basement|commercial\\\",\\n    \\\"energy_focus\\\": \\\"heating|cooling|year_round\\\"\\n  }\\n}"
+        }
+      },
+      "id": "insulation-ai-classifier",
+      "name": "Insulation AI Classifier",
+      "type": "@n8n/n8n-nodes-langchain.chatOpenAi",
+      "position": [-5100, 3200],
+      "typeVersion": 1.3
+    }
+  ],
+  "versionId": "10.0.0",
+  "meta": {
+    "templateVersion": "10.0.0",
+    "industry": "Insulation",
+    "description": "Insulation contractor email automation with energy efficiency and seasonal intelligence",
+    "businessIntelligence": true
+  }
+}

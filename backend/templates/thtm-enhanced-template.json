@@ -1,0 +1,629 @@
+{
+  "name": "{{COMPANY_NAME}} - Smart Email Automation (THTM Enhanced)",
+  "nodes": [
+    {
+      "parameters": {
+        "pollTimes": {
+          "item": [
+            {
+              "mode": "custom",
+              "cronExpression": "=0 */5 * * * *"
+            }
+          ]
+        },
+        "simple": false,
+        "filters": {
+          "q": "in:inbox -(from:({{BUSINESS_DOMAINS}}))"
+        },
+        "options": {
+          "downloadAttachments": true
+        }
+      },
+      "type": "n8n-nodes-base.gmailTrigger",
+      "typeVersion": 1.2,
+      "position": [-6000, 3200],
+      "id": "gmail-trigger-main",
+      "name": "Gmail Trigger",
+      "credentials": {
+        "gmailOAuth2": {
+          "id": "{{GMAIL_CREDENTIAL_ID}}",
+          "name": "{{COMPANY_NAME}} Gmail"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "url": "={{$env.FLOWORX_API_URL}}/api/clients/{{$env.CLIENT_ID}}/config",
+        "authentication": "genericCredentialType",
+        "genericAuthType": "httpHeaderAuth",
+        "options": {
+          "timeout": 10000,
+          "retry": {
+            "enabled": true,
+            "maxTries": 3
+          }
+        }
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [-5700, 3200],
+      "id": "fetch-config",
+      "name": "Fetch Config",
+      "credentials": {
+        "httpHeaderAuth": {
+          "id": "{{FLOWORX_API_CREDENTIAL_ID}}",
+          "name": "FloWorx API Auth"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "functionCode": "// Enhanced Config Cache Manager with business intelligence preservation\nconst clientId = $env.CLIENT_ID;\nconst configData = $input.first().json;\nconst cacheKey = `config:${clientId}:${configData.version}`;\n\n// Get existing cached config\nconst existingConfig = $getStaticData(cacheKey);\n\nif (existingConfig && existingConfig.version === configData.version) {\n  // Use cached config\n  return [{\n    json: {\n      ...configData,\n      cached: true,\n      cacheKey: cacheKey,\n      businessIntelligence: {\n        hasEmergencyService: configData.client.phones?.length > 1,\n        serviceTypes: configData.services || ['installation', 'repair', 'maintenance'],\n        workingHours: configData.client.hours || {},\n        priceRanges: configData.pricing || {},\n        serviceArea: configData.client.service_area || 'Local area'\n      }\n    }\n  }];\n} else {\n  // Cache new config and enhance with business intelligence\n  const enhancedConfig = {\n    ...configData,\n    businessIntelligence: {\n      hasEmergencyService: configData.client.phones?.length > 1,\n      serviceTypes: configData.services || ['installation', 'repair', 'maintenance'],\n      workingHours: configData.client.hours || {},\n      priceRanges: configData.pricing || {},\n      serviceArea: configData.client.service_area || 'Local area',\n      managerNames: (configData.people.managers || []).map(m => m.name),\n      supplierDomains: (configData.suppliers || []).flatMap(s => s.domains || [])\n    }\n  };\n  \n  $setStaticData(cacheKey, enhancedConfig);\n  \n  // Clear old cache entries for this client\n  const staticData = $getStaticData();\n  const oldKeys = Object.keys(staticData).filter(key => \n    key.startsWith(`config:${clientId}:`) && key !== cacheKey\n  );\n  \n  oldKeys.forEach(key => {\n    $setStaticData(key, undefined);\n  });\n  \n  return [{\n    json: {\n      ...enhancedConfig,\n      cached: false,\n      cacheKey: cacheKey\n    }\n  }];\n}"
+      },
+      "type": "n8n-nodes-base.function",
+      "typeVersion": 2,
+      "position": [-5400, 3200],
+      "id": "enhanced-config-cache",
+      "name": "Enhanced Config Cache"
+    },
+    {
+      "parameters": {
+        "promptType": "define",
+        "text": "=Subject: {{ $('Gmail Trigger').item.json.subject }}\\nFrom: {{ $('Gmail Trigger').item.json.from }}\\nTo: {{ $('Gmail Trigger').item.json.to }}\\nDate: {{ $now }}\\nThread ID: {{ $('Gmail Trigger').item.json.threadId }}\\nMessage ID: {{ $('Gmail Trigger').item.json.id }}\\n\\nEmail Body:\\n{{ $('Gmail Trigger').item.json.body }}",
+        "options": {
+          "systemMessage": "=You are an intelligent email classifier for {{ $json.client.name || 'a service business' }}, specializing in {{ $json.businessIntelligence.serviceTypes.join(', ') || 'home services' }}.\\n\\n🏢 BUSINESS CONTEXT:\\n- Company: {{ $json.client.name || 'Service Business' }}\\n- Industry: {{ $json.client.industry || 'Home Services' }}\\n- Service Area: {{ $json.businessIntelligence.serviceArea }}\\n- Emergency Service: {{ $json.businessIntelligence.hasEmergencyService ? 'Available 24/7' : 'Business hours only' }}\\n- Phone: {{ $json.client.phones?.[0] || 'Contact us' }}\\n- Website: {{ $json.client.website || 'N/A' }}\\n- Working Hours: {{ JSON.stringify($json.businessIntelligence.workingHours) }}\\n\\n👥 TEAM MEMBERS:\\n{{ ($json.people.managers || []).map(m => `- ${m.name} (${m.email}) - Manager`).join('\\n') }}\\n\\n🏭 SUPPLIERS (Auto-route supplier emails):\\n{{ ($json.suppliers || []).map(s => `- ${s.name}: ${(s.domains || []).join(', ')}`).join('\\n') }}\\n\\n📧 EMAIL CATEGORIES (use exact labels):\\n{{ Object.keys($json.channels.email.label_map || {}).map(key => `- ${key}: ${$json.channels.email.label_map[key]}`).join('\\n') }}\\n\\n🎯 CLASSIFICATION RULES:\\n\\n**URGENT** (Immediate attention required):\\n- Emergency service calls (water damage, electrical issues, safety hazards)\\n- Angry customers or complaints\\n- Equipment failures affecting multiple customers\\n- Legal or insurance matters\\n- Manager escalations\\n\\n**SALES** (Revenue opportunities):\\n- New installation requests\\n- Quote requests\\n- Product inquiries\\n- Upgrade consultations\\n- Referral inquiries\\n\\n**SUPPORT** (Customer service):\\n- Warranty claims\\n- Maintenance scheduling\\n- How-to questions\\n- Parts orders\\n- General customer inquiries\\n\\n**SUPPLIERS** (Vendor communications):\\n- From domains: {{ $json.businessIntelligence.supplierDomains.join(', ') }}\\n- Parts availability\\n- Delivery notifications\\n- Invoice/billing\\n\\n**MANAGER** (Internal communications):\\n- From: {{ $json.businessIntelligence.managerNames.join(', ') }}\\n- Team communications\\n- Administrative matters\\n\\n**MISC** (Everything else):\\n- General inquiries\\n- Unclassified emails\\n\\n🤖 CLASSIFICATION OUTPUT:\\nAnalyze the email content, sender, and context. Return JSON format:\\n{\\n  \\\"primary_category\\\": \\\"category_name\\\",\\n  \\\"confidence\\\": 0.95,\\n  \\\"reasoning\\\": \\\"detailed explanation of classification\\\",\\n  \\\"urgency_level\\\": \\\"low|medium|high|critical\\\",\\n  \\\"requires_draft\\\": true/false,\\n  \\\"estimated_response_time\\\": \\\"immediate|1hour|4hours|24hours\\\",\\n  \\\"id\\\": \\\"{{ $('Gmail Trigger').item.json.id }}\\\",\\n  \\\"business_context\\\": {\\n    \\\"is_emergency\\\": true/false,\\n    \\\"is_existing_customer\\\": true/false/unknown,\\n    \\\"service_type\\\": \\\"installation|repair|maintenance|consultation|other\\\",\\n    \\\"requires_manager\\\": true/false\\n  }\\n}\\n\\nALWAYS maintain professional standards and accuracy. Consider business hours, emergency protocols, and customer service excellence.\""
+        }
+      },
+      "id": "smart-ai-classifier",
+      "name": "Smart AI Classifier",
+      "type": "@n8n/n8n-nodes-langchain.chatOpenAi",
+      "position": [-5100, 3200],
+      "typeVersion": 1.3
+    },
+    {
+      "parameters": {
+        "rules": {
+          "values": [
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 2
+                },
+                "conditions": [
+                  {
+                    "leftValue": "={{ $json.parsed_output.primary_category }}",
+                    "rightValue": "Urgent",
+                    "operator": {
+                      "type": "string",
+                      "operation": "equals"
+                    }
+                  }
+                ],
+                "combinator": "and"
+              },
+              "renameOutput": true,
+              "outputKey": "Urgent"
+            },
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 2
+                },
+                "conditions": [
+                  {
+                    "leftValue": "={{ $json.parsed_output.primary_category }}",
+                    "rightValue": "Sales",
+                    "operator": {
+                      "type": "string",
+                      "operation": "equals"
+                    }
+                  }
+                ],
+                "combinator": "and"
+              },
+              "renameOutput": true,
+              "outputKey": "Sales"
+            },
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 2
+                },
+                "conditions": [
+                  {
+                    "leftValue": "={{ $json.parsed_output.primary_category }}",
+                    "rightValue": "Support",
+                    "operator": {
+                      "type": "string",
+                      "operation": "equals"
+                    }
+                  }
+                ],
+                "combinator": "and"
+              },
+              "renameOutput": true,
+              "outputKey": "Support"
+            },
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 2
+                },
+                "conditions": [
+                  {
+                    "leftValue": "={{ $json.parsed_output.primary_category }}",
+                    "rightValue": "Suppliers",
+                    "operator": {
+                      "type": "string",
+                      "operation": "equals"
+                    }
+                  }
+                ],
+                "combinator": "and"
+              },
+              "renameOutput": true,
+              "outputKey": "Suppliers"
+            },
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 2
+                },
+                "conditions": [
+                  {
+                    "leftValue": "={{ $json.parsed_output.primary_category }}",
+                    "rightValue": "Manager",
+                    "operator": {
+                      "type": "string",
+                      "operation": "equals"
+                    }
+                  }
+                ],
+                "combinator": "and"
+              },
+              "renameOutput": true,
+              "outputKey": "Manager"
+            },
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 2
+                },
+                "conditions": [
+                  {
+                    "leftValue": "={{ $json.parsed_output.primary_category }}",
+                    "rightValue": "Misc",
+                    "operator": {
+                      "type": "string",
+                      "operation": "equals"
+                    }
+                  }
+                ],
+                "combinator": "and"
+              },
+              "renameOutput": true,
+              "outputKey": "Misc"
+            }
+          ]
+        }
+      },
+      "type": "n8n-nodes-base.switch",
+      "typeVersion": 3,
+      "position": [-4800, 3200],
+      "id": "intelligent-category-switch",
+      "name": "Intelligent Category Switch"
+    },
+    {
+      "parameters": {
+        "operation": "addLabels",
+        "messageId": "={{ $json.parsed_output.id }}",
+        "labelIds": ["Label_Urgent"]
+      },
+      "type": "n8n-nodes-base.gmail",
+      "typeVersion": 2.1,
+      "position": [-4500, 2900],
+      "id": "label-urgent",
+      "name": "Label Urgent",
+      "credentials": {
+        "gmailOAuth2": {
+          "id": "{{GMAIL_CREDENTIAL_ID}}",
+          "name": "{{COMPANY_NAME}} Gmail"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "addLabels",
+        "messageId": "={{ $json.parsed_output.id }}",
+        "labelIds": ["Label_Sales"]
+      },
+      "type": "n8n-nodes-base.gmail",
+      "typeVersion": 2.1,
+      "position": [-4500, 3000],
+      "id": "label-sales",
+      "name": "Label Sales",
+      "credentials": {
+        "gmailOAuth2": {
+          "id": "{{GMAIL_CREDENTIAL_ID}}",
+          "name": "{{COMPANY_NAME}} Gmail"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "addLabels",
+        "messageId": "={{ $json.parsed_output.id }}",
+        "labelIds": ["Label_Support"]
+      },
+      "type": "n8n-nodes-base.gmail",
+      "typeVersion": 2.1,
+      "position": [-4500, 3100],
+      "id": "label-support",
+      "name": "Label Support",
+      "credentials": {
+        "gmailOAuth2": {
+          "id": "{{GMAIL_CREDENTIAL_ID}}",
+          "name": "{{COMPANY_NAME}} Gmail"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "addLabels",
+        "messageId": "={{ $json.parsed_output.id }}",
+        "labelIds": ["Label_Suppliers"]
+      },
+      "type": "n8n-nodes-base.gmail",
+      "typeVersion": 2.1,
+      "position": [-4500, 3200],
+      "id": "label-suppliers",
+      "name": "Label Suppliers",
+      "credentials": {
+        "gmailOAuth2": {
+          "id": "{{GMAIL_CREDENTIAL_ID}}",
+          "name": "{{COMPANY_NAME}} Gmail"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "addLabels",
+        "messageId": "={{ $json.parsed_output.id }}",
+        "labelIds": ["Label_Manager"]
+      },
+      "type": "n8n-nodes-base.gmail",
+      "typeVersion": 2.1,
+      "position": [-4500, 3300],
+      "id": "label-manager",
+      "name": "Label Manager",
+      "credentials": {
+        "gmailOAuth2": {
+          "id": "{{GMAIL_CREDENTIAL_ID}}",
+          "name": "{{COMPANY_NAME}} Gmail"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "addLabels",
+        "messageId": "={{ $json.parsed_output.id }}",
+        "labelIds": ["Label_Misc"]
+      },
+      "type": "n8n-nodes-base.gmail",
+      "typeVersion": 2.1,
+      "position": [-4500, 3400],
+      "id": "label-misc",
+      "name": "Label Misc",
+      "credentials": {
+        "gmailOAuth2": {
+          "id": "{{GMAIL_CREDENTIAL_ID}}",
+          "name": "{{COMPANY_NAME}} Gmail"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "rules": {
+          "values": [
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 2
+                },
+                "conditions": [
+                  {
+                    "leftValue": "={{ $json.parsed_output.requires_draft }}",
+                    "rightValue": true,
+                    "operator": {
+                      "type": "boolean",
+                      "operation": "equal"
+                    }
+                  }
+                ],
+                "combinator": "and"
+              },
+              "renameOutput": true,
+              "outputKey": "Generate Draft"
+            }
+          ]
+        }
+      },
+      "type": "n8n-nodes-base.switch",
+      "typeVersion": 3,
+      "position": [-4200, 3200],
+      "id": "draft-decision-switch",
+      "name": "Draft Decision Switch"
+    },
+    {
+      "parameters": {
+        "functionCode": "// Business-Intelligent Signature Processor for Service Businesses\nconst configData = $('Enhanced Config Cache').first().json;\nconst emailData = $('Gmail Trigger').first().json;\nconst classificationData = $json;\nconst businessContext = classificationData.parsed_output.business_context || {};\n\n// Determine signature based on mode and business context\nlet signature = '';\nconst signatureMode = configData.signature?.mode || 'default';\n\n// Business-specific signature logic\nswitch (signatureMode) {\n  case 'default':\n    // Enhanced default signature with business intelligence\n    const emergencyPhone = configData.businessIntelligence.hasEmergencyService ? \n      `\\nEmergency: ${configData.client.phones?.[1] || configData.client.phones?.[0]}` : '';\n    \n    signature = `\\n\\nBest regards,\\nThe ${configData.client.name || 'Service'} Team\\n${configData.client.name || 'Your Service Business'}\\nPhone: ${configData.client.phones?.[0] || 'Contact us'}${emergencyPhone}\\n${configData.client.website || ''}\\n\\nService Area: ${configData.businessIntelligence.serviceArea}\\nServices: ${configData.businessIntelligence.serviceTypes.join(', ')}`;\n    break;\n    \n  case 'custom':\n    // Use custom signature text\n    signature = configData.signature.custom_text ? `\\n\\n${configData.signature.custom_text}` : '';\n    break;\n    \n  case 'none':\n    // No signature\n    signature = '';\n    break;\n    \n  default:\n    signature = `\\n\\nBest regards,\\nThe ${configData.client.name || 'Service'} Team`;\n}\n\n// Enhanced business context for AI drafting\nconst enhancedContext = {\n  ...businessContext,\n  workingHours: configData.businessIntelligence.workingHours,\n  hasEmergencyService: configData.businessIntelligence.hasEmergencyService,\n  serviceTypes: configData.businessIntelligence.serviceTypes,\n  priceRanges: configData.businessIntelligence.priceRanges,\n  managerNames: configData.businessIntelligence.managerNames\n};\n\n// Prepare comprehensive data for draft generation\nreturn [{\n  json: {\n    ...classificationData,\n    config: configData,\n    email: emailData,\n    signature: signature,\n    signatureMode: signatureMode,\n    signatureInstruction: signatureMode === 'none' ? 'do NOT append signature' : 'append the provided signature',\n    businessContext: enhancedContext,\n    draftingInstructions: {\n      urgencyLevel: classificationData.parsed_output.urgency_level,\n      responseTime: classificationData.parsed_output.estimated_response_time,\n      requiresManager: enhancedContext.requires_manager,\n      isEmergency: enhancedContext.is_emergency,\n      serviceType: enhancedContext.service_type\n    }\n  }\n}];"
+      },
+      "type": "n8n-nodes-base.function",
+      "typeVersion": 2,
+      "position": [-3900, 3200],
+      "id": "business-signature-processor",
+      "name": "Business Signature Processor"
+    },
+    {
+      "parameters": {
+        "promptType": "define",
+        "text": "=Original Email:\\nSubject: {{ $json.email.subject }}\\nFrom: {{ $json.email.from }}\\nTo: {{ $json.email.to }}\\nBody: {{ $json.email.body }}\\n\\nClassification Results:\\nCategory: {{ $json.parsed_output.primary_category }}\\nConfidence: {{ $json.parsed_output.confidence }}\\nUrgency: {{ $json.parsed_output.urgency_level }}\\nService Type: {{ $json.businessContext.service_type }}\\nIs Emergency: {{ $json.businessContext.is_emergency }}\\nRequires Manager: {{ $json.businessContext.requires_manager }}",
+        "options": {
+          "systemMessage": "=You are an expert email response assistant for {{ $json.config.client.name || 'a service business' }}, specializing in {{ $json.config.businessIntelligence.serviceTypes.join(', ') }}.\\n\\n🏢 BUSINESS PROFILE:\\n- Company: {{ $json.config.client.name }}\\n- Services: {{ $json.config.businessIntelligence.serviceTypes.join(', ') }}\\n- Service Area: {{ $json.config.businessIntelligence.serviceArea }}\\n- Emergency Service: {{ $json.config.businessIntelligence.hasEmergencyService ? 'Available 24/7' : 'Business hours only' }}\\n- Phone: {{ $json.config.client.phones?.[0] }}\\n{{ $json.config.businessIntelligence.hasEmergencyService ? '- Emergency: ' + $json.config.client.phones?.[1] : '' }}\\n- Website: {{ $json.config.client.website }}\\n\\n👥 TEAM:\\n{{ ($json.config.people.managers || []).map(m => `- ${m.name} (${m.email}) - Manager`).join('\\n') }}\\n\\n⏰ WORKING HOURS:\\n{{ JSON.stringify($json.config.businessIntelligence.workingHours) }}\\n\\n📧 EMAIL CONTEXT:\\n- Category: {{ $json.parsed_output.primary_category }}\\n- Urgency: {{ $json.parsed_output.urgency_level }}\\n- Response Time Target: {{ $json.parsed_output.estimated_response_time }}\\n- Service Type: {{ $json.businessContext.service_type }}\\n\\n🎯 RESPONSE GUIDELINES:\\n\\n**TONE & STYLE:**\\n- Professional, friendly, and helpful\\n- Reflect {{ $json.config.client.name }}'s brand values\\n- Use industry-appropriate terminology\\n- Show expertise and reliability\\n\\n**CONTENT RULES:**\\n1. **Acknowledge** the customer's inquiry promptly\\n2. **Provide helpful information** within your knowledge scope\\n3. **Set clear expectations** for next steps\\n4. **Include relevant business details** (hours, service area, etc.)\\n5. **Direct to appropriate team member** when needed\\n\\n**PRICING & COMMITMENTS:**\\n- Never quote specific prices without manager approval\\n- Use ranges like \\\"typically between $X-Y\\\" if helpful\\n- Always mention \\\"final quote depends on specific requirements\\\"\\n- For complex jobs, suggest on-site consultation\\n\\n**EMERGENCY PROTOCOLS:**\\n{{ $json.config.businessIntelligence.hasEmergencyService ? '- For emergencies, provide emergency contact: ' + $json.config.client.phones?.[1] : '- For urgent matters outside business hours, mention next business day response' }}\\n- Prioritize safety-related concerns\\n- Escalate to managers for liability issues\\n\\n**MANAGER ESCALATION:**\\n{{ $json.businessContext.requires_manager ? 'This email requires manager attention. Draft a professional response and note that a manager will follow up.' : 'Handle directly with professional expertise.' }}\\n\\n**SERVICE-SPECIFIC GUIDANCE:**\\n{{ $json.businessContext.service_type === 'installation' ? '- Mention consultation process\\n- Ask about timeline preferences\\n- Inquire about site accessibility' : '' }}\\n{{ $json.businessContext.service_type === 'repair' ? '- Ask about symptoms/issues\\n- Mention diagnostic process\\n- Provide emergency contact if urgent' : '' }}\\n{{ $json.businessContext.service_type === 'maintenance' ? '- Explain maintenance benefits\\n- Suggest scheduling options\\n- Mention service packages' : '' }}\\n\\n🔒 AI GUARDRAILS (LOCKED):\\n- Model: {{ $json.config.ai.model }}\\n- Temperature: {{ $json.config.ai.temperature }}\\n- Max tokens: {{ $json.config.ai.max_tokens }}\\n- Professional tone mandatory\\n- No pricing commitments without approval\\n- Safety first for all recommendations\\n\\n📝 DRAFT REQUIREMENTS:\\n- Subject: Re: {{ $json.email.subject }}\\n- Professional greeting\\n- Address customer's specific needs\\n- Provide helpful next steps\\n- Include contact information\\n{{ $json.signatureMode !== 'none' ? '- Professional signature (provided below)' : '- NO signature (per business preference)' }}\\n\\n{{ $json.signatureMode !== 'none' ? '✍️ SIGNATURE TO APPEND:' + $json.signature : '⚠️ DO NOT INCLUDE ANY SIGNATURE - Business preference is no signature.' }}\\n\\nGenerate a complete, professional email response ready to send."
+        }
+      },
+      "id": "business-ai-draft-generator",
+      "name": "Business AI Draft Generator",
+      "type": "@n8n/n8n-nodes-langchain.chatOpenAi",
+      "position": [-3600, 3200],
+      "typeVersion": 1.3
+    },
+    {
+      "parameters": {
+        "operation": "createDraft",
+        "subject": "=Re: {{ $('Gmail Trigger').first().json.subject }}",
+        "message": "={{ $json.response }}",
+        "replyToMessageId": "={{ $('Gmail Trigger').first().json.id }}",
+        "options": {
+          "ccList": "",
+          "bccList": ""
+        }
+      },
+      "type": "n8n-nodes-base.gmail",
+      "typeVersion": 2.1,
+      "position": [-3300, 3200],
+      "id": "create-smart-draft",
+      "name": "Create Smart Draft",
+      "credentials": {
+        "gmailOAuth2": {
+          "id": "{{GMAIL_CREDENTIAL_ID}}",
+          "name": "{{COMPANY_NAME}} Gmail"
+        }
+      }
+    }
+  ],
+  "connections": {
+    "Gmail Trigger": {
+      "main": [
+        [
+          {
+            "node": "Fetch Config",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Fetch Config": {
+      "main": [
+        [
+          {
+            "node": "Enhanced Config Cache",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Enhanced Config Cache": {
+      "main": [
+        [
+          {
+            "node": "Smart AI Classifier",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Smart AI Classifier": {
+      "main": [
+        [
+          {
+            "node": "Intelligent Category Switch",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Intelligent Category Switch": {
+      "main": [
+        [
+          {
+            "node": "Label Urgent",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Label Sales",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Label Support",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Label Suppliers",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Label Manager",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Label Misc",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Label Urgent": {
+      "main": [
+        [
+          {
+            "node": "Draft Decision Switch",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Label Sales": {
+      "main": [
+        [
+          {
+            "node": "Draft Decision Switch",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Label Support": {
+      "main": [
+        [
+          {
+            "node": "Draft Decision Switch",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Label Suppliers": {
+      "main": [
+        [
+          {
+            "node": "Draft Decision Switch",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Label Manager": {
+      "main": [
+        [
+          {
+            "node": "Draft Decision Switch",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Label Misc": {
+      "main": [
+        [
+          {
+            "node": "Draft Decision Switch",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Draft Decision Switch": {
+      "main": [
+        [
+          {
+            "node": "Business Signature Processor",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Business Signature Processor": {
+      "main": [
+        [
+          {
+            "node": "Business AI Draft Generator",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Business AI Draft Generator": {
+      "main": [
+        [
+          {
+            "node": "Create Smart Draft",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": false,
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "versionId": "3.0.0",
+  "meta": {
+    "templateVersion": "3.0.0",
+    "description": "THTM Enhanced - Business-intelligent email automation with config-driven classification, smart drafting, and signature switching",
+    "businessIntelligence": true,
+    "preservesOriginalLogic": true,
+    "dataSource": "Client Config API"
+  }
+}

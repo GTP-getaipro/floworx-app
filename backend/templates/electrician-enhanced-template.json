@@ -1,0 +1,84 @@
+{
+  "name": "{{COMPANY_NAME}} - Electrician Smart Email Automation",
+  "nodes": [
+    {
+      "parameters": {
+        "pollTimes": {
+          "item": [
+            {
+              "mode": "custom",
+              "cronExpression": "=0 */5 * * * *"
+            }
+          ]
+        },
+        "simple": false,
+        "filters": {
+          "q": "in:inbox -(from:({{BUSINESS_DOMAINS}}))"
+        },
+        "options": {
+          "downloadAttachments": true
+        }
+      },
+      "type": "n8n-nodes-base.gmailTrigger",
+      "typeVersion": 1.2,
+      "position": [-6000, 3200],
+      "id": "gmail-trigger-main",
+      "name": "Gmail Trigger",
+      "credentials": {
+        "gmailOAuth2": {
+          "id": "{{GMAIL_CREDENTIAL_ID}}",
+          "name": "{{COMPANY_NAME}} Gmail"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "url": "={{$env.FLOWORX_API_URL}}/api/clients/{{$env.CLIENT_ID}}/config",
+        "authentication": "genericCredentialType",
+        "genericAuthType": "httpHeaderAuth",
+        "options": {
+          "timeout": 10000,
+          "retry": {
+            "enabled": true,
+            "maxTries": 3
+          }
+        }
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [-5700, 3200],
+      "id": "fetch-config",
+      "name": "Fetch Config",
+      "credentials": {
+        "httpHeaderAuth": {
+          "id": "{{FLOWORX_API_CREDENTIAL_ID}}",
+          "name": "FloWorx API Auth"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "functionCode": "// Electrician Business Intelligence Config Cache Manager\nconst clientId = $env.CLIENT_ID;\nconst configData = $input.first().json;\nconst cacheKey = `config:${clientId}:${configData.version}`;\n\n// Get existing cached config\nconst existingConfig = $getStaticData(cacheKey);\n\nif (existingConfig && existingConfig.version === configData.version) {\n  // Use cached config\n  return [{\n    json: {\n      ...configData,\n      cached: true,\n      cacheKey: cacheKey,\n      electricalIntelligence: {\n        hasEmergencyService: configData.client.phones?.length > 1,\n        serviceTypes: configData.services || ['wiring', 'panel_upgrades', 'outlet_installation', 'lighting', 'emergency_electrical'],\n        workingHours: configData.client.hours || {},\n        priceRanges: configData.pricing || {},\n        serviceArea: configData.client.service_area || 'Local area',\n        specializations: ['residential', 'commercial', 'industrial'],\n        emergencyKeywords: ['power out', 'sparking', 'electrical fire', 'shock', 'no power', 'breaker tripping', 'emergency'],\n        safetyProtocols: ['electrical_shock', 'fire_hazard', 'code_compliance', 'arc_fault_protection'],\n        commonServices: {\n          residential: ['outlet_installation', 'lighting_fixtures', 'ceiling_fans', 'panel_upgrades', 'gfci_installation'],\n          commercial: ['three_phase_wiring', 'motor_controls', 'lighting_systems', 'emergency_lighting'],\n          emergency: ['power_restoration', 'electrical_fires', 'shock_incidents', 'exposed_wires']\n        }\n      }\n    }\n  }];\n} else {\n  // Cache new config and enhance with Electrical intelligence\n  const enhancedConfig = {\n    ...configData,\n    electricalIntelligence: {\n      hasEmergencyService: configData.client.phones?.length > 1,\n      serviceTypes: configData.services || ['wiring', 'panel_upgrades', 'outlet_installation', 'lighting', 'emergency_electrical'],\n      workingHours: configData.client.hours || {},\n      priceRanges: configData.pricing || {},\n      serviceArea: configData.client.service_area || 'Local area',\n      managerNames: (configData.people.managers || []).map(m => m.name),\n      supplierDomains: (configData.suppliers || []).flatMap(s => s.domains || []),\n      specializations: ['residential', 'commercial', 'industrial'],\n      emergencyKeywords: ['power out', 'sparking', 'electrical fire', 'shock', 'no power', 'breaker tripping', 'emergency'],\n      safetyProtocols: ['electrical_shock', 'fire_hazard', 'code_compliance', 'arc_fault_protection'],\n      commonServices: {\n        residential: ['outlet_installation', 'lighting_fixtures', 'ceiling_fans', 'panel_upgrades', 'gfci_installation'],\n        commercial: ['three_phase_wiring', 'motor_controls', 'lighting_systems', 'emergency_lighting'],\n        emergency: ['power_restoration', 'electrical_fires', 'shock_incidents', 'exposed_wires']\n      }\n    }\n  };\n  \n  $setStaticData(cacheKey, enhancedConfig);\n  \n  // Clear old cache entries for this client\n  const staticData = $getStaticData();\n  const oldKeys = Object.keys(staticData).filter(key => \n    key.startsWith(`config:${clientId}:`) && key !== cacheKey\n  );\n  \n  oldKeys.forEach(key => {\n    $setStaticData(key, undefined);\n  });\n  \n  return [{\n    json: {\n      ...enhancedConfig,\n      cached: false,\n      cacheKey: cacheKey\n    }\n  }];\n}"
+      },
+      "type": "n8n-nodes-base.function",
+      "typeVersion": 2,
+      "position": [-5400, 3200],
+      "id": "electrical-config-cache",
+      "name": "Electrical Config Cache"
+    },
+    {
+      "parameters": {
+        "promptType": "define",
+        "text": "=Subject: {{ $('Gmail Trigger').item.json.subject }}\\nFrom: {{ $('Gmail Trigger').item.json.from }}\\nTo: {{ $('Gmail Trigger').item.json.to }}\\nDate: {{ $now }}\\nThread ID: {{ $('Gmail Trigger').item.json.threadId }}\\nMessage ID: {{ $('Gmail Trigger').item.json.id }}\\n\\nEmail Body:\\n{{ $('Gmail Trigger').item.json.body }}",
+        "options": {
+          "systemMessage": "=You are an expert electrical contractor email classifier for {{ $json.client.name || 'an electrical service company' }}, specializing in residential, commercial, and industrial electrical work.\\n\\n🏢 ELECTRICAL BUSINESS CONTEXT:\\n- Company: {{ $json.client.name || 'Electrical Service Company' }}\\n- Industry: {{ $json.client.industry || 'Electrical Services' }}\\n- Service Area: {{ $json.electricalIntelligence.serviceArea }}\\n- Emergency Service: {{ $json.electricalIntelligence.hasEmergencyService ? 'Available 24/7' : 'Business hours only' }}\\n- Phone: {{ $json.client.phones?.[0] || 'Contact us' }}\\n- Website: {{ $json.client.website || 'N/A' }}\\n- Working Hours: {{ JSON.stringify($json.electricalIntelligence.workingHours) }}\\n\\n👥 ELECTRICAL TEAM MEMBERS:\\n{{ ($json.people.managers || []).map(m => `- ${m.name} (${m.email}) - Manager`).join('\\n') }}\\n\\n🏭 ELECTRICAL SUPPLIERS (Auto-route supplier emails):\\n{{ ($json.suppliers || []).map(s => `- ${s.name}: ${(s.domains || []).join(', ')}`).join('\\n') }}\\n\\n📧 EMAIL CATEGORIES (use exact labels):\\n{{ Object.keys($json.channels.email.label_map || {}).map(key => `- ${key}: ${$json.channels.email.label_map[key]}`).join('\\n') }}\\n\\n🎯 ELECTRICAL CLASSIFICATION RULES:\\n\\n**URGENT** (Immediate electrical attention required):\\n- Power outages or electrical failures\\n- Sparking outlets, switches, or panels\\n- Electrical fires or burning smells\\n- Electrical shock incidents\\n- Exposed or damaged wiring\\n- Tripping breakers or blown fuses\\n- Water contact with electrical systems\\n- Any electrical safety hazards\\n\\n**SALES** (Electrical revenue opportunities):\\n- Panel upgrades or electrical service increases\\n- New wiring installations\\n- Lighting system installations\\n- Generator installations\\n- Smart home electrical systems\\n- Commercial electrical projects\\n- Code compliance upgrades\\n\\n**SUPPORT** (Electrical customer service):\\n- Outlet or switch installations\\n- Lighting fixture replacements\\n- GFCI outlet installations\\n- Ceiling fan installations\\n- Electrical troubleshooting\\n- Code compliance questions\\n\\n**SUPPLIERS** (Electrical vendor communications):\\n- From domains: {{ $json.electricalIntelligence.supplierDomains.join(', ') }}\\n- Equipment deliveries\\n- Parts availability\\n- Technical specifications\\n- Product recalls or updates\\n\\n**MANAGER** (Internal electrical communications):\\n- From: {{ $json.electricalIntelligence.managerNames.join(', ') }}\\n- Project coordination\\n- Safety meetings\\n- Code updates\\n\\n**MISC** (Everything else):\\n- General electrical inquiries\\n- Unclassified emails\\n\\n⚡ ELECTRICAL SPECIALIZATIONS:\\n- **Residential:** Home wiring, outlets, lighting, panels\\n- **Commercial:** Three-phase systems, motor controls, emergency lighting\\n- **Industrial:** High-voltage systems, motor drives, control panels\\n\\n⚠️ SAFETY PROTOCOLS (CRITICAL):\\n- Electrical shock is LIFE-THREATENING\\n- Electrical fires spread rapidly\\n- Water and electricity are DEADLY combination\\n- Arc faults can cause fires\\n- Code violations create liability\\n\\n🤖 CLASSIFICATION OUTPUT:\\nAnalyze the electrical email content, sender, and context. Return JSON format:\\n{\\n  \\\"primary_category\\\": \\\"category_name\\\",\\n  \\\"confidence\\\": 0.95,\\n  \\\"reasoning\\\": \\\"detailed explanation of electrical classification\\\",\\n  \\\"urgency_level\\\": \\\"low|medium|high|critical\\\",\\n  \\\"requires_draft\\\": true/false,\\n  \\\"estimated_response_time\\\": \\\"immediate|1hour|4hours|24hours\\\",\\n  \\\"id\\\": \\\"{{ $('Gmail Trigger').item.json.id }}\\\",\\n  \\\"electrical_context\\\": {\\n    \\\"is_emergency\\\": true/false,\\n    \\\"is_existing_customer\\\": true/false/unknown,\\n    \\\"service_type\\\": \\\"residential|commercial|industrial|emergency\\\",\\n    \\\"requires_manager\\\": true/false,\\n    \\\"safety_concern\\\": true/false,\\n    \\\"code_compliance\\\": true/false\\n  }\\n}\\n\\nALWAYS prioritize electrical safety. Any mention of sparking, shock, fire, or exposed wires is CRITICAL.\""
+        }
+      },
+      "id": "electrical-ai-classifier",
+      "name": "Electrical AI Classifier",
+      "type": "@n8n/n8n-nodes-langchain.chatOpenAi",
+      "position": [-5100, 3200],
+      "typeVersion": 1.3
+    }
+  ]
+}

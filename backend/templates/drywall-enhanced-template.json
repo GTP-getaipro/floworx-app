@@ -1,0 +1,36 @@
+{
+  "name": "{{COMPANY_NAME}} - Drywall & Ceiling Tile Smart Email Automation",
+  "nodes": [
+    {
+      "parameters": {
+        "functionCode": "// Drywall & Ceiling Tile Business Intelligence Config Cache Manager\nconst clientId = $env.CLIENT_ID;\nconst configData = $input.first().json;\nconst cacheKey = `config:${clientId}:${configData.version}`;\n\nconst enhancedConfig = {\n  ...configData,\n  drywallIntelligence: {\n    hasEmergencyService: configData.client.phones?.length > 1,\n    serviceTypes: configData.services || ['drywall_installation', 'drywall_repair', 'ceiling_tile_installation', 'texturing', 'finishing'],\n    workingHours: configData.client.hours || {},\n    priceRanges: configData.pricing || {},\n    serviceArea: configData.client.service_area || 'Local area',\n    managerNames: (configData.people.managers || []).map(m => m.name),\n    supplierDomains: (configData.suppliers || []).flatMap(s => s.domains || []),\n    specializations: ['residential', 'commercial', 'new_construction', 'renovation'],\n    emergencyKeywords: ['water damage', 'ceiling collapse', 'emergency repair', 'urgent'],\n    projectTypes: {\n      residential: ['room_additions', 'basement_finishing', 'home_renovations', 'repair_work'],\n      commercial: ['office_buildouts', 'retail_spaces', 'warehouse_finishing', 'tenant_improvements'],\n      specialty: ['acoustic_ceilings', 'fire_rated_assemblies', 'moisture_resistant', 'soundproofing']\n    },\n    commonServices: {\n      installation: ['new_drywall', 'ceiling_tiles', 'metal_framing', 'insulation_backing'],\n      repair: ['hole_patching', 'crack_repair', 'water_damage_repair', 'texture_matching'],\n      finishing: ['taping', 'mudding', 'sanding', 'priming', 'texturing']\n    }\n  }\n};\n\n$setStaticData(cacheKey, enhancedConfig);\nreturn [{ json: { ...enhancedConfig, cached: false, cacheKey: cacheKey } }];"
+      },
+      "type": "n8n-nodes-base.function",
+      "typeVersion": 2,
+      "position": [-5400, 3200],
+      "id": "drywall-config-cache",
+      "name": "Drywall Config Cache"
+    },
+    {
+      "parameters": {
+        "promptType": "define",
+        "text": "=Subject: {{ $('Gmail Trigger').item.json.subject }}\\nFrom: {{ $('Gmail Trigger').item.json.from }}\\nEmail Body: {{ $('Gmail Trigger').item.json.body }}",
+        "options": {
+          "systemMessage": "=You are an expert drywall and ceiling tile contractor email classifier for {{ $json.client.name || 'a drywall service company' }}.\\n\\n🏢 DRYWALL BUSINESS CONTEXT:\\n- Company: {{ $json.client.name || 'Drywall Service Company' }}\\n- Services: {{ $json.drywallIntelligence.serviceTypes.join(', ') }}\\n- Service Area: {{ $json.drywallIntelligence.serviceArea }}\\n\\n🎯 DRYWALL CLASSIFICATION RULES:\\n\\n**URGENT** (Immediate attention required):\\n- Water damage to drywall or ceilings\\n- Ceiling tile collapse or safety hazards\\n- Emergency repairs needed for occupancy\\n- Structural damage affecting drywall\\n\\n**SALES** (Revenue opportunities):\\n- New construction drywall projects\\n- Commercial buildouts and renovations\\n- Basement finishing projects\\n- Ceiling tile system installations\\n- Room additions and remodeling\\n\\n**SUPPORT** (Customer service):\\n- Drywall repair estimates\\n- Texture matching requests\\n- Ceiling tile replacement\\n- Maintenance and touch-ups\\n- Project scheduling\\n\\n**SUPPLIERS** (Vendor communications):\\n- Drywall and ceiling tile deliveries\\n- Material specifications\\n- Product availability\\n\\n🏗️ PROJECT TYPES:\\n- **Residential:** Home renovations, basement finishing, room additions\\n- **Commercial:** Office buildouts, retail spaces, tenant improvements\\n- **Specialty:** Acoustic ceilings, fire-rated assemblies, soundproofing\\n\\n🤖 CLASSIFICATION OUTPUT:\\n{\\n  \\\"primary_category\\\": \\\"category_name\\\",\\n  \\\"confidence\\\": 0.95,\\n  \\\"reasoning\\\": \\\"detailed explanation\\\",\\n  \\\"urgency_level\\\": \\\"low|medium|high|critical\\\",\\n  \\\"requires_draft\\\": true/false,\\n  \\\"drywall_context\\\": {\\n    \\\"is_emergency\\\": true/false,\\n    \\\"project_type\\\": \\\"residential|commercial|specialty\\\",\\n    \\\"service_type\\\": \\\"installation|repair|finishing|maintenance\\\"\\n  }\\n}"
+        }
+      },
+      "id": "drywall-ai-classifier",
+      "name": "Drywall AI Classifier",
+      "type": "@n8n/n8n-nodes-langchain.chatOpenAi",
+      "position": [-5100, 3200],
+      "typeVersion": 1.3
+    }
+  ],
+  "versionId": "5.0.0",
+  "meta": {
+    "templateVersion": "5.0.0",
+    "industry": "Drywall & Ceiling Tile",
+    "description": "Drywall and ceiling tile installation email automation with project-specific intelligence",
+    "businessIntelligence": true
+  }
+}

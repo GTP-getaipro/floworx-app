@@ -1,0 +1,36 @@
+{
+  "name": "{{COMPANY_NAME}} - Locksmith Smart Email Automation",
+  "nodes": [
+    {
+      "parameters": {
+        "functionCode": "// Locksmith Business Intelligence Config Cache Manager\nconst clientId = $env.CLIENT_ID;\nconst configData = $input.first().json;\nconst cacheKey = `config:${clientId}:${configData.version}`;\n\nconst enhancedConfig = {\n  ...configData,\n  locksmithIntelligence: {\n    hasEmergencyService: configData.client.phones?.length > 1,\n    serviceTypes: configData.services || ['lockout_service', 'lock_installation', 'key_duplication', 'security_systems', 'safe_services'],\n    workingHours: configData.client.hours || {},\n    priceRanges: configData.pricing || {},\n    serviceArea: configData.client.service_area || 'Local area',\n    managerNames: (configData.people.managers || []).map(m => m.name),\n    supplierDomains: (configData.suppliers || []).flatMap(s => s.domains || []),\n    specializations: ['residential', 'commercial', 'automotive', 'security_systems'],\n    emergencyKeywords: ['locked out', 'emergency lockout', 'urgent', 'stranded', 'immediate'],\n    serviceTypes: {\n      emergency: ['home_lockouts', 'car_lockouts', 'office_lockouts', 'safe_lockouts'],\n      installation: ['deadbolts', 'smart_locks', 'security_systems', 'access_control'],\n      repair: ['lock_repair', 'key_extraction', 'mechanism_repair', 'door_hardware'],\n      security: ['rekeying', 'master_key_systems', 'high_security_locks', 'safes']\n    },\n    lockTypes: {\n      residential: ['deadbolts', 'knob_locks', 'smart_locks', 'padlocks'],\n      commercial: ['mortise_locks', 'panic_hardware', 'access_control', 'master_systems'],\n      automotive: ['car_keys', 'transponder_keys', 'fobs', 'ignition_repair'],\n      specialty: ['safes', 'high_security', 'electronic_locks', 'biometric']\n    },\n    emergencyResponse: {\n      response_time: '15-30 minutes average',\n      availability: '24/7 emergency service',\n      service_area: 'within service radius',\n      priority_order: ['safety_emergencies', 'lockouts', 'security_breaches']\n    },\n    securityLevels: {\n      basic: ['standard_locks', 'basic_deadbolts', 'simple_systems'],\n      enhanced: ['grade_1_locks', 'smart_systems', 'keyless_entry'],\n      high_security: ['restricted_keyways', 'pick_resistant', 'drill_resistant']\n    },\n    safetyProtocols: ['identity_verification', 'property_ownership', 'emergency_situations']\n  }\n};\n\n$setStaticData(cacheKey, enhancedConfig);\nreturn [{ json: { ...enhancedConfig, cached: false, cacheKey: cacheKey } }];"
+      },
+      "type": "n8n-nodes-base.function",
+      "typeVersion": 2,
+      "position": [-5400, 3200],
+      "id": "locksmith-config-cache",
+      "name": "Locksmith Config Cache"
+    },
+    {
+      "parameters": {
+        "promptType": "define",
+        "text": "=Subject: {{ $('Gmail Trigger').item.json.subject }}\\nFrom: {{ $('Gmail Trigger').item.json.from }}\\nEmail Body: {{ $('Gmail Trigger').item.json.body }}",
+        "options": {
+          "systemMessage": "=You are an expert locksmith service email classifier for {{ $json.client.name || 'a locksmith service company' }}.\\n\\n🏢 LOCKSMITH BUSINESS CONTEXT:\\n- Company: {{ $json.client.name || 'Locksmith Service Company' }}\\n- Services: {{ $json.locksmithIntelligence.serviceTypes.join(', ') }}\\n- Service Area: {{ $json.locksmithIntelligence.serviceArea }}\\n- Emergency Service: {{ $json.locksmithIntelligence.hasEmergencyService ? 'Available 24/7' : 'Business hours only' }}\\n- Response Time: {{ $json.locksmithIntelligence.emergencyResponse.response_time }}\\n\\n🎯 LOCKSMITH CLASSIFICATION RULES:\\n\\n**URGENT** (Immediate attention required):\\n- Home, car, or office lockouts\\n- Emergency lockout situations\\n- Safety-related lock failures\\n- Security breaches or break-ins\\n- Stranded customers (especially at night)\\n\\n**SALES** (Revenue opportunities):\\n- Lock installation and upgrades\\n- Security system installations\\n- Smart lock conversions\\n- Master key system design\\n- Safe sales and installation\\n\\n**SUPPORT** (Customer service):\\n- Key duplication services\\n- Lock repairs and maintenance\\n- Rekeying services\\n- Security consultations\\n- Hardware troubleshooting\\n\\n**SUPPLIERS** (Vendor communications):\\n- Lock and hardware suppliers\\n- Security equipment vendors\\n- Key blank suppliers\\n\\n🔐 LOCKSMITH SPECIALIZATIONS:\\n- **Emergency:** Lockouts, key extraction, urgent repairs\\n- **Installation:** Deadbolts, smart locks, security systems\\n- **Repair:** Lock repair, mechanism fixes, hardware\\n- **Security:** Rekeying, master systems, high-security\\n\\n🏠 LOCK TYPES:\\n- **Residential:** Deadbolts, knob locks, smart locks\\n- **Commercial:** Mortise locks, panic hardware, access control\\n- **Automotive:** Car keys, transponders, fobs, ignition\\n- **Specialty:** Safes, high-security, electronic, biometric\\n\\n⚡ EMERGENCY RESPONSE:\\n- **Response Time:** 15-30 minutes average\\n- **Availability:** 24/7 emergency service\\n- **Priority:** Safety emergencies, lockouts, security breaches\\n\\n🛡️ SECURITY LEVELS:\\n- **Basic:** Standard locks, basic deadbolts\\n- **Enhanced:** Grade 1 locks, smart systems, keyless\\n- **High Security:** Restricted keyways, pick/drill resistant\\n\\n⚠️ SAFETY PROTOCOLS (CRITICAL):\\n- Identity verification required\\n- Property ownership confirmation\\n- Emergency situation assessment\\n\\n🤖 CLASSIFICATION OUTPUT:\\n{\\n  \\\"primary_category\\\": \\\"category_name\\\",\\n  \\\"confidence\\\": 0.95,\\n  \\\"reasoning\\\": \\\"detailed explanation\\\",\\n  \\\"urgency_level\\\": \\\"low|medium|high|critical\\\",\\n  \\\"requires_draft\\\": true/false,\\n  \\\"locksmith_context\\\": {\\n    \\\"is_emergency\\\": true/false,\\n    \\\"service_type\\\": \\\"emergency|installation|repair|security\\\",\\n    \\\"lock_type\\\": \\\"residential|commercial|automotive|specialty\\\",\\n    \\\"security_level\\\": \\\"basic|enhanced|high_security\\\"\\n  }\\n}"
+        }
+      },
+      "id": "locksmith-ai-classifier",
+      "name": "Locksmith AI Classifier",
+      "type": "@n8n/n8n-nodes-langchain.chatOpenAi",
+      "position": [-5100, 3200],
+      "typeVersion": 1.3
+    }
+  ],
+  "versionId": "13.0.0",
+  "meta": {
+    "templateVersion": "13.0.0",
+    "industry": "Locksmith",
+    "description": "Locksmith service email automation with emergency response and security intelligence",
+    "businessIntelligence": true
+  }
+}

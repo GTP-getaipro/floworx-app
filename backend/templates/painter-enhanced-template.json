@@ -1,0 +1,36 @@
+{
+  "name": "{{COMPANY_NAME}} - Painter Smart Email Automation",
+  "nodes": [
+    {
+      "parameters": {
+        "functionCode": "// Painting Business Intelligence Config Cache Manager\nconst clientId = $env.CLIENT_ID;\nconst configData = $input.first().json;\nconst cacheKey = `config:${clientId}:${configData.version}`;\n\nconst enhancedConfig = {\n  ...configData,\n  paintingIntelligence: {\n    hasEmergencyService: configData.client.phones?.length > 1,\n    serviceTypes: configData.services || ['interior_painting', 'exterior_painting', 'commercial_painting', 'specialty_finishes', 'pressure_washing'],\n    workingHours: configData.client.hours || {},\n    priceRanges: configData.pricing || {},\n    serviceArea: configData.client.service_area || 'Local area',\n    managerNames: (configData.people.managers || []).map(m => m.name),\n    supplierDomains: (configData.suppliers || []).flatMap(s => s.domains || []),\n    specializations: ['residential', 'commercial', 'industrial', 'decorative'],\n    emergencyKeywords: ['water damage', 'mold', 'lead paint', 'urgent'],\n    paintingTypes: {\n      interior: ['wall_painting', 'ceiling_painting', 'trim_work', 'cabinet_refinishing'],\n      exterior: ['house_painting', 'deck_staining', 'fence_painting', 'pressure_washing'],\n      commercial: ['office_buildings', 'retail_spaces', 'warehouses', 'industrial_facilities'],\n      specialty: ['faux_finishes', 'murals', 'decorative_painting', 'restoration_work']\n    },\n    seasonalServices: {\n      spring: ['exterior_prep', 'pressure_washing', 'deck_staining'],\n      summer: ['exterior_painting', 'fence_staining', 'outdoor_projects'],\n      fall: ['interior_projects', 'preparation_for_winter'],\n      winter: ['indoor_painting', 'commercial_projects', 'specialty_finishes']\n    },\n    surfaceTypes: ['drywall', 'wood', 'metal', 'concrete', 'brick', 'stucco'],\n    paintTypes: ['latex', 'oil_based', 'epoxy', 'specialty_coatings'],\n    safetyProtocols: ['lead_paint_safety', 'voc_compliance', 'ladder_safety', 'chemical_handling']\n  }\n};\n\n$setStaticData(cacheKey, enhancedConfig);\nreturn [{ json: { ...enhancedConfig, cached: false, cacheKey: cacheKey } }];"
+      },
+      "type": "n8n-nodes-base.function",
+      "typeVersion": 2,
+      "position": [-5400, 3200],
+      "id": "painting-config-cache",
+      "name": "Painting Config Cache"
+    },
+    {
+      "parameters": {
+        "promptType": "define",
+        "text": "=Subject: {{ $('Gmail Trigger').item.json.subject }}\\nFrom: {{ $('Gmail Trigger').item.json.from }}\\nEmail Body: {{ $('Gmail Trigger').item.json.body }}",
+        "options": {
+          "systemMessage": "=You are an expert painting contractor email classifier for {{ $json.client.name || 'a painting service company' }}.\\n\\n🏢 PAINTING BUSINESS CONTEXT:\\n- Company: {{ $json.client.name || 'Painting Service Company' }}\\n- Services: {{ $json.paintingIntelligence.serviceTypes.join(', ') }}\\n- Service Area: {{ $json.paintingIntelligence.serviceArea }}\\n- Specializations: {{ $json.paintingIntelligence.specializations.join(', ') }}\\n\\n🎯 PAINTING CLASSIFICATION RULES:\\n\\n**URGENT** (Immediate attention required):\\n- Water damage requiring immediate painting\\n- Mold remediation and repainting\\n- Lead paint safety concerns\\n- Emergency touch-ups for events\\n\\n**SALES** (Revenue opportunities):\\n- Whole house interior/exterior painting\\n- Commercial painting contracts\\n- Specialty finishes and decorative work\\n- Cabinet refinishing projects\\n- Deck staining and restoration\\n\\n**SUPPORT** (Customer service):\\n- Touch-up and repair work\\n- Color consultation services\\n- Pressure washing services\\n- Paint maintenance and care\\n\\n**SUPPLIERS** (Vendor communications):\\n- Paint and coating suppliers\\n- Equipment and tool suppliers\\n- Specialty finish materials\\n\\n🎨 PAINTING SPECIALIZATIONS:\\n- **Interior:** Walls, ceilings, trim, cabinets\\n- **Exterior:** Houses, decks, fences, commercial buildings\\n- **Commercial:** Offices, retail, warehouses, industrial\\n- **Specialty:** Faux finishes, murals, decorative work\\n\\n🌟 SEASONAL CONSIDERATIONS:\\n- **Spring/Summer:** Exterior painting, deck staining\\n- **Fall/Winter:** Interior projects, commercial work\\n\\n⚠️ SAFETY PROTOCOLS:\\n- Lead paint safety (RRP certification)\\n- VOC compliance and ventilation\\n- Ladder and scaffold safety\\n- Chemical handling procedures\\n\\n🤖 CLASSIFICATION OUTPUT:\\n{\\n  \\\"primary_category\\\": \\\"category_name\\\",\\n  \\\"confidence\\\": 0.95,\\n  \\\"reasoning\\\": \\\"detailed explanation\\\",\\n  \\\"urgency_level\\\": \\\"low|medium|high|critical\\\",\\n  \\\"requires_draft\\\": true/false,\\n  \\\"painting_context\\\": {\\n    \\\"is_emergency\\\": true/false,\\n    \\\"painting_type\\\": \\\"interior|exterior|commercial|specialty\\\",\\n    \\\"surface_type\\\": \\\"drywall|wood|metal|concrete|brick|stucco\\\",\\n    \\\"seasonal_priority\\\": true/false\\n  }\\n}"
+        }
+      },
+      "id": "painting-ai-classifier",
+      "name": "Painting AI Classifier",
+      "type": "@n8n/n8n-nodes-langchain.chatOpenAi",
+      "position": [-5100, 3200],
+      "typeVersion": 1.3
+    }
+  ],
+  "versionId": "9.0.0",
+  "meta": {
+    "templateVersion": "9.0.0",
+    "industry": "Painting",
+    "description": "Painting contractor email automation with seasonal and surface-specific intelligence",
+    "businessIntelligence": true
+  }
+}

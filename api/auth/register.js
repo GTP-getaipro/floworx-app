@@ -76,10 +76,23 @@ export default async function handler(req, res) {
       .eq('email', email.toLowerCase())
       .single();
 
+    // Handle the case where no user is found (this is expected for new registrations)
+    if (checkError && checkError.code !== 'PGRST116') {
+      console.error('Database error checking existing user:', checkError);
+      return res.status(500).json({
+        error: {
+          code: 'DATABASE_ERROR',
+          message: 'Unable to check user existence'
+        }
+      });
+    }
+
     if (existingUser) {
       return res.status(409).json({
-        error: 'User already exists',
-        message: 'An account with this email already exists'
+        error: {
+          code: 'EMAIL_EXISTS',
+          message: 'An account with this email already exists'
+        }
       });
     }
 
@@ -88,9 +101,19 @@ export default async function handler(req, res) {
     const passwordHash = await bcrypt.hash(password, saltRounds);
 
     // Generate verification token
-    // Create secure verification token
     const randomBytes = crypto.randomBytes(32).toString('hex');
     const userId = crypto.randomUUID();
+
+    // Check if JWT_SECRET is available
+    if (!process.env.JWT_SECRET) {
+      console.error('JWT_SECRET environment variable is not set');
+      return res.status(500).json({
+        error: {
+          code: 'CONFIGURATION_ERROR',
+          message: 'Server configuration error'
+        }
+      });
+    }
 
     const tokenPayload = {
       type: 'email_verification',
@@ -112,26 +135,67 @@ export default async function handler(req, res) {
 
     const expiresAt = new Date(Date.now() + (24 * 60 * 60 * 1000));
 
-    // Create new user with verification fields
-    const { data: newUser, error: insertError } = await supabase
-      .from('users')
-      .insert([{
-        id: userId,
-        email: email.toLowerCase(),
-        password_hash: passwordHash,
-        first_name: firstName,
-        last_name: lastName,
-        company_name: companyName || null,
-        email_verified: false,
-        verification_token: verificationToken,
-        verification_token_expires_at: expiresAt.toISOString(),
-        created_at: new Date().toISOString()
-      }])
-      .select()
-      .single();
+    // First, try to create user with verification fields
+    // If that fails due to missing columns, create without them
+    let newUser;
+    let insertError;
+
+    try {
+      const result = await supabase
+        .from('users')
+        .insert([{
+          id: userId,
+          email: email.toLowerCase(),
+          password_hash: passwordHash,
+          first_name: firstName,
+          last_name: lastName,
+          company_name: companyName || null,
+          email_verified: false,
+          verification_token: verificationToken,
+          verification_token_expires_at: expiresAt.toISOString(),
+          created_at: new Date().toISOString()
+        }])
+        .select()
+        .single();
+
+      newUser = result.data;
+      insertError = result.error;
+    } catch (error) {
+      // If verification columns don't exist, try without them
+      if (error.message && error.message.includes('column') &&
+          (error.message.includes('verification_token') || error.message.includes('verification_token_expires_at'))) {
+
+        console.log('Verification columns not found, creating user without them');
+        const fallbackResult = await supabase
+          .from('users')
+          .insert([{
+            id: userId,
+            email: email.toLowerCase(),
+            password_hash: passwordHash,
+            first_name: firstName,
+            last_name: lastName,
+            company_name: companyName || null,
+            email_verified: false,
+            created_at: new Date().toISOString()
+          }])
+          .select()
+          .single();
+
+        newUser = fallbackResult.data;
+        insertError = fallbackResult.error;
+      } else {
+        insertError = error;
+      }
+    }
 
     if (insertError) {
-      throw insertError;
+      console.error('User creation error:', insertError);
+      return res.status(500).json({
+        error: {
+          code: 'USER_CREATION_FAILED',
+          message: 'Failed to create user account'
+        }
+      });
     }
 
     // Send verification email (simplified for API route)
@@ -139,6 +203,7 @@ export default async function handler(req, res) {
 
     // TODO: Implement email sending here
     console.log('Verification URL:', verificationUrl);
+    console.log('User created successfully:', { userId: newUser.id, email: email.toLowerCase() });
 
     res.status(201).json({
       success: true,
@@ -151,11 +216,28 @@ export default async function handler(req, res) {
 
   } catch (error) {
     console.error('Registration error:', error);
-    console.error('Error stack:', error.stack);
+    console.error('Error details:', {
+      message: error.message,
+      code: error.code,
+      details: error.details,
+      hint: error.hint,
+      stack: error.stack
+    });
+
+    // Return appropriate error response
+    if (error.code === '23505') { // Unique constraint violation
+      return res.status(409).json({
+        error: {
+          code: 'EMAIL_EXISTS',
+          message: 'An account with this email already exists'
+        }
+      });
+    }
+
     res.status(500).json({
       error: {
-        code: 'INTERNAL',
-        message: 'Unexpected error during registration'
+        code: 'INTERNAL_SERVER_ERROR',
+        message: 'An unexpected error occurred during registration'
       }
     });
   }

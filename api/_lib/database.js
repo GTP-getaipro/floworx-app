@@ -44,6 +44,10 @@ const getSupabaseAdmin = () => {
   return supabaseAdmin;
 };
 
+// ES6 export for compatibility with import statements
+export { getSupabaseClient, getSupabaseAdmin };
+
+// CommonJS export for backward compatibility
 module.exports = {
   getSupabaseClient,
   getSupabaseAdmin,

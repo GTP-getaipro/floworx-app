@@ -341,13 +341,14 @@ router.post('/register', async (req, res) => {
     const tokenResult = generateVerificationToken(email, userId);
 
     if (!tokenResult.success) {
+      console.error('Token generation failed:', tokenResult.error);
       return res.status(500).json({
         error: { code: "INTERNAL", message: "Failed to generate verification token" }
       });
     }
 
-    // Create user with verification fields
-    const userData = {
+    // Create user with verification fields - try with verification columns first
+    let userData = {
       id: userId,
       email: email.toLowerCase().trim(),
       password_hash: passwordHash,
@@ -360,30 +361,63 @@ router.post('/register', async (req, res) => {
       created_at: new Date().toISOString()
     };
 
-    const createResult = await databaseOperations.createUser(userData);
+    let createResult = await databaseOperations.createUser(userData);
+
+    // If creation failed due to missing verification columns, try without them
+    if (createResult.error &&
+        (createResult.error.message?.includes('verification_token') ||
+         createResult.error.code === '42703')) { // Column does not exist
+
+      console.log('Verification columns not found, creating user without them');
+      userData = {
+        id: userId,
+        email: email.toLowerCase().trim(),
+        password_hash: passwordHash,
+        first_name: firstName || null,
+        last_name: lastName || null,
+        company_name: businessName || null,
+        email_verified: false,
+        created_at: new Date().toISOString()
+      };
+
+      createResult = await databaseOperations.createUser(userData);
+    }
 
     if (createResult.error) {
       console.error('User creation error:', createResult.error);
+      console.error('User creation error details:', {
+        message: createResult.error.message,
+        code: createResult.error.code,
+        details: createResult.error.details,
+        hint: createResult.error.hint
+      });
       return res.status(500).json({
         error: { code: "INTERNAL", message: "Failed to create user account" }
       });
     }
 
     // Send verification email
-    const EmailService = require('../services/emailService');
-    const emailService = new EmailService();
-    const verificationUrl = generateVerificationUrl(tokenResult.token);
+    let emailResult = { success: false };
+    try {
+      const EmailService = require('../services/emailService');
+      const emailService = new EmailService();
+      const verificationUrl = generateVerificationUrl(tokenResult.token);
 
-    const emailResult = await emailService.sendVerificationEmail(
-      email,
-      firstName || 'there',
-      verificationUrl
-    );
+      emailResult = await emailService.sendVerificationEmail(
+        email,
+        firstName || 'there',
+        verificationUrl
+      );
 
-    // Log email sending result but don't fail registration if email fails
-    if (!emailResult.success) {
-      console.error('Failed to send verification email:', emailResult.error);
-      // Continue with success response - user can request resend later
+      // Log email sending result but don't fail registration if email fails
+      if (!emailResult.success) {
+        console.error('Failed to send verification email:', emailResult.error);
+        // Continue with success response - user can request resend later
+      }
+    } catch (emailError) {
+      console.error('Email service error:', emailError);
+      // Continue with registration success even if email fails
+      emailResult = { success: false, error: emailError.message };
     }
 
     // Success response - account created, verification email sent
@@ -398,6 +432,21 @@ router.post('/register', async (req, res) => {
 
   } catch (error) {
     console.error('Registration error:', error);
+    console.error('Registration error details:', {
+      message: error.message,
+      code: error.code,
+      details: error.details,
+      hint: error.hint,
+      stack: error.stack
+    });
+
+    // Handle specific database errors
+    if (error.code === '23505') { // Unique constraint violation
+      return res.status(409).json({
+        error: { code: "EMAIL_EXISTS", message: "Email already registered" }
+      });
+    }
+
     res.status(500).json({
       error: { code: "INTERNAL", message: "Unexpected error during registration" }
     });

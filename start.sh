@@ -6,13 +6,18 @@
 # --- Environment Variable Validation ---
 # Exit if any of these critical variables are not set.
 # The ':-' syntax provides a default error message.
-: "${DATABASE_URL:?DATABASE_URL must be set}"
-: "${REDIS_HOST:?REDIS_HOST must be set}"
-: "${REDIS_PORT:?REDIS_PORT must be set}"
-: "${REDIS_USER:?REDIS_USER must be set}"
-: "${REDIS_PASSWORD:?REDIS_PASSWORD must be set}"
+: "${SUPABASE_URL:?SUPABASE_URL must be set}"
 : "${JWT_SECRET:?JWT_SECRET must be set}"
 : "${NODE_ENV:?NODE_ENV must be set}"
+
+# Redis is optional - check if REDIS_URL is provided
+if [ -n "$REDIS_URL" ]; then
+  echo "✅ Redis configuration found via REDIS_URL"
+elif [ -n "$REDIS_HOST" ] && [ -n "$REDIS_PORT" ]; then
+  echo "✅ Redis configuration found via individual variables"
+else
+  echo "⚠️  Redis not configured - using memory cache only"
+fi
 
 # Check that NODE_ENV is specifically 'production'
 if [ "$NODE_ENV" != "production" ]; then

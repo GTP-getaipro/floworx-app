@@ -1131,10 +1131,10 @@ class DatabaseOperations {
   /**
    * Create password reset token with hashed storage
    * @param {string} userId - User ID
-   * @param {number} ttlMinutes - Time to live in minutes (default: 60)
+   * @param {number} ttlMinutes - Time to live in minutes (default: 15)
    * @returns {Object} { token } - Returns raw token; stores hash + expiresAt
    */
-  async createPasswordResetToken(userId, ttlMinutes = 60) {
+  async createPasswordResetToken(userId, ttlMinutes = 15) {
     const crypto = require('crypto');
     const rawToken = crypto.randomBytes(32).toString('hex');
     const tokenHash = crypto.createHash('sha256').update(rawToken).digest('hex');

@@ -5,7 +5,7 @@ const emailService = require('./emailService');
 
 class PasswordResetService {
   constructor() {
-    this.tokenExpiry = 60 * 60 * 1000; // 1 hour in milliseconds
+    this.tokenExpiry = 15 * 60 * 1000; // 15 minutes in milliseconds (as per requirements)
   }
 
   /**

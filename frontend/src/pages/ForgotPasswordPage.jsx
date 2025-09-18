@@ -6,7 +6,7 @@ import useFormValidation from "../hooks/useFormValidation";
 import { required, email } from "../utils/validationRules";
 import { api } from "../lib/api";
 
-export default function ForgotPasswordPage({ onSubmit, errors = {}, values = {} }) {
+export default function ForgotPasswordPage() {
   const [isLoading, setIsLoading] = useState(false);
   const [isSuccess, setIsSuccess] = useState(false);
   const [networkError, setNetworkError] = useState('');
@@ -29,9 +29,34 @@ export default function ForgotPasswordPage({ onSubmit, errors = {}, values = {} 
   // Clear any existing form persistence data on component mount for security
   useEffect(() => {
     try {
-      // Clear any previously stored email data
-      window.localStorage.removeItem('floworx:auth:forgot');
-      window.sessionStorage.removeItem('floworx:auth:forgot');
+      // Clear any previously stored email data from all possible sources
+      const keysToRemove = [
+        'floworx:auth:forgot',
+        'floworx:auth:email',
+        'floworx:registration',
+        'floworx:login',
+        'email',
+        'userEmail',
+        'lastEmail',
+        'auth:email',
+        'forgot:email'
+      ];
+
+      // Clear from both localStorage and sessionStorage
+      keysToRemove.forEach(key => {
+        window.localStorage.removeItem(key);
+        window.sessionStorage.removeItem(key);
+      });
+
+      // Clear any form autofill data and disable autocomplete
+      setTimeout(() => {
+        const emailInputs = document.querySelectorAll('input[type="email"]');
+        emailInputs.forEach(input => {
+          input.value = '';
+          input.setAttribute('autocomplete', 'off');
+          input.setAttribute('data-form-type', 'other');
+        });
+      }, 100);
     } catch (error) {
       console.warn('Failed to clear persisted form data:', error);
     }
@@ -70,11 +95,6 @@ export default function ForgotPasswordPage({ onSubmit, errors = {}, values = {} 
       }
     } finally {
       setIsLoading(false);
-    }
-
-    // Call original onSubmit if provided (for compatibility)
-    if (onSubmit) {
-      onSubmit(formValues);
     }
   };
 
@@ -135,13 +155,15 @@ export default function ForgotPasswordPage({ onSubmit, errors = {}, values = {} 
           value={formValues.email}
           onChange={handleChange}
           onBlur={handleBlur}
-          error={formErrors.email || errors.email}
+          error={formErrors.email}
           placeholder="Enter your account email"
-          aria-invalid={!!(formErrors.email || errors.email)}
+          aria-invalid={!!formErrors.email}
           autoComplete="off"
           autoCorrect="off"
           autoCapitalize="off"
           spellCheck="false"
+          data-form-type="other"
+          data-lpignore="true"
         />
         <Button
           type="submit"

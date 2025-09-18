@@ -1436,16 +1436,25 @@ router.post('/password/request', passwordResetRateLimiter, asyncHandler(async (r
       // Invalidate existing tokens for this user
       await databaseOperations.invalidateUserResetTokens(userResult.data.id);
 
-      // Create new reset token (60 minute TTL)
-      const { token } = await databaseOperations.createPasswordResetToken(userResult.data.id, 60);
+      // Create new reset token (15 minute TTL as per requirements)
+      const { token } = await databaseOperations.createPasswordResetToken(userResult.data.id, 15);
 
       // Store token for test helper if in test environment
       if (process.env.NODE_ENV === 'test') {
         global.lastResetToken = { email: email.toLowerCase(), token };
       }
 
-      // In a real implementation, send email here
-      // await emailService.sendPasswordResetEmail(email, userResult.data.first_name, token);
+      // Send password reset email
+      const emailService = require('../services/emailService');
+      const resetUrl = `${process.env.FRONTEND_URL || 'https://app.floworx-iq.com'}/reset-password?token=${token}`;
+
+      try {
+        await emailService.sendPasswordResetEmail(email, resetUrl);
+        logger.info('Password reset email sent successfully', { email: email.toLowerCase() });
+      } catch (emailError) {
+        logger.error('Failed to send password reset email', { error: emailError.message, email: email.toLowerCase() });
+        // Don't fail the request - always return 202 for security
+      }
 
     } catch (error) {
       logger.warn('Password reset token creation failed', { error: error.message });
@@ -1509,11 +1518,11 @@ router.post('/password/reset', asyncHandler(async (req, res) => {
   } catch (error) {
     if (error.message === 'INVALID_TOKEN') {
       return res.status(401).json({
-        error: { code: "INVALID_TOKEN", message: "Invalid or unknown reset token" }
+        error: { code: "TOKEN_INVALID", message: "Password reset link invalid or expired" }
       });
     } else if (error.message === 'TOKEN_EXPIRED') {
-      return res.status(410).json({
-        error: { code: "TOKEN_EXPIRED", message: "Reset token has expired or already been used" }
+      return res.status(401).json({
+        error: { code: "TOKEN_INVALID", message: "Password reset link invalid or expired" }
       });
     } else {
       logger.error('Password reset error', { error: error.message });

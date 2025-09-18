@@ -1,0 +1,273 @@
+import React from 'react';
+import { render, screen, fireEvent, waitFor } from '@testing-library/react';
+import { BrowserRouter } from 'react-router-dom';
+import ForgotPasswordPage from '../ForgotPasswordPage';
+import ResetPasswordPage from '../ResetPasswordPage';
+import * as api from '../../lib/api';
+
+// Mock the API
+jest.mock('../../lib/api');
+
+// Mock useSearchParams for ResetPasswordPage
+const mockSearchParams = new URLSearchParams();
+const mockNavigate = jest.fn();
+jest.mock('react-router-dom', () => {
+  const actual = jest.requireActual('react-router-dom');
+  return {
+    ...actual,
+    useSearchParams: () => [mockSearchParams],
+    useNavigate: () => mockNavigate,
+  };
+});
+
+const renderWithRouter = (component) => {
+  return render(
+    <BrowserRouter>
+      {component}
+    </BrowserRouter>
+  );
+};
+
+describe('ForgotPasswordPage', () => {
+  beforeEach(() => {
+    jest.clearAllMocks();
+    // Clear localStorage and sessionStorage
+    localStorage.clear();
+    sessionStorage.clear();
+  });
+
+  it('renders forgot password form', () => {
+    renderWithRouter(<ForgotPasswordPage />);
+    
+    expect(screen.getByText('Reset your password')).toBeInTheDocument();
+    expect(screen.getByLabelText('Email Address')).toBeInTheDocument();
+    expect(screen.getByRole('button', { name: /send reset link/i })).toBeInTheDocument();
+  });
+
+  it('starts with empty email field for security', () => {
+    // Pre-populate localStorage with email data
+    localStorage.setItem('floworx:auth:forgot', JSON.stringify({ email: 'test@example.com' }));
+    localStorage.setItem('email', 'another@example.com');
+    sessionStorage.setItem('floworx:auth:email', 'session@example.com');
+    
+    renderWithRouter(<ForgotPasswordPage />);
+    
+    const emailInput = screen.getByLabelText('Email Address');
+    expect(emailInput.value).toBe('');
+  });
+
+  it('clears stored email data on mount', () => {
+    // Pre-populate storage
+    localStorage.setItem('floworx:auth:forgot', JSON.stringify({ email: 'test@example.com' }));
+    localStorage.setItem('floworx:registration', JSON.stringify({ email: 'reg@example.com' }));
+    sessionStorage.setItem('email', 'session@example.com');
+    
+    renderWithRouter(<ForgotPasswordPage />);
+    
+    // Check that storage is cleared
+    expect(localStorage.getItem('floworx:auth:forgot')).toBeNull();
+    expect(localStorage.getItem('floworx:registration')).toBeNull();
+    expect(sessionStorage.getItem('email')).toBeNull();
+  });
+
+  it('validates email input', async () => {
+    renderWithRouter(<ForgotPasswordPage />);
+    
+    const emailInput = screen.getByLabelText('Email Address');
+    const submitButton = screen.getByRole('button', { name: /send reset link/i });
+    
+    // Try to submit without email
+    fireEvent.click(submitButton);
+    
+    await waitFor(() => {
+      expect(screen.getByText('This field is required')).toBeInTheDocument();
+    });
+
+    // Enter invalid email
+    fireEvent.change(emailInput, { target: { value: 'invalid-email' } });
+    fireEvent.blur(emailInput);
+
+    await waitFor(() => {
+      expect(screen.getByText('Please enter a valid email address')).toBeInTheDocument();
+    });
+  });
+
+  it('submits form and shows success message', async () => {
+    api.api.mockResolvedValueOnce({ success: true });
+    
+    renderWithRouter(<ForgotPasswordPage />);
+    
+    const emailInput = screen.getByLabelText('Email Address');
+    const submitButton = screen.getByRole('button', { name: /send reset link/i });
+    
+    fireEvent.change(emailInput, { target: { value: 'test@example.com' } });
+    fireEvent.click(submitButton);
+    
+    await waitFor(() => {
+      expect(screen.getByText('Check your email')).toBeInTheDocument();
+      expect(screen.getByText(/email sent successfully/i)).toBeInTheDocument();
+    });
+    
+    expect(api.api).toHaveBeenCalledWith('/api/auth/password/request', {
+      method: 'POST',
+      body: { email: 'test@example.com' }
+    });
+  });
+
+  it('handles network errors gracefully', async () => {
+    api.api.mockRejectedValueOnce({ status: 0, code: 'NETWORK_ERROR' });
+    
+    renderWithRouter(<ForgotPasswordPage />);
+    
+    const emailInput = screen.getByLabelText('Email Address');
+    const submitButton = screen.getByRole('button', { name: /send reset link/i });
+    
+    fireEvent.change(emailInput, { target: { value: 'test@example.com' } });
+    fireEvent.click(submitButton);
+    
+    await waitFor(() => {
+      expect(screen.getByText(/network error/i)).toBeInTheDocument();
+    });
+  });
+
+  it('shows success for all other errors (security)', async () => {
+    api.api.mockRejectedValueOnce({ status: 404, message: 'User not found' });
+    
+    renderWithRouter(<ForgotPasswordPage />);
+    
+    const emailInput = screen.getByLabelText('Email Address');
+    const submitButton = screen.getByRole('button', { name: /send reset link/i });
+    
+    fireEvent.change(emailInput, { target: { value: 'nonexistent@example.com' } });
+    fireEvent.click(submitButton);
+    
+    await waitFor(() => {
+      expect(screen.getByText('Check your email')).toBeInTheDocument();
+    });
+  });
+});
+
+describe('ResetPasswordPage', () => {
+  beforeEach(() => {
+    jest.clearAllMocks();
+    mockNavigate.mockClear();
+    mockSearchParams.set('token', 'valid-reset-token');
+  });
+
+  it('renders reset password form with token', () => {
+    renderWithRouter(<ResetPasswordPage />);
+    
+    expect(screen.getByText('Set new password')).toBeInTheDocument();
+    expect(screen.getByLabelText('New Password')).toBeInTheDocument();
+    expect(screen.getByLabelText('Confirm New Password')).toBeInTheDocument();
+    expect(screen.getByRole('button', { name: /update password/i })).toBeInTheDocument();
+  });
+
+  it('validates password requirements', async () => {
+    renderWithRouter(<ResetPasswordPage />);
+    
+    const passwordInput = screen.getByLabelText('New Password');
+    const confirmInput = screen.getByLabelText('Confirm New Password');
+    const submitButton = screen.getByRole('button', { name: /update password/i });
+    
+    // Test weak password
+    fireEvent.change(passwordInput, { target: { value: 'weak' } });
+    fireEvent.blur(passwordInput);
+    
+    await waitFor(() => {
+      expect(screen.getByText('Must be at least 8 characters')).toBeInTheDocument();
+    });
+
+    // Test password mismatch
+    fireEvent.change(passwordInput, { target: { value: 'StrongPassword123!' } });
+    fireEvent.change(confirmInput, { target: { value: 'DifferentPassword123!' } });
+    fireEvent.blur(confirmInput);
+
+    await waitFor(() => {
+      expect(screen.getByText('Does not match')).toBeInTheDocument();
+    });
+  });
+
+  it('submits form and shows success message', async () => {
+    api.api.mockResolvedValueOnce({ success: true });
+    
+    renderWithRouter(<ResetPasswordPage />);
+    
+    const passwordInput = screen.getByLabelText('New Password');
+    const confirmInput = screen.getByLabelText('Confirm New Password');
+    const submitButton = screen.getByRole('button', { name: /update password/i });
+    
+    fireEvent.change(passwordInput, { target: { value: 'NewPassword123!' } });
+    fireEvent.change(confirmInput, { target: { value: 'NewPassword123!' } });
+    fireEvent.click(submitButton);
+    
+    await waitFor(() => {
+      expect(screen.getByText('Password updated')).toBeInTheDocument();
+      expect(screen.getByText(/password updated successfully/i)).toBeInTheDocument();
+    });
+    
+    expect(api.api).toHaveBeenCalledWith('/api/auth/password/reset', {
+      method: 'POST',
+      body: { token: 'valid-reset-token', password: 'NewPassword123!' }
+    });
+  });
+
+  it('handles invalid token error', async () => {
+    api.api.mockRejectedValueOnce({ code: 'TOKEN_INVALID' });
+    
+    renderWithRouter(<ResetPasswordPage />);
+    
+    const passwordInput = screen.getByLabelText('New Password');
+    const confirmInput = screen.getByLabelText('Confirm New Password');
+    const submitButton = screen.getByRole('button', { name: /update password/i });
+    
+    fireEvent.change(passwordInput, { target: { value: 'NewPassword123!' } });
+    fireEvent.change(confirmInput, { target: { value: 'NewPassword123!' } });
+    fireEvent.click(submitButton);
+    
+    await waitFor(() => {
+      expect(screen.getByText('Password reset link invalid or expired')).toBeInTheDocument();
+    });
+  });
+
+  it('handles password mismatch error', async () => {
+    api.api.mockRejectedValueOnce({ code: 'PASSWORD_MISMATCH' });
+    
+    renderWithRouter(<ResetPasswordPage />);
+    
+    const passwordInput = screen.getByLabelText('New Password');
+    const confirmInput = screen.getByLabelText('Confirm New Password');
+    const submitButton = screen.getByRole('button', { name: /update password/i });
+    
+    fireEvent.change(passwordInput, { target: { value: 'NewPassword123!' } });
+    fireEvent.change(confirmInput, { target: { value: 'NewPassword123!' } });
+    fireEvent.click(submitButton);
+    
+    await waitFor(() => {
+      expect(screen.getByText('Passwords do not match')).toBeInTheDocument();
+    });
+  });
+
+  it('redirects to login after successful password reset', async () => {
+    api.api.mockResolvedValueOnce({ success: true });
+
+    renderWithRouter(<ResetPasswordPage />);
+
+    const passwordInput = screen.getByLabelText('New Password');
+    const confirmInput = screen.getByLabelText('Confirm New Password');
+    const submitButton = screen.getByRole('button', { name: /update password/i });
+
+    fireEvent.change(passwordInput, { target: { value: 'NewPassword123!' } });
+    fireEvent.change(confirmInput, { target: { value: 'NewPassword123!' } });
+    fireEvent.click(submitButton);
+
+    await waitFor(() => {
+      expect(screen.getByText('Password updated')).toBeInTheDocument();
+    });
+
+    // Wait for redirect timeout
+    await waitFor(() => {
+      expect(mockNavigate).toHaveBeenCalledWith('/login?reset=1');
+    }, { timeout: 3000 });
+  });
+});

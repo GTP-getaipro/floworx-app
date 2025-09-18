@@ -109,7 +109,7 @@ describe('Password Reset Flow', () => {
 
     it('should handle rate limiting (3 requests per 15 minutes)', async () => {
       const email = `rate-limit-test-${Date.now()}@example.com`;
-      
+
       // First 3 requests should succeed
       for (let i = 0; i < 3; i++) {
         await request(app)
@@ -122,11 +122,9 @@ describe('Password Reset Flow', () => {
       const response = await request(app)
         .post('/api/auth/password/request')
         .send({ email })
-        .expect(202);
+        .expect(429);
 
-      expect(response.body).toEqual({
-        message: "If this email is registered, a password reset link will be sent"
-      });
+      expect(response.body).toHaveProperty('error');
     });
   });
 
@@ -210,31 +208,31 @@ describe('Password Reset Flow', () => {
         .expect(401);
 
       expect(response.body).toEqual({
-        error: { code: "INVALID_TOKEN", message: "Invalid or unknown reset token" }
+        error: { code: "TOKEN_INVALID", message: "Password reset link invalid or expired" }
       });
     });
 
-    it('should return 410 for expired/used token', async () => {
+    it('should return 401 for expired/used token', async () => {
       // Use the token once
       await request(app)
         .post('/api/auth/password/reset')
-        .send({ 
-          token: resetToken, 
-          password: newPassword 
+        .send({
+          token: resetToken,
+          password: newPassword
         })
         .expect(200);
 
       // Try to use the same token again
       const response = await request(app)
         .post('/api/auth/password/reset')
-        .send({ 
-          token: resetToken, 
-          password: 'AnotherPassword789!' 
+        .send({
+          token: resetToken,
+          password: 'AnotherPassword789!'
         })
-        .expect(410);
+        .expect(401);
 
       expect(response.body).toEqual({
-        error: { code: "TOKEN_EXPIRED", message: "Reset token has expired or already been used" }
+        error: { code: "TOKEN_INVALID", message: "Password reset link invalid or expired" }
       });
     });
 

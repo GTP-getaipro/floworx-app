@@ -43,7 +43,9 @@ const businessTypesRoutes = require('./routes/businessTypes');
 const dashboardRoutes = require('./routes/dashboard');
 // const diagnosticsRoutes = require('./routes/diagnostics'); // Removed during cleanup
 const errorRoutes = require('./routes/errors');
+const googleRoutes = require('./routes/google');
 // const healthRoutes = require('./routes/health'); // Removed during cleanup
+const microsoftRoutes = require('./routes/microsoft');
 const createMonitoringRoutes = require('./routes/monitoring');
 const oauthRoutes = require('./routes/oauth');
 const onboardingRoutes = require('./routes/onboarding');
@@ -271,6 +273,8 @@ app.use('/api/auth', authRoutes);
 app.use('/api/user', userRoutes);
 app.use('/api/dashboard', dashboardRoutes);
 app.use('/api/oauth', oauthRateLimit, oauthRoutes);
+app.use('/api/integrations/google', googleRoutes);
+app.use('/api/integrations/microsoft', microsoftRoutes);
 app.use('/api/onboarding', onboardingRoutes);
 app.use('/api/recovery', recoveryRoutes);
 // app.use('/api/account-recovery', accountRecoveryRoutes); // Removed during cleanup

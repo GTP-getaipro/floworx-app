@@ -242,7 +242,7 @@ class EmailServiceTest {
       const smtpHost = process.env.SMTP_HOST;
       const smtpPass = process.env.SMTP_PASS;
       
-      if (!smtpHost || !smtpPass || smtpPass === 'your-api-key' || smtpPass === 'SG.your_sendgrid_api_key') {
+      if (!smtpHost || !smtpPass || smtpPass === 'your-api-key' || smtpPass === 'SG.***_PLACEHOLDER_***') {
         test.details.push('⚠️ Skipping email send test - SMTP not properly configured');
         test.details.push('Configure SMTP_HOST and SMTP_PASS to test actual email sending');
         test.success = false;

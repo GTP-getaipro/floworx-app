@@ -142,7 +142,7 @@ FROM_NAME=FloWorx Team
 SMTP_HOST=smtp.sendgrid.net
 SMTP_PORT=587
 SMTP_USER=apikey
-SMTP_PASS=SG.your_sendgrid_api_key
+SMTP_PASS=SG.***_SENDGRID_API_KEY_CONFIGURED_***
 FROM_EMAIL=noreply@floworx-iq.com
 FROM_NAME=FloWorx Team
 ```

@@ -1,5 +1,5 @@
 {
-  "timestamp": "2025-09-18T19:16:50.961Z",
+  "timestamp": "2025-09-18T19:37:42.294Z",
   "tests": [
     {
       "name": "SMTP Configuration Test",
@@ -12,15 +12,19 @@
         "  ❌ SMTP_PASS: NOT SET",
         "  ❌ FROM_EMAIL: NOT SET"
       ],
-      "timestamp": "2025-09-18T19:16:50.963Z"
+      "timestamp": "2025-09-18T19:37:42.297Z"
     },
     {
       "name": "SMTP Connection Test",
       "success": false,
       "details": [
-        "❌ SMTP connection failed: nodemailer.createTransporter is not a function"
+        "SMTP Host: smtp.sendgrid.net",
+        "SMTP Port: 587",
+        "SMTP User: apikey",
+        "SMTP Pass: [SET]",
+        "❌ SMTP connection failed: Invalid login: 535 Authentication failed: The provided authorization grant is invalid, expired, or revoked"
       ],
-      "timestamp": "2025-09-18T19:16:50.964Z"
+      "timestamp": "2025-09-18T19:37:42.298Z"
     },
     {
       "name": "Email Template Test",
@@ -32,7 +36,7 @@
         "✅ Replaced {{expiry_hours}} with 1",
         "✅ All placeholders properly replaced"
       ],
-      "timestamp": "2025-09-18T19:16:50.964Z"
+      "timestamp": "2025-09-18T19:37:42.694Z"
     },
     {
       "name": "Email Sending Test",
@@ -41,7 +45,7 @@
         "⚠️ Skipping email send test - SMTP not properly configured",
         "Configure SMTP_HOST and SMTP_PASS to test actual email sending"
       ],
-      "timestamp": "2025-09-18T19:16:50.966Z"
+      "timestamp": "2025-09-18T19:37:42.697Z"
     }
   ],
   "issues": [
@@ -49,19 +53,19 @@
       "issue": "Missing SMTP environment variables: SMTP_HOST, SMTP_PORT, SMTP_USER, SMTP_PASS, FROM_EMAIL",
       "severity": "critical",
       "recommendation": "Configure all required SMTP environment variables in production",
-      "timestamp": "2025-09-18T19:16:50.964Z"
+      "timestamp": "2025-09-18T19:37:42.297Z"
     },
     {
-      "issue": "SMTP connection error: nodemailer.createTransporter is not a function",
+      "issue": "SMTP connection error: Invalid login: 535 Authentication failed: The provided authorization grant is invalid, expired, or revoked",
       "severity": "high",
       "recommendation": "Review SMTP configuration and check server logs for more details.",
-      "timestamp": "2025-09-18T19:16:50.964Z"
+      "timestamp": "2025-09-18T19:37:42.693Z"
     },
     {
       "issue": "Cannot test email sending - SMTP credentials not configured",
       "severity": "critical",
       "recommendation": "Set proper SMTP credentials in environment variables to enable email functionality.",
-      "timestamp": "2025-09-18T19:16:50.966Z"
+      "timestamp": "2025-09-18T19:37:42.698Z"
     }
   ],
   "recommendations": [],

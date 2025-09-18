@@ -722,7 +722,8 @@ class DatabaseOperations {
     const { type, client } = await this.getClient();
 
     if (type === 'REST_API') {
-      return await client.getAdminClient()
+      // First try plain text token lookup (current working format)
+      let result = await client.getAdminClient()
         .from('password_reset_tokens')
         .select(`
           *,
@@ -732,15 +733,42 @@ class DatabaseOperations {
         .eq('used', false)
         .gt('expires_at', new Date().toISOString())
         .single();
+
+      // If plain text not found, try hashed token lookup
+      if (result.error || !result.data) {
+        const crypto = require('crypto');
+        const tokenHash = crypto.createHash('sha256').update(token).digest('hex');
+
+        result = await client.getAdminClient()
+          .from('password_reset_tokens')
+          .select(`
+            *,
+            users!inner(id, email, first_name)
+          `)
+          .eq('token', tokenHash)
+          .eq('used', false)
+          .gt('expires_at', new Date().toISOString())
+          .single();
+      }
+
+      return result;
     } else {
-      // PostgreSQL implementation
-      const query = `
+      // PostgreSQL implementation - try plain text first, then hashed
+      let query = `
         SELECT prt.*, u.id as user_id, u.email, u.first_name
         FROM password_reset_tokens prt
         JOIN users u ON prt.user_id = u.id
         WHERE prt.token = $1 AND prt.used = false AND prt.expires_at > NOW()
       `;
-      const result = await client.query(query, [token]);
+      let result = await client.query(query, [token]);
+
+      // If plain text not found, try hashed token
+      if (result.rows.length === 0) {
+        const crypto = require('crypto');
+        const tokenHash = crypto.createHash('sha256').update(token).digest('hex');
+        result = await client.query(query, [tokenHash]);
+      }
+
       return {
         data: result.rows[0] || null,
         error: result.rows.length === 0 ? { code: 'PGRST116', message: 'No rows found' } : null
@@ -1156,12 +1184,21 @@ class DatabaseOperations {
     const { type, client } = await this.getClient();
 
     if (type === 'REST_API') {
-      // First, find and validate the token
-      const tokenResult = await client.getAdminClient()
+      // First try hashed token lookup (new format)
+      let tokenResult = await client.getAdminClient()
         .from('password_reset_tokens')
         .select('user_id, expires_at, used')
-        .eq('token', tokenHash) // Use 'token' column
+        .eq('token', tokenHash)
         .single();
+
+      // If hashed token not found, try plain text token lookup (legacy format)
+      if (tokenResult.error || !tokenResult.data) {
+        tokenResult = await client.getAdminClient()
+          .from('password_reset_tokens')
+          .select('user_id, expires_at, used')
+          .eq('token', rawToken)
+          .single();
+      }
 
       if (tokenResult.error || !tokenResult.data) {
         throw new Error('INVALID_TOKEN');
@@ -1177,11 +1214,19 @@ class DatabaseOperations {
         throw new Error('TOKEN_EXPIRED');
       }
 
-      // Mark token as used
-      const updateResult = await client.getAdminClient()
+      // Mark token as used (try both formats)
+      let updateResult = await client.getAdminClient()
         .from('password_reset_tokens')
         .update({ used: true, used_at: new Date().toISOString() })
-        .eq('token', tokenHash); // Use 'token' column
+        .eq('token', tokenHash);
+
+      // If hashed update failed, try plain text update
+      if (updateResult.error) {
+        updateResult = await client.getAdminClient()
+          .from('password_reset_tokens')
+          .update({ used: true, used_at: new Date().toISOString() })
+          .eq('token', rawToken);
+      }
 
       if (updateResult.error) {
         throw new Error('Failed to consume token');
@@ -1189,21 +1234,30 @@ class DatabaseOperations {
 
       return { userId: token.user_id };
     } else {
-      // PostgreSQL implementation
-      const query = `
+      // PostgreSQL implementation - try hashed first, then plain text
+      let query = `
         UPDATE password_reset_tokens
         SET used = true, used_at = NOW()
         WHERE token = $1 AND used = false AND expires_at > NOW()
         RETURNING user_id
       `;
-      const result = await client.query(query, [tokenHash]);
+      let result = await client.query(query, [tokenHash]);
+
+      // If hashed token not found, try plain text token
+      if (result.rows.length === 0) {
+        result = await client.query(query, [rawToken]);
+      }
 
       if (result.rows.length === 0) {
-        // Check if token exists but is expired/used
+        // Check if token exists but is expired/used (try both formats)
         const checkQuery = `
           SELECT expires_at, used FROM password_reset_tokens WHERE token = $1
         `;
-        const checkResult = await client.query(checkQuery, [tokenHash]);
+        let checkResult = await client.query(checkQuery, [tokenHash]);
+
+        if (checkResult.rows.length === 0) {
+          checkResult = await client.query(checkQuery, [rawToken]);
+        }
 
         if (checkResult.rows.length === 0) {
           throw new Error('INVALID_TOKEN');

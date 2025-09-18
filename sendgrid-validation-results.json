@@ -1,0 +1,57 @@
+{
+  "timestamp": "2025-09-18T19:41:57.391Z",
+  "tests": [
+    {
+      "name": "Environment Variables Check",
+      "success": true,
+      "details": [
+        "✅ SMTP_HOST: smtp.sendgrid.net",
+        "✅ SMTP_PORT: 465",
+        "✅ SMTP_USER: apikey",
+        "✅ SMTP_PASS: [HIDDEN]",
+        "✅ FROM_EMAIL: noreply@floworx-iq.com",
+        "✅ FROM_NAME: FloWorx-iq team",
+        "✅ All required environment variables are set"
+      ],
+      "timestamp": "2025-09-18T19:41:57.394Z"
+    },
+    {
+      "name": "SendGrid SMTP Connection",
+      "success": true,
+      "details": [
+        "SMTP Host: smtp.sendgrid.net",
+        "SMTP Port: 465",
+        "SMTP Secure: true",
+        "SMTP User: apikey",
+        "SMTP Pass: [SET]",
+        "✅ SMTP connection successful",
+        "✅ SendGrid authentication working"
+      ],
+      "timestamp": "2025-09-18T19:41:57.394Z"
+    },
+    {
+      "name": "Email Sending Test",
+      "success": true,
+      "details": [
+        "✅ Email template loaded successfully",
+        "Sending test email to: artemlykovv@gmail.com",
+        "From: FloWorx-iq team <noreply@floworx-iq.com>",
+        "Subject: FloWorx Password Reset Test - 2025-09-18T19:41:57.687Z",
+        "✅ Email sent successfully!",
+        "Message ID: <a01c1e1d-3e67-b64c-6074-fc2eaba40f39@floworx-iq.com>",
+        "Response: 250 Ok: queued as RO3Qh9QmQkW-98XUxkgvuw",
+        "📧 Check inbox at artemlykovv@gmail.com for the test email"
+      ],
+      "timestamp": "2025-09-18T19:41:57.686Z"
+    }
+  ],
+  "issues": [],
+  "recommendations": [],
+  "summary": {
+    "total": 3,
+    "passed": 3,
+    "failed": 0,
+    "successRate": "100.0%",
+    "status": "ALL_WORKING"
+  }
+}

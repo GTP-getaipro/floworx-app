@@ -1,6 +1,7 @@
-import SimpleRegisterForm from './SimpleRegisterForm';
+import React from 'react';
+import SimpleRegisterForm from '../components/SimpleRegisterForm';
 
-const Register = () => {
+const SimpleRegisterPage = () => {
   return (
     <div className="min-h-screen bg-gray-50 flex flex-col justify-center py-12 sm:px-6 lg:px-8">
       {/* Header */}
@@ -29,4 +30,4 @@ const Register = () => {
   );
 };
 
-export default Register;
+export default SimpleRegisterPage;

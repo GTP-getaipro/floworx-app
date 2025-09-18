@@ -15,30 +15,21 @@ export const useAuth = () => {
 // Configure axios defaults
 const API_BASE_URL = process.env.REACT_APP_API_URL || 'https://app.floworx-iq.com';
 axios.defaults.baseURL = API_BASE_URL;
+axios.defaults.withCredentials = true; // Enable cookies for session management
 
 export const AuthProvider = ({ children }) => {
   const [user, setUser] = useState(null);
   const [loading, setLoading] = useState(true);
-  const [token, setToken] = useState(localStorage.getItem('floworx_token'));
+  const [isAuthenticated, setIsAuthenticated] = useState(false);
   const [lastError, setLastError] = useState(null);
 
   // Set up axios interceptor for authentication
   useEffect(() => {
-    const requestInterceptor = axios.interceptors.request.use(
-      config => {
-        if (token) {
-          config.headers.Authorization = `Bearer ${token}`;
-        }
-        return config;
-      },
-      error => Promise.reject(error)
-    );
-
     const responseInterceptor = axios.interceptors.response.use(
       response => response,
       error => {
         if (error.response?.status === 401) {
-          // Token expired or invalid
+          // Session expired or invalid
           logout();
         }
         return Promise.reject(error);
@@ -46,33 +37,28 @@ export const AuthProvider = ({ children }) => {
     );
 
     return () => {
-      axios.interceptors.request.eject(requestInterceptor);
       axios.interceptors.response.eject(responseInterceptor);
     };
-  }, [token]);
+  }, []);
 
-  // Verify token on app load
+  // Verify session on app load
   useEffect(() => {
-    const verifyToken = async () => {
-      if (!token) {
-        setLoading(false);
-        return;
-      }
-
+    const verifySession = async () => {
       try {
-        const response = await axios.get('/auth/verify');
+        const response = await axios.get('/api/auth/verify');
         setUser(response.data.user);
+        setIsAuthenticated(true);
       } catch (error) {
-        console.error('Token verification failed:', error);
-        localStorage.removeItem('floworx_token');
-        setToken(null);
+        console.error('Session verification failed:', error);
+        setIsAuthenticated(false);
+        setUser(null);
       } finally {
         setLoading(false);
       }
     };
 
-    verifyToken();
-  }, [token]);
+    verifySession();
+  }, []);
 
   // Login function
   const login = async (email, password) => {
@@ -81,11 +67,19 @@ export const AuthProvider = ({ children }) => {
 
     try {
       const response = await axios.post('/api/auth/login', { email, password });
-      const { token: newToken, user: userData } = response.data;
 
-      localStorage.setItem('floworx_token', newToken);
-      setToken(newToken);
-      setUser(userData);
+      // Handle different response formats
+      if (response.data.user) {
+        // Old format: { token, user }
+        setUser(response.data.user);
+        setIsAuthenticated(true);
+      } else if (response.data.userId) {
+        // New format: { userId } with cookies
+        // Get user data from verify endpoint
+        const verifyResponse = await axios.get('/api/auth/verify');
+        setUser(verifyResponse.data.user);
+        setIsAuthenticated(true);
+      }
 
       return { success: true };
     } catch (error) {
@@ -201,27 +195,26 @@ export const AuthProvider = ({ children }) => {
   };
 
   // Logout function
-  const logout = () => {
-    localStorage.removeItem('floworx_token');
-    setToken(null);
-    setUser(null);
-    clearErrors(); // Clear any errors on logout
-  };
-
-  // Check if user is authenticated
-  const isAuthenticated = () => {
-    return Boolean(token) && Boolean(user);
+  const logout = async () => {
+    try {
+      await axios.post('/api/auth/logout');
+    } catch (error) {
+      console.error('Logout error:', error);
+    } finally {
+      setUser(null);
+      setIsAuthenticated(false);
+      clearErrors(); // Clear any errors on logout
+    }
   };
 
   const value = {
     user,
-    token,
+    isAuthenticated,
     loading,
     lastError,
     login,
     register,
     logout,
-    isAuthenticated,
     clearErrors,
   };
 

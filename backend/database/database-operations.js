@@ -61,13 +61,17 @@ class DatabaseOperations {
         .select()
         .single();
     } else {
-      // PostgreSQL implementation
+      // PostgreSQL implementation - support all user fields including verification
+      const fields = Object.keys(userData).filter(key => key !== 'created_at');
+      const placeholders = fields.map((_, index) => `$${index + 1}`).join(', ');
+      const fieldNames = fields.join(', ');
+
       const query = `
-        INSERT INTO users (id, email, password_hash, first_name, last_name, created_at)
-        VALUES ($1, $2, $3, $4, $5, NOW())
+        INSERT INTO users (${fieldNames}, created_at)
+        VALUES (${placeholders}, NOW())
         RETURNING *
       `;
-      const values = [userData.id, userData.email, userData.password_hash, userData.first_name, userData.last_name];
+      const values = fields.map(field => userData[field]);
       const result = await client.query(query, values);
       return { data: result.rows[0], error: null };
     }

@@ -319,8 +319,8 @@ class APIDoublePathDebugger {
  * Main execution
  */
 async function main() {
-  const debugger = new APIDoublePathDebugger();
-  await debugger.debugDoublePathIssue();
+  const debugTool = new APIDoublePathDebugger();
+  await debugTool.debugDoublePathIssue();
 }
 
 // Handle graceful shutdown

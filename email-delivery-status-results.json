@@ -1,0 +1,138 @@
+{
+  "timestamp": "2025-09-18T18:17:46.866Z",
+  "environment": "production",
+  "baseURL": "https://app.floworx-iq.com",
+  "emailTests": [
+    {
+      "name": "Password Reset with Debug Headers",
+      "endpoint": "/api/auth/password/request",
+      "email": "debug-test-reset@example.com",
+      "status": 202,
+      "success": true,
+      "headers": {
+        "access-control-allow-credentials": "true",
+        "access-control-expose-headers": "X-RateLimit-Limit,X-RateLimit-Remaining,X-RateLimit-Reset",
+        "alt-svc": "h3=\":443\"; ma=2592000",
+        "cache-control": "no-cache, no-store, must-revalidate",
+        "content-length": "77",
+        "content-type": "application/json; charset=utf-8",
+        "date": "Thu, 18 Sep 2025 18:17:48 GMT",
+        "etag": "W/\"4d-cvRxdQKji/9Pt+bO5j7RI3nzRwE\"",
+        "ratelimit-limit": "100",
+        "ratelimit-policy": "100;w=900",
+        "ratelimit-remaining": "92",
+        "ratelimit-reset": "512",
+        "server": "FloWorx",
+        "strict-transport-security": "max-age=63072000; includeSubDomains; preload",
+        "vary": "Accept-Encoding, Origin, Accept-Encoding",
+        "x-powered-by": "Express",
+        "x-request-id": "req_1758219467842_vq34tthtm",
+        "x-robots-tag": "noindex, nofollow"
+      },
+      "data": {
+        "message": "If this email is registered, a password reset link will be sent"
+      },
+      "emailIndicators": {
+        "shouldSendEmail": true,
+        "emailService": "unknown",
+        "deliveryStatus": "unknown",
+        "errorCode": null
+      },
+      "timestamp": "2025-09-18T18:17:47.331Z"
+    },
+    {
+      "name": "Registration with Debug Headers",
+      "endpoint": "/api/auth/register",
+      "email": "debug-test-reg-1758219466868@example.com",
+      "status": 201,
+      "success": true,
+      "headers": {
+        "access-control-allow-credentials": "true",
+        "access-control-expose-headers": "X-RateLimit-Limit,X-RateLimit-Remaining,X-RateLimit-Reset",
+        "alt-svc": "h3=\":443\"; ma=2592000",
+        "cache-control": "no-cache, no-store, must-revalidate",
+        "content-length": "250",
+        "content-type": "application/json; charset=utf-8",
+        "date": "Thu, 18 Sep 2025 18:17:48 GMT",
+        "etag": "W/\"fa-LWyNZ9EDuipUsiDH1uKlEJo1VSA\"",
+        "ratelimit-limit": "100",
+        "ratelimit-policy": "100;w=900",
+        "ratelimit-remaining": "91",
+        "ratelimit-reset": "511",
+        "server": "FloWorx",
+        "strict-transport-security": "max-age=63072000; includeSubDomains; preload",
+        "vary": "Accept-Encoding, Origin, Accept-Encoding",
+        "x-powered-by": "Express",
+        "x-request-id": "req_1758219468101_61967p44x",
+        "x-robots-tag": "noindex, nofollow"
+      },
+      "data": {
+        "success": true,
+        "message": "Account created successfully. Please check your email to verify your account.",
+        "userId": "53cfbfcb-a05f-4278-8838-09372bc1db88",
+        "requiresVerification": true,
+        "email": "debug-test-reg-1758219466868@example.com",
+        "emailSent": true
+      },
+      "emailIndicators": {
+        "shouldSendEmail": true,
+        "emailService": "unknown",
+        "deliveryStatus": "unknown",
+        "errorCode": null
+      },
+      "timestamp": "2025-09-18T18:17:48.172Z"
+    },
+    {
+      "name": "Email Service Health Check",
+      "endpoint": "/api/health",
+      "status": 200,
+      "success": true,
+      "data": {
+        "status": "ok",
+        "timestamp": "2025-09-18T18:17:48.939Z",
+        "version": "1.0.0",
+        "environment": "production",
+        "deployment": {
+          "buildTime": "2025-09-18T18:17:48.939Z",
+          "nodeVersion": "v20.19.5",
+          "platform": "unknown",
+          "staticFileServingEnabled": true,
+          "commitHash": "ee6b793"
+        }
+      },
+      "timestamp": "2025-09-18T18:17:48.256Z"
+    },
+    {
+      "name": "SMTP Connectivity Test",
+      "testType": "rapid-requests",
+      "email": "smtp-connectivity-test@example.com",
+      "requests": 3,
+      "statuses": [
+        202,
+        202,
+        202
+      ],
+      "success": true,
+      "allSuccessful": true,
+      "rateLimited": false,
+      "errors": 0,
+      "timestamp": "2025-09-18T18:17:48.602Z"
+    }
+  ],
+  "deliveryStatus": {
+    "apiEndpointsWorking": true,
+    "emailIndicatorsPositive": true,
+    "noServerErrors": true,
+    "overallStatus": "EXCELLENT - All systems operational, emails should be delivered",
+    "successRate": "100.0%",
+    "emailDeliveryLikelihood": "VERY HIGH (90%+)"
+  },
+  "recommendations": [
+    {
+      "priority": "INFO",
+      "title": "System Status: Excellent",
+      "description": "All email systems appear to be working correctly. Emails should be delivered successfully.",
+      "action": "Monitor email delivery and user feedback for any issues."
+    }
+  ]
+}

@@ -1,0 +1,236 @@
+{
+  "timestamp": "2025-09-18T18:21:14.456Z",
+  "environment": "production",
+  "baseURL": "https://app.floworx-iq.com",
+  "errorTests": [
+    {
+      "name": "Invalid Email Format - Password Reset",
+      "endpoint": "/api/auth/password/request",
+      "method": "POST",
+      "expectedStatus": 400,
+      "actualStatus": 202,
+      "statusMatch": false,
+      "data": {
+        "message": "If this email is registered, a password reset link will be sent"
+      },
+      "hasUnifiedErrorFormat": true,
+      "timestamp": "2025-09-18T18:21:14.935Z",
+      "expectedErrorCode": "VALIDATION_ERROR",
+      "errorCodeMatch": false,
+      "hasMessage": true,
+      "success": false
+    },
+    {
+      "name": "Missing Email - Password Reset",
+      "endpoint": "/api/auth/password/request",
+      "method": "POST",
+      "expectedStatus": 400,
+      "actualStatus": 400,
+      "statusMatch": true,
+      "data": {
+        "error": {
+          "code": "MISSING_EMAIL",
+          "message": "Email address is required"
+        }
+      },
+      "hasUnifiedErrorFormat": true,
+      "timestamp": "2025-09-18T18:21:15.529Z",
+      "expectedErrorCode": "VALIDATION_ERROR",
+      "errorCodeMatch": false,
+      "hasMessage": true,
+      "success": false
+    },
+    {
+      "name": "Invalid Token - Email Verification",
+      "endpoint": "/api/auth/verify-email",
+      "method": "POST",
+      "expectedStatus": [
+        400,
+        401,
+        404
+      ],
+      "actualStatus": 400,
+      "statusMatch": true,
+      "data": {
+        "success": false,
+        "error": "Invalid token",
+        "message": "Verification token is invalid or has been used"
+      },
+      "hasUnifiedErrorFormat": true,
+      "timestamp": "2025-09-18T18:21:16.218Z",
+      "hasMessage": true,
+      "success": true
+    },
+    {
+      "name": "Missing Token - Email Verification",
+      "endpoint": "/api/auth/verify-email",
+      "method": "POST",
+      "expectedStatus": 400,
+      "actualStatus": 400,
+      "statusMatch": true,
+      "data": {
+        "success": false,
+        "error": "Missing token",
+        "message": "Verification token is required"
+      },
+      "hasUnifiedErrorFormat": true,
+      "timestamp": "2025-09-18T18:21:16.810Z",
+      "expectedErrorCode": "VALIDATION_ERROR",
+      "errorCodeMatch": false,
+      "hasMessage": true,
+      "success": false
+    },
+    {
+      "name": "Invalid Token - Password Reset",
+      "endpoint": "/api/auth/reset-password",
+      "method": "POST",
+      "expectedStatus": [
+        400,
+        401,
+        404
+      ],
+      "actualStatus": 404,
+      "statusMatch": true,
+      "data": {
+        "success": false,
+        "error": {
+          "message": "Route POST /api/auth/reset-password not found",
+          "statusCode": 404,
+          "data": "req_1758219678089_kjqebp8by"
+        }
+      },
+      "hasUnifiedErrorFormat": false,
+      "timestamp": "2025-09-18T18:21:17.404Z",
+      "hasMessage": true,
+      "success": false
+    },
+    {
+      "name": "Weak Password - Password Reset",
+      "endpoint": "/api/auth/reset-password",
+      "method": "POST",
+      "expectedStatus": 400,
+      "actualStatus": 404,
+      "statusMatch": false,
+      "data": {
+        "success": false,
+        "error": {
+          "message": "Route POST /api/auth/reset-password not found",
+          "statusCode": 404,
+          "data": "req_1758219678677_bdvo5oyln"
+        }
+      },
+      "hasUnifiedErrorFormat": false,
+      "timestamp": "2025-09-18T18:21:17.992Z",
+      "expectedErrorCode": "VALIDATION_ERROR",
+      "errorCodeMatch": false,
+      "hasMessage": true,
+      "success": false
+    },
+    {
+      "name": "Password Mismatch - Password Reset",
+      "endpoint": "/api/auth/reset-password",
+      "method": "POST",
+      "expectedStatus": 400,
+      "actualStatus": 404,
+      "statusMatch": false,
+      "data": {
+        "success": false,
+        "error": {
+          "message": "Route POST /api/auth/reset-password not found",
+          "statusCode": 404,
+          "data": "req_1758219679264_lnq5f1c2m"
+        }
+      },
+      "hasUnifiedErrorFormat": false,
+      "timestamp": "2025-09-18T18:21:18.580Z",
+      "expectedErrorCode": "VALIDATION_ERROR",
+      "errorCodeMatch": false,
+      "hasMessage": true,
+      "success": false
+    },
+    {
+      "name": "Invalid Email - Registration",
+      "endpoint": "/api/auth/register",
+      "method": "POST",
+      "expectedStatus": 400,
+      "actualStatus": 400,
+      "statusMatch": true,
+      "data": {
+        "error": {
+          "code": "BAD_REQUEST",
+          "message": "Invalid email format"
+        }
+      },
+      "hasUnifiedErrorFormat": true,
+      "timestamp": "2025-09-18T18:21:19.180Z",
+      "expectedErrorCode": "VALIDATION_ERROR",
+      "errorCodeMatch": false,
+      "hasMessage": true,
+      "success": false
+    },
+    {
+      "name": "Missing Required Fields - Registration",
+      "endpoint": "/api/auth/register",
+      "method": "POST",
+      "expectedStatus": 400,
+      "actualStatus": 400,
+      "statusMatch": true,
+      "data": {
+        "error": {
+          "code": "BAD_REQUEST",
+          "message": "Email and password are required"
+        }
+      },
+      "hasUnifiedErrorFormat": true,
+      "timestamp": "2025-09-18T18:21:19.760Z",
+      "expectedErrorCode": "VALIDATION_ERROR",
+      "errorCodeMatch": false,
+      "hasMessage": true,
+      "success": false
+    },
+    {
+      "name": "Invalid Credentials - Login",
+      "endpoint": "/api/auth/login",
+      "method": "POST",
+      "expectedStatus": 401,
+      "actualStatus": 401,
+      "statusMatch": true,
+      "data": {
+        "error": {
+          "code": "INVALID_CREDENTIALS",
+          "message": "Invalid email or password"
+        }
+      },
+      "hasUnifiedErrorFormat": true,
+      "timestamp": "2025-09-18T18:21:20.453Z",
+      "expectedErrorCode": "INVALID_CREDENTIALS",
+      "errorCodeMatch": true,
+      "hasMessage": true,
+      "success": true
+    },
+    {
+      "name": "Rate Limiting Error Format",
+      "endpoint": "/api/auth/password/request",
+      "method": "POST",
+      "totalRequests": 5,
+      "rateLimitedCount": 2,
+      "success": true,
+      "hasUnifiedErrorFormat": true,
+      "timestamp": "2025-09-18T18:21:21.308Z",
+      "sampleRateLimitResponse": {
+        "error": {
+          "code": "RATE_LIMITED",
+          "message": "Try again later"
+        }
+      }
+    }
+  ],
+  "summary": {
+    "total": 11,
+    "passed": 3,
+    "failed": 8,
+    "successRate": "27.3%",
+    "errorFormatConsistency": "72.7%",
+    "overallStatus": "ISSUES_DETECTED"
+  }
+}

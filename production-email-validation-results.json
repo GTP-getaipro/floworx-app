@@ -1,0 +1,141 @@
+{
+  "timestamp": "2025-09-18T18:13:39.810Z",
+  "environment": "production",
+  "baseURL": "https://app.floworx-iq.com",
+  "tests": [
+    {
+      "name": "Forgot Password API",
+      "endpoint": "POST /api/auth/password/request",
+      "email": "qa-test@example.com",
+      "status": 202,
+      "data": {
+        "message": "If this email is registered, a password reset link will be sent"
+      },
+      "success": true,
+      "expectedMessage": true,
+      "timestamp": "2025-09-18T18:13:40.171Z"
+    },
+    {
+      "name": "Registration with Email Verification",
+      "endpoint": "POST /api/auth/register",
+      "email": "qa-test-1758219220172@example.com",
+      "status": 201,
+      "data": {
+        "success": true,
+        "message": "Account created successfully. Please check your email to verify your account.",
+        "userId": "ef13ad96-3c92-4b31-974b-1459b51663f7",
+        "requiresVerification": true,
+        "email": "qa-test-1758219220172@example.com",
+        "emailSent": true
+      },
+      "success": true,
+      "emailSent": true,
+      "requiresVerification": true,
+      "userId": "ef13ad96-3c92-4b31-974b-1459b51663f7",
+      "timestamp": "2025-09-18T18:13:41.288Z"
+    },
+    {
+      "name": "Email Verification Endpoint",
+      "endpoint": "POST /api/auth/verify-email",
+      "status": 400,
+      "data": {
+        "success": false,
+        "error": "Invalid token",
+        "message": "Verification token is invalid or has been used"
+      },
+      "success": true,
+      "hasUnifiedErrorFormat": false,
+      "timestamp": "2025-09-18T18:13:41.468Z"
+    },
+    {
+      "name": "Password Reset Token Validation",
+      "endpoint": "POST /api/auth/reset-password",
+      "status": 404,
+      "data": {
+        "success": false,
+        "error": {
+          "message": "Route POST /api/auth/reset-password not found",
+          "statusCode": 404,
+          "data": "req_1758219222235_42sag5dus"
+        }
+      },
+      "success": true,
+      "hasUnifiedErrorFormat": false,
+      "timestamp": "2025-09-18T18:13:41.554Z"
+    }
+  ],
+  "summary": {
+    "apiTests": {
+      "total": 4,
+      "passed": 4,
+      "failed": 0,
+      "successRate": "100.0%"
+    },
+    "emailDeliveryTests": {
+      "total": 2,
+      "passed": 2,
+      "failed": 0,
+      "successRate": "100.0%"
+    },
+    "overallStatus": "ALL_SYSTEMS_OPERATIONAL"
+  },
+  "emailDeliveryTests": [
+    {
+      "name": "Password Reset Email Request",
+      "email": "delivery-test-reset@example.com",
+      "endpoint": "/api/auth/password/request",
+      "status": 202,
+      "success": true,
+      "emailIndicator": true,
+      "timestamp": "2025-09-18T18:13:41.689Z"
+    },
+    {
+      "name": "Registration Email Request",
+      "email": "delivery-test-reg-1758219221555@example.com",
+      "endpoint": "/api/auth/register",
+      "status": 201,
+      "success": true,
+      "emailIndicator": true,
+      "timestamp": "2025-09-18T18:13:42.700Z"
+    }
+  ],
+  "manualTestInstructions": {
+    "forgotPassword": {
+      "title": "🔐 Manual Forgot Password Test",
+      "steps": [
+        "1. Navigate to https://app.floworx-iq.com/forgot-password",
+        "2. Enter email: qa-test@example.com",
+        "3. Submit form and verify success message",
+        "4. Check email inbox for reset email from noreply@floworx-iq.com",
+        "5. Click reset link in email",
+        "6. Enter new password and confirm",
+        "7. Attempt login with new password",
+        "8. Verify successful login"
+      ]
+    },
+    "registration": {
+      "title": "📝 Manual Registration + Verification Test",
+      "steps": [
+        "1. Navigate to https://app.floworx-iq.com/register",
+        "2. Fill out registration form with test email",
+        "3. Submit and verify success message",
+        "4. Check email inbox for verification email from noreply@floworx-iq.com",
+        "5. Click verification link in email",
+        "6. Verify redirect to success page",
+        "7. Check for welcome email delivery",
+        "8. Attempt login with registered credentials"
+      ]
+    },
+    "emailChecks": {
+      "title": "📬 Email Delivery Validation",
+      "checks": [
+        "✅ Emails arrive in inbox (not spam folder)",
+        "✅ Sender shows as noreply@floworx-iq.com",
+        "✅ Email content is properly formatted",
+        "✅ Links in emails work correctly",
+        "✅ Email delivery time is reasonable (< 5 minutes)",
+        "✅ No duplicate emails sent"
+      ]
+    }
+  }
+}

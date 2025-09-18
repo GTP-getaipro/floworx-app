@@ -3,12 +3,10 @@ import AuthLayout from "../components/auth/AuthLayout";
 import Input from "../components/auth/Input";
 import Button from "../components/auth/Button";
 import useFormValidation from "../hooks/useFormValidation";
-import useFormPersistence from "../hooks/useFormPersistence";
 import { required, email } from "../utils/validationRules";
 import { api } from "../lib/api";
 
 export default function ForgotPasswordPage({ onSubmit, errors = {}, values = {} }) {
-  const { load, save } = useFormPersistence('auth:forgot');
   const [isLoading, setIsLoading] = useState(false);
   const [isSuccess, setIsSuccess] = useState(false);
   const [networkError, setNetworkError] = useState('');
@@ -20,25 +18,24 @@ export default function ForgotPasswordPage({ onSubmit, errors = {}, values = {} 
     handleChange,
     handleBlur,
     validate,
-    isValid,
-    setValue
+    isValid
   } = useFormValidation({
-    initialValues: { email: values.email || "" },
+    initialValues: { email: "" }, // Always start with empty email for security
     rules: {
       email: [required(), email()]
     }
   });
 
+  // Clear any existing form persistence data on component mount for security
   useEffect(() => {
-    const savedData = load();
-    if (savedData?.email) {
-      setValue('email', savedData.email);
+    try {
+      // Clear any previously stored email data
+      window.localStorage.removeItem('floworx:auth:forgot');
+      window.sessionStorage.removeItem('floworx:auth:forgot');
+    } catch (error) {
+      console.warn('Failed to clear persisted form data:', error);
     }
-  }, [load, setValue]);
-
-  useEffect(() => {
-    save(formValues);
-  }, [formValues, save]);
+  }, []);
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -53,6 +50,15 @@ export default function ForgotPasswordPage({ onSubmit, errors = {}, values = {} 
         method: 'POST',
         body: { email: formValues.email }
       });
+
+      // Clear any form data from storage after successful submission for security
+      try {
+        window.localStorage.removeItem('floworx:auth:forgot');
+        window.sessionStorage.removeItem('floworx:auth:forgot');
+      } catch (error) {
+        console.warn('Failed to clear form data after submission:', error);
+      }
+
       setIsSuccess(true);
     } catch (error) {
       // Only show network errors, not user existence errors (security)
@@ -119,6 +125,10 @@ export default function ForgotPasswordPage({ onSubmit, errors = {}, values = {} 
           error={formErrors.email || errors.email}
           placeholder="Enter your account email"
           aria-invalid={!!(formErrors.email || errors.email)}
+          autoComplete="off"
+          autoCorrect="off"
+          autoCapitalize="off"
+          spellCheck="false"
         />
         <Button
           type="submit"

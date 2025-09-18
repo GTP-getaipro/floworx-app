@@ -71,11 +71,9 @@ const authenticateToken = async (req, res, next) => {
 
     if (!token) {
       return res.status(401).json({
-        success: false,
         error: {
-          type: 'AUTHENTICATION_ERROR',
-          message: 'Access token required',
-          code: 401
+          code: 'UNAUTHORIZED',
+          message: 'Authentication required'
         }
       });
     }
@@ -94,11 +92,9 @@ const authenticateToken = async (req, res, next) => {
     const userId = decoded.userId || decoded.sub;
     if (!userId) {
       return res.status(401).json({
-        success: false,
         error: {
-          type: 'AUTHENTICATION_ERROR',
-          message: 'Invalid token format',
-          code: 401
+          code: 'UNAUTHORIZED',
+          message: 'Invalid token format'
         }
       });
     }
@@ -125,29 +121,23 @@ const authenticateToken = async (req, res, next) => {
   } catch (error) {
     if (error.name === 'TokenExpiredError') {
       return res.status(401).json({
-        success: false,
         error: {
-          type: 'TOKEN_EXPIRED',
-          message: 'Token has expired',
-          code: 401
+          code: 'UNAUTHORIZED',
+          message: 'Token has expired'
         }
       });
     } else if (error.name === 'JsonWebTokenError') {
       return res.status(401).json({
-        success: false,
         error: {
-          type: 'INVALID_TOKEN',
-          message: 'Invalid token format',
-          code: 401
+          code: 'UNAUTHORIZED',
+          message: 'Invalid token format'
         }
       });
     } else if (error instanceof AuthenticationError || error instanceof AuthorizationError) {
       return res.status(401).json({
-        success: false,
         error: {
-          type: 'AUTHENTICATION_ERROR',
-          message: error.message,
-          code: 401
+          code: 'UNAUTHORIZED',
+          message: error.message
         }
       });
     } else {

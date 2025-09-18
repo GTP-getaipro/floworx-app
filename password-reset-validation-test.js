@@ -91,12 +91,13 @@ class PasswordResetValidationTest {
 
       test.details.push('❌ Invalid token should have been rejected');
     } catch (error) {
-      if (error.response && error.response.status === 400) {
-        test.details.push('✅ Invalid token correctly rejected');
-        test.details.push(`Error message: ${error.response.data.message || error.response.data.error}`);
+      if (error.response && error.response.status === 401) {
+        test.details.push('✅ Invalid token correctly rejected with 401 Unauthorized');
+        test.details.push(`Error message: ${error.response.data.error?.message || error.response.data.message || 'Invalid token'}`);
         test.success = true;
       } else {
         test.details.push(`❌ Unexpected error: ${error.message}`);
+        test.details.push(`Expected 401 for invalid token, got: ${error.response?.status || 'no status'}`);
       }
     }
 

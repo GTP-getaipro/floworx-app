@@ -399,12 +399,11 @@ router.post('/register', async (req, res) => {
     // Send verification email
     let emailResult = { success: false };
     try {
-      const verificationUrl = generateVerificationUrl(tokenResult.token);
-
+      // Pass just the token - sendVerificationEmail will construct the URL internally
       emailResult = await emailService.sendVerificationEmail(
         email,
         firstName || 'there',
-        verificationUrl
+        tokenResult.token
       );
 
       // Log email sending result but don't fail registration if email fails
@@ -620,12 +619,11 @@ router.post('/resend-verification', resendVerificationLimiter, async (req, res) 
     }
 
     // Send verification email
-    const verificationUrl = generateVerificationUrl(tokenResult.token);
-
+    // Pass just the token - sendVerificationEmail will construct the URL internally
     const emailResult = await emailService.sendVerificationEmail(
       email,
       user.first_name || 'there',
-      verificationUrl
+      tokenResult.token
     );
 
     if (!emailResult.success) {

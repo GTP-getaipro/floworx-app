@@ -54,42 +54,8 @@ class EmailService {
     return generateEmailVerificationToken();
   }
 
-  /**
-   * Send email verification email to user
-   * @param {string} email - User's email address
-   * @param {string} firstName - User's first name
-   * @param {string} verificationUrl - Complete verification URL
-   * @returns {Promise<Object>} Send result
-   */
-  async sendVerificationEmail(email, firstName, verificationUrl) {
-    try {
-      const senderConfig = this.getSenderConfig();
-
-      const mailOptions = {
-        from: senderConfig.from,
-        to: email,
-        replyTo: senderConfig.replyTo,
-        subject: 'Verify Your FloWorx Account',
-        html: this.generateVerificationEmailTemplate(firstName, verificationUrl),
-        text: this.generateVerificationEmailText(firstName, verificationUrl)
-      };
-
-      const result = await this.transporter.sendMail(mailOptions);
-
-      return {
-        success: true,
-        messageId: result.messageId,
-        response: result.response
-      };
-    } catch (error) {
-      console.error('Error sending verification email:', error);
-      return {
-        success: false,
-        error: error.message,
-        code: 'EMAIL_SEND_FAILED'
-      };
-    }
-  }
+  // REMOVED: Duplicate sendVerificationEmail method that expected full URL
+  // The correct implementation is at line 253 which expects just the token
 
   /**
    * Generate HTML template for verification email

@@ -9,7 +9,7 @@
 CREATE TABLE IF NOT EXISTS mailbox_mappings (
     user_id UUID NOT NULL REFERENCES auth.users(id) ON DELETE CASCADE,
     provider VARCHAR(20) NOT NULL CHECK (provider IN ('gmail', 'o365')),
-    client_id UUID REFERENCES client_config(client_id) ON DELETE SET NULL,
+    client_id TEXT REFERENCES client_config(client_id) ON DELETE SET NULL,
     mapping JSONB NOT NULL DEFAULT '{}',
     version INTEGER NOT NULL DEFAULT 1,
     created_at TIMESTAMP WITH TIME ZONE DEFAULT NOW(),

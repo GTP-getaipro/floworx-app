@@ -37,7 +37,7 @@ class DatabaseManager {
   constructor() {
     this.pool = null;
     this.restClient = null;
-    this.useRestApi = true; // Default to REST API
+    this.useRestApi = false; // Force PostgreSQL connection for authentication
     this.isInitialized = false;
     this.connectionConfig = this.getConnectionConfig();
 

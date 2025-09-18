@@ -64,8 +64,8 @@ class ComprehensiveAPIValidator {
       { path: '/api/oauth/google', method: 'GET', category: 'OAuth',
         expectedStatuses: [302, 400] },
       
-      // Onboarding endpoints
-      { path: '/api/onboarding/business-types', method: 'GET', category: 'Onboarding',
+      // Business types endpoints (corrected path)
+      { path: '/api/business-types', method: 'GET', category: 'Business Types',
         expectedStatuses: [200, 401] },
       
       // Dashboard endpoints

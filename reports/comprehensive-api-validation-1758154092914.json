@@ -1,0 +1,584 @@
+{
+  "timestamp": "2025-09-18T00:08:07.466Z",
+  "environment": "production",
+  "url": "https://app.floworx-iq.com",
+  "endpoints": [
+    {
+      "path": "/api/auth/register",
+      "method": "POST",
+      "category": "Authentication",
+      "data": {
+        "email": "test@example.com",
+        "password": "Test123!",
+        "firstName": "Test",
+        "lastName": "User"
+      },
+      "expectedStatuses": [
+        201,
+        400,
+        409
+      ],
+      "timestamp": "2025-09-18T00:08:07.522Z",
+      "status": "PASS",
+      "statusCode": 409,
+      "statusMessage": "Conflict",
+      "responseTime": 468,
+      "contentType": "application/json; charset=utf-8",
+      "bodyLength": 70,
+      "rateLimitRemaining": "93",
+      "rateLimitLimit": "100",
+      "message": "Expected status 409",
+      "responseBody": {
+        "error": {
+          "code": "EMAIL_EXISTS",
+          "message": "Email already registered"
+        }
+      }
+    },
+    {
+      "path": "/api/auth/login",
+      "method": "POST",
+      "category": "Authentication",
+      "data": {
+        "email": "test@example.com",
+        "password": "wrongpassword"
+      },
+      "expectedStatuses": [
+        200,
+        401,
+        400
+      ],
+      "timestamp": "2025-09-18T00:08:08.202Z",
+      "status": "PASS",
+      "statusCode": 401,
+      "statusMessage": "Unauthorized",
+      "responseTime": 511,
+      "contentType": "application/json; charset=utf-8",
+      "bodyLength": 78,
+      "rateLimitRemaining": "92",
+      "rateLimitLimit": "100",
+      "message": "Expected status 401",
+      "responseBody": {
+        "error": {
+          "code": "INVALID_CREDENTIALS",
+          "message": "Invalid email or password"
+        }
+      }
+    },
+    {
+      "path": "/api/auth/logout",
+      "method": "POST",
+      "category": "Authentication",
+      "data": {},
+      "expectedStatuses": [
+        200,
+        401
+      ],
+      "timestamp": "2025-09-18T00:08:08.919Z",
+      "status": "WARN",
+      "statusCode": 204,
+      "statusMessage": "No Content",
+      "responseTime": 85,
+      "bodyLength": 0,
+      "rateLimitRemaining": "91",
+      "rateLimitLimit": "100",
+      "message": "Unexpected status 204 (not in expected list)"
+    },
+    {
+      "path": "/api/auth/refresh",
+      "method": "POST",
+      "category": "Authentication",
+      "data": {},
+      "expectedStatuses": [
+        200,
+        401
+      ],
+      "timestamp": "2025-09-18T00:08:09.212Z",
+      "status": "PASS",
+      "statusCode": 401,
+      "statusMessage": "Unauthorized",
+      "responseTime": 88,
+      "contentType": "application/json; charset=utf-8",
+      "bodyLength": 78,
+      "rateLimitRemaining": "90",
+      "rateLimitLimit": "100",
+      "message": "Expected status 401",
+      "responseBody": {
+        "error": {
+          "code": "UNAUTHORIZED",
+          "message": "Invalid or expired refresh token"
+        }
+      }
+    },
+    {
+      "path": "/api/auth/forgot-password",
+      "method": "POST",
+      "category": "Authentication",
+      "data": {
+        "email": "test@example.com"
+      },
+      "expectedStatuses": [
+        200,
+        400,
+        404
+      ],
+      "timestamp": "2025-09-18T00:08:09.512Z",
+      "status": "PASS",
+      "statusCode": 200,
+      "statusMessage": "OK",
+      "responseTime": 182,
+      "contentType": "application/json; charset=utf-8",
+      "bodyLength": 95,
+      "rateLimitRemaining": "89",
+      "rateLimitLimit": "100",
+      "message": "Expected status 200",
+      "responseBody": {
+        "success": false,
+        "error": "Internal error",
+        "message": "Unable to process password reset request"
+      }
+    },
+    {
+      "path": "/api/health",
+      "method": "GET",
+      "category": "System",
+      "expectedStatuses": [
+        200
+      ],
+      "timestamp": "2025-09-18T00:08:09.902Z",
+      "status": "PASS",
+      "statusCode": 200,
+      "statusMessage": "OK",
+      "responseTime": 87,
+      "contentType": "application/json; charset=utf-8",
+      "bodyLength": 254,
+      "rateLimitRemaining": "88",
+      "rateLimitLimit": "100",
+      "message": "Expected status 200",
+      "responseBody": {
+        "status": "ok",
+        "timestamp": "2025-09-18T00:08:10.302Z",
+        "version": "1.0.0",
+        "environment": "production",
+        "deployment": {
+          "buildTime": "2025-09-18T00:08:10.302Z",
+          "nodeVersion": "v20.19.5",
+          "platform": "unknown",
+          "staticFileServingEnabled": true,
+          "commitHash": "ee6b793"
+        }
+      }
+    },
+    {
+      "path": "/health",
+      "method": "GET",
+      "category": "System",
+      "expectedStatuses": [
+        200
+      ],
+      "timestamp": "2025-09-18T00:08:10.200Z",
+      "status": "PASS",
+      "statusCode": 200,
+      "statusMessage": "OK",
+      "responseTime": 78,
+      "contentType": "application/json; charset=utf-8",
+      "bodyLength": 77,
+      "message": "Expected status 200",
+      "responseBody": {
+        "status": "healthy",
+        "timestamp": "2025-09-18T00:08:10.595Z",
+        "version": "1.0.0"
+      }
+    },
+    {
+      "path": "/api/user/profile",
+      "method": "GET",
+      "category": "User",
+      "requiresAuth": true,
+      "expectedStatuses": [
+        200,
+        401
+      ],
+      "timestamp": "2025-09-18T00:08:10.493Z",
+      "status": "PASS",
+      "statusCode": 200,
+      "statusMessage": "OK",
+      "responseTime": 80,
+      "contentType": "application/json; charset=utf-8",
+      "bodyLength": 85,
+      "rateLimitRemaining": "87",
+      "rateLimitLimit": "100",
+      "message": "Expected status 200",
+      "responseBody": {
+        "id": "test-user-id",
+        "email": "test@example.com",
+        "firstName": "Test",
+        "lastName": "User"
+      }
+    },
+    {
+      "path": "/api/user/settings",
+      "method": "GET",
+      "category": "User",
+      "requiresAuth": true,
+      "expectedStatuses": [
+        200,
+        401
+      ],
+      "timestamp": "2025-09-18T00:08:10.787Z",
+      "status": "PASS",
+      "statusCode": 401,
+      "statusMessage": "Unauthorized",
+      "responseTime": 87,
+      "contentType": "application/json; charset=utf-8",
+      "bodyLength": 94,
+      "rateLimitRemaining": "86",
+      "rateLimitLimit": "100",
+      "message": "Expected status 401",
+      "responseBody": {
+        "success": false,
+        "error": {
+          "type": "INVALID_TOKEN",
+          "message": "Invalid token format",
+          "code": 401
+        }
+      }
+    },
+    {
+      "path": "/api/oauth/google",
+      "method": "GET",
+      "category": "OAuth",
+      "expectedStatuses": [
+        302,
+        400
+      ],
+      "timestamp": "2025-09-18T00:08:11.082Z",
+      "status": "PASS",
+      "statusCode": 302,
+      "statusMessage": "Found",
+      "responseTime": 84,
+      "contentType": "text/html; charset=utf-8",
+      "bodyLength": 85,
+      "rateLimitRemaining": "85",
+      "rateLimitLimit": "100",
+      "message": "Expected status 302",
+      "responseBody": "<p>Found. Redirecting to https://app.floworx-iq.com/dashboard?error=auth_required</p>"
+    },
+    {
+      "path": "/api/business-types",
+      "method": "GET",
+      "category": "Business Types",
+      "expectedStatuses": [
+        200,
+        401
+      ],
+      "timestamp": "2025-09-18T00:08:11.374Z",
+      "status": "PASS",
+      "statusCode": 200,
+      "statusMessage": "OK",
+      "responseTime": 147,
+      "contentType": "application/json; charset=utf-8",
+      "bodyLength": 4761,
+      "rateLimitRemaining": "84",
+      "rateLimitLimit": "100",
+      "message": "Expected status 200",
+      "responseBody": {
+        "success": true,
+        "data": [
+          {
+            "id": 6,
+            "name": "General Contractor",
+            "description": "General construction and contracting services",
+            "slug": "general-contractor",
+            "is_active": true,
+            "sort_order": 0,
+            "default_categories": [
+              "Project Inquiries",
+              "Estimates",
+              "Scheduling",
+              "Material Orders",
+              "Customer Communication"
+            ],
+            "workflow_template_id": null,
+            "created_at": "2025-09-10T17:22:29.331176+00:00",
+            "updated_at": "2025-09-10T17:22:29.331176+00:00"
+          },
+          {
+            "id": 1,
+            "name": "Hot Tub & Spa",
+            "description": "Email automation for hot tub dealers, service companies, and spa retailers specializing in sales, service calls, parts orders, and warranty claims",
+            "slug": "hot-tub-spa",
+            "is_active": true,
+            "sort_order": 1,
+            "default_categories": [
+              {
+                "name": "Service Calls",
+                "priority": "high",
+                "description": "Emergency repairs and maintenance requests"
+              },
+              {
+                "name": "Sales Inquiries",
+                "priority": "medium",
+                "description": "New customer quotes and product information"
+              },
+              {
+                "name": "Parts Orders",
+                "priority": "medium",
+                "description": "Replacement parts and accessories"
+              },
+              {
+                "name": "Warranty Claims",
+                "priority": "high",
+                "description": "Product warranty and support issues"
+              },
+              {
+                "name": "General Support",
+                "priority": "low",
+                "description": "General questions and customer support"
+              }
+            ],
+            "workflow_template_id": "floworx-hot-tub-automation-v1",
+            "created_at": "2025-09-01T19:51:16.663703+00:00",
+            "updated_at": "2025-09-01T19:51:16.663703+00:00"
+          },
+          {
+            "id": 5,
+            "name": "HVAC Services",
+            "description": "Heating, ventilation, and air conditioning services",
+            "slug": "hvac-services",
+            "is_active": true,
+            "sort_order": 0,
+            "default_categories": [
+              "Service Calls",
+              "Maintenance",
+              "Installation",
+              "Emergency Repairs",
+              "Customer Support"
+            ],
+            "workflow_template_id": null,
+            "created_at": "2025-09-10T17:22:29.331176+00:00",
+            "updated_at": "2025-09-10T17:22:29.331176+00:00"
+          },
+          {
+            "id": 7,
+            "name": "Other Service Business",
+            "description": "Other professional service businesses",
+            "slug": "other-service",
+            "is_active": true,
+            "sort_order": 0,
+            "default_categories": [
+              "Customer Inquiries",
+              "Service Requests",
+              "Scheduling",
+              "Follow-up",
+              "Support"
+            ],
+            "workflow_template_id": null,
+            "created_at": "2025-09-10T17:22:29.331176+00:00",
+            "updated_at": "2025-09-10T17:22:29.331176+00:00"
+          },
+          {
+            "id": 4,
+            "name": "Pool Services",
+            "description": "Swimming pool maintenance, cleaning, and repair services",
+            "slug": "pool-services",
+            "is_active": true,
+            "sort_order": 0,
+            "default_categories": [
+              "Pool Cleaning",
+              "Chemical Balancing",
+              "Equipment Repair",
+              "Pool Opening/Closing",
+              "Customer Inquiries"
+            ],
+            "workflow_template_id": null,
+            "created_at": "2025-09-10T17:22:29.331176+00:00",
+            "updated_at": "2025-09-10T17:22:29.331176+00:00"
+          },
+          {
+            "id": 2,
+            "name": "Test Business Type",
+            "description": null,
+            "slug": "duplicate-test-slug",
+            "is_active": true,
+            "sort_order": 0,
+            "default_categories": [],
+            "workflow_template_id": null,
+            "created_at": "2025-09-03T21:24:12.707145+00:00",
+            "updated_at": "2025-09-03T21:24:12.707145+00:00"
+          },
+          {
+            "id": 10,
+            "name": "Test Business Type 017300a3",
+            "description": "Test business type for integration testing",
+            "slug": "test-business-type-017300a3",
+            "is_active": true,
+            "sort_order": 0,
+            "default_categories": [
+              "general"
+            ],
+            "workflow_template_id": null,
+            "created_at": "2025-09-17T03:30:19.233528+00:00",
+            "updated_at": "2025-09-17T03:30:19.233528+00:00"
+          },
+          {
+            "id": 9,
+            "name": "Test Business Type 0b6b6006",
+            "description": "Test business type for integration testing",
+            "slug": "test-business-type-0b6b6006",
+            "is_active": true,
+            "sort_order": 0,
+            "default_categories": [
+              "general"
+            ],
+            "workflow_template_id": null,
+            "created_at": "2025-09-17T03:12:48.484244+00:00",
+            "updated_at": "2025-09-17T03:12:48.484244+00:00"
+          },
+          {
+            "id": 11,
+            "name": "Test Business Type 277f2e8d",
+            "description": "Test business type for integration testing",
+            "slug": "test-business-type-277f2e8d",
+            "is_active": true,
+            "sort_order": 0,
+            "default_categories": [
+              "general"
+            ],
+            "workflow_template_id": null,
+            "created_at": "2025-09-17T03:41:01.877097+00:00",
+            "updated_at": "2025-09-17T03:41:01.877097+00:00"
+          },
+          {
+            "id": 12,
+            "name": "Test Business Type 68086af5",
+            "description": "Test business type for integration testing",
+            "slug": "test-business-type-68086af5",
+            "is_active": true,
+            "sort_order": 0,
+            "default_categories": [
+              "general"
+            ],
+            "workflow_template_id": null,
+            "created_at": "2025-09-17T04:06:37.536582+00:00",
+            "updated_at": "2025-09-17T04:06:37.536582+00:00"
+          },
+          {
+            "id": 14,
+            "name": "Test Business Type bb7f4674",
+            "description": "Test business type for integration testing",
+            "slug": "test-business-type-bb7f4674",
+            "is_active": true,
+            "sort_order": 0,
+            "default_categories": [
+              "general"
+            ],
+            "workflow_template_id": null,
+            "created_at": "2025-09-17T04:12:15.930628+00:00",
+            "updated_at": "2025-09-17T04:12:15.930628+00:00"
+          },
+          {
+            "id": 13,
+            "name": "Test Business Type c2f0e531",
+            "description": "Test business type for integration testing",
+            "slug": "test-business-type-c2f0e531",
+            "is_active": true,
+            "sort_order": 0,
+            "default_categories": [
+              "general"
+            ],
+            "workflow_template_id": null,
+            "created_at": "2025-09-17T04:10:52.044303+00:00",
+            "updated_at": "2025-09-17T04:10:52.044303+00:00"
+          }
+        ]
+      }
+    },
+    {
+      "path": "/api/dashboard",
+      "method": "GET",
+      "category": "Dashboard",
+      "requiresAuth": true,
+      "expectedStatuses": [
+        200,
+        401
+      ],
+      "timestamp": "2025-09-18T00:08:11.733Z",
+      "status": "PASS",
+      "statusCode": 401,
+      "statusMessage": "Unauthorized",
+      "responseTime": 79,
+      "contentType": "application/json; charset=utf-8",
+      "bodyLength": 94,
+      "rateLimitRemaining": "83",
+      "rateLimitLimit": "100",
+      "message": "Expected status 401",
+      "responseBody": {
+        "success": false,
+        "error": {
+          "type": "INVALID_TOKEN",
+          "message": "Invalid token format",
+          "code": 401
+        }
+      }
+    },
+    {
+      "path": "/",
+      "method": "GET",
+      "category": "Static",
+      "expectedStatuses": [
+        200
+      ],
+      "timestamp": "2025-09-18T00:08:12.029Z",
+      "status": "PASS",
+      "statusCode": 200,
+      "statusMessage": "OK",
+      "responseTime": 80,
+      "contentType": "text/html; charset=UTF-8",
+      "bodyLength": 799,
+      "message": "Expected status 200",
+      "responseBody": "<!doctype html><html lang=\"en\"><head><meta charset=\"utf-8\"/><link rel=\"icon\" href=\"/favicon.svg\" type=\"image/svg+xml\"/><link rel=\"icon\" href=\"/favicon.ico\"/><meta name=\"viewport\" content=\"width=device"
+    },
+    {
+      "path": "/login",
+      "method": "GET",
+      "category": "Static",
+      "expectedStatuses": [
+        200
+      ],
+      "timestamp": "2025-09-18T00:08:12.324Z",
+      "status": "PASS",
+      "statusCode": 200,
+      "statusMessage": "OK",
+      "responseTime": 81,
+      "contentType": "text/html; charset=UTF-8",
+      "bodyLength": 799,
+      "message": "Expected status 200",
+      "responseBody": "<!doctype html><html lang=\"en\"><head><meta charset=\"utf-8\"/><link rel=\"icon\" href=\"/favicon.svg\" type=\"image/svg+xml\"/><link rel=\"icon\" href=\"/favicon.ico\"/><meta name=\"viewport\" content=\"width=device"
+    },
+    {
+      "path": "/register",
+      "method": "GET",
+      "category": "Static",
+      "expectedStatuses": [
+        200
+      ],
+      "timestamp": "2025-09-18T00:08:12.621Z",
+      "status": "PASS",
+      "statusCode": 200,
+      "statusMessage": "OK",
+      "responseTime": 80,
+      "contentType": "text/html; charset=UTF-8",
+      "bodyLength": 799,
+      "message": "Expected status 200",
+      "responseBody": "<!doctype html><html lang=\"en\"><head><meta charset=\"utf-8\"/><link rel=\"icon\" href=\"/favicon.svg\" type=\"image/svg+xml\"/><link rel=\"icon\" href=\"/favicon.ico\"/><meta name=\"viewport\" content=\"width=device"
+    }
+  ],
+  "summary": {
+    "total": 15,
+    "working": 14,
+    "failing": 0,
+    "errors": [],
+    "warnings": 1
+  }
+}

@@ -1,0 +1,64 @@
+{
+  "timestamp": "2025-09-18T00:13:03.249Z",
+  "tests": [
+    {
+      "name": "Erroneous Path Returns 404",
+      "path": "/api/api/auth/register",
+      "expected": "404 Not Found",
+      "actual": "404 Not Found",
+      "status": "PASS",
+      "responseTime": 299,
+      "details": "This 404 is expected behavior for the incorrect path"
+    },
+    {
+      "name": "Correct Path Working",
+      "path": "/api/auth/register",
+      "expected": "201 Created or 409 Conflict",
+      "actual": "201 Created",
+      "status": "PASS",
+      "responseTime": 571,
+      "details": "Correct registration endpoint should work properly"
+    },
+    {
+      "name": "Unique Registration Success",
+      "path": "/api/auth/register",
+      "expected": "201 Created",
+      "actual": "201 Created",
+      "status": "PASS",
+      "responseTime": 480,
+      "details": "Registration with unique email: unique-test-1758154384126@floworx-verification.com"
+    },
+    {
+      "name": "Duplicate Registration Handling",
+      "path": "/api/auth/register",
+      "expected": "409 Conflict",
+      "actual": "409 Conflict",
+      "status": "PASS",
+      "responseTime": 138,
+      "details": "Registration with existing email: test@example.com"
+    },
+    {
+      "name": "Invalid Data Validation",
+      "path": "/api/auth/register",
+      "expected": "400 Bad Request",
+      "actual": "400 Bad Request",
+      "status": "PASS",
+      "responseTime": 85,
+      "details": "Registration with invalid email and short password"
+    },
+    {
+      "name": "Rate Limiting Active",
+      "path": "/api/auth/register",
+      "expected": "Rate limit headers present",
+      "actual": "Rate limiting active",
+      "status": "PASS",
+      "responseTime": 476,
+      "details": "Average of 3 requests"
+    }
+  ],
+  "summary": {
+    "total": 6,
+    "passed": 6,
+    "failed": 0
+  }
+}

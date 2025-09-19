@@ -3,6 +3,44 @@ import { useLocation, useNavigate, Link } from 'react-router-dom';
 import axios from 'axios';
 import './PasswordReset.css';
 
+/**
+ * PasswordReset - Password Reset Flow Component
+ *
+ * Handles both password reset request and password reset completion
+ * flows with automatic step detection based on URL parameters.
+ *
+ * @component
+ * @example
+ * // Usage for password reset request
+ * <PasswordReset />
+ *
+ * // Usage for password reset completion (with token)
+ * // URL: /reset-password?token=abc123
+ *
+ * @features
+ * - Dual-mode operation (request and reset)
+ * - Automatic step detection from URL token
+ * - Email validation for reset requests
+ * - Password strength validation for reset
+ * - Loading states during API operations
+ * - Comprehensive error handling
+ * - Success messaging and navigation
+ * - Professional UI with consistent styling
+ *
+ * @steps
+ * - request: User enters email to request reset
+ * - reset: User sets new password with valid token
+ *
+ * @dependencies
+ * - React Router: useLocation, useNavigate, Link
+ * - Axios: HTTP client for API requests
+ * - CSS: PasswordReset.css for styling
+ *
+ * @security
+ * - Token validation for password reset
+ * - Password confirmation matching
+ * - Secure API communication
+ */
 const PasswordReset = () => {
   const location = useLocation();
   const navigate = useNavigate();

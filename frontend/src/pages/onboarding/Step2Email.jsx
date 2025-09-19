@@ -2,6 +2,34 @@ import React, { useState, useEffect } from 'react';
 import { useNavigate, useSearchParams } from 'react-router-dom';
 import { api } from '../../lib/api';
 
+/**
+ * Step2Email - Email Integration Onboarding Step
+ *
+ * Onboarding step where users connect their email accounts (Gmail/Outlook)
+ * for email automation and AI-powered email management.
+ *
+ * @component
+ * @example
+ * // Usage in onboarding router
+ * <Route path="/onboarding/step2" element={<Step2Email />} />
+ *
+ * @features
+ * - Multiple email provider support (Gmail, Outlook)
+ * - OAuth connection setup and management
+ * - Connection status validation and display
+ * - Error handling for OAuth failures
+ * - Success feedback for completed connections
+ * - Loading states during connection process
+ * - Form state persistence across sessions
+ * - Skip option for later setup
+ *
+ * @dependencies
+ * - React Router: useNavigate, useSearchParams for routing and OAuth callbacks
+ * - API: Email integration and onboarding endpoints
+ * - OAuth: Gmail and Outlook API authentication flows
+ *
+ * @note Core component for FloWorx email automation functionality
+ */
 export default function Step2Email() {
   const navigate = useNavigate();
   const [searchParams] = useSearchParams();

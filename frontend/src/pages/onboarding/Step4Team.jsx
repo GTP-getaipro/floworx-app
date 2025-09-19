@@ -2,6 +2,38 @@ import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { api } from '../../lib/api';
 
+/**
+ * Step4Team - Team and Supplier Configuration Onboarding Step
+ *
+ * Final configuration step where users set up their team members,
+ * suppliers, and notification preferences for the FloWorx platform.
+ *
+ * @component
+ * @example
+ * // Usage in onboarding router
+ * <Route path="/onboarding/step4" element={<Step4Team />} />
+ *
+ * @features
+ * - Team member management with roles (owner, admin, user)
+ * - Supplier contact configuration
+ * - Notification preferences (email, SMS)
+ * - Dynamic form fields for adding/removing team members
+ * - Form validation and error handling
+ * - Loading states during configuration save
+ * - Form state persistence across sessions
+ * - Progress tracking in onboarding flow
+ *
+ * @dependencies
+ * - React Router: useNavigate for step progression
+ * - API: Team configuration and onboarding endpoints
+ *
+ * @configuration
+ * - team: Array of team members with email and role
+ * - suppliers: Array of supplier contacts
+ * - notifications: Email and SMS notification preferences
+ *
+ * @note Final step before onboarding completion
+ */
 export default function Step4Team() {
   const navigate = useNavigate();
   const [loading, setLoading] = useState(false);

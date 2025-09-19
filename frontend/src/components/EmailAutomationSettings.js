@@ -1,6 +1,46 @@
 import React, { useState, useEffect } from 'react';
 import apiService from '../services/api';
 
+/**
+ * EmailAutomationSettings - Email Automation Configuration Component
+ *
+ * Comprehensive interface for configuring email automation settings,
+ * AI parameters, and workflow management for specific clients.
+ *
+ * @component
+ * @example
+ * // Usage with client ID
+ * <EmailAutomationSettings clientId="client-123" />
+ *
+ * @param {Object} props - Component props
+ * @param {string} props.clientId - Unique identifier for the client
+ *
+ * @features
+ * - Client-specific configuration management
+ * - Email automation rule configuration
+ * - AI model parameter tuning
+ * - Workflow provisioning and deployment
+ * - Real-time configuration validation
+ * - Loading states for all operations
+ * - Comprehensive error handling
+ * - Success feedback and notifications
+ * - Configuration backup and restore
+ * - Multi-tenant isolation and security
+ *
+ * @operations
+ * - Load: Retrieve current client configuration
+ * - Save: Update configuration settings
+ * - Provision: Deploy new automation workflows
+ * - Redeploy: Update existing deployments
+ *
+ * @dependencies
+ * - apiService: Client configuration API endpoints
+ *
+ * @security
+ * - Client-specific data isolation
+ * - Configuration validation
+ * - Secure API communication
+ */
 const EmailAutomationSettings = ({ clientId }) => {
   const [config, setConfig] = useState(null);
   const [loading, setLoading] = useState(true);

@@ -2,6 +2,37 @@ import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { api } from '../../lib/api';
 
+/**
+ * Step3Labels - Email Label Configuration Onboarding Step
+ *
+ * Onboarding step where users configure email labels and AI classification
+ * settings for automated email organization and routing.
+ *
+ * @component
+ * @example
+ * // Usage in onboarding router
+ * <Route path="/onboarding/step3" element={<Step3Labels />} />
+ *
+ * @features
+ * - Email label mapping configuration (service, sales, parts, warranty, support)
+ * - AI confidence threshold settings
+ * - Label validation and testing
+ * - Form state persistence across sessions
+ * - Loading states during configuration save
+ * - Error handling with user feedback
+ * - Progress tracking in onboarding flow
+ * - Skip option for default settings
+ *
+ * @dependencies
+ * - React Router: useNavigate for step progression
+ * - API: Label configuration and onboarding endpoints
+ *
+ * @configuration
+ * - labelMap: Maps business categories to email labels
+ * - thresholds: AI confidence levels for automatic classification
+ *
+ * @note Critical for FloWorx AI email classification functionality
+ */
 export default function Step3Labels() {
   const navigate = useNavigate();
   const [loading, setLoading] = useState(false);

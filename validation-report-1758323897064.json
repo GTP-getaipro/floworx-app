@@ -1,0 +1,946 @@
+{
+  "timestamp": "2025-09-19T23:18:16.692Z",
+  "validations": {
+    "Component Contract Validation": {
+      "passed": 4,
+      "failed": 2,
+      "warnings": 1,
+      "issues": [
+        {
+          "type": "error",
+          "message": "Environment variable conflicts found",
+          "details": {
+            "conflicts": [
+              {
+                "variable": "PORT",
+                "files": {
+                  ".env.production": "5001",
+                  ".env.production.template": "3000"
+                },
+                "values": [
+                  "5001",
+                  "3000"
+                ]
+              },
+              {
+                "variable": "GOOGLE_REDIRECT_URI",
+                "files": {
+                  ".env.production": "https://app.floworx-iq.com/api/oauth/google/callback",
+                  ".env.production.template": "https://app.floworx-iq.com/auth/google/callback"
+                },
+                "values": [
+                  "https://app.floworx-iq.com/api/oauth/google/callback",
+                  "https://app.floworx-iq.com/auth/google/callback"
+                ]
+              },
+              {
+                "variable": "SMTP_HOST",
+                "files": {
+                  ".env.production": "smtp.sendgrid.net",
+                  ".env.production.template": "smtp.gmail.com"
+                },
+                "values": [
+                  "smtp.sendgrid.net",
+                  "smtp.gmail.com"
+                ]
+              },
+              {
+                "variable": "SMTP_USER",
+                "files": {
+                  ".env.production": "apikey",
+                  ".env.production.template": "alerts@floworx-iq.com"
+                },
+                "values": [
+                  "apikey",
+                  "alerts@floworx-iq.com"
+                ]
+              },
+              {
+                "variable": "REACT_APP_API_URL",
+                "files": {
+                  "frontend/.env.production": "https://app.floworx-iq.com/api",
+                  "frontend/.env.development": "http://localhost:5001/api"
+                },
+                "values": [
+                  "https://app.floworx-iq.com/api",
+                  "http://localhost:5001/api"
+                ]
+              },
+              {
+                "variable": "GENERATE_SOURCEMAP",
+                "files": {
+                  "frontend/.env.production": "false",
+                  "frontend/.env.development": "true"
+                },
+                "values": [
+                  "false",
+                  "true"
+                ]
+              }
+            ]
+          },
+          "timestamp": "2025-09-19T23:13:26.180Z"
+        },
+        {
+          "type": "warning",
+          "message": "Potential port conflicts",
+          "details": {
+            "conflicts": [
+              {
+                "port": "587",
+                "files": [
+                  ".env.production",
+                  ".env.production.template"
+                ]
+              }
+            ]
+          },
+          "timestamp": "2025-09-19T23:13:26.184Z"
+        },
+        {
+          "type": "error",
+          "message": "Inconsistent production URLs",
+          "details": {
+            "urls": [
+              "https://app.floworx-iq.com",
+              "https://app.floworx-iq.com/api/oauth/google/callback",
+              "https://app.floworx-iq.com/auth/google/callback",
+              "https://app.floworx-iq.com,https://www.floworx-iq.com",
+              "https://app.floworx-iq.com/api"
+            ]
+          },
+          "timestamp": "2025-09-19T23:13:26.185Z"
+        }
+      ],
+      "details": {
+        "passed": 4,
+        "failed": 2,
+        "warnings": 1,
+        "issues": [
+          {
+            "type": "error",
+            "message": "Environment variable conflicts found",
+            "details": {
+              "conflicts": [
+                {
+                  "variable": "PORT",
+                  "files": {
+                    ".env.production": "5001",
+                    ".env.production.template": "3000"
+                  },
+                  "values": [
+                    "5001",
+                    "3000"
+                  ]
+                },
+                {
+                  "variable": "GOOGLE_REDIRECT_URI",
+                  "files": {
+                    ".env.production": "https://app.floworx-iq.com/api/oauth/google/callback",
+                    ".env.production.template": "https://app.floworx-iq.com/auth/google/callback"
+                  },
+                  "values": [
+                    "https://app.floworx-iq.com/api/oauth/google/callback",
+                    "https://app.floworx-iq.com/auth/google/callback"
+                  ]
+                },
+                {
+                  "variable": "SMTP_HOST",
+                  "files": {
+                    ".env.production": "smtp.sendgrid.net",
+                    ".env.production.template": "smtp.gmail.com"
+                  },
+                  "values": [
+                    "smtp.sendgrid.net",
+                    "smtp.gmail.com"
+                  ]
+                },
+                {
+                  "variable": "SMTP_USER",
+                  "files": {
+                    ".env.production": "apikey",
+                    ".env.production.template": "alerts@floworx-iq.com"
+                  },
+                  "values": [
+                    "apikey",
+                    "alerts@floworx-iq.com"
+                  ]
+                },
+                {
+                  "variable": "REACT_APP_API_URL",
+                  "files": {
+                    "frontend/.env.production": "https://app.floworx-iq.com/api",
+                    "frontend/.env.development": "http://localhost:5001/api"
+                  },
+                  "values": [
+                    "https://app.floworx-iq.com/api",
+                    "http://localhost:5001/api"
+                  ]
+                },
+                {
+                  "variable": "GENERATE_SOURCEMAP",
+                  "files": {
+                    "frontend/.env.production": "false",
+                    "frontend/.env.development": "true"
+                  },
+                  "values": [
+                    "false",
+                    "true"
+                  ]
+                }
+              ]
+            },
+            "timestamp": "2025-09-19T23:13:26.180Z"
+          },
+          {
+            "type": "warning",
+            "message": "Potential port conflicts",
+            "details": {
+              "conflicts": [
+                {
+                  "port": "587",
+                  "files": [
+                    ".env.production",
+                    ".env.production.template"
+                  ]
+                }
+              ]
+            },
+            "timestamp": "2025-09-19T23:13:26.184Z"
+          },
+          {
+            "type": "error",
+            "message": "Inconsistent production URLs",
+            "details": {
+              "urls": [
+                "https://app.floworx-iq.com",
+                "https://app.floworx-iq.com/api/oauth/google/callback",
+                "https://app.floworx-iq.com/auth/google/callback",
+                "https://app.floworx-iq.com,https://www.floworx-iq.com",
+                "https://app.floworx-iq.com/api"
+              ]
+            },
+            "timestamp": "2025-09-19T23:13:26.185Z"
+          }
+        ],
+        "summary": {}
+      },
+      "duration": 57,
+      "status": "FAILED",
+      "critical": true
+    },
+    "Configuration Consistency": {
+      "passed": 4,
+      "failed": 2,
+      "warnings": 1,
+      "issues": [
+        {
+          "type": "error",
+          "message": "Environment variable conflicts found",
+          "details": {
+            "conflicts": [
+              {
+                "variable": "PORT",
+                "files": {
+                  ".env.production": "5001",
+                  ".env.production.template": "3000"
+                },
+                "values": [
+                  "5001",
+                  "3000"
+                ]
+              },
+              {
+                "variable": "GOOGLE_REDIRECT_URI",
+                "files": {
+                  ".env.production": "https://app.floworx-iq.com/api/oauth/google/callback",
+                  ".env.production.template": "https://app.floworx-iq.com/auth/google/callback"
+                },
+                "values": [
+                  "https://app.floworx-iq.com/api/oauth/google/callback",
+                  "https://app.floworx-iq.com/auth/google/callback"
+                ]
+              },
+              {
+                "variable": "SMTP_HOST",
+                "files": {
+                  ".env.production": "smtp.sendgrid.net",
+                  ".env.production.template": "smtp.gmail.com"
+                },
+                "values": [
+                  "smtp.sendgrid.net",
+                  "smtp.gmail.com"
+                ]
+              },
+              {
+                "variable": "SMTP_USER",
+                "files": {
+                  ".env.production": "apikey",
+                  ".env.production.template": "alerts@floworx-iq.com"
+                },
+                "values": [
+                  "apikey",
+                  "alerts@floworx-iq.com"
+                ]
+              },
+              {
+                "variable": "REACT_APP_API_URL",
+                "files": {
+                  "frontend/.env.production": "https://app.floworx-iq.com/api",
+                  "frontend/.env.development": "http://localhost:5001/api"
+                },
+                "values": [
+                  "https://app.floworx-iq.com/api",
+                  "http://localhost:5001/api"
+                ]
+              },
+              {
+                "variable": "GENERATE_SOURCEMAP",
+                "files": {
+                  "frontend/.env.production": "false",
+                  "frontend/.env.development": "true"
+                },
+                "values": [
+                  "false",
+                  "true"
+                ]
+              }
+            ]
+          },
+          "timestamp": "2025-09-19T23:18:16.785Z"
+        },
+        {
+          "type": "warning",
+          "message": "Potential port conflicts",
+          "details": {
+            "conflicts": [
+              {
+                "port": "587",
+                "files": [
+                  ".env.production",
+                  ".env.production.template"
+                ]
+              }
+            ]
+          },
+          "timestamp": "2025-09-19T23:18:16.787Z"
+        },
+        {
+          "type": "error",
+          "message": "Inconsistent production URLs",
+          "details": {
+            "urls": [
+              "https://app.floworx-iq.com",
+              "https://app.floworx-iq.com/api/oauth/google/callback",
+              "https://app.floworx-iq.com/auth/google/callback",
+              "https://app.floworx-iq.com,https://www.floworx-iq.com",
+              "https://app.floworx-iq.com/api"
+            ]
+          },
+          "timestamp": "2025-09-19T23:18:16.789Z"
+        }
+      ],
+      "details": {
+        "passed": 4,
+        "failed": 2,
+        "warnings": 1,
+        "issues": [
+          {
+            "type": "error",
+            "message": "Environment variable conflicts found",
+            "details": {
+              "conflicts": [
+                {
+                  "variable": "PORT",
+                  "files": {
+                    ".env.production": "5001",
+                    ".env.production.template": "3000"
+                  },
+                  "values": [
+                    "5001",
+                    "3000"
+                  ]
+                },
+                {
+                  "variable": "GOOGLE_REDIRECT_URI",
+                  "files": {
+                    ".env.production": "https://app.floworx-iq.com/api/oauth/google/callback",
+                    ".env.production.template": "https://app.floworx-iq.com/auth/google/callback"
+                  },
+                  "values": [
+                    "https://app.floworx-iq.com/api/oauth/google/callback",
+                    "https://app.floworx-iq.com/auth/google/callback"
+                  ]
+                },
+                {
+                  "variable": "SMTP_HOST",
+                  "files": {
+                    ".env.production": "smtp.sendgrid.net",
+                    ".env.production.template": "smtp.gmail.com"
+                  },
+                  "values": [
+                    "smtp.sendgrid.net",
+                    "smtp.gmail.com"
+                  ]
+                },
+                {
+                  "variable": "SMTP_USER",
+                  "files": {
+                    ".env.production": "apikey",
+                    ".env.production.template": "alerts@floworx-iq.com"
+                  },
+                  "values": [
+                    "apikey",
+                    "alerts@floworx-iq.com"
+                  ]
+                },
+                {
+                  "variable": "REACT_APP_API_URL",
+                  "files": {
+                    "frontend/.env.production": "https://app.floworx-iq.com/api",
+                    "frontend/.env.development": "http://localhost:5001/api"
+                  },
+                  "values": [
+                    "https://app.floworx-iq.com/api",
+                    "http://localhost:5001/api"
+                  ]
+                },
+                {
+                  "variable": "GENERATE_SOURCEMAP",
+                  "files": {
+                    "frontend/.env.production": "false",
+                    "frontend/.env.development": "true"
+                  },
+                  "values": [
+                    "false",
+                    "true"
+                  ]
+                }
+              ]
+            },
+            "timestamp": "2025-09-19T23:18:16.785Z"
+          },
+          {
+            "type": "warning",
+            "message": "Potential port conflicts",
+            "details": {
+              "conflicts": [
+                {
+                  "port": "587",
+                  "files": [
+                    ".env.production",
+                    ".env.production.template"
+                  ]
+                }
+              ]
+            },
+            "timestamp": "2025-09-19T23:18:16.787Z"
+          },
+          {
+            "type": "error",
+            "message": "Inconsistent production URLs",
+            "details": {
+              "urls": [
+                "https://app.floworx-iq.com",
+                "https://app.floworx-iq.com/api/oauth/google/callback",
+                "https://app.floworx-iq.com/auth/google/callback",
+                "https://app.floworx-iq.com,https://www.floworx-iq.com",
+                "https://app.floworx-iq.com/api"
+              ]
+            },
+            "timestamp": "2025-09-19T23:18:16.789Z"
+          }
+        ],
+        "summary": {}
+      },
+      "duration": 46,
+      "status": "FAILED",
+      "critical": true
+    },
+    "Environment Variable Validation": {
+      "passed": 4,
+      "failed": 2,
+      "warnings": 1,
+      "issues": [
+        {
+          "type": "error",
+          "message": "Environment variable conflicts found",
+          "details": {
+            "conflicts": [
+              {
+                "variable": "PORT",
+                "files": {
+                  ".env.production": "5001",
+                  ".env.production.template": "3000"
+                },
+                "values": [
+                  "5001",
+                  "3000"
+                ]
+              },
+              {
+                "variable": "GOOGLE_REDIRECT_URI",
+                "files": {
+                  ".env.production": "https://app.floworx-iq.com/api/oauth/google/callback",
+                  ".env.production.template": "https://app.floworx-iq.com/auth/google/callback"
+                },
+                "values": [
+                  "https://app.floworx-iq.com/api/oauth/google/callback",
+                  "https://app.floworx-iq.com/auth/google/callback"
+                ]
+              },
+              {
+                "variable": "SMTP_HOST",
+                "files": {
+                  ".env.production": "smtp.sendgrid.net",
+                  ".env.production.template": "smtp.gmail.com"
+                },
+                "values": [
+                  "smtp.sendgrid.net",
+                  "smtp.gmail.com"
+                ]
+              },
+              {
+                "variable": "SMTP_USER",
+                "files": {
+                  ".env.production": "apikey",
+                  ".env.production.template": "alerts@floworx-iq.com"
+                },
+                "values": [
+                  "apikey",
+                  "alerts@floworx-iq.com"
+                ]
+              },
+              {
+                "variable": "REACT_APP_API_URL",
+                "files": {
+                  "frontend/.env.production": "https://app.floworx-iq.com/api",
+                  "frontend/.env.development": "http://localhost:5001/api"
+                },
+                "values": [
+                  "https://app.floworx-iq.com/api",
+                  "http://localhost:5001/api"
+                ]
+              },
+              {
+                "variable": "GENERATE_SOURCEMAP",
+                "files": {
+                  "frontend/.env.production": "false",
+                  "frontend/.env.development": "true"
+                },
+                "values": [
+                  "false",
+                  "true"
+                ]
+              }
+            ]
+          },
+          "timestamp": "2025-09-19T23:18:16.785Z"
+        },
+        {
+          "type": "warning",
+          "message": "Potential port conflicts",
+          "details": {
+            "conflicts": [
+              {
+                "port": "587",
+                "files": [
+                  ".env.production",
+                  ".env.production.template"
+                ]
+              }
+            ]
+          },
+          "timestamp": "2025-09-19T23:18:16.787Z"
+        },
+        {
+          "type": "error",
+          "message": "Inconsistent production URLs",
+          "details": {
+            "urls": [
+              "https://app.floworx-iq.com",
+              "https://app.floworx-iq.com/api/oauth/google/callback",
+              "https://app.floworx-iq.com/auth/google/callback",
+              "https://app.floworx-iq.com,https://www.floworx-iq.com",
+              "https://app.floworx-iq.com/api"
+            ]
+          },
+          "timestamp": "2025-09-19T23:18:16.789Z"
+        }
+      ],
+      "details": {
+        "passed": 4,
+        "failed": 2,
+        "warnings": 1,
+        "issues": [
+          {
+            "type": "error",
+            "message": "Environment variable conflicts found",
+            "details": {
+              "conflicts": [
+                {
+                  "variable": "PORT",
+                  "files": {
+                    ".env.production": "5001",
+                    ".env.production.template": "3000"
+                  },
+                  "values": [
+                    "5001",
+                    "3000"
+                  ]
+                },
+                {
+                  "variable": "GOOGLE_REDIRECT_URI",
+                  "files": {
+                    ".env.production": "https://app.floworx-iq.com/api/oauth/google/callback",
+                    ".env.production.template": "https://app.floworx-iq.com/auth/google/callback"
+                  },
+                  "values": [
+                    "https://app.floworx-iq.com/api/oauth/google/callback",
+                    "https://app.floworx-iq.com/auth/google/callback"
+                  ]
+                },
+                {
+                  "variable": "SMTP_HOST",
+                  "files": {
+                    ".env.production": "smtp.sendgrid.net",
+                    ".env.production.template": "smtp.gmail.com"
+                  },
+                  "values": [
+                    "smtp.sendgrid.net",
+                    "smtp.gmail.com"
+                  ]
+                },
+                {
+                  "variable": "SMTP_USER",
+                  "files": {
+                    ".env.production": "apikey",
+                    ".env.production.template": "alerts@floworx-iq.com"
+                  },
+                  "values": [
+                    "apikey",
+                    "alerts@floworx-iq.com"
+                  ]
+                },
+                {
+                  "variable": "REACT_APP_API_URL",
+                  "files": {
+                    "frontend/.env.production": "https://app.floworx-iq.com/api",
+                    "frontend/.env.development": "http://localhost:5001/api"
+                  },
+                  "values": [
+                    "https://app.floworx-iq.com/api",
+                    "http://localhost:5001/api"
+                  ]
+                },
+                {
+                  "variable": "GENERATE_SOURCEMAP",
+                  "files": {
+                    "frontend/.env.production": "false",
+                    "frontend/.env.development": "true"
+                  },
+                  "values": [
+                    "false",
+                    "true"
+                  ]
+                }
+              ]
+            },
+            "timestamp": "2025-09-19T23:18:16.785Z"
+          },
+          {
+            "type": "warning",
+            "message": "Potential port conflicts",
+            "details": {
+              "conflicts": [
+                {
+                  "port": "587",
+                  "files": [
+                    ".env.production",
+                    ".env.production.template"
+                  ]
+                }
+              ]
+            },
+            "timestamp": "2025-09-19T23:18:16.787Z"
+          },
+          {
+            "type": "error",
+            "message": "Inconsistent production URLs",
+            "details": {
+              "urls": [
+                "https://app.floworx-iq.com",
+                "https://app.floworx-iq.com/api/oauth/google/callback",
+                "https://app.floworx-iq.com/auth/google/callback",
+                "https://app.floworx-iq.com,https://www.floworx-iq.com",
+                "https://app.floworx-iq.com/api"
+              ]
+            },
+            "timestamp": "2025-09-19T23:18:16.789Z"
+          }
+        ],
+        "summary": {}
+      },
+      "duration": 179,
+      "status": "FAILED",
+      "critical": true
+    },
+    "API Contract Validation": {
+      "passed": 4,
+      "failed": 2,
+      "warnings": 1,
+      "issues": [
+        {
+          "type": "error",
+          "message": "Environment variable conflicts found",
+          "details": {
+            "conflicts": [
+              {
+                "variable": "PORT",
+                "files": {
+                  ".env.production": "5001",
+                  ".env.production.template": "3000"
+                },
+                "values": [
+                  "5001",
+                  "3000"
+                ]
+              },
+              {
+                "variable": "GOOGLE_REDIRECT_URI",
+                "files": {
+                  ".env.production": "https://app.floworx-iq.com/api/oauth/google/callback",
+                  ".env.production.template": "https://app.floworx-iq.com/auth/google/callback"
+                },
+                "values": [
+                  "https://app.floworx-iq.com/api/oauth/google/callback",
+                  "https://app.floworx-iq.com/auth/google/callback"
+                ]
+              },
+              {
+                "variable": "SMTP_HOST",
+                "files": {
+                  ".env.production": "smtp.sendgrid.net",
+                  ".env.production.template": "smtp.gmail.com"
+                },
+                "values": [
+                  "smtp.sendgrid.net",
+                  "smtp.gmail.com"
+                ]
+              },
+              {
+                "variable": "SMTP_USER",
+                "files": {
+                  ".env.production": "apikey",
+                  ".env.production.template": "alerts@floworx-iq.com"
+                },
+                "values": [
+                  "apikey",
+                  "alerts@floworx-iq.com"
+                ]
+              },
+              {
+                "variable": "REACT_APP_API_URL",
+                "files": {
+                  "frontend/.env.production": "https://app.floworx-iq.com/api",
+                  "frontend/.env.development": "http://localhost:5001/api"
+                },
+                "values": [
+                  "https://app.floworx-iq.com/api",
+                  "http://localhost:5001/api"
+                ]
+              },
+              {
+                "variable": "GENERATE_SOURCEMAP",
+                "files": {
+                  "frontend/.env.production": "false",
+                  "frontend/.env.development": "true"
+                },
+                "values": [
+                  "false",
+                  "true"
+                ]
+              }
+            ]
+          },
+          "timestamp": "2025-09-19T23:18:16.785Z"
+        },
+        {
+          "type": "warning",
+          "message": "Potential port conflicts",
+          "details": {
+            "conflicts": [
+              {
+                "port": "587",
+                "files": [
+                  ".env.production",
+                  ".env.production.template"
+                ]
+              }
+            ]
+          },
+          "timestamp": "2025-09-19T23:18:16.787Z"
+        },
+        {
+          "type": "error",
+          "message": "Inconsistent production URLs",
+          "details": {
+            "urls": [
+              "https://app.floworx-iq.com",
+              "https://app.floworx-iq.com/api/oauth/google/callback",
+              "https://app.floworx-iq.com/auth/google/callback",
+              "https://app.floworx-iq.com,https://www.floworx-iq.com",
+              "https://app.floworx-iq.com/api"
+            ]
+          },
+          "timestamp": "2025-09-19T23:18:16.789Z"
+        }
+      ],
+      "details": {
+        "passed": 4,
+        "failed": 2,
+        "warnings": 1,
+        "issues": [
+          {
+            "type": "error",
+            "message": "Environment variable conflicts found",
+            "details": {
+              "conflicts": [
+                {
+                  "variable": "PORT",
+                  "files": {
+                    ".env.production": "5001",
+                    ".env.production.template": "3000"
+                  },
+                  "values": [
+                    "5001",
+                    "3000"
+                  ]
+                },
+                {
+                  "variable": "GOOGLE_REDIRECT_URI",
+                  "files": {
+                    ".env.production": "https://app.floworx-iq.com/api/oauth/google/callback",
+                    ".env.production.template": "https://app.floworx-iq.com/auth/google/callback"
+                  },
+                  "values": [
+                    "https://app.floworx-iq.com/api/oauth/google/callback",
+                    "https://app.floworx-iq.com/auth/google/callback"
+                  ]
+                },
+                {
+                  "variable": "SMTP_HOST",
+                  "files": {
+                    ".env.production": "smtp.sendgrid.net",
+                    ".env.production.template": "smtp.gmail.com"
+                  },
+                  "values": [
+                    "smtp.sendgrid.net",
+                    "smtp.gmail.com"
+                  ]
+                },
+                {
+                  "variable": "SMTP_USER",
+                  "files": {
+                    ".env.production": "apikey",
+                    ".env.production.template": "alerts@floworx-iq.com"
+                  },
+                  "values": [
+                    "apikey",
+                    "alerts@floworx-iq.com"
+                  ]
+                },
+                {
+                  "variable": "REACT_APP_API_URL",
+                  "files": {
+                    "frontend/.env.production": "https://app.floworx-iq.com/api",
+                    "frontend/.env.development": "http://localhost:5001/api"
+                  },
+                  "values": [
+                    "https://app.floworx-iq.com/api",
+                    "http://localhost:5001/api"
+                  ]
+                },
+                {
+                  "variable": "GENERATE_SOURCEMAP",
+                  "files": {
+                    "frontend/.env.production": "false",
+                    "frontend/.env.development": "true"
+                  },
+                  "values": [
+                    "false",
+                    "true"
+                  ]
+                }
+              ]
+            },
+            "timestamp": "2025-09-19T23:18:16.785Z"
+          },
+          {
+            "type": "warning",
+            "message": "Potential port conflicts",
+            "details": {
+              "conflicts": [
+                {
+                  "port": "587",
+                  "files": [
+                    ".env.production",
+                    ".env.production.template"
+                  ]
+                }
+              ]
+            },
+            "timestamp": "2025-09-19T23:18:16.787Z"
+          },
+          {
+            "type": "error",
+            "message": "Inconsistent production URLs",
+            "details": {
+              "urls": [
+                "https://app.floworx-iq.com",
+                "https://app.floworx-iq.com/api/oauth/google/callback",
+                "https://app.floworx-iq.com/auth/google/callback",
+                "https://app.floworx-iq.com,https://www.floworx-iq.com",
+                "https://app.floworx-iq.com/api"
+              ]
+            },
+            "timestamp": "2025-09-19T23:18:16.789Z"
+          }
+        ],
+        "summary": {}
+      },
+      "duration": 84,
+      "status": "FAILED",
+      "critical": true
+    }
+  },
+  "summary": {
+    "totalValidations": 4,
+    "passedValidations": 0,
+    "failedValidations": 4,
+    "totalIssues": 12,
+    "criticalIssues": 8,
+    "warningIssues": 4,
+    "overallStatus": "CRITICAL_ISSUES"
+  },
+  "recommendations": [
+    {
+      "priority": "HIGH",
+      "category": "Critical Issues",
+      "message": "8 critical issues found that require immediate attention",
+      "action": "Review and fix critical issues before deployment"
+    },
+    {
+      "priority": "HIGH",
+      "category": "Critical Validations",
+      "message": "4 critical validations failed",
+      "action": "Fix critical validation failures: Component Contract Validation, Configuration Consistency, Environment Variable Validation, API Contract Validation"
+    }
+  ],
+  "metadata": {
+    "version": "1.0.0",
+    "generatedBy": "FloWorx Master Validation Orchestrator",
+    "nodeVersion": "v24.7.0",
+    "platform": "win32"
+  }
+}

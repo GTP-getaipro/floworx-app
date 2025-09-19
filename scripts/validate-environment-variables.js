@@ -10,10 +10,9 @@
 const fs = require('fs');
 const path = require('path');
 const { promisify } = require('util');
-const glob = require('glob');
+const { glob } = require('glob');
 
 const readFile = promisify(fs.readFile);
-const globAsync = promisify(glob);
 
 class EnvironmentVariableValidator {
   constructor() {
@@ -120,8 +119,8 @@ class EnvironmentVariableValidator {
   async scanCodeUsage() {
     console.log('\n🔍 Scanning Code for Environment Variable Usage...');
     
-    const files = await globAsync('**/*.{js,jsx}', {
-      ignore: ['node_modules/**', 'build/**', 'dist/**', 'coverage/**']
+    const files = await glob('**/*.{js,jsx}', {
+      ignore: ['**/node_modules/**', '**/build/**', '**/dist/**', '**/coverage/**', '**/.git/**']
     });
     
     const usage = new Set();

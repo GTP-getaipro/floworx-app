@@ -10,10 +10,9 @@
 const fs = require('fs');
 const path = require('path');
 const { promisify } = require('util');
-const glob = require('glob');
+const { glob } = require('glob');
 
 const readFile = promisify(fs.readFile);
-const globAsync = promisify(glob);
 
 class DoubleReferenceDetector {
   constructor() {
@@ -50,8 +49,8 @@ class DoubleReferenceDetector {
   async detectDuplicateImports() {
     console.log('\n📦 Detecting Duplicate Imports...');
     
-    const files = await globAsync('**/*.{js,jsx}', {
-      ignore: ['node_modules/**', 'build/**', 'dist/**', 'coverage/**']
+    const files = await glob('**/*.{js,jsx}', {
+      ignore: ['**/node_modules/**', '**/build/**', '**/dist/**', '**/coverage/**', '**/.git/**']
     });
     
     const importMap = new Map();
@@ -98,8 +97,8 @@ class DoubleReferenceDetector {
   async detectDuplicateRoutes() {
     console.log('\n🛣️ Detecting Duplicate Routes...');
     
-    const routeFiles = await globAsync('**/routes/**/*.js', {
-      ignore: ['node_modules/**']
+    const routeFiles = await glob('**/routes/**/*.js', {
+      ignore: ['**/node_modules/**', '**/.git/**']
     });
     
     const routeMap = new Map();
@@ -146,8 +145,8 @@ class DoubleReferenceDetector {
   async detectDuplicateComponents() {
     console.log('\n⚛️ Detecting Duplicate Components...');
     
-    const componentFiles = await globAsync('**/components/**/*.{js,jsx}', {
-      ignore: ['node_modules/**']
+    const componentFiles = await glob('**/components/**/*.{js,jsx}', {
+      ignore: ['**/node_modules/**', '**/.git/**']
     });
     
     const componentMap = new Map();
@@ -190,8 +189,8 @@ class DoubleReferenceDetector {
   async detectDuplicateExports() {
     console.log('\n📤 Detecting Duplicate Exports...');
     
-    const files = await globAsync('**/*.{js,jsx}', {
-      ignore: ['node_modules/**', 'build/**', 'dist/**']
+    const files = await glob('**/*.{js,jsx}', {
+      ignore: ['**/node_modules/**', '**/build/**', '**/dist/**', '**/.git/**']
     });
     
     const exportMap = new Map();
@@ -234,8 +233,8 @@ class DoubleReferenceDetector {
   async detectDuplicateConstants() {
     console.log('\n🔢 Detecting Duplicate Constants...');
     
-    const files = await globAsync('**/*.{js,jsx}', {
-      ignore: ['node_modules/**', 'build/**', 'dist/**']
+    const files = await glob('**/*.{js,jsx}', {
+      ignore: ['**/node_modules/**', '**/build/**', '**/dist/**', '**/.git/**']
     });
     
     const constantMap = new Map();
@@ -281,8 +280,8 @@ class DoubleReferenceDetector {
   async detectDuplicateUtilities() {
     console.log('\n🛠️ Detecting Duplicate Utilities...');
     
-    const utilFiles = await globAsync('**/utils/**/*.{js,jsx}', {
-      ignore: ['node_modules/**']
+    const utilFiles = await glob('**/utils/**/*.{js,jsx}', {
+      ignore: ['**/node_modules/**', '**/.git/**']
     });
     
     const utilityMap = new Map();

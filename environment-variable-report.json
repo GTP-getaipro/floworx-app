@@ -1,0 +1,857 @@
+{
+  "missingVariables": [
+    {
+      "variable": "NODE_ENV",
+      "environment": "development",
+      "severity": "warning",
+      "suggestion": "Define appropriate value for your environment"
+    },
+    {
+      "variable": "PORT",
+      "environment": "development",
+      "severity": "warning",
+      "suggestion": "Set to 5001 for production, 3000 for development"
+    },
+    {
+      "variable": "SUPABASE_URL",
+      "environment": "development",
+      "severity": "warning",
+      "suggestion": "Get from Supabase project settings"
+    },
+    {
+      "variable": "SUPABASE_ANON_KEY",
+      "environment": "development",
+      "severity": "warning",
+      "suggestion": "Get from Supabase project API settings"
+    },
+    {
+      "variable": "UAT_BASE_URL",
+      "environment": "all",
+      "severity": "critical",
+      "suggestion": "Define in appropriate environment files"
+    },
+    {
+      "variable": "STRIPE_PUBLISHABLE_KEY",
+      "environment": "all",
+      "severity": "critical",
+      "suggestion": "Define in appropriate environment files"
+    },
+    {
+      "variable": "STRIPE_SECRET_KEY",
+      "environment": "all",
+      "severity": "critical",
+      "suggestion": "Define in appropriate environment files"
+    },
+    {
+      "variable": "STRIPE_WEBHOOK_SECRET",
+      "environment": "all",
+      "severity": "critical",
+      "suggestion": "Define in appropriate environment files"
+    },
+    {
+      "variable": "REDIS_HOST",
+      "environment": "all",
+      "severity": "critical",
+      "suggestion": "Define in appropriate environment files"
+    },
+    {
+      "variable": "REDIS_PORT",
+      "environment": "all",
+      "severity": "critical",
+      "suggestion": "Define in appropriate environment files"
+    },
+    {
+      "variable": "API_BASE_URL",
+      "environment": "all",
+      "severity": "critical",
+      "suggestion": "Define in appropriate environment files"
+    },
+    {
+      "variable": "API_URL",
+      "environment": "all",
+      "severity": "critical",
+      "suggestion": "Define in appropriate environment files"
+    },
+    {
+      "variable": "TEST_BASE_URL",
+      "environment": "all",
+      "severity": "critical",
+      "suggestion": "Define in appropriate environment files"
+    },
+    {
+      "variable": "STAGING_URL",
+      "environment": "all",
+      "severity": "critical",
+      "suggestion": "Define in appropriate environment files"
+    },
+    {
+      "variable": "REDIS_CLUSTER_ENABLED",
+      "environment": "all",
+      "severity": "critical",
+      "suggestion": "Define in appropriate environment files"
+    },
+    {
+      "variable": "REDIS_CLUSTER_NODES",
+      "environment": "all",
+      "severity": "critical",
+      "suggestion": "Define in appropriate environment files"
+    },
+    {
+      "variable": "REDIS_PASSWORD",
+      "environment": "all",
+      "severity": "critical",
+      "suggestion": "Define in appropriate environment files"
+    },
+    {
+      "variable": "REDIS_DB",
+      "environment": "all",
+      "severity": "critical",
+      "suggestion": "Define in appropriate environment files"
+    },
+    {
+      "variable": "SUPPORT_EMAIL",
+      "environment": "all",
+      "severity": "critical",
+      "suggestion": "Define in appropriate environment files"
+    },
+    {
+      "variable": "UAT_ENVIRONMENT",
+      "environment": "all",
+      "severity": "critical",
+      "suggestion": "Define in appropriate environment files"
+    },
+    {
+      "variable": "UAT_DASHBOARD_PORT",
+      "environment": "all",
+      "severity": "critical",
+      "suggestion": "Define in appropriate environment files"
+    },
+    {
+      "variable": "ACCOUNT_RECOVERY_TOKEN_EXPIRY",
+      "environment": "all",
+      "severity": "critical",
+      "suggestion": "Define in appropriate environment files"
+    },
+    {
+      "variable": "MAX_FAILED_LOGIN_ATTEMPTS",
+      "environment": "all",
+      "severity": "critical",
+      "suggestion": "Define in appropriate environment files"
+    },
+    {
+      "variable": "ACCOUNT_LOCKOUT_DURATION",
+      "environment": "all",
+      "severity": "critical",
+      "suggestion": "Define in appropriate environment files"
+    },
+    {
+      "variable": "PROGRESSIVE_LOCKOUT_MULTIPLIER",
+      "environment": "all",
+      "severity": "critical",
+      "suggestion": "Define in appropriate environment files"
+    },
+    {
+      "variable": "VARIABLE_NAME",
+      "environment": "all",
+      "severity": "critical",
+      "suggestion": "Define in appropriate environment files"
+    },
+    {
+      "variable": "BASE_URL",
+      "environment": "all",
+      "severity": "critical",
+      "suggestion": "Define in appropriate environment files"
+    },
+    {
+      "variable": "SKIP_E2E",
+      "environment": "all",
+      "severity": "critical",
+      "suggestion": "Define in appropriate environment files"
+    },
+    {
+      "variable": "CYPRESS_BASE_URL",
+      "environment": "all",
+      "severity": "critical",
+      "suggestion": "Define in appropriate environment files"
+    },
+    {
+      "variable": "CYPRESS_BROWSER",
+      "environment": "all",
+      "severity": "critical",
+      "suggestion": "Define in appropriate environment files"
+    },
+    {
+      "variable": "CYPRESS_HEADED",
+      "environment": "all",
+      "severity": "critical",
+      "suggestion": "Define in appropriate environment files"
+    },
+    {
+      "variable": "ELASTICSEARCH_URL",
+      "environment": "all",
+      "severity": "critical",
+      "suggestion": "Define in appropriate environment files"
+    },
+    {
+      "variable": "ELASTICSEARCH_USERNAME",
+      "environment": "all",
+      "severity": "critical",
+      "suggestion": "Define in appropriate environment files"
+    },
+    {
+      "variable": "ELASTICSEARCH_PASSWORD",
+      "environment": "all",
+      "severity": "critical",
+      "suggestion": "Define in appropriate environment files"
+    },
+    {
+      "variable": "ALERT_EMAIL",
+      "environment": "all",
+      "severity": "critical",
+      "suggestion": "Define in appropriate environment files"
+    },
+    {
+      "variable": "VERCEL",
+      "environment": "all",
+      "severity": "critical",
+      "suggestion": "Define in appropriate environment files"
+    },
+    {
+      "variable": "PLAYWRIGHT_BASE_URL",
+      "environment": "all",
+      "severity": "critical",
+      "suggestion": "Define in appropriate environment files"
+    },
+    {
+      "variable": "SUPABASE_SERVICE_KEY",
+      "environment": "all",
+      "severity": "critical",
+      "suggestion": "Define in appropriate environment files"
+    },
+    {
+      "variable": "TEST_API_URL",
+      "environment": "all",
+      "severity": "critical",
+      "suggestion": "Define in appropriate environment files"
+    },
+    {
+      "variable": "GENERATE_HTML_REPORT",
+      "environment": "all",
+      "severity": "critical",
+      "suggestion": "Define in appropriate environment files"
+    },
+    {
+      "variable": "TEST_SERVER_URL",
+      "environment": "all",
+      "severity": "critical",
+      "suggestion": "Define in appropriate environment files"
+    },
+    {
+      "variable": "TEST_URL",
+      "environment": "all",
+      "severity": "critical",
+      "suggestion": "Define in appropriate environment files"
+    },
+    {
+      "variable": "TEST_DB_HOST",
+      "environment": "all",
+      "severity": "critical",
+      "suggestion": "Define in appropriate environment files"
+    },
+    {
+      "variable": "TEST_DB_PORT",
+      "environment": "all",
+      "severity": "critical",
+      "suggestion": "Define in appropriate environment files"
+    },
+    {
+      "variable": "TEST_DB_USER",
+      "environment": "all",
+      "severity": "critical",
+      "suggestion": "Define in appropriate environment files"
+    },
+    {
+      "variable": "TEST_DB_PASSWORD",
+      "environment": "all",
+      "severity": "critical",
+      "suggestion": "Define in appropriate environment files"
+    },
+    {
+      "variable": "ALLOWED_ORIGINS",
+      "environment": "all",
+      "severity": "critical",
+      "suggestion": "Define in appropriate environment files"
+    },
+    {
+      "variable": "CODE_AUDIT",
+      "environment": "all",
+      "severity": "critical",
+      "suggestion": "Define in appropriate environment files"
+    },
+    {
+      "variable": "TEST_RUN_ID",
+      "environment": "all",
+      "severity": "critical",
+      "suggestion": "Define in appropriate environment files"
+    },
+    {
+      "variable": "TEST_DATABASE_URL",
+      "environment": "all",
+      "severity": "critical",
+      "suggestion": "Define in appropriate environment files"
+    },
+    {
+      "variable": "DISABLE_RATE_LIMITING",
+      "environment": "all",
+      "severity": "critical",
+      "suggestion": "Define in appropriate environment files"
+    },
+    {
+      "variable": "MS_CLIENT_ID",
+      "environment": "all",
+      "severity": "critical",
+      "suggestion": "Define in appropriate environment files"
+    },
+    {
+      "variable": "MS_CLIENT_SECRET",
+      "environment": "all",
+      "severity": "critical",
+      "suggestion": "Define in appropriate environment files"
+    },
+    {
+      "variable": "MS_REDIRECT_URI",
+      "environment": "all",
+      "severity": "critical",
+      "suggestion": "Define in appropriate environment files"
+    },
+    {
+      "variable": "SESSION_TTL_MIN",
+      "environment": "all",
+      "severity": "critical",
+      "suggestion": "Define in appropriate environment files"
+    },
+    {
+      "variable": "REFRESH_TTL_DAYS",
+      "environment": "all",
+      "severity": "critical",
+      "suggestion": "Define in appropriate environment files"
+    },
+    {
+      "variable": "REVOKE_ALL_ON_REUSE",
+      "environment": "all",
+      "severity": "critical",
+      "suggestion": "Define in appropriate environment files"
+    },
+    {
+      "variable": "KEYDB_HOST",
+      "environment": "all",
+      "severity": "critical",
+      "suggestion": "Define in appropriate environment files"
+    },
+    {
+      "variable": "KEYDB_PASSWORD",
+      "environment": "all",
+      "severity": "critical",
+      "suggestion": "Define in appropriate environment files"
+    },
+    {
+      "variable": "DISABLE_REDIS",
+      "environment": "all",
+      "severity": "critical",
+      "suggestion": "Define in appropriate environment files"
+    },
+    {
+      "variable": "SKIP_RATE_LIMIT",
+      "environment": "all",
+      "severity": "critical",
+      "suggestion": "Define in appropriate environment files"
+    },
+    {
+      "variable": "DISABLE_RATE_LIMIT",
+      "environment": "all",
+      "severity": "critical",
+      "suggestion": "Define in appropriate environment files"
+    },
+    {
+      "variable": "ENABLE_API_DOCS",
+      "environment": "all",
+      "severity": "critical",
+      "suggestion": "Define in appropriate environment files"
+    },
+    {
+      "variable": "USAGE_AUDIT",
+      "environment": "all",
+      "severity": "critical",
+      "suggestion": "Define in appropriate environment files"
+    },
+    {
+      "variable": "CURRENT_ROUTE",
+      "environment": "all",
+      "severity": "critical",
+      "suggestion": "Define in appropriate environment files"
+    },
+    {
+      "variable": "CURRENT_USER_ID",
+      "environment": "all",
+      "severity": "critical",
+      "suggestion": "Define in appropriate environment files"
+    },
+    {
+      "variable": "CURRENT_SESSION_ID",
+      "environment": "all",
+      "severity": "critical",
+      "suggestion": "Define in appropriate environment files"
+    },
+    {
+      "variable": "KEYDB_PORT",
+      "environment": "all",
+      "severity": "critical",
+      "suggestion": "Define in appropriate environment files"
+    },
+    {
+      "variable": "FLOWORX_API_URL",
+      "environment": "all",
+      "severity": "critical",
+      "suggestion": "Define in appropriate environment files"
+    },
+    {
+      "variable": "N8N_API_URL",
+      "environment": "all",
+      "severity": "critical",
+      "suggestion": "Define in appropriate environment files"
+    },
+    {
+      "variable": "REPLY_TO_EMAIL",
+      "environment": "all",
+      "severity": "critical",
+      "suggestion": "Define in appropriate environment files"
+    },
+    {
+      "variable": "CACHE_TTL",
+      "environment": "all",
+      "severity": "critical",
+      "suggestion": "Define in appropriate environment files"
+    },
+    {
+      "variable": "CACHE_MAX_KEYS",
+      "environment": "all",
+      "severity": "critical",
+      "suggestion": "Define in appropriate environment files"
+    },
+    {
+      "variable": "ENABLE_REDIS_IN_TESTS",
+      "environment": "all",
+      "severity": "critical",
+      "suggestion": "Define in appropriate environment files"
+    },
+    {
+      "variable": "KEYDB_URL",
+      "environment": "all",
+      "severity": "critical",
+      "suggestion": "Define in appropriate environment files"
+    },
+    {
+      "variable": "JWT_EXPIRY",
+      "environment": "all",
+      "severity": "critical",
+      "suggestion": "Define in appropriate environment files"
+    },
+    {
+      "variable": "SMTP_SECURE",
+      "environment": "all",
+      "severity": "critical",
+      "suggestion": "Define in appropriate environment files"
+    },
+    {
+      "variable": "N8N_ENABLED",
+      "environment": "all",
+      "severity": "critical",
+      "suggestion": "Define in appropriate environment files"
+    },
+    {
+      "variable": "MAX_REQUEST_SIZE",
+      "environment": "all",
+      "severity": "critical",
+      "suggestion": "Define in appropriate environment files"
+    },
+    {
+      "variable": "COMPRESSION_LEVEL",
+      "environment": "all",
+      "severity": "critical",
+      "suggestion": "Define in appropriate environment files"
+    },
+    {
+      "variable": "ENABLE_METRICS",
+      "environment": "all",
+      "severity": "critical",
+      "suggestion": "Define in appropriate environment files"
+    },
+    {
+      "variable": "ENABLE_TRACING",
+      "environment": "all",
+      "severity": "critical",
+      "suggestion": "Define in appropriate environment files"
+    },
+    {
+      "variable": "DEPLOYMENT_PLATFORM",
+      "environment": "all",
+      "severity": "critical",
+      "suggestion": "Define in appropriate environment files"
+    },
+    {
+      "variable": "BUILD_ENV",
+      "environment": "all",
+      "severity": "critical",
+      "suggestion": "Define in appropriate environment files"
+    },
+    {
+      "variable": "HEALTH_CHECK_PATH",
+      "environment": "all",
+      "severity": "critical",
+      "suggestion": "Define in appropriate environment files"
+    },
+    {
+      "variable": "E2E_HEADLESS",
+      "environment": "all",
+      "severity": "critical",
+      "suggestion": "Define in appropriate environment files"
+    },
+    {
+      "variable": "E2E_SLOW_MO",
+      "environment": "all",
+      "severity": "critical",
+      "suggestion": "Define in appropriate environment files"
+    },
+    {
+      "variable": "TEST_DB_NAME",
+      "environment": "all",
+      "severity": "critical",
+      "suggestion": "Define in appropriate environment files"
+    },
+    {
+      "variable": "TEST_FRONTEND_PORT",
+      "environment": "all",
+      "severity": "critical",
+      "suggestion": "Define in appropriate environment files"
+    },
+    {
+      "variable": "DEBUG_E2E",
+      "environment": "all",
+      "severity": "critical",
+      "suggestion": "Define in appropriate environment files"
+    },
+    {
+      "variable": "TEST_ENV",
+      "environment": "all",
+      "severity": "critical",
+      "suggestion": "Define in appropriate environment files"
+    }
+  ],
+  "inconsistentValues": [],
+  "securityIssues": [
+    {
+      "variable": "SUPABASE_ANON_KEY",
+      "file": ".env.production",
+      "environment": "production",
+      "issue": "Placeholder value detected",
+      "severity": "critical"
+    },
+    {
+      "variable": "SUPABASE_SERVICE_ROLE_KEY",
+      "file": ".env.production",
+      "environment": "production",
+      "issue": "Placeholder value detected",
+      "severity": "critical"
+    },
+    {
+      "variable": "GOOGLE_CLIENT_SECRET",
+      "file": ".env.production",
+      "environment": "production",
+      "issue": "Placeholder value detected",
+      "severity": "critical"
+    },
+    {
+      "variable": "N8N_API_KEY",
+      "file": ".env.production",
+      "environment": "production",
+      "issue": "Placeholder value detected",
+      "severity": "critical"
+    },
+    {
+      "variable": "REACT_APP_API_URL",
+      "file": "frontend/.env.development",
+      "environment": "development",
+      "issue": "Hardcoded value detected",
+      "severity": "warning"
+    },
+    {
+      "variable": "REACT_APP_ENVIRONMENT",
+      "file": "frontend/.env.development",
+      "environment": "development",
+      "issue": "Hardcoded value detected",
+      "severity": "warning"
+    },
+    {
+      "variable": "JWT_SECRET",
+      "file": ".env.test",
+      "environment": "test",
+      "issue": "Example/test value in production variable",
+      "severity": "critical"
+    },
+    {
+      "variable": "ENCRYPTION_KEY",
+      "file": ".env.test",
+      "environment": "test",
+      "issue": "Example/test value in production variable",
+      "severity": "critical"
+    },
+    {
+      "variable": "DATADOG_API_KEY",
+      "file": ".env.production.template",
+      "environment": "template",
+      "issue": "Placeholder value detected",
+      "severity": "critical"
+    },
+    {
+      "variable": "DATADOG_APP_KEY",
+      "file": ".env.production.template",
+      "environment": "template",
+      "issue": "Placeholder value detected",
+      "severity": "critical"
+    },
+    {
+      "variable": "NEW_RELIC_LICENSE_KEY",
+      "file": ".env.production.template",
+      "environment": "template",
+      "issue": "Placeholder value detected",
+      "severity": "critical"
+    },
+    {
+      "variable": "PAGERDUTY_INTEGRATION_KEY",
+      "file": ".env.production.template",
+      "environment": "template",
+      "issue": "Placeholder value detected",
+      "severity": "critical"
+    },
+    {
+      "variable": "PAGERDUTY_SERVICE_KEY",
+      "file": ".env.production.template",
+      "environment": "template",
+      "issue": "Placeholder value detected",
+      "severity": "critical"
+    },
+    {
+      "variable": "N8N_API_KEY",
+      "file": ".env.production.template",
+      "environment": "template",
+      "issue": "Placeholder value detected",
+      "severity": "critical"
+    },
+    {
+      "variable": "SUPABASE_ANON_KEY",
+      "file": ".env.production.template",
+      "environment": "template",
+      "issue": "Placeholder value detected",
+      "severity": "critical"
+    },
+    {
+      "variable": "SUPABASE_SERVICE_ROLE_KEY",
+      "file": ".env.production.template",
+      "environment": "template",
+      "issue": "Placeholder value detected",
+      "severity": "critical"
+    },
+    {
+      "variable": "GOOGLE_CLIENT_SECRET",
+      "file": ".env.production.template",
+      "environment": "template",
+      "issue": "Placeholder value detected",
+      "severity": "critical"
+    }
+  ],
+  "unusedVariables": [
+    {
+      "variable": "ENABLE_REQUEST_LOGGING",
+      "severity": "warning",
+      "suggestion": "Consider removing if not needed"
+    },
+    {
+      "variable": "ENABLE_ERROR_TRACKING",
+      "severity": "warning",
+      "suggestion": "Consider removing if not needed"
+    },
+    {
+      "variable": "GENERATE_SOURCEMAP",
+      "severity": "warning",
+      "suggestion": "Consider removing if not needed"
+    },
+    {
+      "variable": "DISABLE_ESLINT_PLUGIN",
+      "severity": "warning",
+      "suggestion": "Consider removing if not needed"
+    },
+    {
+      "variable": "ESLINT_NO_DEV_ERRORS",
+      "severity": "warning",
+      "suggestion": "Consider removing if not needed"
+    },
+    {
+      "variable": "TSC_COMPILE_ON_ERROR",
+      "severity": "warning",
+      "suggestion": "Consider removing if not needed"
+    },
+    {
+      "variable": "REACT_APP_ENVIRONMENT",
+      "severity": "warning",
+      "suggestion": "Consider removing if not needed"
+    },
+    {
+      "variable": "REACT_APP_DEBUG",
+      "severity": "warning",
+      "suggestion": "Consider removing if not needed"
+    },
+    {
+      "variable": "DB_SSL",
+      "severity": "warning",
+      "suggestion": "Consider removing if not needed"
+    },
+    {
+      "variable": "DB_MAX_CONNECTIONS",
+      "severity": "warning",
+      "suggestion": "Consider removing if not needed"
+    },
+    {
+      "variable": "AWS_ACCESS_KEY_ID",
+      "severity": "warning",
+      "suggestion": "Consider removing if not needed"
+    },
+    {
+      "variable": "AWS_SECRET_ACCESS_KEY",
+      "severity": "warning",
+      "suggestion": "Consider removing if not needed"
+    },
+    {
+      "variable": "LOG_FORMAT",
+      "severity": "warning",
+      "suggestion": "Consider removing if not needed"
+    },
+    {
+      "variable": "LOG_FILE_ENABLED",
+      "severity": "warning",
+      "suggestion": "Consider removing if not needed"
+    },
+    {
+      "variable": "LOG_FILE_PATH",
+      "severity": "warning",
+      "suggestion": "Consider removing if not needed"
+    },
+    {
+      "variable": "LOG_MAX_SIZE",
+      "severity": "warning",
+      "suggestion": "Consider removing if not needed"
+    },
+    {
+      "variable": "LOG_MAX_FILES",
+      "severity": "warning",
+      "suggestion": "Consider removing if not needed"
+    },
+    {
+      "variable": "CORS_CREDENTIALS",
+      "severity": "warning",
+      "suggestion": "Consider removing if not needed"
+    },
+    {
+      "variable": "RATE_LIMIT_SKIP_SUCCESSFUL_REQUESTS",
+      "severity": "warning",
+      "suggestion": "Consider removing if not needed"
+    },
+    {
+      "variable": "SSL_ENABLED",
+      "severity": "warning",
+      "suggestion": "Consider removing if not needed"
+    },
+    {
+      "variable": "SSL_CERT_PATH",
+      "severity": "warning",
+      "suggestion": "Consider removing if not needed"
+    },
+    {
+      "variable": "SSL_KEY_PATH",
+      "severity": "warning",
+      "suggestion": "Consider removing if not needed"
+    },
+    {
+      "variable": "BACKUP_ENABLED",
+      "severity": "warning",
+      "suggestion": "Consider removing if not needed"
+    },
+    {
+      "variable": "BACKUP_SCHEDULE",
+      "severity": "warning",
+      "suggestion": "Consider removing if not needed"
+    },
+    {
+      "variable": "BACKUP_RETENTION_DAYS",
+      "severity": "warning",
+      "suggestion": "Consider removing if not needed"
+    },
+    {
+      "variable": "BACKUP_S3_BUCKET",
+      "severity": "warning",
+      "suggestion": "Consider removing if not needed"
+    },
+    {
+      "variable": "FEATURE_ADAPTIVE_THRESHOLDS",
+      "severity": "warning",
+      "suggestion": "Consider removing if not needed"
+    },
+    {
+      "variable": "FEATURE_BUSINESS_ALERTING",
+      "severity": "warning",
+      "suggestion": "Consider removing if not needed"
+    },
+    {
+      "variable": "FEATURE_STAKEHOLDER_REPORTS",
+      "severity": "warning",
+      "suggestion": "Consider removing if not needed"
+    },
+    {
+      "variable": "FEATURE_REAL_TIME_MONITORING",
+      "severity": "warning",
+      "suggestion": "Consider removing if not needed"
+    },
+    {
+      "variable": "FEATURE_ERROR_TRACKING",
+      "severity": "warning",
+      "suggestion": "Consider removing if not needed"
+    }
+  ],
+  "typeConflicts": [
+    {
+      "variable": "SMTP_USER",
+      "types": {
+        "string": [
+          {
+            "environment": "production",
+            "file": ".env.production",
+            "value": "apikey"
+          }
+        ],
+        "email": [
+          {
+            "environment": "template",
+            "file": ".env.production.template",
+            "value": "alerts@floworx-iq.com"
+          }
+        ]
+      },
+      "severity": "warning"
+    }
+  ],
+  "summary": {
+    "totalVariables": 0,
+    "totalIssues": 140,
+    "criticalIssues": 102,
+    "warningIssues": 38
+  }
+}

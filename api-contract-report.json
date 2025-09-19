@@ -1,0 +1,3007 @@
+{
+  "missingEndpoints": [
+    {
+      "method": "GET",
+      "path": "/api/auth/verify-email",
+      "calls": [
+        {
+          "method": "GET",
+          "path": "/api/auth/verify-email",
+          "file": "frontend\\src\\pages\\VerifyEmailPage.jsx",
+          "line": 61,
+          "url": "/api/auth/verify-email?token=${encodeURIComponent(token)}",
+          "parameters": {
+            "body": [],
+            "headers": []
+          },
+          "expectedResponse": {
+            "type": "await",
+            "variable": "response"
+          }
+        },
+        {
+          "method": "GET",
+          "path": "/api/auth/verify-email",
+          "file": "frontend\\src\\pages\\EmailVerificationPage.jsx",
+          "line": 56,
+          "url": "/api/auth/verify-email?token=${encodeURIComponent(verificationToken)}",
+          "parameters": {
+            "body": [],
+            "headers": []
+          },
+          "expectedResponse": {
+            "type": "await",
+            "variable": "response"
+          }
+        },
+        {
+          "method": "GET",
+          "path": "/api/auth/verify-email",
+          "file": "frontend\\src\\components\\EmailVerification.js",
+          "line": 47,
+          "url": "/api/auth/verify-email",
+          "parameters": {
+            "body": [],
+            "headers": []
+          },
+          "expectedResponse": {
+            "type": "await",
+            "variable": "response"
+          }
+        }
+      ],
+      "severity": "critical"
+    },
+    {
+      "method": "GET",
+      "path": "/api/auth/resend-verification",
+      "calls": [
+        {
+          "method": "GET",
+          "path": "/api/auth/resend-verification",
+          "file": "frontend\\src\\pages\\VerifyEmailPage.jsx",
+          "line": 115,
+          "url": "/api/auth/resend-verification",
+          "parameters": {
+            "body": [],
+            "headers": []
+          },
+          "expectedResponse": {
+            "type": "await",
+            "variable": "response"
+          }
+        },
+        {
+          "method": "GET",
+          "path": "/api/auth/resend-verification",
+          "file": "frontend\\src\\pages\\EmailVerificationPage.jsx",
+          "line": 116,
+          "url": "/api/auth/resend-verification",
+          "parameters": {
+            "body": [],
+            "headers": []
+          },
+          "expectedResponse": {
+            "type": "await",
+            "variable": "response"
+          }
+        },
+        {
+          "method": "GET",
+          "path": "/api/auth/resend-verification",
+          "file": "frontend\\src\\components\\CheckEmailMessage.jsx",
+          "line": 17,
+          "url": "/api/auth/resend-verification",
+          "parameters": {
+            "body": [],
+            "headers": []
+          },
+          "expectedResponse": {
+            "type": "await",
+            "variable": "response"
+          }
+        }
+      ],
+      "severity": "critical"
+    },
+    {
+      "method": "GET",
+      "path": "/api/auth/csrf",
+      "calls": [
+        {
+          "method": "GET",
+          "path": "/api/auth/csrf",
+          "file": "frontend\\src\\lib\\csrf.js",
+          "line": 62,
+          "url": "/api/auth/csrf",
+          "parameters": {
+            "body": [],
+            "headers": []
+          },
+          "expectedResponse": {
+            "type": "await",
+            "variable": "response"
+          }
+        }
+      ],
+      "severity": "critical"
+    },
+    {
+      "method": "GET",
+      "path": "/api/auth/verify",
+      "calls": [
+        {
+          "method": "GET",
+          "path": "/api/auth/verify",
+          "file": "frontend\\src\\contexts\\AuthContext.js",
+          "line": 48,
+          "library": "axios",
+          "parameters": {
+            "body": [],
+            "config": []
+          },
+          "expectedResponse": {
+            "type": "await",
+            "variable": "response"
+          }
+        },
+        {
+          "method": "GET",
+          "path": "/api/auth/verify",
+          "file": "frontend\\src\\contexts\\AuthContext.js",
+          "line": 101,
+          "library": "axios",
+          "parameters": {
+            "body": [
+              "success",
+              "user"
+            ],
+            "config": []
+          },
+          "expectedResponse": {
+            "type": "await",
+            "variable": "verifyResponse"
+          }
+        }
+      ],
+      "severity": "critical"
+    },
+    {
+      "method": "POST",
+      "path": "/api/auth/login",
+      "calls": [
+        {
+          "method": "POST",
+          "path": "/api/auth/login",
+          "file": "frontend\\src\\contexts\\AuthContext.js",
+          "line": 81,
+          "library": "axios",
+          "parameters": {
+            "body": [
+              "email",
+              "password",
+              "success",
+              "user"
+            ],
+            "config": []
+          },
+          "expectedResponse": {
+            "type": "await",
+            "variable": "response"
+          }
+        }
+      ],
+      "severity": "critical"
+    },
+    {
+      "method": "POST",
+      "path": "/api/auth/register",
+      "calls": [
+        {
+          "method": "POST",
+          "path": "/api/auth/register",
+          "file": "frontend\\src\\contexts\\AuthContext.js",
+          "line": 178,
+          "library": "axios",
+          "parameters": {
+            "body": [],
+            "config": []
+          },
+          "expectedResponse": {
+            "type": "await",
+            "variable": "response"
+          }
+        }
+      ],
+      "severity": "critical"
+    },
+    {
+      "method": "POST",
+      "path": "/api/auth/logout",
+      "calls": [
+        {
+          "method": "POST",
+          "path": "/api/auth/logout",
+          "file": "frontend\\src\\contexts\\AuthContext.js",
+          "line": 250,
+          "library": "axios",
+          "parameters": {
+            "body": [],
+            "config": []
+          },
+          "expectedResponse": null
+        }
+      ],
+      "severity": "critical"
+    },
+    {
+      "method": "GET",
+      "path": "/api/user/profile",
+      "calls": [
+        {
+          "method": "GET",
+          "path": "/api/user/profile",
+          "file": "frontend\\src\\components\\UserManagement.js",
+          "line": 68,
+          "url": "/api/user/profile",
+          "parameters": {
+            "body": [],
+            "headers": []
+          },
+          "expectedResponse": {
+            "type": "await",
+            "variable": "response"
+          }
+        }
+      ],
+      "severity": "critical"
+    },
+    {
+      "method": "GET",
+      "path": "/api/user/settings",
+      "calls": [
+        {
+          "method": "GET",
+          "path": "/api/user/settings",
+          "file": "frontend\\src\\components\\Settings.js",
+          "line": 51,
+          "url": "/api/user/settings",
+          "parameters": {
+            "body": [],
+            "headers": []
+          },
+          "expectedResponse": {
+            "type": "await",
+            "variable": "response"
+          }
+        },
+        {
+          "method": "GET",
+          "path": "/api/user/settings",
+          "file": "frontend\\src\\components\\Settings.js",
+          "line": 99,
+          "url": "/api/user/settings",
+          "parameters": {
+            "body": [],
+            "headers": []
+          },
+          "expectedResponse": {
+            "type": "await",
+            "variable": "response"
+          }
+        }
+      ],
+      "severity": "critical"
+    },
+    {
+      "method": "POST",
+      "path": "${apiUrl}/password-reset/request",
+      "calls": [
+        {
+          "method": "POST",
+          "path": "${apiUrl}/password-reset/request",
+          "file": "frontend\\src\\components\\PasswordReset.js",
+          "line": 78,
+          "library": "axios",
+          "parameters": {
+            "body": [
+              "apiUrl"
+            ],
+            "config": []
+          },
+          "expectedResponse": {
+            "type": "await",
+            "variable": "response"
+          }
+        }
+      ],
+      "severity": "critical"
+    },
+    {
+      "method": "POST",
+      "path": "${apiUrl}/password-reset/reset",
+      "calls": [
+        {
+          "method": "POST",
+          "path": "${apiUrl}/password-reset/reset",
+          "file": "frontend\\src\\components\\PasswordReset.js",
+          "line": 117,
+          "library": "axios",
+          "parameters": {
+            "body": [
+              "apiUrl"
+            ],
+            "config": []
+          },
+          "expectedResponse": {
+            "type": "await",
+            "variable": "response"
+          }
+        }
+      ],
+      "severity": "critical"
+    },
+    {
+      "method": "GET",
+      "path": "/api/onboarding/status",
+      "calls": [
+        {
+          "method": "GET",
+          "path": "/api/onboarding/status",
+          "file": "frontend\\src\\components\\OnboardingWizard.js",
+          "line": 76,
+          "url": "/api/onboarding/status",
+          "parameters": {
+            "body": [],
+            "headers": []
+          },
+          "expectedResponse": {
+            "type": "await",
+            "variable": "response"
+          }
+        }
+      ],
+      "severity": "critical"
+    },
+    {
+      "method": "GET",
+      "path": "/api/onboarding/complete",
+      "calls": [
+        {
+          "method": "GET",
+          "path": "/api/onboarding/complete",
+          "file": "frontend\\src\\components\\OnboardingWizard.js",
+          "line": 128,
+          "url": "/api/onboarding/complete",
+          "parameters": {
+            "body": [],
+            "headers": []
+          },
+          "expectedResponse": {
+            "type": "await",
+            "variable": "response"
+          }
+        }
+      ],
+      "severity": "critical"
+    },
+    {
+      "method": "GET",
+      "path": "/${API_BASE}/api/health",
+      "calls": [
+        {
+          "method": "GET",
+          "path": "/${API_BASE}/api/health",
+          "file": "frontend\\src\\components\\DatabaseTest.js",
+          "line": 89,
+          "url": "${API_BASE}/api/health",
+          "parameters": {
+            "body": [],
+            "headers": []
+          },
+          "expectedResponse": {
+            "type": "await",
+            "variable": "response"
+          }
+        }
+      ],
+      "severity": "critical"
+    },
+    {
+      "method": "GET",
+      "path": "/${API_BASE}/api/health/db",
+      "calls": [
+        {
+          "method": "GET",
+          "path": "/${API_BASE}/api/health/db",
+          "file": "frontend\\src\\components\\DatabaseTest.js",
+          "line": 101,
+          "url": "${API_BASE}/api/health/db",
+          "parameters": {
+            "body": [],
+            "headers": []
+          },
+          "expectedResponse": {
+            "type": "await",
+            "variable": "response"
+          }
+        }
+      ],
+      "severity": "critical"
+    },
+    {
+      "method": "GET",
+      "path": "/${API_BASE}/api/auth/register",
+      "calls": [
+        {
+          "method": "GET",
+          "path": "/${API_BASE}/api/auth/register",
+          "file": "frontend\\src\\components\\DatabaseTest.js",
+          "line": 113,
+          "url": "${API_BASE}/api/auth/register",
+          "parameters": {
+            "body": [],
+            "headers": []
+          },
+          "expectedResponse": {
+            "type": "await",
+            "variable": "response"
+          }
+        }
+      ],
+      "severity": "critical"
+    },
+    {
+      "method": "GET",
+      "path": "/${API_BASE}/api/auth/login",
+      "calls": [
+        {
+          "method": "GET",
+          "path": "/${API_BASE}/api/auth/login",
+          "file": "frontend\\src\\components\\DatabaseTest.js",
+          "line": 146,
+          "url": "${API_BASE}/api/auth/login",
+          "parameters": {
+            "body": [],
+            "headers": []
+          },
+          "expectedResponse": {
+            "type": "await",
+            "variable": "response"
+          }
+        }
+      ],
+      "severity": "critical"
+    },
+    {
+      "method": "GET",
+      "path": "/api/dashboard/stats",
+      "calls": [
+        {
+          "method": "GET",
+          "path": "/api/dashboard/stats",
+          "file": "frontend\\src\\components\\Dashboard.js",
+          "line": 42,
+          "url": "/api/dashboard/stats",
+          "parameters": {
+            "body": [],
+            "headers": []
+          },
+          "expectedResponse": {
+            "type": "await",
+            "variable": "response"
+          }
+        }
+      ],
+      "severity": "critical"
+    },
+    {
+      "method": "GET",
+      "path": "/api/oauth/status",
+      "calls": [
+        {
+          "method": "GET",
+          "path": "/api/oauth/status",
+          "file": "frontend\\src\\components\\oauth\\OAuthCallback.js",
+          "line": 125,
+          "url": "/api/oauth/status",
+          "parameters": {
+            "body": [],
+            "headers": []
+          },
+          "expectedResponse": {
+            "type": "await",
+            "variable": "response"
+          }
+        },
+        {
+          "method": "GET",
+          "path": "/api/oauth/status",
+          "file": "frontend\\src\\components\\ui\\GmailConnectionStatus.js",
+          "line": 79,
+          "url": "/api/oauth/status",
+          "parameters": {
+            "body": [],
+            "headers": []
+          },
+          "expectedResponse": {
+            "type": "await",
+            "variable": "response"
+          }
+        },
+        {
+          "method": "GET",
+          "path": "/api/oauth/status",
+          "file": "frontend\\src\\components\\onboarding\\GmailOAuthStep.js",
+          "line": 32,
+          "url": "/api/oauth/status",
+          "parameters": {
+            "body": [],
+            "headers": []
+          },
+          "expectedResponse": {
+            "type": "await",
+            "variable": "response"
+          }
+        }
+      ],
+      "severity": "critical"
+    },
+    {
+      "method": "GET",
+      "path": "/api/oauth/refresh",
+      "calls": [
+        {
+          "method": "GET",
+          "path": "/api/oauth/refresh",
+          "file": "frontend\\src\\components\\ui\\GmailConnectionStatus.js",
+          "line": 128,
+          "url": "/api/oauth/refresh",
+          "parameters": {
+            "body": [],
+            "headers": []
+          },
+          "expectedResponse": {
+            "type": "await",
+            "variable": "response"
+          }
+        },
+        {
+          "method": "GET",
+          "path": "/api/oauth/refresh",
+          "file": "frontend\\src\\components\\onboarding\\GmailOAuthStep.js",
+          "line": 115,
+          "url": "/api/oauth/refresh",
+          "parameters": {
+            "body": [],
+            "headers": []
+          },
+          "expectedResponse": {
+            "type": "await",
+            "variable": "response"
+          }
+        }
+      ],
+      "severity": "critical"
+    },
+    {
+      "method": "GET",
+      "path": "${process.env.REACT_APP_API_URL}/onboarding/gmail-labels",
+      "calls": [
+        {
+          "method": "GET",
+          "path": "${process.env.REACT_APP_API_URL}/onboarding/gmail-labels",
+          "file": "frontend\\src\\components\\onboarding\\LabelMappingStep.js",
+          "line": 31,
+          "library": "axios",
+          "parameters": {
+            "body": [
+              "process.env.REACT_APP_API_URL",
+              "Authorization"
+            ],
+            "config": []
+          },
+          "expectedResponse": {
+            "type": "await",
+            "variable": "response"
+          }
+        }
+      ],
+      "severity": "critical"
+    },
+    {
+      "method": "GET",
+      "path": "/api/oauth/google",
+      "calls": [
+        {
+          "method": "GET",
+          "path": "/api/oauth/google",
+          "file": "frontend\\src\\components\\onboarding\\GmailOAuthStep.js",
+          "line": 89,
+          "url": "/api/oauth/google",
+          "parameters": {
+            "body": [],
+            "headers": []
+          },
+          "expectedResponse": {
+            "type": "await",
+            "variable": "response"
+          }
+        }
+      ],
+      "severity": "critical"
+    },
+    {
+      "method": "GET",
+      "path": "/api/business-types",
+      "calls": [
+        {
+          "method": "GET",
+          "path": "/api/business-types",
+          "file": "frontend\\src\\components\\onboarding\\BusinessTypeStep.js",
+          "line": 27,
+          "library": "axios",
+          "parameters": {
+            "body": [],
+            "config": []
+          },
+          "expectedResponse": {
+            "type": "await",
+            "variable": "response"
+          }
+        }
+      ],
+      "severity": "critical"
+    }
+  ],
+  "orphanedEndpoints": [
+    {
+      "method": "GET",
+      "path": "/",
+      "file": "backend\\routes\\analytics.js",
+      "line": 13,
+      "handler": "res",
+      "middleware": [
+        "authenticateToken"
+      ],
+      "parameters": {
+        "path": [],
+        "query": [],
+        "body": []
+      },
+      "responses": [
+        {
+          "type": "json",
+          "content": "analyticsData"
+        }
+      ],
+      "severity": "warning"
+    },
+    {
+      "method": "POST",
+      "path": "/deploy",
+      "file": "backend\\routes\\workflows.js",
+      "line": 74,
+      "handler": "res",
+      "middleware": [
+        "authenticateToken"
+      ],
+      "parameters": {
+        "path": [],
+        "query": [],
+        "body": []
+      },
+      "responses": [
+        {
+          "type": "status",
+          "content": "400"
+        }
+      ],
+      "severity": "warning"
+    },
+    {
+      "method": "GET",
+      "path": "/status",
+      "file": "backend\\routes\\dashboard.js",
+      "line": 212,
+      "handler": "res",
+      "middleware": [
+        "authenticateToken"
+      ],
+      "parameters": {
+        "path": [],
+        "query": [],
+        "body": []
+      },
+      "responses": [
+        {
+          "type": "status",
+          "content": "404"
+        }
+      ],
+      "severity": "warning"
+    },
+    {
+      "method": "POST",
+      "path": "/:workflowId/test",
+      "file": "backend\\routes\\workflows.js",
+      "line": 321,
+      "handler": "res",
+      "middleware": [
+        "authenticateToken"
+      ],
+      "parameters": {
+        "path": [
+          "workflowId"
+        ],
+        "query": [],
+        "body": []
+      },
+      "responses": [
+        {
+          "type": "status",
+          "content": "403"
+        }
+      ],
+      "severity": "warning"
+    },
+    {
+      "method": "POST",
+      "path": "/:workflowId/activate",
+      "file": "backend\\routes\\workflows.js",
+      "line": 368,
+      "handler": "res",
+      "middleware": [
+        "authenticateToken"
+      ],
+      "parameters": {
+        "path": [
+          "workflowId"
+        ],
+        "query": [],
+        "body": []
+      },
+      "responses": [
+        {
+          "type": "status",
+          "content": "403"
+        }
+      ],
+      "severity": "warning"
+    },
+    {
+      "method": "POST",
+      "path": "/:workflowId/deactivate",
+      "file": "backend\\routes\\workflows.js",
+      "line": 416,
+      "handler": "res",
+      "middleware": [
+        "authenticateToken"
+      ],
+      "parameters": {
+        "path": [
+          "workflowId"
+        ],
+        "query": [],
+        "body": []
+      },
+      "responses": [
+        {
+          "type": "status",
+          "content": "403"
+        }
+      ],
+      "severity": "warning"
+    },
+    {
+      "method": "DELETE",
+      "path": "/:workflowId",
+      "file": "backend\\routes\\workflows.js",
+      "line": 464,
+      "handler": "res",
+      "middleware": [
+        "authenticateToken"
+      ],
+      "parameters": {
+        "path": [
+          "workflowId"
+        ],
+        "query": [],
+        "body": []
+      },
+      "responses": [
+        {
+          "type": "status",
+          "content": "403"
+        }
+      ],
+      "severity": "warning"
+    },
+    {
+      "method": "POST",
+      "path": "/reconfigure",
+      "file": "backend\\routes\\workflows.js",
+      "line": 555,
+      "handler": "res",
+      "middleware": [
+        "authenticateToken"
+      ],
+      "parameters": {
+        "path": [],
+        "query": [],
+        "body": []
+      },
+      "responses": [
+        {
+          "type": "status",
+          "content": "400"
+        },
+        {
+          "type": "status",
+          "content": "400"
+        }
+      ],
+      "severity": "warning"
+    },
+    {
+      "method": "GET",
+      "path": "/profile",
+      "file": "backend\\routes\\auth.js",
+      "line": 2125,
+      "handler": "res",
+      "middleware": [
+        "authenticateToken"
+      ],
+      "parameters": {
+        "path": [],
+        "query": [],
+        "body": []
+      },
+      "responses": [
+        {
+          "type": "status",
+          "content": "404"
+        },
+        {
+          "type": "status",
+          "content": "200"
+        }
+      ],
+      "severity": "warning"
+    },
+    {
+      "method": "GET",
+      "path": "/settings",
+      "file": "backend\\routes\\user.js",
+      "line": 48,
+      "handler": "res",
+      "middleware": [
+        "authenticateToken"
+      ],
+      "parameters": {
+        "path": [],
+        "query": [],
+        "body": []
+      },
+      "responses": [],
+      "severity": "warning"
+    },
+    {
+      "method": "PUT",
+      "path": "/settings",
+      "file": "backend\\routes\\user.js",
+      "line": 82,
+      "handler": "res",
+      "middleware": [
+        "authenticateToken"
+      ],
+      "parameters": {
+        "path": [],
+        "query": [],
+        "body": []
+      },
+      "responses": [],
+      "severity": "warning"
+    },
+    {
+      "method": "PUT",
+      "path": "/profile",
+      "file": "backend\\routes\\user.js",
+      "line": 113,
+      "handler": "res",
+      "middleware": [
+        "authenticateToken"
+      ],
+      "parameters": {
+        "path": [],
+        "query": [],
+        "body": []
+      },
+      "responses": [
+        {
+          "type": "status",
+          "content": "400"
+        }
+      ],
+      "severity": "warning"
+    },
+    {
+      "method": "POST",
+      "path": "/mark-verified",
+      "file": "backend\\routes\\test.js",
+      "line": 15,
+      "handler": "res",
+      "middleware": [],
+      "parameters": {
+        "path": [],
+        "query": [],
+        "body": []
+      },
+      "responses": [
+        {
+          "type": "status",
+          "content": "400"
+        },
+        {
+          "type": "status",
+          "content": "404"
+        }
+      ],
+      "severity": "warning"
+    },
+    {
+      "method": "GET",
+      "path": "/last-verification-token",
+      "file": "backend\\routes\\test.js",
+      "line": 55,
+      "handler": "res",
+      "middleware": [],
+      "parameters": {
+        "path": [],
+        "query": [],
+        "body": []
+      },
+      "responses": [
+        {
+          "type": "status",
+          "content": "400"
+        },
+        {
+          "type": "status",
+          "content": "404"
+        }
+      ],
+      "severity": "warning"
+    },
+    {
+      "method": "GET",
+      "path": "/last-reset-token",
+      "file": "backend\\routes\\test.js",
+      "line": 117,
+      "handler": "res",
+      "middleware": [],
+      "parameters": {
+        "path": [],
+        "query": [],
+        "body": []
+      },
+      "responses": [
+        {
+          "type": "status",
+          "content": "400"
+        },
+        {
+          "type": "status",
+          "content": "200"
+        },
+        {
+          "type": "status",
+          "content": "404"
+        }
+      ],
+      "severity": "warning"
+    },
+    {
+      "method": "POST",
+      "path": "/echo",
+      "file": "backend\\routes\\test.js",
+      "line": 147,
+      "handler": "res",
+      "middleware": [
+        "requireAuth"
+      ],
+      "parameters": {
+        "path": [],
+        "query": [],
+        "body": []
+      },
+      "responses": [
+        {
+          "type": "status",
+          "content": "200"
+        },
+        {
+          "type": "status",
+          "content": "204"
+        },
+        {
+          "type": "status",
+          "content": "500"
+        }
+      ],
+      "severity": "warning"
+    },
+    {
+      "method": "POST",
+      "path": "/reset-rate-limits",
+      "file": "backend\\routes\\test.js",
+      "line": 157,
+      "handler": "res",
+      "middleware": [],
+      "parameters": {
+        "path": [],
+        "query": [],
+        "body": []
+      },
+      "responses": [
+        {
+          "type": "status",
+          "content": "204"
+        },
+        {
+          "type": "status",
+          "content": "500"
+        }
+      ],
+      "severity": "warning"
+    },
+    {
+      "method": "GET",
+      "path": "/test-keydb",
+      "file": "backend\\routes\\auth.js",
+      "line": 2062,
+      "handler": "res",
+      "middleware": [],
+      "parameters": {
+        "path": [],
+        "query": [],
+        "body": []
+      },
+      "responses": [],
+      "severity": "warning"
+    },
+    {
+      "method": "POST",
+      "path": "/initiate",
+      "file": "backend\\routes\\recovery.js",
+      "line": 34,
+      "handler": "res",
+      "middleware": [],
+      "parameters": {
+        "path": [],
+        "query": [],
+        "body": []
+      },
+      "responses": [
+        {
+          "type": "status",
+          "content": "400"
+        },
+        {
+          "type": "status",
+          "content": "500"
+        }
+      ],
+      "severity": "warning"
+    },
+    {
+      "method": "GET",
+      "path": "/session",
+      "file": "backend\\routes\\recovery.js",
+      "line": 62,
+      "handler": "res",
+      "middleware": [
+        "authenticateToken"
+      ],
+      "parameters": {
+        "path": [],
+        "query": [],
+        "body": []
+      },
+      "responses": [
+        {
+          "type": "status",
+          "content": "500"
+        }
+      ],
+      "severity": "warning"
+    },
+    {
+      "method": "POST",
+      "path": "/resume",
+      "file": "backend\\routes\\recovery.js",
+      "line": 82,
+      "handler": "res",
+      "middleware": [
+        "authenticateToken"
+      ],
+      "parameters": {
+        "path": [],
+        "query": [],
+        "body": []
+      },
+      "responses": [
+        {
+          "type": "status",
+          "content": "500"
+        }
+      ],
+      "severity": "warning"
+    },
+    {
+      "method": "POST",
+      "path": "/retry",
+      "file": "backend\\routes\\recovery.js",
+      "line": 110,
+      "handler": "res",
+      "middleware": [
+        "authenticateToken"
+      ],
+      "parameters": {
+        "path": [],
+        "query": [],
+        "body": []
+      },
+      "responses": [
+        {
+          "type": "status",
+          "content": "400"
+        }
+      ],
+      "severity": "warning"
+    },
+    {
+      "method": "POST",
+      "path": "/rollback",
+      "file": "backend\\routes\\recovery.js",
+      "line": 140,
+      "handler": "res",
+      "middleware": [
+        "authenticateToken"
+      ],
+      "parameters": {
+        "path": [],
+        "query": [],
+        "body": []
+      },
+      "responses": [
+        {
+          "type": "status",
+          "content": "400"
+        }
+      ],
+      "severity": "warning"
+    },
+    {
+      "method": "POST",
+      "path": "/refresh-oauth",
+      "file": "backend\\routes\\recovery.js",
+      "line": 178,
+      "handler": "res",
+      "middleware": [
+        "authenticateToken"
+      ],
+      "parameters": {
+        "path": [],
+        "query": [],
+        "body": []
+      },
+      "responses": [
+        {
+          "type": "status",
+          "content": "404"
+        }
+      ],
+      "severity": "warning"
+    },
+    {
+      "method": "GET",
+      "path": "/diagnostics",
+      "file": "backend\\routes\\recovery.js",
+      "line": 280,
+      "handler": "res",
+      "middleware": [
+        "authenticateToken"
+      ],
+      "parameters": {
+        "path": [],
+        "query": [],
+        "body": []
+      },
+      "responses": [],
+      "severity": "warning"
+    },
+    {
+      "method": "POST",
+      "path": "/clear-errors",
+      "file": "backend\\routes\\recovery.js",
+      "line": 340,
+      "handler": "res",
+      "middleware": [
+        "authenticateToken"
+      ],
+      "parameters": {
+        "path": [],
+        "query": [],
+        "body": []
+      },
+      "responses": [],
+      "severity": "warning"
+    },
+    {
+      "method": "POST",
+      "path": "/request",
+      "file": "backend\\routes\\passwordReset.js",
+      "line": 40,
+      "handler": "res",
+      "middleware": [],
+      "parameters": {
+        "path": [],
+        "query": [],
+        "body": []
+      },
+      "responses": [
+        {
+          "type": "status",
+          "content": "400"
+        },
+        {
+          "type": "status",
+          "content": "400"
+        }
+      ],
+      "severity": "warning"
+    },
+    {
+      "method": "POST",
+      "path": "/reset",
+      "file": "backend\\routes\\monitoring.js",
+      "line": 166,
+      "handler": "res",
+      "middleware": [
+        "authenticateToken",
+        "requireAdmin"
+      ],
+      "parameters": {
+        "path": [],
+        "query": [],
+        "body": []
+      },
+      "responses": [],
+      "severity": "warning"
+    },
+    {
+      "method": "PUT",
+      "path": "/",
+      "file": "backend\\routes\\onboarding.js",
+      "line": 49,
+      "handler": null,
+      "middleware": [
+        "authenticateToken"
+      ],
+      "parameters": {
+        "path": [],
+        "query": [],
+        "body": []
+      },
+      "responses": [
+        {
+          "type": "status",
+          "content": "400"
+        },
+        {
+          "type": "status",
+          "content": "500"
+        }
+      ],
+      "severity": "warning"
+    },
+    {
+      "method": "POST",
+      "path": "/complete",
+      "file": "backend\\routes\\onboarding.js",
+      "line": 112,
+      "handler": "res",
+      "middleware": [
+        "authenticateToken"
+      ],
+      "parameters": {
+        "path": [],
+        "query": [],
+        "body": []
+      },
+      "responses": [
+        {
+          "type": "status",
+          "content": "500"
+        },
+        {
+          "type": "status",
+          "content": "400"
+        }
+      ],
+      "severity": "warning"
+    },
+    {
+      "method": "GET",
+      "path": "/google",
+      "file": "backend\\routes\\oauth.js",
+      "line": 36,
+      "handler": "res",
+      "middleware": [],
+      "parameters": {
+        "path": [],
+        "query": [
+          "token"
+        ],
+        "body": []
+      },
+      "responses": [],
+      "severity": "warning"
+    },
+    {
+      "method": "GET",
+      "path": "/google/callback",
+      "file": "backend\\routes\\oauth.js",
+      "line": 88,
+      "handler": "res",
+      "middleware": [],
+      "parameters": {
+        "path": [],
+        "query": [],
+        "body": []
+      },
+      "responses": [],
+      "severity": "warning"
+    },
+    {
+      "method": "DELETE",
+      "path": "/google",
+      "file": "backend\\routes\\oauth.js",
+      "line": 152,
+      "handler": "res",
+      "middleware": [
+        "authenticateToken"
+      ],
+      "parameters": {
+        "path": [],
+        "query": [],
+        "body": []
+      },
+      "responses": [],
+      "severity": "warning"
+    },
+    {
+      "method": "POST",
+      "path": "/refresh",
+      "file": "backend\\routes\\auth.js",
+      "line": 963,
+      "handler": "res",
+      "middleware": [
+        "refreshRateLimiter"
+      ],
+      "parameters": {
+        "path": [],
+        "query": [],
+        "body": []
+      },
+      "responses": [
+        {
+          "type": "status",
+          "content": "401"
+        },
+        {
+          "type": "status",
+          "content": "401"
+        }
+      ],
+      "severity": "warning"
+    },
+    {
+      "method": "GET",
+      "path": "/microsoft",
+      "file": "backend\\routes\\oauth.js",
+      "line": 294,
+      "handler": "res",
+      "middleware": [],
+      "parameters": {
+        "path": [],
+        "query": [],
+        "body": []
+      },
+      "responses": [],
+      "severity": "warning"
+    },
+    {
+      "method": "GET",
+      "path": "/microsoft/callback",
+      "file": "backend\\routes\\oauth.js",
+      "line": 326,
+      "handler": "res",
+      "middleware": [],
+      "parameters": {
+        "path": [],
+        "query": [],
+        "body": []
+      },
+      "responses": [],
+      "severity": "warning"
+    },
+    {
+      "method": "DELETE",
+      "path": "/microsoft",
+      "file": "backend\\routes\\oauth.js",
+      "line": 406,
+      "handler": "res",
+      "middleware": [
+        "authenticateToken"
+      ],
+      "parameters": {
+        "path": [],
+        "query": [],
+        "body": []
+      },
+      "responses": [
+        {
+          "type": "status",
+          "content": "400"
+        }
+      ],
+      "severity": "warning"
+    },
+    {
+      "method": "GET",
+      "path": "/dashboard",
+      "file": "backend\\routes\\analytics.js",
+      "line": 309,
+      "handler": "res",
+      "middleware": [
+        "authenticateToken"
+      ],
+      "parameters": {
+        "path": [],
+        "query": [],
+        "body": []
+      },
+      "responses": [],
+      "severity": "warning"
+    },
+    {
+      "method": "GET",
+      "path": "/alerts",
+      "file": "backend\\routes\\monitoring.js",
+      "line": 66,
+      "handler": "res",
+      "middleware": [
+        "authenticateToken",
+        "requireAdmin"
+      ],
+      "parameters": {
+        "path": [],
+        "query": [],
+        "body": []
+      },
+      "responses": [],
+      "severity": "warning"
+    },
+    {
+      "method": "GET",
+      "path": "/queries",
+      "file": "backend\\routes\\monitoring.js",
+      "line": 96,
+      "handler": "res",
+      "middleware": [
+        "authenticateToken",
+        "requireAdmin"
+      ],
+      "parameters": {
+        "path": [],
+        "query": [],
+        "body": []
+      },
+      "responses": [],
+      "severity": "warning"
+    },
+    {
+      "method": "GET",
+      "path": "/recommendations",
+      "file": "backend\\routes\\monitoring.js",
+      "line": 128,
+      "handler": "res",
+      "middleware": [
+        "authenticateToken",
+        "requireAdmin"
+      ],
+      "parameters": {
+        "path": [],
+        "query": [],
+        "body": []
+      },
+      "responses": [],
+      "severity": "warning"
+    },
+    {
+      "method": "POST",
+      "path": "/thresholds",
+      "file": "backend\\routes\\monitoring.js",
+      "line": 144,
+      "handler": "res",
+      "middleware": [
+        "authenticateToken",
+        "requireAdmin"
+      ],
+      "parameters": {
+        "path": [],
+        "query": [],
+        "body": []
+      },
+      "responses": [],
+      "severity": "warning"
+    },
+    {
+      "method": "GET",
+      "path": "/stream",
+      "file": "backend\\routes\\monitoring.js",
+      "line": 199,
+      "handler": "res",
+      "middleware": [
+        "authenticateToken",
+        "requireAdmin"
+      ],
+      "parameters": {
+        "path": [],
+        "query": [],
+        "body": []
+      },
+      "responses": [],
+      "severity": "warning"
+    },
+    {
+      "method": "GET",
+      "path": "/export",
+      "file": "backend\\routes\\errors.js",
+      "line": 335,
+      "handler": "res",
+      "middleware": [
+        "authenticateToken",
+        "requireAdmin"
+      ],
+      "parameters": {
+        "path": [],
+        "query": [],
+        "body": []
+      },
+      "responses": [],
+      "severity": "warning"
+    },
+    {
+      "method": "GET",
+      "path": "/authorize",
+      "file": "backend\\routes\\google.js",
+      "line": 117,
+      "handler": "res",
+      "middleware": [
+        "authorizeLimiter",
+        "authenticateToken"
+      ],
+      "parameters": {
+        "path": [],
+        "query": [],
+        "body": []
+      },
+      "responses": [
+        {
+          "type": "status",
+          "content": "500"
+        },
+        {
+          "type": "json",
+          "content": "{ url: authUrl }"
+        }
+      ],
+      "severity": "warning"
+    },
+    {
+      "method": "GET",
+      "path": "/callback",
+      "file": "backend\\routes\\google.js",
+      "line": 145,
+      "handler": "res",
+      "middleware": [
+        "callbackLimiter"
+      ],
+      "parameters": {
+        "path": [],
+        "query": [],
+        "body": []
+      },
+      "responses": [
+        {
+          "type": "status",
+          "content": "400"
+        },
+        {
+          "type": "status",
+          "content": "400"
+        }
+      ],
+      "severity": "warning"
+    },
+    {
+      "method": "POST",
+      "path": "/disconnect",
+      "file": "backend\\routes\\google.js",
+      "line": 216,
+      "handler": "res",
+      "middleware": [
+        "authenticateToken",
+        "csrfProtection"
+      ],
+      "parameters": {
+        "path": [],
+        "query": [],
+        "body": []
+      },
+      "responses": [],
+      "severity": "warning"
+    },
+    {
+      "method": "GET",
+      "path": "/discover",
+      "file": "backend\\routes\\mailbox.js",
+      "line": 46,
+      "handler": null,
+      "middleware": [],
+      "parameters": {
+        "path": [],
+        "query": [],
+        "body": []
+      },
+      "responses": [
+        {
+          "type": "status",
+          "content": "400"
+        }
+      ],
+      "severity": "warning"
+    },
+    {
+      "method": "POST",
+      "path": "/provision",
+      "file": "backend\\routes\\mailbox.js",
+      "line": 132,
+      "handler": null,
+      "middleware": [],
+      "parameters": {
+        "path": [],
+        "query": [],
+        "body": []
+      },
+      "responses": [],
+      "severity": "warning"
+    },
+    {
+      "method": "PUT",
+      "path": "/mapping",
+      "file": "backend\\routes\\mailbox.js",
+      "line": 222,
+      "handler": null,
+      "middleware": [],
+      "parameters": {
+        "path": [],
+        "query": [],
+        "body": []
+      },
+      "responses": [],
+      "severity": "warning"
+    },
+    {
+      "method": "GET",
+      "path": "/mapping",
+      "file": "backend\\routes\\mailbox.js",
+      "line": 305,
+      "handler": null,
+      "middleware": [],
+      "parameters": {
+        "path": [],
+        "query": [],
+        "body": []
+      },
+      "responses": [
+        {
+          "type": "status",
+          "content": "400"
+        }
+      ],
+      "severity": "warning"
+    },
+    {
+      "method": "GET",
+      "path": "/stats",
+      "file": "backend\\routes\\errors.js",
+      "line": 33,
+      "handler": "res",
+      "middleware": [
+        "authenticateToken",
+        "requireAdmin"
+      ],
+      "parameters": {
+        "path": [],
+        "query": [],
+        "body": []
+      },
+      "responses": [],
+      "severity": "warning"
+    },
+    {
+      "method": "GET",
+      "path": "/groups",
+      "file": "backend\\routes\\errors.js",
+      "line": 46,
+      "handler": "res",
+      "middleware": [
+        "authenticateToken",
+        "requireAdmin"
+      ],
+      "parameters": {
+        "path": [],
+        "query": [],
+        "body": []
+      },
+      "responses": [],
+      "severity": "warning"
+    },
+    {
+      "method": "GET",
+      "path": "/recent",
+      "file": "backend\\routes\\errors.js",
+      "line": 92,
+      "handler": "res",
+      "middleware": [
+        "authenticateToken",
+        "requireAdmin"
+      ],
+      "parameters": {
+        "path": [],
+        "query": [],
+        "body": []
+      },
+      "responses": [],
+      "severity": "warning"
+    },
+    {
+      "method": "GET",
+      "path": "/:errorId",
+      "file": "backend\\routes\\errors.js",
+      "line": 110,
+      "handler": "res",
+      "middleware": [
+        "authenticateToken",
+        "requireAdmin"
+      ],
+      "parameters": {
+        "path": [
+          "errorId"
+        ],
+        "query": [],
+        "body": []
+      },
+      "responses": [
+        {
+          "type": "status",
+          "content": "404"
+        }
+      ],
+      "severity": "warning"
+    },
+    {
+      "method": "GET",
+      "path": "/search",
+      "file": "backend\\routes\\errors.js",
+      "line": 136,
+      "handler": "res",
+      "middleware": [
+        "authenticateToken",
+        "requireAdmin"
+      ],
+      "parameters": {
+        "path": [],
+        "query": [],
+        "body": []
+      },
+      "responses": [
+        {
+          "type": "status",
+          "content": "400"
+        }
+      ],
+      "severity": "warning"
+    },
+    {
+      "method": "GET",
+      "path": "/analytics/trends",
+      "file": "backend\\routes\\errors.js",
+      "line": 184,
+      "handler": "res",
+      "middleware": [
+        "authenticateToken",
+        "requireAdmin"
+      ],
+      "parameters": {
+        "path": [],
+        "query": [],
+        "body": []
+      },
+      "responses": [],
+      "severity": "warning"
+    },
+    {
+      "method": "GET",
+      "path": "/analytics/top-endpoints",
+      "file": "backend\\routes\\errors.js",
+      "line": 225,
+      "handler": "res",
+      "middleware": [
+        "authenticateToken",
+        "requireAdmin"
+      ],
+      "parameters": {
+        "path": [],
+        "query": [],
+        "body": []
+      },
+      "responses": [],
+      "severity": "warning"
+    },
+    {
+      "method": "GET",
+      "path": "/analytics/top-users",
+      "file": "backend\\routes\\errors.js",
+      "line": 247,
+      "handler": "res",
+      "middleware": [
+        "authenticateToken",
+        "requireAdmin"
+      ],
+      "parameters": {
+        "path": [],
+        "query": [],
+        "body": []
+      },
+      "responses": [],
+      "severity": "warning"
+    },
+    {
+      "method": "POST",
+      "path": "/track",
+      "file": "backend\\routes\\analytics.js",
+      "line": 55,
+      "handler": "res",
+      "middleware": [
+        "authenticateToken",
+        "extractMetadata"
+      ],
+      "parameters": {
+        "path": [],
+        "query": [],
+        "body": []
+      },
+      "responses": [
+        {
+          "type": "status",
+          "content": "400"
+        }
+      ],
+      "severity": "warning"
+    },
+    {
+      "method": "DELETE",
+      "path": "/groups/:fingerprint",
+      "file": "backend\\routes\\errors.js",
+      "line": 320,
+      "handler": "res",
+      "middleware": [
+        "authenticateToken",
+        "requireAdmin"
+      ],
+      "parameters": {
+        "path": [
+          "fingerprint"
+        ],
+        "query": [],
+        "body": []
+      },
+      "responses": [],
+      "severity": "warning"
+    },
+    {
+      "method": "GET",
+      "path": "/statistics",
+      "file": "backend\\routes\\dashboard.js",
+      "line": 94,
+      "handler": "res",
+      "middleware": [
+        "authenticateToken"
+      ],
+      "parameters": {
+        "path": [],
+        "query": [],
+        "body": []
+      },
+      "responses": [],
+      "severity": "warning"
+    },
+    {
+      "method": "GET",
+      "path": "/activity",
+      "file": "backend\\routes\\dashboard.js",
+      "line": 140,
+      "handler": "res",
+      "middleware": [
+        "authenticateToken"
+      ],
+      "parameters": {
+        "path": [],
+        "query": [
+          "limit"
+        ],
+        "body": []
+      },
+      "responses": [],
+      "severity": "warning"
+    },
+    {
+      "method": "GET",
+      "path": "/:id/config",
+      "file": "backend\\routes\\clients.js",
+      "line": 18,
+      "handler": "res",
+      "middleware": [
+        "requireAuth"
+      ],
+      "parameters": {
+        "path": [
+          "id"
+        ],
+        "query": [],
+        "body": []
+      },
+      "responses": [
+        {
+          "type": "status",
+          "content": "400"
+        },
+        {
+          "type": "json",
+          "content": "config"
+        },
+        {
+          "type": "status",
+          "content": "500"
+        }
+      ],
+      "severity": "warning"
+    },
+    {
+      "method": "PUT",
+      "path": "/:id/config",
+      "file": "backend\\routes\\clients.js",
+      "line": 48,
+      "handler": "res",
+      "middleware": [
+        "requireAuth",
+        "csrfProtection"
+      ],
+      "parameters": {
+        "path": [
+          "id"
+        ],
+        "query": [],
+        "body": []
+      },
+      "responses": [
+        {
+          "type": "status",
+          "content": "400"
+        }
+      ],
+      "severity": "warning"
+    },
+    {
+      "method": "POST",
+      "path": "/:id/provision",
+      "file": "backend\\routes\\clients.js",
+      "line": 95,
+      "handler": "res",
+      "middleware": [
+        "requireAuth",
+        "csrfProtection"
+      ],
+      "parameters": {
+        "path": [
+          "id"
+        ],
+        "query": [],
+        "body": []
+      },
+      "responses": [
+        {
+          "type": "status",
+          "content": "400"
+        },
+        {
+          "type": "status",
+          "content": "202"
+        },
+        {
+          "type": "status",
+          "content": "500"
+        }
+      ],
+      "severity": "warning"
+    },
+    {
+      "method": "GET",
+      "path": "/test",
+      "file": "backend\\routes\\businessTypes.js",
+      "line": 13,
+      "handler": "res",
+      "middleware": [],
+      "parameters": {
+        "path": [],
+        "query": [],
+        "body": []
+      },
+      "responses": [
+        {
+          "type": "status",
+          "content": "500"
+        }
+      ],
+      "severity": "warning"
+    },
+    {
+      "method": "GET",
+      "path": "/:slug",
+      "file": "backend\\routes\\businessTypes.js",
+      "line": 78,
+      "handler": "res",
+      "middleware": [],
+      "parameters": {
+        "path": [
+          "slug"
+        ],
+        "query": [],
+        "body": []
+      },
+      "responses": [
+        {
+          "type": "status",
+          "content": "404"
+        },
+        {
+          "type": "status",
+          "content": "500"
+        }
+      ],
+      "severity": "warning"
+    },
+    {
+      "method": "GET",
+      "path": "/user/current",
+      "file": "backend\\routes\\businessTypes.js",
+      "line": 216,
+      "handler": "res",
+      "middleware": [
+        "authenticateToken"
+      ],
+      "parameters": {
+        "path": [],
+        "query": [],
+        "body": []
+      },
+      "responses": [
+        {
+          "type": "status",
+          "content": "404"
+        }
+      ],
+      "severity": "warning"
+    },
+    {
+      "method": "GET",
+      "path": "/:businessTypeId/template",
+      "file": "backend\\routes\\businessTypes.js",
+      "line": 281,
+      "handler": "res",
+      "middleware": [
+        "authenticateToken"
+      ],
+      "parameters": {
+        "path": [
+          "businessTypeId"
+        ],
+        "query": [],
+        "body": []
+      },
+      "responses": [
+        {
+          "type": "status",
+          "content": "404"
+        }
+      ],
+      "severity": "warning"
+    },
+    {
+      "method": "POST",
+      "path": "/test-emergency",
+      "file": "backend\\routes\\auth.js",
+      "line": 28,
+      "handler": "res",
+      "middleware": [],
+      "parameters": {
+        "path": [],
+        "query": [],
+        "body": []
+      },
+      "responses": [
+        {
+          "type": "status",
+          "content": "200"
+        },
+        {
+          "type": "status",
+          "content": "500"
+        }
+      ],
+      "severity": "warning"
+    },
+    {
+      "method": "GET",
+      "path": "/csrf",
+      "file": "backend\\routes\\auth.js",
+      "line": 47,
+      "handler": "res",
+      "middleware": [],
+      "parameters": {
+        "path": [],
+        "query": [],
+        "body": []
+      },
+      "responses": [
+        {
+          "type": "status",
+          "content": "200"
+        }
+      ],
+      "severity": "warning"
+    },
+    {
+      "method": "GET",
+      "path": "/debug",
+      "file": "backend\\routes\\auth.js",
+      "line": 152,
+      "handler": "res",
+      "middleware": [],
+      "parameters": {
+        "path": [],
+        "query": [],
+        "body": []
+      },
+      "responses": [],
+      "severity": "warning"
+    },
+    {
+      "method": "POST",
+      "path": "/test-register",
+      "file": "backend\\routes\\auth.js",
+      "line": 210,
+      "handler": "res",
+      "middleware": [],
+      "parameters": {
+        "path": [],
+        "query": [],
+        "body": []
+      },
+      "responses": [
+        {
+          "type": "status",
+          "content": "400"
+        }
+      ],
+      "severity": "warning"
+    },
+    {
+      "method": "POST",
+      "path": "/register",
+      "file": "backend\\routes\\auth.js",
+      "line": 302,
+      "handler": "res",
+      "middleware": [],
+      "parameters": {
+        "path": [],
+        "query": [],
+        "body": []
+      },
+      "responses": [
+        {
+          "type": "status",
+          "content": "400"
+        }
+      ],
+      "severity": "warning"
+    },
+    {
+      "method": "GET",
+      "path": "/verify-email",
+      "file": "backend\\routes\\auth.js",
+      "line": 1187,
+      "handler": "res",
+      "middleware": [],
+      "parameters": {
+        "path": [],
+        "query": [],
+        "body": []
+      },
+      "responses": [
+        {
+          "type": "status",
+          "content": "400"
+        },
+        {
+          "type": "status",
+          "content": "400"
+        }
+      ],
+      "severity": "warning"
+    },
+    {
+      "method": "POST",
+      "path": "/resend-verification",
+      "file": "backend\\routes\\auth.js",
+      "line": 1365,
+      "handler": "res",
+      "middleware": [],
+      "parameters": {
+        "path": [],
+        "query": [],
+        "body": []
+      },
+      "responses": [
+        {
+          "type": "status",
+          "content": "400"
+        },
+        {
+          "type": "status",
+          "content": "400"
+        }
+      ],
+      "severity": "warning"
+    },
+    {
+      "method": "POST",
+      "path": "/login",
+      "file": "backend\\routes\\auth.js",
+      "line": 724,
+      "handler": "res",
+      "middleware": [
+        "loginRateLimiter"
+      ],
+      "parameters": {
+        "path": [],
+        "query": [],
+        "body": []
+      },
+      "responses": [
+        {
+          "type": "status",
+          "content": "400"
+        }
+      ],
+      "severity": "warning"
+    },
+    {
+      "method": "GET",
+      "path": "/verify",
+      "file": "backend\\routes\\auth.js",
+      "line": 1060,
+      "handler": "res",
+      "middleware": [
+        "authenticateToken"
+      ],
+      "parameters": {
+        "path": [],
+        "query": [],
+        "body": []
+      },
+      "responses": [
+        {
+          "type": "status",
+          "content": "404"
+        }
+      ],
+      "severity": "warning"
+    },
+    {
+      "method": "GET",
+      "path": "/me",
+      "file": "backend\\routes\\auth.js",
+      "line": 910,
+      "handler": "res",
+      "middleware": [
+        "requireAuth"
+      ],
+      "parameters": {
+        "path": [],
+        "query": [],
+        "body": []
+      },
+      "responses": [
+        {
+          "type": "status",
+          "content": "200"
+        }
+      ],
+      "severity": "warning"
+    },
+    {
+      "method": "POST",
+      "path": "/logout",
+      "file": "backend\\routes\\auth.js",
+      "line": 1871,
+      "handler": "res",
+      "middleware": [
+        "authenticateToken"
+      ],
+      "parameters": {
+        "path": [],
+        "query": [],
+        "body": []
+      },
+      "responses": [
+        {
+          "type": "status",
+          "content": "500"
+        }
+      ],
+      "severity": "warning"
+    },
+    {
+      "method": "GET",
+      "path": "/user/status",
+      "file": "backend\\routes\\auth.js",
+      "line": 1069,
+      "handler": "res",
+      "middleware": [
+        "authenticateToken"
+      ],
+      "parameters": {
+        "path": [],
+        "query": [],
+        "body": []
+      },
+      "responses": [
+        {
+          "type": "status",
+          "content": "404"
+        },
+        {
+          "type": "status",
+          "content": "200"
+        }
+      ],
+      "severity": "warning"
+    },
+    {
+      "method": "POST",
+      "path": "/verify-email",
+      "file": "backend\\routes\\auth.js",
+      "line": 1277,
+      "handler": "res",
+      "middleware": [],
+      "parameters": {
+        "path": [],
+        "query": [],
+        "body": []
+      },
+      "responses": [
+        {
+          "type": "status",
+          "content": "400"
+        },
+        {
+          "type": "status",
+          "content": "400"
+        }
+      ],
+      "severity": "warning"
+    },
+    {
+      "method": "POST",
+      "path": "/resend",
+      "file": "backend\\routes\\auth.js",
+      "line": 1407,
+      "handler": "res",
+      "middleware": [],
+      "parameters": {
+        "path": [],
+        "query": [],
+        "body": []
+      },
+      "responses": [
+        {
+          "type": "status",
+          "content": "400"
+        },
+        {
+          "type": "status",
+          "content": "429"
+        }
+      ],
+      "severity": "warning"
+    },
+    {
+      "method": "POST",
+      "path": "/verify",
+      "file": "backend\\routes\\auth.js",
+      "line": 1483,
+      "handler": "res",
+      "middleware": [],
+      "parameters": {
+        "path": [],
+        "query": [],
+        "body": []
+      },
+      "responses": [
+        {
+          "type": "status",
+          "content": "400"
+        },
+        {
+          "type": "status",
+          "content": "401"
+        }
+      ],
+      "severity": "warning"
+    },
+    {
+      "method": "POST",
+      "path": "/complete-onboarding",
+      "file": "backend\\routes\\auth.js",
+      "line": 1534,
+      "handler": "res",
+      "middleware": [
+        "authenticateToken"
+      ],
+      "parameters": {
+        "path": [],
+        "query": [],
+        "body": []
+      },
+      "responses": [
+        {
+          "type": "status",
+          "content": "404"
+        }
+      ],
+      "severity": "warning"
+    },
+    {
+      "method": "POST",
+      "path": "/password/request",
+      "file": "backend\\routes\\auth.js",
+      "line": 1580,
+      "handler": "res",
+      "middleware": [
+        "passwordResetRateLimiter"
+      ],
+      "parameters": {
+        "path": [],
+        "query": [],
+        "body": []
+      },
+      "responses": [
+        {
+          "type": "status",
+          "content": "400"
+        }
+      ],
+      "severity": "warning"
+    },
+    {
+      "method": "POST",
+      "path": "/password/reset",
+      "file": "backend\\routes\\auth.js",
+      "line": 1643,
+      "handler": "res",
+      "middleware": [],
+      "parameters": {
+        "path": [],
+        "query": [],
+        "body": []
+      },
+      "responses": [
+        {
+          "type": "status",
+          "content": "400"
+        },
+        {
+          "type": "status",
+          "content": "400"
+        }
+      ],
+      "severity": "warning"
+    },
+    {
+      "method": "GET",
+      "path": "/password-requirements",
+      "file": "backend\\routes\\auth.js",
+      "line": 1696,
+      "handler": "res",
+      "middleware": [],
+      "parameters": {
+        "path": [],
+        "query": [],
+        "body": []
+      },
+      "responses": [
+        {
+          "type": "status",
+          "content": "200"
+        }
+      ],
+      "severity": "warning"
+    },
+    {
+      "method": "GET",
+      "path": "/test-status",
+      "file": "backend\\routes\\auth.js",
+      "line": 1712,
+      "handler": "res",
+      "middleware": [
+        "authenticateToken"
+      ],
+      "parameters": {
+        "path": [],
+        "query": [],
+        "body": []
+      },
+      "responses": [
+        {
+          "type": "status",
+          "content": "404"
+        },
+        {
+          "type": "status",
+          "content": "200"
+        }
+      ],
+      "severity": "warning"
+    },
+    {
+      "method": "GET",
+      "path": "/welcome",
+      "file": "backend\\routes\\auth.js",
+      "line": 1751,
+      "handler": "res",
+      "middleware": [],
+      "parameters": {
+        "path": [],
+        "query": [],
+        "body": []
+      },
+      "responses": [
+        {
+          "type": "status",
+          "content": "200"
+        },
+        {
+          "type": "status",
+          "content": "400"
+        }
+      ],
+      "severity": "warning"
+    },
+    {
+      "method": "POST",
+      "path": "/lockout-check",
+      "file": "backend\\routes\\auth.js",
+      "line": 1762,
+      "handler": "res",
+      "middleware": [],
+      "parameters": {
+        "path": [],
+        "query": [],
+        "body": []
+      },
+      "responses": [
+        {
+          "type": "status",
+          "content": "400"
+        }
+      ],
+      "severity": "warning"
+    },
+    {
+      "method": "POST",
+      "path": "/forgot-password",
+      "file": "backend\\routes\\auth.js",
+      "line": 1792,
+      "handler": "res",
+      "middleware": [],
+      "parameters": {
+        "path": [],
+        "query": [],
+        "body": []
+      },
+      "responses": [
+        {
+          "type": "status",
+          "content": "400"
+        },
+        {
+          "type": "status",
+          "content": "400"
+        }
+      ],
+      "severity": "warning"
+    },
+    {
+      "method": "POST",
+      "path": "/recovery",
+      "file": "backend\\routes\\auth.js",
+      "line": 1831,
+      "handler": "res",
+      "middleware": [],
+      "parameters": {
+        "path": [],
+        "query": [],
+        "body": []
+      },
+      "responses": [
+        {
+          "type": "status",
+          "content": "400"
+        },
+        {
+          "type": "json",
+          "content": "result"
+        }
+      ],
+      "severity": "warning"
+    },
+    {
+      "method": "GET",
+      "path": "/generate-verification-link/:email",
+      "file": "backend\\routes\\auth.js",
+      "line": 1895,
+      "handler": "res",
+      "middleware": [],
+      "parameters": {
+        "path": [
+          "email"
+        ],
+        "query": [],
+        "body": []
+      },
+      "responses": [
+        {
+          "type": "status",
+          "content": "400"
+        },
+        {
+          "type": "status",
+          "content": "404"
+        }
+      ],
+      "severity": "warning"
+    },
+    {
+      "method": "GET",
+      "path": "/check-verification-status/:email",
+      "file": "backend\\routes\\auth.js",
+      "line": 1952,
+      "handler": "res",
+      "middleware": [],
+      "parameters": {
+        "path": [
+          "email"
+        ],
+        "query": [],
+        "body": []
+      },
+      "responses": [
+        {
+          "type": "status",
+          "content": "400"
+        },
+        {
+          "type": "status",
+          "content": "404"
+        }
+      ],
+      "severity": "warning"
+    },
+    {
+      "method": "POST",
+      "path": "/manual-verify-email",
+      "file": "backend\\routes\\auth.js",
+      "line": 2004,
+      "handler": "res",
+      "middleware": [],
+      "parameters": {
+        "path": [],
+        "query": [],
+        "body": []
+      },
+      "responses": [
+        {
+          "type": "status",
+          "content": "400"
+        },
+        {
+          "type": "status",
+          "content": "404"
+        }
+      ],
+      "severity": "warning"
+    },
+    {
+      "method": "GET",
+      "path": "/verify-email/:token",
+      "file": "backend\\routes\\auth.js",
+      "line": 2164,
+      "handler": "res",
+      "middleware": [],
+      "parameters": {
+        "path": [
+          "token"
+        ],
+        "query": [],
+        "body": []
+      },
+      "responses": [
+        {
+          "type": "status",
+          "content": "400"
+        },
+        {
+          "type": "status",
+          "content": "200"
+        }
+      ],
+      "severity": "warning"
+    },
+    {
+      "method": "POST",
+      "path": "/onboarding/started",
+      "file": "backend\\routes\\analytics.js",
+      "line": 87,
+      "handler": "res",
+      "middleware": [
+        "authenticateToken",
+        "extractMetadata"
+      ],
+      "parameters": {
+        "path": [],
+        "query": [],
+        "body": []
+      },
+      "responses": [],
+      "severity": "warning"
+    },
+    {
+      "method": "POST",
+      "path": "/onboarding/step-completed",
+      "file": "backend\\routes\\analytics.js",
+      "line": 121,
+      "handler": "res",
+      "middleware": [
+        "authenticateToken",
+        "extractMetadata"
+      ],
+      "parameters": {
+        "path": [],
+        "query": [],
+        "body": []
+      },
+      "responses": [
+        {
+          "type": "status",
+          "content": "400"
+        }
+      ],
+      "severity": "warning"
+    },
+    {
+      "method": "POST",
+      "path": "/onboarding/step-failed",
+      "file": "backend\\routes\\analytics.js",
+      "line": 150,
+      "handler": "res",
+      "middleware": [
+        "authenticateToken",
+        "extractMetadata"
+      ],
+      "parameters": {
+        "path": [],
+        "query": [],
+        "body": []
+      },
+      "responses": [
+        {
+          "type": "status",
+          "content": "400"
+        }
+      ],
+      "severity": "warning"
+    },
+    {
+      "method": "POST",
+      "path": "/onboarding/completed",
+      "file": "backend\\routes\\analytics.js",
+      "line": 179,
+      "handler": "res",
+      "middleware": [
+        "authenticateToken",
+        "extractMetadata"
+      ],
+      "parameters": {
+        "path": [],
+        "query": [],
+        "body": []
+      },
+      "responses": [],
+      "severity": "warning"
+    },
+    {
+      "method": "GET",
+      "path": "/funnel",
+      "file": "backend\\routes\\analytics.js",
+      "line": 214,
+      "handler": "res",
+      "middleware": [
+        "authenticateToken"
+      ],
+      "parameters": {
+        "path": [],
+        "query": [],
+        "body": []
+      },
+      "responses": [
+        {
+          "type": "json",
+          "content": "funnel"
+        },
+        {
+          "type": "status",
+          "content": "500"
+        }
+      ],
+      "severity": "warning"
+    },
+    {
+      "method": "GET",
+      "path": "/conversion",
+      "file": "backend\\routes\\analytics.js",
+      "line": 241,
+      "handler": "res",
+      "middleware": [
+        "authenticateToken"
+      ],
+      "parameters": {
+        "path": [],
+        "query": [],
+        "body": []
+      },
+      "responses": [
+        {
+          "type": "json",
+          "content": "conversion"
+        },
+        {
+          "type": "status",
+          "content": "500"
+        }
+      ],
+      "severity": "warning"
+    },
+    {
+      "method": "GET",
+      "path": "/behavior",
+      "file": "backend\\routes\\analytics.js",
+      "line": 267,
+      "handler": "res",
+      "middleware": [
+        "authenticateToken"
+      ],
+      "parameters": {
+        "path": [],
+        "query": [],
+        "body": []
+      },
+      "responses": [
+        {
+          "type": "json",
+          "content": "behavior"
+        },
+        {
+          "type": "status",
+          "content": "500"
+        }
+      ],
+      "severity": "warning"
+    },
+    {
+      "method": "GET",
+      "path": "/realtime",
+      "file": "backend\\routes\\analytics.js",
+      "line": 293,
+      "handler": "res",
+      "middleware": [
+        "authenticateToken"
+      ],
+      "parameters": {
+        "path": [],
+        "query": [],
+        "body": []
+      },
+      "responses": [
+        {
+          "type": "json",
+          "content": "metrics"
+        },
+        {
+          "type": "status",
+          "content": "500"
+        }
+      ],
+      "severity": "warning"
+    },
+    {
+      "method": "POST",
+      "path": "/drop-off",
+      "file": "backend\\routes\\analytics.js",
+      "line": 351,
+      "handler": "res",
+      "middleware": [
+        "authenticateToken",
+        "extractMetadata"
+      ],
+      "parameters": {
+        "path": [],
+        "query": [],
+        "body": []
+      },
+      "responses": [
+        {
+          "type": "status",
+          "content": "400"
+        }
+      ],
+      "severity": "warning"
+    }
+  ],
+  "contractMismatches": [],
+  "methodConflicts": [],
+  "parameterMismatches": [],
+  "responseFormatIssues": [],
+  "summary": {
+    "totalEndpoints": 110,
+    "totalApiCalls": 32,
+    "totalIssues": 130,
+    "criticalIssues": 23,
+    "warningIssues": 107
+  }
+}

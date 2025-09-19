@@ -10,10 +10,9 @@
 const fs = require('fs');
 const path = require('path');
 const { promisify } = require('util');
-const glob = require('glob');
+const { glob } = require('glob');
 
 const readFile = promisify(fs.readFile);
-const globAsync = promisify(glob);
 
 class APIContractValidator {
   constructor() {
@@ -55,7 +54,7 @@ class APIContractValidator {
   async scanBackendEndpoints() {
     console.log('\n🔍 Scanning Backend Endpoints...');
     
-    const routeFiles = await globAsync('backend/routes/**/*.js', {
+    const routeFiles = await glob('backend/routes/**/*.js', {
       ignore: ['node_modules/**']
     });
     
@@ -80,7 +79,7 @@ class APIContractValidator {
   async scanFrontendApiCalls() {
     console.log('\n🔍 Scanning Frontend API Calls...');
     
-    const frontendFiles = await globAsync('frontend/src/**/*.{js,jsx}', {
+    const frontendFiles = await glob('frontend/src/**/*.{js,jsx}', {
       ignore: ['node_modules/**', 'build/**']
     });
     

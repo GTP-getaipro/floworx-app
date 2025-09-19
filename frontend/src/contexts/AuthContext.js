@@ -46,8 +46,20 @@ export const AuthProvider = ({ children }) => {
     const verifySession = async () => {
       try {
         const response = await axios.get('/api/auth/verify');
-        setUser(response.data.user);
-        setIsAuthenticated(true);
+
+        // Handle new response format
+        if (response.data.success && response.data.user) {
+          setUser(response.data.user);
+          setIsAuthenticated(true);
+        } else if (response.data.user) {
+          // Legacy format
+          setUser(response.data.user);
+          setIsAuthenticated(true);
+        } else {
+          // Invalid response format
+          setIsAuthenticated(false);
+          setUser(null);
+        }
       } catch (error) {
         console.error('Session verification failed:', error);
         setIsAuthenticated(false);
@@ -68,31 +80,54 @@ export const AuthProvider = ({ children }) => {
     try {
       const response = await axios.post('/api/auth/login', { email, password });
 
-      // Handle different response formats
-      if (response.data.user) {
-        // Old format: { token, user }
+      // Handle new response format with success field
+      if (response.data.success && response.data.user) {
+        // New format: { success: true, user: {...}, meta: {...} }
         setUser(response.data.user);
         setIsAuthenticated(true);
+        return {
+          success: true,
+          user: response.data.user,
+          meta: response.data.meta
+        };
+      } else if (response.data.user) {
+        // Legacy format: { token, user }
+        setUser(response.data.user);
+        setIsAuthenticated(true);
+        return { success: true, user: response.data.user };
       } else if (response.data.userId) {
-        // New format: { userId } with cookies
+        // Cookie-based format: { userId } with cookies
         // Get user data from verify endpoint
         const verifyResponse = await axios.get('/api/auth/verify');
-        setUser(verifyResponse.data.user);
-        setIsAuthenticated(true);
+        if (verifyResponse.data.success && verifyResponse.data.user) {
+          setUser(verifyResponse.data.user);
+          setIsAuthenticated(true);
+          return { success: true, user: verifyResponse.data.user };
+        }
       }
 
       return { success: true };
     } catch (error) {
       console.error('Login error:', error);
 
-      // Extract error message from backend response structure
+      // Extract error message from new backend response structure
       let message = 'Login failed';
+      let errorCode = null;
+      let meta = null;
 
       if (error.response?.data) {
         const data = error.response.data;
-        // Handle backend error structure: { error: { code: "INVALID_CREDENTIALS", message: "Invalid email or password" } }
-        if (data.error?.message) {
+
+        // Handle new response format: { success: false, error: { code, message }, meta: {...} }
+        if (data.success === false && data.error) {
+          message = data.error.message || 'Login failed';
+          errorCode = data.error.code;
+          meta = data.meta;
+        }
+        // Handle legacy error structure: { error: { code: "INVALID_CREDENTIALS", message: "Invalid email or password" } }
+        else if (data.error?.message) {
           message = data.error.message;
+          errorCode = data.error.code;
         }
         // Handle simple message structure: { message: "..." }
         else if (data.message) {
@@ -104,20 +139,20 @@ export const AuthProvider = ({ children }) => {
         }
       }
 
+      // Handle specific error cases
+      if (error.response?.status === 403 && errorCode === 'EMAIL_NOT_VERIFIED') {
+        return {
+          success: false,
+          error: message,
+          code: 'EMAIL_NOT_VERIFIED',
+          resendUrl: meta?.resendUrl || '/api/auth/resend',
+          meta
+        };
+      }
+
       // Provide user-friendly messages for common errors
       if (error.response?.status === 401) {
         message = 'Invalid email or password. Please check your credentials and try again.';
-      } else if (error.response?.status === 409) {
-        // Handle unverified email case
-        if (error.response.data?.error?.code === 'UNVERIFIED') {
-          message = 'Please verify your email address before logging in.';
-          return {
-            success: false,
-            error: message,
-            code: 'UNVERIFIED',
-            resendUrl: error.response.data?.resendUrl
-          };
-        }
       }
 
       const errorResult = {

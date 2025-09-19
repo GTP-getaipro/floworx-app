@@ -1,5 +1,13 @@
 import React from 'react';
 
+// FloWorx logo assets from public directory
+const logoAssets = {
+  label: '/images/logos/Label Logo.png',
+  transparent: '/images/logos/transpoerent logo.png',
+  whiteOnBlue: '/images/logos/white on a blue.png',
+  labelWithText: '/images/logos/lable on transperent with word Floworx.png'
+};
+
 const Logo = ({
   variant = 'icon',
   size = 'md',
@@ -26,32 +34,59 @@ const Logo = ({
 
   const logoClasses = `${sizeClasses[size]} ${className}`;
 
-  // Logo variants based on background context
+  // Logo variants using actual FloWorx logo assets
   const getLogoContent = () => {
     switch (variant) {
       case 'white-on-blue':
-        // White F on blue background - for blue headers/backgrounds
+        // White logo on blue background - for blue headers/backgrounds
         return (
-          <div className="bg-blue-600 text-white rounded-lg flex items-center justify-center w-full h-full font-bold shadow-lg">
-            <span className={`${textSizeClasses[size]} font-bold`}>F</span>
-          </div>
+          <img
+            src={logoAssets.whiteOnBlue}
+            alt={alt}
+            className="w-full h-full object-contain"
+          />
         );
 
       case 'blue-on-white':
-        // Blue F on white/transparent - for white backgrounds
+      case 'transparent':
+        // Transparent logo - for white backgrounds
         return (
-          <div className="bg-white text-blue-600 rounded-lg flex items-center justify-center w-full h-full font-bold shadow-md border border-blue-100">
-            <span className={`${textSizeClasses[size]} font-bold`}>F</span>
-          </div>
+          <img
+            src={logoAssets.transparent}
+            alt={alt}
+            className="w-full h-full object-contain"
+          />
+        );
+
+      case 'transparent-with-text':
+        // Logo with FloWorx text included
+        return (
+          <img
+            src={logoAssets.labelWithText}
+            alt={alt}
+            className="w-full h-full object-contain"
+          />
+        );
+
+      case 'label':
+        // Label logo variant
+        return (
+          <img
+            src={logoAssets.label}
+            alt={alt}
+            className="w-full h-full object-contain"
+          />
         );
 
       case 'icon':
       default:
-        // Default blue F with subtle shadow
+        // Default transparent logo
         return (
-          <div className="bg-blue-600 text-white rounded-lg flex items-center justify-center w-full h-full font-bold shadow-blue-200 shadow-lg">
-            <span className={`${textSizeClasses[size]} font-bold`}>F</span>
-          </div>
+          <img
+            src={logoAssets.transparent}
+            alt={alt}
+            className="w-full h-full object-contain"
+          />
         );
     }
   };

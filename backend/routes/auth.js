@@ -725,10 +725,18 @@ router.post('/login', loginRateLimiter, async (req, res) => {
   try {
     const { email, password } = req.body;
 
+    // Get client information for consistent response
+    const remoteAddr = req.ip || req.connection.remoteAddress || null;
+
     // Basic validation
     if (!email || !password) {
       return res.status(400).json({
-        error: { code: "BAD_REQUEST", message: "Email and password are required" }
+        success: false,
+        error: {
+          code: "VALIDATION_ERROR",
+          message: "Email and password are required"
+        },
+        meta: { remoteAddr }
       });
     }
 
@@ -737,7 +745,12 @@ router.post('/login', loginRateLimiter, async (req, res) => {
 
     if (userResult.error || !userResult.data) {
       return res.status(401).json({
-        error: { code: "INVALID_CREDENTIALS", message: "Invalid email or password" }
+        success: false,
+        error: {
+          code: "INVALID_CREDENTIALS",
+          message: "Invalid email or password"
+        },
+        meta: { remoteAddr }
       });
     }
 
@@ -748,19 +761,28 @@ router.post('/login', loginRateLimiter, async (req, res) => {
 
     if (!passwordMatch) {
       return res.status(401).json({
-        error: { code: "INVALID_CREDENTIALS", message: "Invalid email or password" }
+        success: false,
+        error: {
+          code: "INVALID_CREDENTIALS",
+          message: "Invalid email or password"
+        },
+        meta: { remoteAddr }
       });
     }
 
     // Check if user is verified
     if (!user.email_verified) {
       return res.status(403).json({
+        success: false,
         error: {
           code: "EMAIL_NOT_VERIFIED",
           message: "Please verify your email address to log in. Check your inbox for the verification link."
         },
-        resendUrl: "/api/auth/resend",
-        userFriendlyMessage: "Your account is not verified. Please check your email for the verification link."
+        meta: {
+          remoteAddr,
+          resendUrl: "/api/auth/resend",
+          userFriendlyMessage: "Your account is not verified. Please check your email for the verification link."
+        }
       });
     }
 
@@ -802,13 +824,83 @@ router.post('/login', loginRateLimiter, async (req, res) => {
     }
 
     res.status(200).json({
-      userId: user.id
+      success: true,
+      user: {
+        id: user.id,
+        email: user.email,
+        firstName: user.first_name,
+        lastName: user.last_name,
+        businessName: user.business_name || user.company_name,
+        emailVerified: user.email_verified
+      },
+      meta: {
+        remoteAddr,
+        sessionTtl: sessionTtlMin,
+        loginTime: new Date().toISOString()
+      }
     });
 
   } catch (error) {
     console.error('Login error:', error);
+    const remoteAddr = req.ip || req.connection.remoteAddress || null;
     res.status(500).json({
-      error: { code: "INTERNAL", message: "Unexpected error" }
+      success: false,
+      error: {
+        code: "INTERNAL_ERROR",
+        message: "Unexpected error during login"
+      },
+      meta: { remoteAddr }
+    });
+  }
+});
+
+// GET /api/auth/verify
+// Verify current session and return user info
+router.get('/verify', requireAuth, async (req, res) => {
+  try {
+    const userId = req.auth.userId;
+
+    // Get user data
+    const userResult = await databaseOperations.getUserById(userId);
+
+    if (userResult.error || !userResult.data) {
+      return res.status(401).json({
+        success: false,
+        error: {
+          code: "USER_NOT_FOUND",
+          message: "User not found"
+        }
+      });
+    }
+
+    const user = userResult.data;
+    const remoteAddr = req.ip || req.connection.remoteAddress || null;
+
+    res.status(200).json({
+      success: true,
+      user: {
+        id: user.id,
+        email: user.email,
+        firstName: user.first_name,
+        lastName: user.last_name,
+        businessName: user.business_name || user.company_name,
+        emailVerified: user.email_verified
+      },
+      meta: {
+        remoteAddr,
+        verifiedAt: new Date().toISOString()
+      }
+    });
+  } catch (error) {
+    console.error('Auth verify error:', error);
+    const remoteAddr = req.ip || req.connection.remoteAddress || null;
+    res.status(500).json({
+      success: false,
+      error: {
+        code: "INTERNAL_ERROR",
+        message: "Failed to verify authentication"
+      },
+      meta: { remoteAddr }
     });
   }
 });

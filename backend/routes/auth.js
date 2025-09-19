@@ -303,10 +303,29 @@ router.post('/register', async (req, res) => {
   try {
     const { email, password, firstName, lastName, businessName } = req.body;
 
+    // Get client information for consistent response
+    const remoteAddr = req.ip || req.connection.remoteAddress || null;
+
     // Input validation
     if (!email || !password) {
       return res.status(400).json({
-        error: { code: "BAD_REQUEST", message: "Email and password are required" }
+        success: false,
+        error: {
+          code: "VALIDATION_ERROR",
+          message: "Email and password are required"
+        },
+        meta: { remoteAddr }
+      });
+    }
+
+    if (!firstName || !lastName) {
+      return res.status(400).json({
+        success: false,
+        error: {
+          code: "VALIDATION_ERROR",
+          message: "First name and last name are required"
+        },
+        meta: { remoteAddr }
       });
     }
 
@@ -314,14 +333,24 @@ router.post('/register', async (req, res) => {
     const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
     if (!emailRegex.test(email)) {
       return res.status(400).json({
-        error: { code: "BAD_REQUEST", message: "Invalid email format" }
+        success: false,
+        error: {
+          code: "VALIDATION_ERROR",
+          message: "Invalid email format"
+        },
+        meta: { remoteAddr }
       });
     }
 
     // Password validation
     if (password.length < 8) {
       return res.status(400).json({
-        error: { code: "BAD_REQUEST", message: "Password must be at least 8 characters long" }
+        success: false,
+        error: {
+          code: "VALIDATION_ERROR",
+          message: "Password must be at least 8 characters long"
+        },
+        meta: { remoteAddr }
       });
     }
 
@@ -329,7 +358,12 @@ router.post('/register', async (req, res) => {
     const existingUser = await databaseOperations.getUserByEmail(email);
     if (existingUser.data) {
       return res.status(409).json({
-        error: { code: "EMAIL_EXISTS", message: "Email already registered" }
+        success: false,
+        error: {
+          code: "EMAIL_EXISTS",
+          message: "Email already registered"
+        },
+        meta: { remoteAddr }
       });
     }
 
@@ -344,7 +378,12 @@ router.post('/register', async (req, res) => {
     if (!tokenResult.success) {
       console.error('Token generation failed:', tokenResult.error);
       return res.status(500).json({
-        error: { code: "INTERNAL", message: "Failed to generate verification token" }
+        success: false,
+        error: {
+          code: "INTERNAL_ERROR",
+          message: "Failed to generate verification token"
+        },
+        meta: { remoteAddr }
       });
     }
 
@@ -393,7 +432,12 @@ router.post('/register', async (req, res) => {
         hint: createResult.error.hint
       });
       return res.status(500).json({
-        error: { code: "INTERNAL", message: "Failed to create user account" }
+        success: false,
+        error: {
+          code: "INTERNAL_ERROR",
+          message: "Failed to create user account"
+        },
+        meta: { remoteAddr }
       });
     }
 
@@ -421,11 +465,19 @@ router.post('/register', async (req, res) => {
     // Success response - account created, verification email sent
     res.status(201).json({
       success: true,
-      message: "Account created successfully. Please check your email to verify your account.",
-      userId: createResult.data.id,
-      requiresVerification: true,
-      email: email.toLowerCase().trim(),
-      emailSent: emailResult.success
+      user: {
+        id: createResult.data.id,
+        firstName: firstName,
+        lastName: lastName,
+        email: email.toLowerCase().trim()
+      },
+      meta: {
+        remoteAddr: remoteAddr,
+        createdAt: new Date().toISOString(),
+        requiresVerification: true,
+        emailSent: emailResult.success
+      },
+      message: "Account created successfully. Please check your email to verify your account."
     });
 
   } catch (error) {
@@ -438,15 +490,28 @@ router.post('/register', async (req, res) => {
       stack: error.stack
     });
 
+    // Get client information for error response
+    const remoteAddr = req.ip || req.connection.remoteAddress || null;
+
     // Handle specific database errors
     if (error.code === '23505') { // Unique constraint violation
       return res.status(409).json({
-        error: { code: "EMAIL_EXISTS", message: "Email already registered" }
+        success: false,
+        error: {
+          code: "EMAIL_EXISTS",
+          message: "Email already registered"
+        },
+        meta: { remoteAddr }
       });
     }
 
     res.status(500).json({
-      error: { code: "INTERNAL", message: "Unexpected error during registration" }
+      success: false,
+      error: {
+        code: "INTERNAL_ERROR",
+        message: "Unexpected error during registration"
+      },
+      meta: { remoteAddr }
     });
   }
 });

@@ -141,11 +141,26 @@ export const AuthProvider = ({ children }) => {
 
     try {
       const response = await axios.post('/api/auth/register', userData);
-      return {
-        success: true,
-        requiresVerification: response.data.requiresVerification,
-        user: response.data.user,
-      };
+
+      // Handle successful response with new schema
+      if (response.data.success) {
+        return {
+          success: true,
+          requiresVerification: response.data.meta?.requiresVerification || true,
+          user: response.data.user,
+          meta: response.data.meta
+        };
+      } else {
+        // Handle error response with success: false
+        const message = response.data.error?.message || 'Registration failed';
+        const errorResult = {
+          success: false,
+          error: message,
+          status: response.status,
+        };
+        setLastError(errorResult);
+        return errorResult;
+      }
     } catch (error) {
       console.error('Registration error:', error);
 

@@ -184,12 +184,20 @@ const RegisterForm = () => {
           success: true,
           requiresVerification: result.requiresVerification || false,
           email: values.email,
+          user: result.user,
+          meta: result.meta
         };
 
         setSubmitResult(successResult);
 
         // Clear persisted data on success
         handleSubmitSuccess();
+
+        // Log registration success with safe remoteAddr handling
+        const remoteAddr = result.meta?.remoteAddr;
+        if (remoteAddr && typeof remoteAddr === 'string') {
+          console.log('Registration successful from:', remoteAddr);
+        }
 
         // Show enhanced success toast with next steps
         showSuccess(

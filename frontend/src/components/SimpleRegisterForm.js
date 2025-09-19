@@ -92,12 +92,19 @@ const SimpleRegisterForm = () => {
 
       if (result && result.success) {
         console.log('Registration successful');
+
+        // Log registration success with safe remoteAddr handling
+        const remoteAddr = result.meta?.remoteAddr;
+        if (remoteAddr && typeof remoteAddr === 'string') {
+          console.log('Registration successful from:', remoteAddr);
+        }
+
         setSuccessEmail(formData.email);
         setShowSuccess(true);
       } else {
         console.error('Registration failed:', result);
-        setErrors({ 
-          submit: result?.error || 'Registration failed. Please try again.' 
+        setErrors({
+          submit: result?.error || 'Registration failed. Please try again.'
         });
       }
     } catch (error) {

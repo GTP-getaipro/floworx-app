@@ -1,6 +1,40 @@
 import { useState } from 'react';
 import './DatabaseTest.css';
 
+/**
+ * DatabaseTest - Database Connection and API Testing Component
+ *
+ * Comprehensive testing interface for validating database connectivity,
+ * API endpoints, and core functionality in the FloWorx application.
+ *
+ * @component
+ * @example
+ * // Usage in development/testing environments
+ * <DatabaseTest />
+ *
+ * @features
+ * - Health check endpoint testing
+ * - Database connectivity validation
+ * - User registration flow testing
+ * - User login flow testing
+ * - Real-time test result display
+ * - Loading states during test execution
+ * - Error handling and detailed reporting
+ * - Test user data generation
+ * - API endpoint status monitoring
+ *
+ * @testSuite
+ * - Health Check: Validates API server status
+ * - Database Test: Checks database connection
+ * - User Registration: Tests complete registration flow
+ * - User Login: Validates authentication process
+ *
+ * @dependencies
+ * - CSS: DatabaseTest.css for styling
+ * - Environment: REACT_APP_API_URL configuration
+ *
+ * @note For development and testing environments only
+ */
 const DatabaseTest = () => {
   const [testResults, setTestResults] = useState({
     health: null,

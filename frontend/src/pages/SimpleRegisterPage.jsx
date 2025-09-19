@@ -1,6 +1,32 @@
 import React from 'react';
 import SimpleRegisterForm from '../components/SimpleRegisterForm';
 
+/**
+ * SimpleRegisterPage - Simplified Registration Page
+ *
+ * Alternative registration page with simplified layout and branding
+ * for streamlined user onboarding experience.
+ *
+ * @component
+ * @example
+ * // Usage in router for simplified registration flow
+ * <Route path="/simple-register" element={<SimpleRegisterPage />} />
+ *
+ * @features
+ * - Simplified, clean layout design
+ * - FloWorx branding with tagline
+ * - Responsive design optimized for mobile
+ * - Minimal distractions for focused registration
+ * - Professional footer with copyright
+ * - Tailwind CSS styling for modern appearance
+ * - Hot tub industry-specific messaging
+ *
+ * @dependencies
+ * - SimpleRegisterForm: Simplified registration form component
+ * - Tailwind CSS: Utility-first CSS framework for styling
+ *
+ * @note Alternative to RegisterPage.jsx with different styling approach
+ */
 const SimpleRegisterPage = () => {
   return (
     <div className="min-h-screen bg-gray-50 flex flex-col justify-center py-12 sm:px-6 lg:px-8">

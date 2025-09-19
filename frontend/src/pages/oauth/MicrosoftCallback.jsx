@@ -2,6 +2,44 @@ import React, { useEffect, useState } from 'react';
 import { useSearchParams, useNavigate } from 'react-router-dom';
 import { api } from '../../lib/api';
 
+/**
+ * MicrosoftCallback - Microsoft OAuth Callback Handler
+ *
+ * Handles the OAuth callback from Microsoft authentication flow,
+ * processes authorization codes, and manages the integration setup.
+ *
+ * @component
+ * @example
+ * // Usage in router for OAuth callback
+ * <Route path="/oauth/microsoft/callback" element={<MicrosoftCallback />} />
+ * // URL: /oauth/microsoft/callback?code=abc123&state=xyz789
+ *
+ * @features
+ * - OAuth authorization code processing
+ * - State parameter validation for security
+ * - Error handling for OAuth failures
+ * - Loading states during token exchange
+ * - Automatic navigation after processing
+ * - User feedback during OAuth flow
+ * - Integration with FloWorx API endpoints
+ * - Timeout handling for failed requests
+ *
+ * @dependencies
+ * - React Router: useSearchParams, useNavigate
+ * - API: Microsoft OAuth token exchange endpoints
+ *
+ * @security
+ * - Validates OAuth state parameter
+ * - Handles authorization errors securely
+ * - Processes authorization codes safely
+ * - Redirects appropriately based on results
+ *
+ * @flow
+ * 1. User redirected here from Microsoft OAuth
+ * 2. Extract code and state from URL parameters
+ * 3. Exchange code for access token via API
+ * 4. Navigate to appropriate next step or error page
+ */
 export default function MicrosoftCallback() {
   const [searchParams] = useSearchParams();
   const navigate = useNavigate();

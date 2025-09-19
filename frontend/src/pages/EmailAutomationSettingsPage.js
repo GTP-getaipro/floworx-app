@@ -3,6 +3,40 @@ import { useParams, useNavigate } from 'react-router-dom';
 import EmailAutomationSettings from '../components/EmailAutomationSettings';
 import { useAuth } from '../contexts/AuthContext';
 
+/**
+ * EmailAutomationSettingsPage - Email Automation Configuration Page
+ *
+ * Provides interface for configuring email automation settings for
+ * specific clients in the FloWorx multi-tenant SaaS platform.
+ *
+ * @component
+ * @example
+ * // Usage in router with client parameter
+ * <Route path="/clients/:clientId/email-settings" element={<EmailAutomationSettingsPage />} />
+ * // URL: /clients/123/email-settings
+ *
+ * @features
+ * - Client-specific email automation configuration
+ * - Authentication and authorization validation
+ * - Route parameter validation (clientId)
+ * - Loading states during initialization
+ * - Automatic redirects for unauthorized access
+ * - Integration with AuthContext for user validation
+ * - Professional page layout with error handling
+ *
+ * @dependencies
+ * - React Router: useParams, useNavigate for routing
+ * - AuthContext: Authentication state and user information
+ * - EmailAutomationSettings: Main settings configuration component
+ *
+ * @security
+ * - Requires authenticated user
+ * - Validates client ID parameter
+ * - Redirects unauthorized users to login
+ * - Ensures proper access control
+ *
+ * @note Uses AuthContext - ensure component is wrapped in AuthProvider
+ */
 const EmailAutomationSettingsPage = () => {
   const { clientId } = useParams();
   const navigate = useNavigate();

@@ -2,10 +2,51 @@ import React, { useState, useEffect } from 'react';
 import { Mail, CheckCircle, AlertCircle, RefreshCw, Clock } from 'lucide-react';
 import './GmailConnectionStatus.css';
 
-const GmailConnectionStatus = ({ 
-  showActions = true, 
-  compact = false, 
-  onStatusChange = null 
+/**
+ * GmailConnectionStatus - Gmail Integration Status Display Component
+ *
+ * Displays the current status of Gmail API connection with real-time
+ * monitoring, error handling, and connection management actions.
+ *
+ * @component
+ * @example
+ * // Full status display with actions
+ * <GmailConnectionStatus
+ *   showActions={true}
+ *   onStatusChange={handleStatusChange}
+ * />
+ *
+ * // Compact status indicator
+ * <GmailConnectionStatus
+ *   compact={true}
+ *   showActions={false}
+ * />
+ *
+ * @param {Object} props - Component props
+ * @param {boolean} [props.showActions=true] - Whether to show connection actions
+ * @param {boolean} [props.compact=false] - Whether to use compact display mode
+ * @param {Function} [props.onStatusChange] - Callback when status changes
+ *
+ * @features
+ * - Real-time connection status monitoring (30-second intervals)
+ * - Visual status indicators with icons and colors
+ * - Connection management actions (connect, disconnect, refresh)
+ * - Error handling with user-friendly messages
+ * - Loading states during API operations
+ * - Compact mode for space-constrained layouts
+ * - Token-based authentication validation
+ * - Automatic status updates and notifications
+ *
+ * @dependencies
+ * - Lucide React: Icons for status display
+ * - CSS: GmailConnectionStatus.css for styling
+ * - localStorage: Token storage and validation
+ * - Gmail API: Connection status and management endpoints
+ */
+const GmailConnectionStatus = ({
+  showActions = true,
+  compact = false,
+  onStatusChange = null
 }) => {
   const [status, setStatus] = useState({
     loading: true,

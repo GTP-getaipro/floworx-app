@@ -2,6 +2,39 @@ import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { api } from '../../lib/api';
 
+/**
+ * Step2Gmail - Gmail Integration Onboarding Step
+ *
+ * Critical onboarding step where users connect their Gmail account
+ * for email automation and AI-powered email management.
+ *
+ * @component
+ * @example
+ * // Usage in onboarding router
+ * <Route path="/onboarding/step2-gmail" element={<Step2Gmail />} />
+ *
+ * @features
+ * - Gmail OAuth connection setup
+ * - Connection status validation
+ * - Integration testing and verification
+ * - Error handling for OAuth failures
+ * - Loading states during connection process
+ * - Form state persistence across sessions
+ * - Progress tracking in onboarding flow
+ * - Skip option for later setup
+ *
+ * @dependencies
+ * - React Router: useNavigate for step progression
+ * - API: Gmail integration and onboarding endpoints
+ * - OAuth: Gmail API authentication flow
+ *
+ * @security
+ * - Secure OAuth token handling
+ * - Permission scope validation
+ * - Connection status verification
+ *
+ * @note Critical for FloWorx email automation functionality
+ */
 export default function Step2Gmail() {
   const navigate = useNavigate();
   const [loading, setLoading] = useState(false);

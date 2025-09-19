@@ -3,6 +3,45 @@ import { useNavigate, useSearchParams } from 'react-router-dom';
 import { CheckCircle, AlertCircle, RefreshCw } from 'lucide-react';
 import './OAuthCallback.css';
 
+/**
+ * OAuthCallback - OAuth Authentication Callback Handler Component
+ *
+ * Handles OAuth callbacks from various providers (Gmail, Microsoft, etc.)
+ * and processes authentication results with user feedback.
+ *
+ * @component
+ * @example
+ * // Usage in OAuth callback routes
+ * <Route path="/oauth/callback" element={<OAuthCallback />} />
+ * // URL: /oauth/callback?code=abc123&state=xyz789
+ *
+ * @features
+ * - OAuth authorization code processing
+ * - State parameter validation for security
+ * - Error handling for OAuth failures
+ * - Loading states during token exchange
+ * - Success/error status display with icons
+ * - Automatic navigation after processing
+ * - User-friendly error messages
+ * - Integration with FloWorx API endpoints
+ *
+ * @dependencies
+ * - React Router: useNavigate, useSearchParams
+ * - Lucide React: Status icons (CheckCircle, AlertCircle, RefreshCw)
+ * - CSS: OAuthCallback.css for styling
+ *
+ * @security
+ * - Validates OAuth state parameter
+ * - Handles authorization errors securely
+ * - Processes authorization codes safely
+ * - Redirects appropriately based on results
+ *
+ * @flow
+ * 1. User redirected here from OAuth provider
+ * 2. Extract code, state, and error from URL parameters
+ * 3. Exchange code for access token via API
+ * 4. Display status and navigate to appropriate page
+ */
 const OAuthCallback = () => {
   const [searchParams] = useSearchParams();
   const navigate = useNavigate();

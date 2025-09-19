@@ -2,6 +2,38 @@ import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { api } from '../../lib/api';
 
+/**
+ * Step1Business - Business Information Onboarding Step
+ *
+ * First step in the onboarding process where users provide their
+ * business information and basic configuration settings.
+ *
+ * @component
+ * @example
+ * // Usage in onboarding router
+ * <Route path="/onboarding/step1" element={<Step1Business />} />
+ *
+ * @features
+ * - Business information collection (name, type, timezone)
+ * - Service area configuration with radius selection
+ * - Business hours setup
+ * - Form state persistence across sessions
+ * - Loading states during API operations
+ * - Error handling with user feedback
+ * - Progress tracking in onboarding flow
+ * - Automatic navigation to next step
+ *
+ * @dependencies
+ * - React Router: useNavigate for step progression
+ * - API: Onboarding data persistence endpoints
+ *
+ * @formFields
+ * - businessName: Company or business name
+ * - businessType: Type of hot tub business
+ * - timezone: Business timezone for scheduling
+ * - hours: Operating hours configuration
+ * - serviceAreaRadius: Service coverage area in miles
+ */
 export default function Step1Business() {
   const navigate = useNavigate();
   const [loading, setLoading] = useState(false);

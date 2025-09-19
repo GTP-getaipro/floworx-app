@@ -2,6 +2,36 @@ import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { api } from '../../lib/api';
 
+/**
+ * Complete - Onboarding Completion Page
+ *
+ * Final step in the onboarding process where users complete their
+ * setup and are transitioned to the main application dashboard.
+ *
+ * @component
+ * @example
+ * // Usage in onboarding router
+ * <Route path="/onboarding/complete" element={<Complete />} />
+ *
+ * @features
+ * - Onboarding completion status checking
+ * - Final setup confirmation and processing
+ * - Loading states during completion process
+ * - Error handling for completion failures
+ * - Automatic navigation to dashboard after completion
+ * - Professional completion UI with success messaging
+ * - Integration with onboarding API endpoints
+ *
+ * @dependencies
+ * - React Router: useNavigate for post-completion navigation
+ * - API: Onboarding status and completion endpoints
+ *
+ * @flow
+ * 1. Check if onboarding is already completed
+ * 2. Display completion interface if not completed
+ * 3. Process final completion when user confirms
+ * 4. Navigate to dashboard after successful completion
+ */
 export default function Complete() {
   const navigate = useNavigate();
   const [loading, setLoading] = useState(false);

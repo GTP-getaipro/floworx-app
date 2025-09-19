@@ -6,6 +6,34 @@ import Input from "../components/auth/Input";
 import { api } from "../lib/api";
 import { handleReturnToFromQuery, getReturnTo, clearReturnTo } from "../lib/returnTo";
 
+/**
+ * VerifyEmailPage - Email Verification Processing Page
+ *
+ * Handles email verification process by processing verification tokens
+ * from email links with comprehensive error handling and user feedback.
+ *
+ * @component
+ * @example
+ * // Usage in router for email verification
+ * <Route path="/verify-email" element={<VerifyEmailPage />} />
+ * // URL: /verify-email?token=abc123&returnTo=/dashboard
+ *
+ * @features
+ * - Automatic token processing from URL parameters
+ * - Return-to URL handling for post-verification navigation
+ * - Email resend functionality for failed verifications
+ * - Loading states during verification process
+ * - Success confirmation with automatic redirect
+ * - Comprehensive error handling with recovery options
+ * - Manual email input for resend functionality
+ * - Professional UI with consistent auth layout
+ *
+ * @dependencies
+ * - React Router: useSearchParams, useNavigate
+ * - AuthLayout: Consistent authentication page layout
+ * - API: Email verification and resend endpoints
+ * - returnTo: URL handling utilities for post-auth navigation
+ */
 export default function VerifyEmailPage() {
   const [isLoading, setIsLoading] = useState(true);
   const [isSuccess, setIsSuccess] = useState(false);

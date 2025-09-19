@@ -1,9 +1,26 @@
 import React from 'react';
 import { render, screen, fireEvent, waitFor } from '@testing-library/react';
 import '@testing-library/jest-dom';
+import { BrowserRouter } from 'react-router-dom';
+import { AuthProvider } from '../contexts/AuthContext';
+import { ErrorProvider } from '../contexts/ErrorContext';
+import { ToastProvider } from '../contexts/ToastContext';
 import LoginPage from '../pages/LoginPage';
 import RegisterPage from '../pages/RegisterPage';
 import ForgotPasswordPage from '../pages/ForgotPasswordPage';
+
+// Test wrapper with all necessary providers
+const TestWrapper = ({ children }) => (
+  <BrowserRouter>
+    <ErrorProvider>
+      <ToastProvider>
+        <AuthProvider>
+          {children}
+        </AuthProvider>
+      </ToastProvider>
+    </ErrorProvider>
+  </BrowserRouter>
+);
 
 // Mock handlers for testing
 const mockHandlers = {
@@ -20,7 +37,11 @@ describe('Auth Pages Design Validation', () => {
 
   describe('LoginPage', () => {
     test('renders with new glassmorphism design', () => {
-      render(<LoginPage {...mockHandlers} />);
+      render(
+        <TestWrapper>
+          <LoginPage {...mockHandlers} />
+        </TestWrapper>
+      );
       
       // Check for FloWorx branding
       expect(screen.getByText('FloWorx')).toBeInTheDocument();
@@ -38,7 +59,11 @@ describe('Auth Pages Design Validation', () => {
     });
 
     test('password field has show/hide toggle', () => {
-      render(<LoginPage {...mockHandlers} />);
+      render(
+        <TestWrapper>
+          <LoginPage {...mockHandlers} />
+        </TestWrapper>
+      );
       
       const passwordInput = screen.getByLabelText('Password');
       const toggleButton = screen.getByLabelText('Show password');
@@ -51,7 +76,11 @@ describe('Auth Pages Design Validation', () => {
     });
 
     test('form validation works correctly', async () => {
-      render(<LoginPage {...mockHandlers} />);
+      render(
+        <TestWrapper>
+          <LoginPage {...mockHandlers} />
+        </TestWrapper>
+      );
 
       const submitButton = screen.getByRole('button', { name: 'Sign In' });
       const emailInput = screen.getByLabelText('Email Address');
@@ -76,7 +105,11 @@ describe('Auth Pages Design Validation', () => {
 
   describe('RegisterPage', () => {
     test('renders with new glassmorphism design', () => {
-      render(<RegisterPage {...mockHandlers} />);
+      render(
+        <TestWrapper>
+          <RegisterPage {...mockHandlers} />
+        </TestWrapper>
+      );
       
       // Check for FloWorx branding
       expect(screen.getByText('FloWorx')).toBeInTheDocument();
@@ -93,7 +126,11 @@ describe('Auth Pages Design Validation', () => {
     });
 
     test('both password fields have show/hide toggles', () => {
-      render(<RegisterPage {...mockHandlers} />);
+      render(
+        <TestWrapper>
+          <RegisterPage {...mockHandlers} />
+        </TestWrapper>
+      );
       
       const passwordInputs = screen.getAllByDisplayValue('');
       const toggleButtons = screen.getAllByLabelText('Show password');
@@ -108,7 +145,11 @@ describe('Auth Pages Design Validation', () => {
 
   describe('ForgotPasswordPage', () => {
     test('renders with new glassmorphism design', () => {
-      render(<ForgotPasswordPage {...mockHandlers} />);
+      render(
+        <TestWrapper>
+          <ForgotPasswordPage {...mockHandlers} />
+        </TestWrapper>
+      );
       
       // Check for FloWorx branding
       expect(screen.getByText('FloWorx')).toBeInTheDocument();
@@ -126,7 +167,11 @@ describe('Auth Pages Design Validation', () => {
 
   describe('Accessibility', () => {
     test('all form inputs have proper labels and ARIA attributes', () => {
-      render(<LoginPage {...mockHandlers} />);
+      render(
+        <TestWrapper>
+          <LoginPage {...mockHandlers} />
+        </TestWrapper>
+      );
       
       const emailInput = screen.getByLabelText('Email Address');
       const passwordInput = screen.getByLabelText('Password');
@@ -145,7 +190,11 @@ describe('Auth Pages Design Validation', () => {
         errors: { email: 'Email is required' }
       };
       
-      render(<LoginPage {...errorProps} />);
+      render(
+        <TestWrapper>
+          <LoginPage {...errorProps} />
+        </TestWrapper>
+      );
       
       const emailInput = screen.getByLabelText('Email Address');
       expect(emailInput).toHaveAttribute('aria-invalid', 'true');
@@ -153,7 +202,11 @@ describe('Auth Pages Design Validation', () => {
     });
 
     test('keyboard navigation works properly', () => {
-      render(<LoginPage {...mockHandlers} />);
+      render(
+        <TestWrapper>
+          <LoginPage {...mockHandlers} />
+        </TestWrapper>
+      );
       
       const emailInput = screen.getByLabelText('Email Address');
       const passwordInput = screen.getByLabelText('Password');
@@ -175,21 +228,33 @@ describe('Auth Pages Design Validation', () => {
       global.innerWidth = 360;
       global.dispatchEvent(new Event('resize'));
       
-      const { rerender } = render(<LoginPage {...mockHandlers} />);
+      const { rerender } = render(
+        <TestWrapper>
+          <LoginPage {...mockHandlers} />
+        </TestWrapper>
+      );
       expect(screen.getByText('FloWorx')).toBeInTheDocument();
       
       // Test tablet viewport
       global.innerWidth = 768;
       global.dispatchEvent(new Event('resize'));
       
-      rerender(<RegisterPage {...mockHandlers} />);
+      rerender(
+        <TestWrapper>
+          <RegisterPage {...mockHandlers} />
+        </TestWrapper>
+      );
       expect(screen.getByText('Create your FloWorx account')).toBeInTheDocument();
       
       // Test desktop viewport
       global.innerWidth = 1024;
       global.dispatchEvent(new Event('resize'));
       
-      rerender(<ForgotPasswordPage {...mockHandlers} />);
+      rerender(
+        <TestWrapper>
+          <ForgotPasswordPage {...mockHandlers} />
+        </TestWrapper>
+      );
       expect(screen.getByText('Reset your password')).toBeInTheDocument();
     });
   });

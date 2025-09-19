@@ -108,7 +108,7 @@ describe('ForgotPasswordPage', () => {
       expect(screen.getByText(/email sent successfully/i)).toBeInTheDocument();
     });
     
-    expect(api.api).toHaveBeenCalledWith('/api/auth/password/request', {
+    expect(api.api).toHaveBeenCalledWith('/api/auth/forgot-password', {
       method: 'POST',
       body: { email: 'test@example.com' }
     });
@@ -206,9 +206,9 @@ describe('ResetPasswordPage', () => {
       expect(screen.getByText(/password updated successfully/i)).toBeInTheDocument();
     });
     
-    expect(api.api).toHaveBeenCalledWith('/api/auth/password/reset', {
+    expect(api.api).toHaveBeenCalledWith('/api/auth/reset-password', {
       method: 'POST',
-      body: { token: 'valid-reset-token', password: 'NewPassword123!' }
+      body: { token: 'valid-reset-token', newPassword: 'NewPassword123!' }
     });
   });
 

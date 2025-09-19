@@ -124,11 +124,9 @@ describe('Auth Flows', () => {
 
       // Wait for verification to complete
       await waitFor(() => {
-        expect(fetch).toHaveBeenCalledWith('/api/auth/verify', {
-          method: 'POST',
-          headers: { 'content-type': 'application/json' },
-          body: JSON.stringify({ token: 'verify-token' }),
-          credentials: 'include',
+        expect(fetch).toHaveBeenCalledWith('/api/auth/verify-email?token=verify-token', {
+          method: 'GET',
+          headers: { 'Content-Type': 'application/json' },
         });
       });
 

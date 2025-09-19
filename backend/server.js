@@ -443,6 +443,10 @@ const startServer = async () => {
       process.exit(1);
     }
 
+    // Add startup log to verify port configuration
+    console.log(`🔧 Starting server on port ${PORT}, NODE_ENV=${process.env.NODE_ENV}`);
+    console.log(`🔧 PORT environment variable: ${process.env.PORT}`);
+
     // Start the server
     const server = app.listen(PORT, '0.0.0.0', () => {
       logger.info(`FloworxInvite backend server started`, {

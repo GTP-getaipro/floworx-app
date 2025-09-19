@@ -9,8 +9,9 @@ services:
       - NODE_ENV=production
       - PORT=5001
       - FRONTEND_URL=https://app.floworx-iq.com
-    env_file:
-      - .env.production
+    # Removed env_file to prevent .env.production from overriding runtime envs
+    # env_file:
+    #   - .env.production
     restart: unless-stopped
     healthcheck:
       test: ["CMD", "curl", "-f", "http://localhost:5001/api/health"]

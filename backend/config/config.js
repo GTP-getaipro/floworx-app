@@ -75,7 +75,7 @@ class ConfigManager {
     this.config = {
       // Environment
       nodeEnv: process.env.NODE_ENV || 'development',
-      port: parseInt(process.env.PORT) || 5001,
+      port: process.env.PORT ? Number(process.env.PORT) : 5001,
       
       // Database Configuration
       database: {

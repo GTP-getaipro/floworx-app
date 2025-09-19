@@ -457,12 +457,7 @@ const startServer = async () => {
         platform: config.get('deployment.platform')
       });
 
-      // Log frontend serving configuration
-      const frontendPath = path.join(__dirname, '..', 'frontend', 'build');
-      console.log(`📁 Serving frontend from: ${frontendPath}`);
-
-      // Log frontend path and status for debugging
-      const frontendPath = path.join(__dirname, '..', 'frontend', 'build');
+      // Log frontend path and status for debugging (reuse existing frontendPath)
       const indexPath = path.join(frontendPath, 'index.html');
       console.log(`📁 Serving frontend from: ${frontendPath}`);
       console.log(`📄 Frontend index.html exists: ${fs.existsSync(indexPath)}`);

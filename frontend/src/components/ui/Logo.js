@@ -18,16 +18,19 @@ import React from 'react';
  * <Logo
  *   variant="label"
  *   size="md"
- *   showText={true}
- *   className="custom-logo-class"
+ *   config={{
+ *     showText: true,
+ *     className: "custom-logo-class"
+ *   }}
  * />
  *
  * @param {Object} props - Component props
  * @param {string} [props.variant="icon"] - Logo variant (icon, label, transparent, whiteOnBlue, labelWithText)
  * @param {string} [props.size="md"] - Logo size (xs, sm, md, lg, xl)
- * @param {string} [props.alt="FloWorx Logo"] - Alt text for accessibility
- * @param {string} [props.className=""] - Additional CSS classes
- * @param {boolean} [props.showText=false] - Whether to show "FloWorx" text
+ * @param {Object} [props.config] - Logo configuration object
+ * @param {string} [props.config.alt="FloWorx Logo"] - Alt text for accessibility
+ * @param {string} [props.config.className=""] - Additional CSS classes
+ * @param {boolean} [props.config.showText=false] - Whether to show "FloWorx" text
  * @param {Object} props...props - Additional props passed to the container
  *
  * @features
@@ -60,11 +63,19 @@ const logoAssets = {
 const Logo = ({
   variant = 'icon',
   size = 'md',
-  alt = 'FloWorx Logo',
-  className = '',
-  showText = false,
+  config = {},
+  // Backward compatibility - support old prop structure
+  alt: legacyAlt,
+  className: legacyClassName,
+  showText: legacyShowText,
   ...props
 }) => {
+  // Extract config with defaults, supporting backward compatibility
+  const {
+    alt = legacyAlt || 'FloWorx Logo',
+    className = legacyClassName || '',
+    showText = legacyShowText !== undefined ? legacyShowText : false
+  } = config;
   const sizeClasses = {
     xs: 'h-6 w-6',
     sm: 'h-8 w-8',
@@ -145,6 +156,9 @@ const Logo = ({
         );
     }
   };
+
+  // The legacy props are already destructured at function level,
+  // so props only contains the remaining DOM props
 
   return (
     <div className={`flex items-center gap-3 ${showText ? 'flex-row' : ''}`} {...props}>

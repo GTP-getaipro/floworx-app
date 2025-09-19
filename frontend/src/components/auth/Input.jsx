@@ -12,30 +12,34 @@ import React from "react";
  * <Input
  *   id="email"
  *   label="Email Address"
- *   type="email"
  *   value={email}
  *   onChange={handleEmailChange}
+ *   config={{ type: "email" }}
  * />
  *
- * // With error state
+ * // With error state and configuration
  * <Input
  *   id="password"
  *   label="Password"
- *   type="password"
  *   value={password}
  *   onChange={handlePasswordChange}
- *   error="Password must be at least 8 characters"
+ *   config={{
+ *     type: "password",
+ *     error: "Password must be at least 8 characters",
+ *     placeholder: "Enter your password"
+ *   }}
  * />
  *
  * @param {Object} props - Component props
  * @param {string} props.id - Unique identifier for the input
  * @param {string} [props.label] - Label text for the input
- * @param {string} [props.type="text"] - Input type (text, email, password, etc.)
  * @param {string} props.value - Current input value
  * @param {Function} props.onChange - Change handler function
- * @param {Function} [props.onBlur] - Blur handler function
- * @param {string} [props.error] - Error message to display
- * @param {string} [props.placeholder] - Placeholder text
+ * @param {Object} [props.config] - Input configuration object
+ * @param {string} [props.config.type="text"] - Input type
+ * @param {string} [props.config.placeholder] - Placeholder text
+ * @param {Function} [props.config.onBlur] - Blur handler function
+ * @param {string} [props.config.error] - Error message to display
  * @param {Object} props...props - Additional props passed to input element
  *
  * @features
@@ -51,14 +55,18 @@ import React from "react";
 export default function Input({
   id,
   label,
-  type = "text",
   value,
   onChange,
-  onBlur,
-  error,
-  placeholder,
+  config = {},
   ...props
 }) {
+  // Extract config with defaults
+  const {
+    type = "text",
+    placeholder,
+    onBlur,
+    error
+  } = config;
   return (
     <div className="space-y-2">
       {label && (

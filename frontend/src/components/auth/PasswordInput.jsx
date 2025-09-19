@@ -17,13 +17,16 @@ import { Eye, EyeOff } from "lucide-react";
  *   onChange={handlePasswordChange}
  * />
  *
- * // With validation error
+ * // With validation error and configuration
  * <PasswordInput
  *   id="confirm-password"
  *   label="Confirm Password"
  *   value={confirmPassword}
  *   onChange={handleConfirmChange}
- *   error="Passwords do not match"
+ *   config={{
+ *     error: "Passwords do not match",
+ *     placeholder: "Confirm your password"
+ *   }}
  * />
  *
  * @param {Object} props - Component props
@@ -31,9 +34,10 @@ import { Eye, EyeOff } from "lucide-react";
  * @param {string} [props.label] - Label text for the input
  * @param {string} props.value - Current input value
  * @param {Function} props.onChange - Change handler function
- * @param {Function} [props.onBlur] - Blur handler function
- * @param {string} [props.error] - Error message to display
- * @param {string} [props.placeholder] - Placeholder text
+ * @param {Object} [props.config] - Input configuration object
+ * @param {Function} [props.config.onBlur] - Blur handler function
+ * @param {string} [props.config.error] - Error message to display
+ * @param {string} [props.config.placeholder] - Placeholder text
  * @param {Object} props...props - Additional props passed to input element
  *
  * @features
@@ -53,11 +57,15 @@ export default function PasswordInput({
   label,
   value,
   onChange,
-  onBlur,
-  error,
-  placeholder,
+  config = {},
   ...props
 }) {
+  // Extract config with defaults
+  const {
+    onBlur,
+    error,
+    placeholder
+  } = config;
   const [showPassword, setShowPassword] = useState(false);
 
   const togglePasswordVisibility = () => {

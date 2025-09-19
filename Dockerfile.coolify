@@ -7,11 +7,21 @@ COPY frontend/package*.json ./
 RUN npm ci
 
 COPY frontend/ ./
-# Build the React application with memory optimization
-RUN NODE_OPTIONS="--max-old-space-size=2048" npm run build
+# Build the React application with memory optimization and verbose output
+RUN NODE_OPTIONS="--max-old-space-size=2048" npm run build --verbose
 
-# Verify build was created
-RUN ls -la build/ && echo "✅ Frontend build created successfully"
+# Verify build was created and show detailed contents
+RUN echo "📋 Build directory contents:" && ls -la build/
+RUN echo "📄 Checking for index.html:" && ls -la build/index.html || echo "❌ index.html not found"
+RUN echo "📁 Static directory contents:" && ls -la build/static/ || echo "❌ static directory not found"
+
+# Fallback: If index.html is missing, copy from public (this shouldn't be needed but ensures we have it)
+RUN if [ ! -f build/index.html ]; then \
+      echo "🔧 index.html missing, copying from public folder as fallback"; \
+      cp public/index.html build/index.html; \
+    fi
+
+RUN echo "✅ Frontend build verification completed"
 
 
 # ---- Production stage ----

@@ -3,7 +3,7 @@ import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-d
 
 // Critical components loaded immediately
 import ErrorBoundary from './components/ErrorBoundary';
-import Login from './components/Login';
+import LoginPage from './pages/LoginPage';
 import ProtectedRoute from './components/ProtectedRoute';
 import { Logo } from './components/ui';
 import { AuthProvider } from './contexts/AuthContext';
@@ -17,7 +17,7 @@ const ForgotPasswordPage = React.lazy(() => import('./pages/ForgotPasswordPage')
 const ResetPasswordPage = React.lazy(() => import('./pages/ResetPasswordPage'));
 const AccountRecoveryDashboard = React.lazy(() => import('./components/recovery/AccountRecoveryDashboard'));
 const NotFoundPage = React.lazy(() => import('./components/NotFoundPage'));
-const Register = React.lazy(() => import('./components/Register'));
+const RegisterPage = React.lazy(() => import('./pages/RegisterPage'));
 const UserManagement = React.lazy(() => import('./components/UserManagement'));
 const Settings = React.lazy(() => import('./components/Settings'));
 const APITestDashboard = React.lazy(() => import('./components/APITestDashboard'));
@@ -64,7 +64,7 @@ function App() {
                       path='/login'
                       element={
                         <ErrorBoundary key='login'>
-                          <Login />
+                          <LoginPage />
                         </ErrorBoundary>
                       }
                     />
@@ -75,7 +75,7 @@ function App() {
                       element={
                         <ErrorBoundary key='register'>
                           <Suspense fallback={<LoadingSpinner />}>
-                            <Register />
+                            <RegisterPage />
                           </Suspense>
                         </ErrorBoundary>
                       }

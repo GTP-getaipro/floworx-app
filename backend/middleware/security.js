@@ -126,7 +126,7 @@ const rateLimitConfigs = {
   // General API rate limiting
   api: rateLimit({
     windowMs: authConfig.rateLimits.api.windowMs,
-    max: process.env.NODE_ENV === 'production' ? 100 : 1000,
+    max: process.env.NODE_ENV === 'production' ? 1000 : 1000, // Increased for production testing
     message: {
       error: 'Too many requests',
       message: 'Rate limit exceeded. Please try again later.',
@@ -154,7 +154,7 @@ const rateLimitConfigs = {
   // Authentication endpoints (stricter)
   auth: rateLimit({
     windowMs: authConfig.rateLimits.login.windowMs,
-    max: process.env.NODE_ENV === 'production' ? 50 : 1000, // Very high for development/testing
+    max: process.env.NODE_ENV === 'production' ? 200 : 1000, // Increased for production testing
     skipSuccessfulRequests: true,
     message: {
       error: 'Too many authentication attempts',
@@ -165,14 +165,14 @@ const rateLimitConfigs = {
     trustProxy: ['127.0.0.1', '::1', '10.0.0.0/8', '172.16.0.0/12', '192.168.0.0/16'],
     skip: (_req) => {
       // Skip rate limiting for test environments
-      return process.env.NODE_ENV === 'test' || process.env.SKIP_RATE_LIMIT === 'true';
+      return process.env.NODE_ENV === 'test' || process.env.SKIP_RATE_LIMIT === 'true' || process.env.DISABLE_RATE_LIMIT === 'true';
     }
   }),
 
   // Registration (more lenient for testing)
   registration: rateLimit({
     windowMs: 60 * 60 * 1000, // 1 hour
-    max: process.env.NODE_ENV === 'production' ? 20 : 1000, // Very high for development/testing
+    max: process.env.NODE_ENV === 'production' ? 100 : 1000, // Increased for production testing
     message: {
       error: 'Too many registration attempts',
       message: 'Maximum registrations per hour exceeded.',
@@ -182,7 +182,7 @@ const rateLimitConfigs = {
     trustProxy: ['127.0.0.1', '::1', '10.0.0.0/8', '172.16.0.0/12', '192.168.0.0/16'],
     skip: (_req) => {
       // Skip rate limiting for test environments
-      return process.env.NODE_ENV === 'test' || process.env.SKIP_RATE_LIMIT === 'true';
+      return process.env.NODE_ENV === 'test' || process.env.SKIP_RATE_LIMIT === 'true' || process.env.DISABLE_RATE_LIMIT === 'true';
     }
   }),
 

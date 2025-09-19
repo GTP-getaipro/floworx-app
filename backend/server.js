@@ -461,6 +461,19 @@ const startServer = async () => {
       const frontendPath = path.join(__dirname, '..', 'frontend', 'build');
       console.log(`📁 Serving frontend from: ${frontendPath}`);
 
+      // Log frontend path and status for debugging
+      const frontendPath = path.join(__dirname, '..', 'frontend', 'build');
+      const indexPath = path.join(frontendPath, 'index.html');
+      console.log(`📁 Serving frontend from: ${frontendPath}`);
+      console.log(`📄 Frontend index.html exists: ${fs.existsSync(indexPath)}`);
+
+      if (fs.existsSync(frontendPath)) {
+        const buildFiles = fs.readdirSync(frontendPath);
+        console.log(`📋 Frontend build files: ${buildFiles.slice(0, 5).join(', ')}${buildFiles.length > 5 ? '...' : ''}`);
+      } else {
+        console.log(`❌ Frontend build directory does not exist: ${frontendPath}`);
+      }
+
       // Only log detailed info in development
       if (config.get('nodeEnv') !== 'production') {
         console.log(`🚀 Floworx backend server running on port ${PORT}`);

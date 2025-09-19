@@ -10,6 +10,9 @@ COPY frontend/ ./
 # Build the React application with memory optimization
 RUN NODE_OPTIONS="--max-old-space-size=2048" npm run build
 
+# Verify build was created
+RUN ls -la build/ && echo "✅ Frontend build created successfully"
+
 
 # ---- Production stage ----
 FROM node:20-alpine AS production
@@ -40,6 +43,9 @@ COPY backend/ ./backend/
 COPY shared/ ./shared/
 COPY database/ ./database/
 COPY start.sh ./start.sh
+
+# Verify frontend build was copied correctly
+RUN ls -la ./frontend/build/ && echo "✅ Frontend build copied to production stage"
 
 # Install all dependencies as root (npm ci does not care about user, but some global bins might)
 RUN npm ci --only=production && npm cache clean --force

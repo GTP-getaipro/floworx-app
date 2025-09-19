@@ -1,6 +1,36 @@
 import React from "react";
 import Logo from "../ui/Logo";
 
+/**
+ * AuthLayout - Authentication Pages Layout Component
+ *
+ * Provides consistent layout and branding for all authentication pages
+ * including login, register, forgot password, and email verification.
+ *
+ * @component
+ * @example
+ * // Usage in authentication pages
+ * <AuthLayout title="Sign In" subtitle="Welcome back to FloWorx">
+ *   <LoginForm />
+ * </AuthLayout>
+ *
+ * @param {Object} props - Component props
+ * @param {string} props.title - Main heading text for the auth page
+ * @param {string} props.subtitle - Subtitle text below the main heading
+ * @param {React.ReactNode} props.children - Auth form or content to display
+ *
+ * @features
+ * - Responsive fullscreen layout with gradient background
+ * - Centered auth card with consistent styling
+ * - FloWorx branding with logo and tagline
+ * - Professional design optimized for conversions
+ * - Mobile-first responsive design
+ * - Consistent spacing and typography
+ *
+ * @dependencies
+ * - Logo component: FloWorx branding
+ * - Tailwind CSS: Styling and responsive design
+ */
 export default function AuthLayout({ title, subtitle, children }) {
   return (
     <div className="min-h-screen flex flex-col items-center justify-center bg-gradient-to-b from-blue-500 to-indigo-600 px-4 py-8">

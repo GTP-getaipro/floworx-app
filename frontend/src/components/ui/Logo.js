@@ -1,5 +1,54 @@
 import React from 'react';
 
+/**
+ * Logo - FloWorx Brand Logo Component
+ *
+ * Displays the FloWorx logo with multiple variants, sizes, and configurations
+ * for consistent branding across the application.
+ *
+ * @component
+ * @example
+ * // Basic usage
+ * <Logo />
+ *
+ * // With specific variant and size
+ * <Logo variant="transparent" size="lg" />
+ *
+ * // With text and custom styling
+ * <Logo
+ *   variant="label"
+ *   size="md"
+ *   showText={true}
+ *   className="custom-logo-class"
+ * />
+ *
+ * @param {Object} props - Component props
+ * @param {string} [props.variant="icon"] - Logo variant (icon, label, transparent, whiteOnBlue, labelWithText)
+ * @param {string} [props.size="md"] - Logo size (xs, sm, md, lg, xl)
+ * @param {string} [props.alt="FloWorx Logo"] - Alt text for accessibility
+ * @param {string} [props.className=""] - Additional CSS classes
+ * @param {boolean} [props.showText=false] - Whether to show "FloWorx" text
+ * @param {Object} props...props - Additional props passed to the container
+ *
+ * @features
+ * - Multiple logo variants for different backgrounds
+ * - Responsive sizing system (xs to xl)
+ * - Optional text display with size-appropriate typography
+ * - Accessibility support with proper alt text
+ * - Flexible styling with className override
+ * - Optimized image loading with proper aspect ratios
+ *
+ * @variants
+ * - icon: Default icon-only logo
+ * - label: Logo with label styling
+ * - transparent: Logo with transparent background
+ * - whiteOnBlue: White logo for blue backgrounds
+ * - labelWithText: Logo with integrated text
+ *
+ * @dependencies
+ * - Logo assets: Located in /public/images/logos/
+ */
+
 // FloWorx logo assets from public directory
 const logoAssets = {
   label: '/images/logos/Label Logo.png',

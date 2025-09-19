@@ -1,6 +1,38 @@
 import React, { Suspense } from 'react';
 import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom';
 
+/**
+ * App - Main FloWorx Application Component
+ *
+ * Root component that sets up routing, context providers, error boundaries,
+ * and lazy loading for optimal performance in the FloWorx SaaS platform.
+ *
+ * @component
+ * @example
+ * // Usage as root component
+ * <App />
+ *
+ * @features
+ * - Multi-tenant SaaS routing with protected routes
+ * - Lazy loading for performance optimization
+ * - Comprehensive error boundary protection
+ * - Context providers for auth, error handling, and notifications
+ * - Responsive design with loading states
+ * - OAuth callback handling for Google/Microsoft integration
+ *
+ * @architecture
+ * - ErrorProvider: Global error handling and reporting
+ * - AuthProvider: Authentication state and user management
+ * - ToastProvider: User notifications and feedback
+ * - ProtectedRoute: Route-level authentication guards
+ * - Suspense: Lazy loading with loading fallbacks
+ *
+ * @dependencies
+ * - React Router: Client-side routing
+ * - Context providers: Auth, Error, Toast contexts
+ * - Lazy components: Performance-optimized component loading
+ */
+
 // Critical components loaded immediately
 import ErrorBoundary from './components/ErrorBoundary';
 import LoginPage from './pages/LoginPage';

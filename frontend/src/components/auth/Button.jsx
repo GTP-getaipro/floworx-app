@@ -1,11 +1,45 @@
 import React from "react";
 
-export default function Button({ 
-  children, 
-  type = "button", 
-  disabled = false, 
+/**
+ * Button - Primary Button Component for Authentication
+ *
+ * Reusable button component with consistent styling, loading states,
+ * and accessibility features for authentication forms.
+ *
+ * @component
+ * @example
+ * // Basic usage
+ * <Button type="submit">Sign In</Button>
+ *
+ * // With loading state
+ * <Button loading={isSubmitting} disabled={!isValid}>
+ *   Create Account
+ * </Button>
+ *
+ * @param {Object} props - Component props
+ * @param {React.ReactNode} props.children - Button text or content
+ * @param {string} [props.type="button"] - Button type (button, submit, reset)
+ * @param {boolean} [props.disabled=false] - Whether button is disabled
+ * @param {boolean} [props.loading=false] - Whether to show loading state
+ * @param {Object} props...props - Additional props passed to button element
+ *
+ * @features
+ * - Consistent brand styling with hover/active states
+ * - Loading state with spinner animation
+ * - Disabled state handling
+ * - Full accessibility support (focus, keyboard navigation)
+ * - Responsive design
+ * - Smooth transitions and animations
+ *
+ * @dependencies
+ * - Tailwind CSS: Styling and responsive design
+ */
+export default function Button({
+  children,
+  type = "button",
+  disabled = false,
   loading = false,
-  ...props 
+  ...props
 }) {
   return (
     <button

@@ -1,15 +1,63 @@
 import React from "react";
 
-export default function Input({ 
-  id, 
-  label, 
-  type = "text", 
-  value, 
-  onChange, 
-  onBlur, 
-  error, 
+/**
+ * Input - Form Input Component for Authentication
+ *
+ * Reusable input component with consistent styling, validation states,
+ * and accessibility features for authentication forms.
+ *
+ * @component
+ * @example
+ * // Basic usage
+ * <Input
+ *   id="email"
+ *   label="Email Address"
+ *   type="email"
+ *   value={email}
+ *   onChange={handleEmailChange}
+ * />
+ *
+ * // With error state
+ * <Input
+ *   id="password"
+ *   label="Password"
+ *   type="password"
+ *   value={password}
+ *   onChange={handlePasswordChange}
+ *   error="Password must be at least 8 characters"
+ * />
+ *
+ * @param {Object} props - Component props
+ * @param {string} props.id - Unique identifier for the input
+ * @param {string} [props.label] - Label text for the input
+ * @param {string} [props.type="text"] - Input type (text, email, password, etc.)
+ * @param {string} props.value - Current input value
+ * @param {Function} props.onChange - Change handler function
+ * @param {Function} [props.onBlur] - Blur handler function
+ * @param {string} [props.error] - Error message to display
+ * @param {string} [props.placeholder] - Placeholder text
+ * @param {Object} props...props - Additional props passed to input element
+ *
+ * @features
+ * - Consistent styling with focus and error states
+ * - Accessibility support (labels, ARIA attributes)
+ * - Error message display with styling
+ * - Responsive design
+ * - Smooth transitions
+ *
+ * @dependencies
+ * - Tailwind CSS: Styling and responsive design
+ */
+export default function Input({
+  id,
+  label,
+  type = "text",
+  value,
+  onChange,
+  onBlur,
+  error,
   placeholder,
-  ...props 
+  ...props
 }) {
   return (
     <div className="space-y-2">

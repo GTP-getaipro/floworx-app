@@ -1,6 +1,35 @@
 import React from 'react';
 import './ErrorBoundary.css';
 
+/**
+ * ErrorBoundary - React Error Boundary Component
+ *
+ * Catches JavaScript errors anywhere in the child component tree,
+ * logs those errors, and displays a fallback UI instead of crashing.
+ *
+ * @component
+ * @example
+ * // Usage wrapping components that might error
+ * <ErrorBoundary>
+ *   <SomeComponent />
+ * </ErrorBoundary>
+ *
+ * @features
+ * - Catches and handles React component errors
+ * - Displays user-friendly error fallback UI
+ * - Logs errors to console and analytics (Google Analytics)
+ * - Provides error details in development mode
+ * - Allows users to retry after errors
+ * - Prevents entire app crashes from component errors
+ *
+ * @lifecycle
+ * - getDerivedStateFromError: Updates state to show fallback UI
+ * - componentDidCatch: Logs error details and sends to analytics
+ *
+ * @dependencies
+ * - ErrorBoundary.css: Styling for error UI
+ * - Google Analytics: Optional error reporting (window.gtag)
+ */
 class ErrorBoundary extends React.Component {
   constructor(props) {
     super(props);

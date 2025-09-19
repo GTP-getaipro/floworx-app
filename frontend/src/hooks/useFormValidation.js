@@ -1,5 +1,57 @@
 import { useCallback, useMemo, useRef, useState } from "react";
 
+/**
+ * useFormValidation - Custom Hook for Form Validation
+ *
+ * Provides comprehensive form validation with real-time feedback,
+ * error handling, and submission state management.
+ *
+ * @hook
+ * @example
+ * // Basic usage
+ * const { values, errors, handleChange, handleSubmit, isValid } = useFormValidation(
+ *   { email: '', password: '' },
+ *   {
+ *     email: [required('Email is required'), email('Invalid email')],
+ *     password: [required('Password is required'), minLength(8, 'Too short')]
+ *   }
+ * );
+ *
+ * // With submission handler
+ * const handleFormSubmit = useCallback(async (formValues) => {
+ *   await api.login(formValues);
+ * }, []);
+ *
+ * @param {Object} initialValues - Initial form field values
+ * @param {Object} rules - Validation rules for each field
+ * @param {Object} [options={}] - Additional configuration options
+ * @param {boolean} [options.validateOnChange=true] - Validate on field change
+ * @param {boolean} [options.validateOnBlur=true] - Validate on field blur
+ *
+ * @returns {Object} Form validation utilities
+ * @returns {Object} returns.values - Current form values
+ * @returns {Object} returns.errors - Current validation errors
+ * @returns {Object} returns.touched - Fields that have been interacted with
+ * @returns {boolean} returns.isSubmitting - Whether form is being submitted
+ * @returns {boolean} returns.isValid - Whether form is currently valid
+ * @returns {Function} returns.handleChange - Field change handler
+ * @returns {Function} returns.handleBlur - Field blur handler
+ * @returns {Function} returns.handleSubmit - Form submission handler
+ * @returns {Function} returns.setFieldValue - Programmatically set field value
+ * @returns {Function} returns.setFieldError - Programmatically set field error
+ * @returns {Function} returns.resetForm - Reset form to initial state
+ *
+ * @features
+ * - Real-time validation with customizable rules
+ * - Field-level and form-level validation
+ * - Submission state management
+ * - Error handling and display
+ * - Backward compatibility with legacy parameter formats
+ * - Performance optimized with useCallback and useMemo
+ *
+ * @dependencies
+ * - React hooks: useState, useCallback, useMemo, useRef
+ */
 export default function useFormValidation(initialValues, rules, options = {}) {
   // Handle both old and new parameter formats for backward compatibility
   const actualInitialValues = initialValues?.initialValues || initialValues || {};

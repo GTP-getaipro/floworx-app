@@ -8,30 +8,35 @@ export default function AuthLayout({ title, subtitle, children }) {
       <div className="absolute top-20 left-20 w-72 h-72 bg-brand-500 rounded-full blur-3xl opacity-40 mix-blend-screen"></div>
       <div className="absolute bottom-20 right-20 w-96 h-96 bg-indigo-500 rounded-full blur-3xl opacity-40 mix-blend-screen"></div>
 
-      {/* Brand header */}
-      <div className="relative z-10 pt-8 pb-6">
-        <div className="text-center">
-          <Logo variant="whiteOnBlue" size="sm" showText={true} className="mx-auto mb-3" />
-          <p className="text-slate-200 text-sm opacity-90 mt-4 px-4">Email AI Built by Hot Tub Pros—For Hot Tub Pros</p>
-        </div>
-      </div>
-      
-      {/* Main content */}
-      <div className="relative z-10 flex items-center justify-center px-4 pb-8 mt-4">
-        <div className="bg-white/10 backdrop-blur-xl border border-white/20 shadow-2xl rounded-3xl p-6 sm:p-8 w-full max-w-md sm:max-w-lg lg:max-w-xl">
-          {/* Card header */}
+      {/* Flex container for perfect centering */}
+      <div className="relative z-10 min-h-screen flex items-center justify-center px-4 py-6">
+        <div className="w-full max-w-sm sm:max-w-md lg:max-w-lg">
+          {/* Compact header with logo + tagline in single section */}
           <div className="text-center mb-6">
-            {title && (
-              <h2 className="text-2xl font-bold text-white mb-2">{title}</h2>
-            )}
-            {subtitle && (
-              <p className="text-slate-200 text-sm opacity-90">{subtitle}</p>
-            )}
+            <div className="flex flex-col items-center gap-2">
+              <Logo variant="whiteOnBlue" size="md" showText={true} className="max-h-12 max-w-12" />
+              <p className="text-sm text-gray-200 mt-2">Email AI Built by Hot Tub Pros—For Hot Tub Pros</p>
+            </div>
           </div>
-          
-          {/* Card content */}
-          <div className="space-y-4">
-            {children}
+
+          {/* Form container - keeps everything in viewport */}
+          <div className="bg-white/10 backdrop-blur-xl border border-white/20 shadow-xl rounded-2xl p-6 sm:p-8 max-h-[650px] overflow-y-auto">
+            {/* Card header */}
+            {(title || subtitle) && (
+              <div className="text-center mb-6">
+                {title && (
+                  <h2 className="text-2xl font-bold text-white mb-2">{title}</h2>
+                )}
+                {subtitle && (
+                  <p className="text-slate-200 text-sm opacity-90">{subtitle}</p>
+                )}
+              </div>
+            )}
+
+            {/* Card content */}
+            <div className="space-y-4">
+              {children}
+            </div>
           </div>
         </div>
       </div>

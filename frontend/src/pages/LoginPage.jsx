@@ -1,9 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { useSearchParams, useNavigate } from "react-router-dom";
 import AuthLayout from "../components/auth/AuthLayout";
-import Input from "../components/auth/Input";
-import PasswordInput from "../components/auth/PasswordInput";
-import Button from "../components/auth/Button";
+import FormContainer, { FormInput, FormButton, FormAlert, FormNavigation, FormLink } from "../components/auth/FormContainer";
 import useFormValidation from "../hooks/useFormValidation";
 import { required, email, minLength } from "../utils/validationRules";
 import { api } from "../lib/api";

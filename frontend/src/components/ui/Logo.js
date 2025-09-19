@@ -18,10 +18,10 @@ const Logo = ({
 }) => {
   const sizeClasses = {
     xs: 'h-6 w-6',
-    sm: 'h-8 w-8',   // Perfect for auth headers - not oversized
-    md: 'h-10 w-10', // Reduced from h-12 w-12 for better scaling
-    lg: 'h-12 w-12', // Further reduced from h-14 w-14 for UAT compliance
-    xl: 'h-16 w-16'  // Reduced from h-18 w-18 for better scaling
+    sm: 'h-8 w-8',
+    md: 'h-12 w-12', // Standard auth header size - max-h-12 max-w-12
+    lg: 'h-16 w-16',
+    xl: 'h-20 w-20'
   };
 
   const textSizeClasses = {

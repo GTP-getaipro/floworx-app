@@ -1,9 +1,7 @@
 import React, { useEffect, useState } from "react";
-import { useSearchParams } from "react-router-dom";
+import { useSearchParams, useNavigate } from "react-router-dom";
 import AuthLayout from "../components/auth/AuthLayout";
-import Input from "../components/auth/Input";
-import PasswordInput from "../components/auth/PasswordInput";
-import Button from "../components/auth/Button";
+import FormContainer, { FormInput, FormButton, FormAlert, FormNavigation, FormLink } from "../components/auth/FormContainer";
 import useFormValidation from "../hooks/useFormValidation";
 import useFormPersistence from "../hooks/useFormPersistence";
 import { required, email, minLength, passwordStrong, matches } from "../utils/validationRules";
@@ -13,6 +11,10 @@ export default function RegisterPage({ onSubmit, errors = {}, values = {} }) {
   const { load, save, clear } = useFormPersistence('auth:register');
   const [showRestoreNotice, setShowRestoreNotice] = useState(false);
   const [searchParams] = useSearchParams();
+  const [loading, setLoading] = useState(false);
+  const [submitError, setSubmitError] = useState(null);
+  const [submitSuccess, setSubmitSuccess] = useState(false);
+  const navigate = useNavigate();
 
   const {
     values: formValues,
@@ -62,12 +64,30 @@ export default function RegisterPage({ onSubmit, errors = {}, values = {} }) {
     save(formValues);
   }, [formValues, save]);
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    const { valid } = validate();
-    if (valid) {
-      clear(); // Clear saved data on successful submit
-      onSubmit(formValues);
+
+    if (!validate()) {
+      return;
+    }
+
+    setLoading(true);
+    setSubmitError(null);
+
+    try {
+      await onSubmit(formValues);
+      clear(); // Clear saved data on successful submission
+      setSubmitSuccess(true);
+
+      // Auto-redirect to email verification after 2 seconds
+      setTimeout(() => {
+        navigate('/verify-email');
+      }, 2000);
+    } catch (error) {
+      console.error('Registration failed:', error);
+      setSubmitError(error.message || 'Registration failed. Please try again.');
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -79,49 +99,69 @@ export default function RegisterPage({ onSubmit, errors = {}, values = {} }) {
 
   return (
     <AuthLayout title="Create your FloWorx account" subtitle="Start automating your workflow today">
-      {showRestoreNotice && (
-        <div className="bg-blue-50/20 border border-blue-300/30 rounded-xl p-3 mb-4 text-sm text-slate-200">
-          Previous data restored.
-          <button
-            type="button"
-            onClick={handleClearAndStartFresh}
-            className="ml-2 text-brand-300 hover:text-white underline"
-          >
-            Clear & Start Fresh
-          </button>
-        </div>
+      {/* Success message */}
+      {submitSuccess && (
+        <FormAlert type="success" className="mb-4">
+          Account created successfully! Redirecting to email verification...
+        </FormAlert>
       )}
-      <form onSubmit={handleSubmit} noValidate className="space-y-4">
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-          <Input
-            id="firstName"
-            name="firstName"
-            label="First Name"
-            value={formValues.firstName}
-            onChange={handleChange}
-            onBlur={handleBlur}
-            error={formErrors.firstName || errors.firstName}
-          />
-          <Input
-            id="lastName"
-            name="lastName"
-            label="Last Name"
-            value={formValues.lastName}
-            onChange={handleChange}
-            onBlur={handleBlur}
-            error={formErrors.lastName || errors.lastName}
-          />
-        </div>
-        <Input
-          id="company"
+
+      {/* Error message */}
+      {submitError && (
+        <FormAlert type="error" className="mb-4">
+          {submitError}
+        </FormAlert>
+      )}
+
+      {/* Previous data restored notice - only show if not fresh load */}
+      {showRestoreNotice && (
+        <FormAlert type="info" className="mb-4">
+          Previous data restored.
+          <FormLink onClick={handleClearAndStartFresh} className="ml-2">
+            Clear & Start Fresh
+          </FormLink>
+        </FormAlert>
+      )}
+
+      <FormContainer onSubmit={handleSubmit} loading={loading}>
+        {/* Single column layout for compact spacing */}
+        <FormInput
+          name="firstName"
+          label="First Name"
+          value={formValues.firstName}
+          onChange={handleChange}
+          onBlur={handleBlur}
+          error={formErrors.firstName || errors.firstName}
+          touched={touched.firstName}
+          autoFocus={true}
+          required={true}
+          placeholder="Enter your first name"
+        />
+
+        <FormInput
+          name="lastName"
+          label="Last Name"
+          value={formValues.lastName}
+          onChange={handleChange}
+          onBlur={handleBlur}
+          error={formErrors.lastName || errors.lastName}
+          touched={touched.lastName}
+          required={true}
+          placeholder="Enter your last name"
+        />
+
+        <FormInput
           name="company"
-          label="Company (optional)"
+          label="Company"
           value={formValues.company}
           onChange={handleChange}
           onBlur={handleBlur}
+          error={formErrors.company || errors.company}
+          touched={touched.company}
+          placeholder="Your company name (optional)"
         />
-        <Input
-          id="email"
+
+        <FormInput
           name="email"
           type="email"
           label="Email Address"
@@ -129,44 +169,52 @@ export default function RegisterPage({ onSubmit, errors = {}, values = {} }) {
           onChange={handleChange}
           onBlur={handleBlur}
           error={formErrors.email || errors.email}
+          touched={touched.email}
+          required={true}
           placeholder="Enter your business email"
         />
-        <PasswordInput
-          id="password"
+
+        <FormInput
           name="password"
+          type="password"
           label="Password"
           value={formValues.password}
           onChange={handleChange}
           onBlur={handleBlur}
           error={formErrors.password || errors.password}
-          placeholder="Create a password (min. 8 characters)"
+          touched={touched.password}
+          required={true}
+          placeholder="Create a strong password (min. 8 characters)"
         />
-        <PasswordInput
-          id="confirm"
+
+        <FormInput
           name="confirm"
+          type="password"
           label="Confirm Password"
           value={formValues.confirm}
           onChange={handleChange}
           onBlur={handleBlur}
           error={formErrors.confirm || errors.confirm}
+          touched={touched.confirm}
+          required={true}
           placeholder="Confirm your password"
         />
-        <Button
+
+        <FormButton
           type="submit"
+          loading={loading}
           disabled={!isValid && Object.keys(touched).length > 0}
         >
           Create Account
-        </Button>
-        <div className="text-center pt-2">
-          <span className="text-slate-200 text-sm">Already have an account? </span>
-          <a
-            href="/login"
-            className="text-brand-300 hover:text-white underline-offset-4 hover:underline text-sm"
-          >
+        </FormButton>
+
+        <FormNavigation>
+          <span className="text-slate-200 text-sm">Already have an account?</span>
+          <FormLink onClick={() => navigate('/login')}>
             Sign in here
-          </a>
-        </div>
-      </form>
+          </FormLink>
+        </FormNavigation>
+      </FormContainer>
     </AuthLayout>
   );
 }

@@ -22,20 +22,30 @@ export default async function handler(req, res) {
   }
 
   if (req.method !== 'POST') {
+    const remoteAddr = req.ip || req.connection?.remoteAddress || null;
     return res.status(405).json({
-      error: 'Method not allowed',
-      message: 'Only POST requests are allowed'
+      success: false,
+      error: {
+        code: 'METHOD_NOT_ALLOWED',
+        message: 'Only POST requests are allowed'
+      },
+      meta: { remoteAddr }
     });
   }
 
   try {
     const { email, password } = req.body;
+    const remoteAddr = req.ip || req.connection?.remoteAddress || null;
 
     // Input validation
     if (!email || !password) {
       return res.status(400).json({
-        error: 'Missing credentials',
-        message: 'Email and password are required'
+        success: false,
+        error: {
+          code: 'VALIDATION_ERROR',
+          message: 'Email and password are required'
+        },
+        meta: { remoteAddr }
       });
     }
 
@@ -56,8 +66,12 @@ export default async function handler(req, res) {
 
     if (findError || !user) {
       return res.status(401).json({
-        error: 'Invalid credentials',
-        message: 'Email or password is incorrect'
+        success: false,
+        error: {
+          code: 'INVALID_CREDENTIALS',
+          message: 'Invalid email or password'
+        },
+        meta: { remoteAddr }
       });
     }
 
@@ -66,8 +80,28 @@ export default async function handler(req, res) {
 
     if (!passwordMatch) {
       return res.status(401).json({
-        error: 'Invalid credentials',
-        message: 'Email or password is incorrect'
+        success: false,
+        error: {
+          code: 'INVALID_CREDENTIALS',
+          message: 'Invalid email or password'
+        },
+        meta: { remoteAddr }
+      });
+    }
+
+    // Check if user is verified
+    if (!user.email_verified) {
+      return res.status(403).json({
+        success: false,
+        error: {
+          code: 'EMAIL_NOT_VERIFIED',
+          message: 'Please verify your email address to log in. Check your inbox for the verification link.'
+        },
+        meta: {
+          remoteAddr,
+          resendUrl: '/api/auth/resend',
+          userFriendlyMessage: 'Your account is not verified. Please check your email for the verification link.'
+        }
       });
     }
 
@@ -85,24 +119,33 @@ export default async function handler(req, res) {
       .eq('id', user.id);
 
     res.status(200).json({
-      message: 'Login successful',
-      token,
+      success: true,
       user: {
         id: user.id,
         email: user.email,
         firstName: user.first_name,
         lastName: user.last_name,
-        companyName: user.company_name,
-        createdAt: user.created_at
+        businessName: user.company_name,
+        emailVerified: user.email_verified
       },
-      expiresIn: '24h'
+      meta: {
+        remoteAddr,
+        token,
+        expiresIn: '24h',
+        loginTime: new Date().toISOString()
+      }
     });
 
   } catch (error) {
     console.error('Login error:', error);
+    const remoteAddr = req.ip || req.connection?.remoteAddress || null;
     res.status(500).json({
-      error: 'Login failed',
-      message: 'Something went wrong during login. Please try again.'
+      success: false,
+      error: {
+        code: 'INTERNAL_ERROR',
+        message: 'Something went wrong during login. Please try again.'
+      },
+      meta: { remoteAddr }
     });
   }
 }

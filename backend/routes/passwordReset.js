@@ -110,7 +110,7 @@ router.post('/request', async (req, res) => {
       await emailService.sendPasswordResetEmail(user.email, resetUrl);
 
       // Log successful password reset request
-      await logAuthEvent(user.id, 'PASSWORD_RESET_REQUEST', { emailSent: true }, req);
+      await logAuthActivity(user.id, 'PASSWORD_RESET_REQUEST', true, { emailSent: true }, req);
 
       logger.info('Password reset email sent successfully', { userId: user.id, email: user.email });
     } catch (emailError) {
@@ -120,15 +120,25 @@ router.post('/request', async (req, res) => {
       logAuthActivity(user.id, 'PASSWORD_RESET_REQUEST', false, { emailSent: false, error: emailError.message }, req);
     }
 
+    const remoteAddr = req.ip || req.connection.remoteAddress || null;
     res.json({
       success: true,
-      message: 'If an account with that email exists, a password reset link has been sent.'
+      message: 'If an account with that email exists, a password reset link has been sent.',
+      meta: {
+        remoteAddr,
+        requestTime: new Date().toISOString()
+      }
     });
   } catch (error) {
     console.error('Password reset request error:', error);
+    const remoteAddr = req.ip || req.connection.remoteAddress || null;
     res.status(500).json({
-      error: 'Internal server error',
-      message: 'Failed to process password reset request'
+      success: false,
+      error: {
+        code: 'INTERNAL_ERROR',
+        message: 'Failed to process password reset request'
+      },
+      meta: { remoteAddr }
     });
   }
 });

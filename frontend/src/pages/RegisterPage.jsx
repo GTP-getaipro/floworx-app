@@ -123,7 +123,7 @@ export default function RegisterPage({ onSubmit, errors = {}, values = {} }) {
         </FormAlert>
       )}
 
-      <FormContainer onSubmit={handleSubmit} loading={loading}>
+      <form onSubmit={handleSubmit} className="space-y-4">
         {/* Single column layout for compact spacing */}
         <FormInput
           name="firstName"
@@ -208,13 +208,13 @@ export default function RegisterPage({ onSubmit, errors = {}, values = {} }) {
           Create Account
         </FormButton>
 
-        <FormNavigation>
-          <span className="text-slate-200 text-sm">Already have an account?</span>
+        <div className="flex flex-col sm:flex-row items-center justify-center gap-2 pt-4 text-sm text-gray-600">
+          <span>Already have an account?</span>
           <FormLink onClick={() => navigate('/login')}>
             Sign in here
           </FormLink>
-        </FormNavigation>
-      </FormContainer>
+        </div>
+      </form>
     </AuthLayout>
   );
 }

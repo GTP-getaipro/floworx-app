@@ -47,8 +47,8 @@ export function FormInput({
   return (
     <div className="space-y-1">
       {label && (
-        <label htmlFor={name} className="block text-xs font-medium text-white">
-          {label} {required && <span className="text-red-400">*</span>}
+        <label htmlFor={name} className="block text-sm font-medium text-gray-700">
+          {label} {required && <span className="text-red-500">*</span>}
         </label>
       )}
       <input
@@ -62,17 +62,17 @@ export function FormInput({
         autoFocus={autoFocus}
         required={required}
         className={`
-          w-full h-9 px-3 py-1.5
-          bg-white/10 border border-white/20 rounded-lg
-          text-white placeholder-gray-300 text-sm
-          focus:outline-none focus:ring-2 focus:ring-brand-500 focus:border-transparent
+          w-full h-10 px-3 py-2
+          bg-white border border-gray-300 rounded-lg
+          text-gray-900 placeholder-gray-500 text-sm
+          focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500
           transition-colors duration-200
           ${hasError ? 'border-red-400 focus:ring-red-400' : ''}
           ${className}
         `}
       />
       {hasError && (
-        <p className="text-xs text-red-400 mt-0.5">{error}</p>
+        <p className="text-xs text-red-500 mt-1">{error}</p>
       )}
     </div>
   );
@@ -88,22 +88,22 @@ export function FormButton({
   onClick,
   className = ""
 }) {
-  const baseClasses = "w-full h-10 px-4 py-2 rounded-lg font-medium transition-all duration-200 flex items-center justify-center gap-2 text-sm";
-  
+  const baseClasses = "w-full h-11 px-4 py-2 rounded-lg font-medium transition-all duration-200 flex items-center justify-center gap-2 text-sm";
+
   const variantClasses = {
     primary: `
-      bg-brand-600 hover:bg-brand-700 
+      bg-blue-600 hover:bg-blue-700
       text-white shadow-lg hover:shadow-xl
-      disabled:bg-gray-600 disabled:cursor-not-allowed
+      disabled:bg-gray-400 disabled:cursor-not-allowed
     `,
     secondary: `
-      bg-white/10 hover:bg-white/20 
-      text-white border border-white/20
-      disabled:bg-gray-600 disabled:cursor-not-allowed
+      bg-gray-100 hover:bg-gray-200
+      text-gray-700 border border-gray-300
+      disabled:bg-gray-100 disabled:cursor-not-allowed
     `,
     link: `
-      bg-transparent hover:bg-white/10 
-      text-brand-200 hover:text-white
+      bg-transparent hover:bg-gray-100
+      text-blue-600 hover:text-blue-700
       h-auto py-2
     `
   };
@@ -127,19 +127,19 @@ export function FormButton({
 }
 
 // Link Component for auth navigation
-export function FormLink({ 
-  to, 
-  children, 
+export function FormLink({
+  to,
+  children,
   className = "",
-  onClick 
+  onClick
 }) {
   return (
     <button
       type="button"
       onClick={onClick}
       className={`
-        text-sm text-brand-200 hover:text-white 
-        transition-colors duration-200 
+        text-sm text-blue-600 hover:text-blue-700
+        transition-colors duration-200
         underline hover:no-underline
         ${className}
       `}
@@ -156,15 +156,15 @@ export function FormAlert({
   className = "" 
 }) {
   const typeClasses = {
-    success: "bg-green-500/20 border-green-400 text-green-100",
-    error: "bg-red-500/20 border-red-400 text-red-100",
-    warning: "bg-yellow-500/20 border-yellow-400 text-yellow-100",
-    info: "bg-blue-500/20 border-blue-400 text-blue-100"
+    success: "bg-green-50 border-green-200 text-green-800",
+    error: "bg-red-50 border-red-200 text-red-800",
+    warning: "bg-yellow-50 border-yellow-200 text-yellow-800",
+    info: "bg-blue-50 border-blue-200 text-blue-800"
   };
-  
+
   return (
     <div className={`
-      p-3 rounded-lg border backdrop-blur-sm
+      p-3 rounded-lg border
       ${typeClasses[type]}
       ${className}
     `}>

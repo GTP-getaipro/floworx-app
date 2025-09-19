@@ -101,7 +101,7 @@ export default function LoginPage({ onSubmit, errors = {}, values = {}, links = 
         </FormAlert>
       )}
 
-      <FormContainer onSubmit={handleSubmit}>
+      <form onSubmit={handleSubmit} className="space-y-4">
         <FormInput
           name="email"
           type="email"
@@ -136,15 +136,15 @@ export default function LoginPage({ onSubmit, errors = {}, values = {}, links = 
           Sign In
         </FormButton>
 
-        <FormNavigation>
+        <div className="flex flex-col sm:flex-row items-center justify-between gap-3 pt-4 text-sm">
           <FormLink onClick={() => window.location.href = links.forgotPassword || "/forgot-password"}>
             Forgot your password?
           </FormLink>
           <FormLink onClick={() => window.location.href = links.register || "/register"}>
             Create an account
           </FormLink>
-        </FormNavigation>
-      </FormContainer>
+        </div>
+      </form>
     </AuthLayout>
   );
 }

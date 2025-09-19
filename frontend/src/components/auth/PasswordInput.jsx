@@ -1,15 +1,62 @@
 import React, { useState } from "react";
 import { Eye, EyeOff } from "lucide-react";
 
-export default function PasswordInput({ 
-  id, 
-  label, 
-  value, 
-  onChange, 
-  onBlur, 
-  error, 
+/**
+ * PasswordInput - Secure Password Input Component
+ *
+ * Enhanced password input with show/hide toggle functionality,
+ * validation states, and accessibility features.
+ *
+ * @component
+ * @example
+ * // Basic usage
+ * <PasswordInput
+ *   id="password"
+ *   label="Password"
+ *   value={password}
+ *   onChange={handlePasswordChange}
+ * />
+ *
+ * // With validation error
+ * <PasswordInput
+ *   id="confirm-password"
+ *   label="Confirm Password"
+ *   value={confirmPassword}
+ *   onChange={handleConfirmChange}
+ *   error="Passwords do not match"
+ * />
+ *
+ * @param {Object} props - Component props
+ * @param {string} props.id - Unique identifier for the input
+ * @param {string} [props.label] - Label text for the input
+ * @param {string} props.value - Current input value
+ * @param {Function} props.onChange - Change handler function
+ * @param {Function} [props.onBlur] - Blur handler function
+ * @param {string} [props.error] - Error message to display
+ * @param {string} [props.placeholder] - Placeholder text
+ * @param {Object} props...props - Additional props passed to input element
+ *
+ * @features
+ * - Password visibility toggle with eye icon
+ * - Consistent styling with focus and error states
+ * - Accessibility support (labels, ARIA attributes)
+ * - Error message display with styling
+ * - Responsive design with smooth transitions
+ * - Security-focused (no autocomplete by default)
+ *
+ * @dependencies
+ * - Lucide React: Eye and EyeOff icons
+ * - Tailwind CSS: Styling and responsive design
+ */
+export default function PasswordInput({
+  id,
+  label,
+  value,
+  onChange,
+  onBlur,
+  error,
   placeholder,
-  ...props 
+  ...props
 }) {
   const [showPassword, setShowPassword] = useState(false);
 

@@ -6,6 +6,32 @@ import useFormValidation from "../hooks/useFormValidation";
 import { required, email } from "../utils/validationRules";
 import { api } from "../lib/api";
 
+/**
+ * ForgotPasswordPage - Password Reset Request Page
+ *
+ * Allows users to request a password reset by entering their email address.
+ * Sends a reset link to the user's email for secure password recovery.
+ *
+ * @component
+ * @example
+ * // Usage in router
+ * <Route path="/forgot-password" element={<ForgotPasswordPage />} />
+ *
+ * @features
+ * - Email validation with real-time feedback
+ * - Secure password reset request handling
+ * - Loading states during API calls
+ * - Success confirmation with clear next steps
+ * - Network error handling with user feedback
+ * - Form persistence cleared for security
+ * - Professional UI with consistent branding
+ *
+ * @dependencies
+ * - AuthLayout: Consistent authentication page layout
+ * - useFormValidation: Form validation and state management
+ * - API: Password reset request endpoint
+ * - Validation rules: Email and required field validation
+ */
 export default function ForgotPasswordPage() {
   const [isLoading, setIsLoading] = useState(false);
   const [isSuccess, setIsSuccess] = useState(false);

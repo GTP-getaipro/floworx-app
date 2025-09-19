@@ -3,6 +3,33 @@ import { useSearchParams, useNavigate, Link } from 'react-router-dom';
 import { useToast } from '../contexts/ToastContext';
 import { Logo } from '../components/ui';
 
+/**
+ * EmailVerificationPage - Email Verification Handler Page
+ *
+ * Handles email verification process by processing verification tokens
+ * from email links and providing comprehensive user feedback.
+ *
+ * @component
+ * @example
+ * // Usage in router for email verification
+ * <Route path="/verify-email" element={<EmailVerificationPage />} />
+ * // URL: /verify-email?token=abc123
+ *
+ * @features
+ * - Automatic token processing from URL parameters
+ * - Multiple verification states (verifying, success, error, expired)
+ * - Toast notifications for user feedback
+ * - Email resend functionality for failed verifications
+ * - Automatic redirect to login after successful verification
+ * - Professional error handling with recovery options
+ * - Responsive design with consistent branding
+ *
+ * @dependencies
+ * - React Router: useSearchParams, useNavigate, Link
+ * - ToastContext: User notifications and feedback
+ * - Logo: FloWorx branding component
+ * - API: Email verification endpoints
+ */
 const EmailVerificationPage = () => {
   const [searchParams] = useSearchParams();
   const navigate = useNavigate();

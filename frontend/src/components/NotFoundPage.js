@@ -1,6 +1,29 @@
 import React from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 
+/**
+ * NotFoundPage - 404 Error Page Component
+ *
+ * Displays a user-friendly 404 error page when users navigate
+ * to non-existent routes, with helpful navigation options.
+ *
+ * @component
+ * @example
+ * // Usage in router configuration
+ * <Route path="*" element={<NotFoundPage />} />
+ *
+ * @features
+ * - Professional 404 error display
+ * - Navigation options (back button, home link)
+ * - Helpful links to common pages
+ * - Responsive design with consistent branding
+ * - Browser history integration
+ * - SEO-friendly error handling
+ *
+ * @dependencies
+ * - React Router: useNavigate hook and Link component
+ * - CSS: Styling classes for layout and design
+ */
 const NotFoundPage = () => {
   const navigate = useNavigate();
 

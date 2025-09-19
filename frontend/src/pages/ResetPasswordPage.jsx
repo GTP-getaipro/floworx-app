@@ -8,6 +8,35 @@ import { required, minLength, passwordStrong, matches } from "../utils/validatio
 import { api } from "../lib/api";
 import { handleReturnToFromQuery } from "../lib/returnTo";
 
+/**
+ * ResetPasswordPage - Password Reset Completion Page
+ *
+ * Allows users to set a new password using a valid reset token
+ * received via email. Includes comprehensive validation and security.
+ *
+ * @component
+ * @example
+ * // Usage in router with token parameter
+ * <Route path="/reset-password" element={<ResetPasswordPage />} />
+ * // URL: /reset-password?token=abc123
+ *
+ * @features
+ * - Token validation from URL parameters
+ * - Strong password requirements with real-time validation
+ * - Password confirmation matching
+ * - Secure API communication
+ * - Loading states during password reset
+ * - Success confirmation with automatic redirect
+ * - Error handling for invalid/expired tokens
+ * - Return-to URL handling after successful reset
+ *
+ * @dependencies
+ * - React Router: useNavigate, useSearchParams
+ * - AuthLayout: Consistent authentication page layout
+ * - useFormValidation: Form validation and state management
+ * - API: Password reset completion endpoint
+ * - Validation rules: Password strength and matching validation
+ */
 export default function ResetPasswordPage() {
   const [isLoading, setIsLoading] = useState(false);
   const [isSuccess, setIsSuccess] = useState(false);

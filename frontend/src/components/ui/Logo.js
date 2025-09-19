@@ -19,9 +19,9 @@ const Logo = ({
   const sizeClasses = {
     xs: 'h-6 w-6',
     sm: 'h-8 w-8',
-    md: 'h-12 w-12',
-    lg: 'h-16 w-16',
-    xl: 'h-20 w-20'
+    md: 'h-10 w-10', // Reduced from h-12 w-12 for better scaling
+    lg: 'h-14 w-14', // Reduced from h-16 w-16 for better scaling
+    xl: 'h-18 w-18'  // Reduced from h-20 w-20 for better scaling
   };
 
   const textSizeClasses = {

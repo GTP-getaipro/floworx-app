@@ -156,15 +156,26 @@ const routes = {
 
       console.log('Password reset email sent successfully');
 
+      const remoteAddr = req.ip || req.connection?.remoteAddress || null;
       res.status(200).json({
+        success: true,
         message: 'Password reset email sent successfully',
-        email: email
+        meta: {
+          remoteAddr,
+          email: email,
+          requestTime: new Date().toISOString()
+        }
       });
     } catch (error) {
       console.error('Password reset error:', error);
+      const remoteAddr = req.ip || req.connection?.remoteAddress || null;
       res.status(500).json({
-        error: 'Password reset failed',
-        message: 'Something went wrong. Please try again.'
+        success: false,
+        error: {
+          code: 'INTERNAL_ERROR',
+          message: 'Something went wrong. Please try again.'
+        },
+        meta: { remoteAddr }
       });
     }
   },

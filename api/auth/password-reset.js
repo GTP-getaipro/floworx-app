@@ -67,18 +67,28 @@ const forgotPassword = async (req, res) => {
       });
     }
 
+    const remoteAddr = req.ip || req.connection?.remoteAddress || null;
     res.status(200).json({
       success: true,
       message: result.message,
-      emailSent: result.emailSent,
-      expiresIn: result.expiresIn
+      meta: {
+        remoteAddr,
+        emailSent: result.emailSent,
+        expiresIn: result.expiresIn,
+        requestTime: new Date().toISOString()
+      }
     });
 
   } catch (error) {
     console.error('Forgot password error:', error);
+    const remoteAddr = req.ip || req.connection?.remoteAddress || null;
     res.status(500).json({
-      error: 'Internal server error',
-      message: 'Unable to process password reset request'
+      success: false,
+      error: {
+        code: 'INTERNAL_ERROR',
+        message: 'Unable to process password reset request'
+      },
+      meta: { remoteAddr }
     });
   }
 };

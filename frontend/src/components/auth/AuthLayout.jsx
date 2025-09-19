@@ -11,14 +11,14 @@ export default function AuthLayout({ title, subtitle, children }) {
       {/* Brand header */}
       <div className="relative z-10 pt-8 pb-4">
         <div className="text-center">
-          <Logo variant="whiteOnBlue" size="lg" showText={true} className="mx-auto mb-2" />
+          <Logo variant="whiteOnBlue" size="md" showText={true} className="mx-auto mb-2" />
           <p className="text-slate-200 text-sm opacity-90">Email AI Built by Hot Tub Pros—For Hot Tub Pros</p>
         </div>
       </div>
       
       {/* Main content */}
       <div className="relative z-10 flex items-center justify-center px-4 pb-8">
-        <div className="bg-white/10 backdrop-blur-xl border border-white/20 shadow-2xl rounded-3xl p-6 sm:p-8 w-full max-w-lg">
+        <div className="bg-white/10 backdrop-blur-xl border border-white/20 shadow-2xl rounded-3xl p-6 sm:p-8 w-full max-w-md sm:max-w-lg lg:max-w-xl">
           {/* Card header */}
           <div className="text-center mb-6">
             {title && (

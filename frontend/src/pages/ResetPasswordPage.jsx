@@ -51,9 +51,9 @@ export default function ResetPasswordPage() {
     setApiError('');
 
     try {
-      await api('/api/password-reset/reset', {
+      await api('/api/auth/reset-password', {
         method: 'POST',
-        body: { token, password: formValues.password }
+        body: { token, newPassword: formValues.password }
       });
       setIsSuccess(true);
 

@@ -43,7 +43,7 @@ const Logo = ({
           <img
             src={logoAssets.whiteOnBlue}
             alt={alt}
-            className="w-full h-full object-contain"
+            className="w-full h-full object-contain max-w-full max-h-full"
           />
         );
 

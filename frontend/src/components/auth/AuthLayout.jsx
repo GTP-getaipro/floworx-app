@@ -10,25 +10,27 @@ export default function AuthLayout({ title, subtitle, children }) {
 
       {/* Flex container for perfect centering */}
       <div className="relative z-10 min-h-screen flex items-center justify-center px-4 py-6">
-        <div className="w-full max-w-sm sm:max-w-md lg:max-w-lg">
+        <div className="w-full max-w-sm sm:max-w-md md:max-w-md lg:max-w-lg xl:max-w-lg">
           {/* Compact header with logo + tagline in single section */}
           <div className="text-center mb-6">
             <div className="flex flex-col items-center gap-2">
-              <Logo variant="whiteOnBlue" size="md" showText={true} className="max-h-12 max-w-12" />
-              <p className="text-sm text-gray-200 mt-2">Email AI Built by Hot Tub Pros—For Hot Tub Pros</p>
+              <div className="max-h-12 max-w-12 flex items-center justify-center">
+                <Logo variant="whiteOnBlue" size="sm" showText={true} className="h-12 w-12 object-contain" />
+              </div>
+              <p className="text-sm text-gray-200">Email AI Built by Hot Tub Pros—For Hot Tub Pros</p>
             </div>
           </div>
 
           {/* Form container - keeps everything in viewport */}
-          <div className="bg-white/10 backdrop-blur-xl border border-white/20 shadow-xl rounded-2xl p-6 sm:p-8 max-h-[650px] overflow-y-auto">
+          <div className="bg-white/10 backdrop-blur-xl border border-white/20 shadow-xl rounded-2xl p-4 sm:p-6 max-h-[600px] overflow-y-auto">
             {/* Card header */}
             {(title || subtitle) && (
-              <div className="text-center mb-6">
+              <div className="text-center mb-4">
                 {title && (
-                  <h2 className="text-2xl font-bold text-white mb-2">{title}</h2>
+                  <h2 className="text-xl font-bold text-white mb-1">{title}</h2>
                 )}
                 {subtitle && (
-                  <p className="text-slate-200 text-sm opacity-90">{subtitle}</p>
+                  <p className="text-slate-200 text-xs opacity-90">{subtitle}</p>
                 )}
               </div>
             )}

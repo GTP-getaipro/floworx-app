@@ -10,16 +10,16 @@ import React from "react";
  * - Mobile-first responsive design
  * - Loading states and error handling
  */
-export default function FormContainer({ 
-  children, 
-  onSubmit, 
+export default function FormContainer({
+  children,
+  onSubmit,
   className = "",
-  loading = false 
+  loading = false
 }) {
   return (
-    <form 
-      onSubmit={onSubmit} 
-      className={`space-y-4 ${className}`}
+    <form
+      onSubmit={onSubmit}
+      className={`space-y-3 ${className}`}
       noValidate
     >
       {children}
@@ -47,7 +47,7 @@ export function FormInput({
   return (
     <div className="space-y-1">
       {label && (
-        <label htmlFor={name} className="block text-sm font-medium text-white">
+        <label htmlFor={name} className="block text-xs font-medium text-white">
           {label} {required && <span className="text-red-400">*</span>}
         </label>
       )}
@@ -62,9 +62,9 @@ export function FormInput({
         autoFocus={autoFocus}
         required={required}
         className={`
-          w-full h-10 px-3 py-2 
+          w-full h-9 px-3 py-1.5
           bg-white/10 border border-white/20 rounded-lg
-          text-white placeholder-gray-300
+          text-white placeholder-gray-300 text-sm
           focus:outline-none focus:ring-2 focus:ring-brand-500 focus:border-transparent
           transition-colors duration-200
           ${hasError ? 'border-red-400 focus:ring-red-400' : ''}
@@ -72,7 +72,7 @@ export function FormInput({
         `}
       />
       {hasError && (
-        <p className="text-sm text-red-400 mt-1">{error}</p>
+        <p className="text-xs text-red-400 mt-0.5">{error}</p>
       )}
     </div>
   );
@@ -88,7 +88,7 @@ export function FormButton({
   onClick,
   className = ""
 }) {
-  const baseClasses = "w-full h-11 px-4 py-2 rounded-lg font-medium transition-all duration-200 flex items-center justify-center gap-2";
+  const baseClasses = "w-full h-10 px-4 py-2 rounded-lg font-medium transition-all duration-200 flex items-center justify-center gap-2 text-sm";
   
   const variantClasses = {
     primary: `

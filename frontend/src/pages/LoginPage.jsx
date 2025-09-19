@@ -82,33 +82,27 @@ export default function LoginPage({ onSubmit, errors = {}, values = {}, links = 
   return (
     <AuthLayout title="Sign in to FloWorx" subtitle="Access your automation dashboard">
       {showUnverifiedBanner && (
-        <div className="mb-4 p-4 bg-yellow-50 border border-yellow-200 rounded-lg">
-          <div
-            className="text-yellow-800 text-sm"
-            role="alert"
-            aria-live="polite"
-          >
+        <FormAlert type="warning" className="mb-4">
+          <div className="text-sm">
             Please verify your email to continue.
           </div>
           {resendSuccess ? (
-            <div className="mt-2 text-green-700 text-sm">
+            <div className="mt-2 text-green-100 text-sm">
               Verification email sent! Check your inbox.
             </div>
           ) : (
-            <button
-              type="button"
+            <FormLink
               onClick={handleResendVerification}
-              disabled={isResending}
-              className="mt-2 text-yellow-700 hover:text-yellow-900 underline text-sm"
+              className="mt-2 block"
             >
               {isResending ? 'Sending...' : 'Resend verification email'}
-            </button>
+            </FormLink>
           )}
-        </div>
+        </FormAlert>
       )}
-      <form onSubmit={handleSubmit} noValidate className="space-y-4">
-        <Input
-          id="email"
+
+      <FormContainer onSubmit={handleSubmit}>
+        <FormInput
           name="email"
           type="email"
           label="Email Address"
@@ -116,39 +110,41 @@ export default function LoginPage({ onSubmit, errors = {}, values = {}, links = 
           onChange={handleChange}
           onBlur={handleBlur}
           error={formErrors.email || errors.email}
+          touched={touched.email}
+          autoFocus={true}
+          required={true}
           placeholder="you@company.com"
         />
-        <PasswordInput
-          id="password"
+
+        <FormInput
           name="password"
+          type="password"
           label="Password"
           value={formValues.password}
           onChange={handleChange}
           onBlur={handleBlur}
           error={formErrors.password || errors.password}
+          touched={touched.password}
+          required={true}
           placeholder="••••••••"
         />
-        <Button
+
+        <FormButton
           type="submit"
           disabled={!isValid && Object.keys(touched).length > 0}
         >
           Sign In
-        </Button>
-        <div className="flex flex-col sm:flex-row justify-between gap-3 pt-2">
-          <a
-            href={links.forgotPassword || "/forgot-password"}
-            className="text-brand-300 hover:text-white underline-offset-4 hover:underline text-sm text-center"
-          >
+        </FormButton>
+
+        <FormNavigation>
+          <FormLink onClick={() => window.location.href = links.forgotPassword || "/forgot-password"}>
             Forgot your password?
-          </a>
-          <a
-            href={links.register || "/register"}
-            className="text-brand-300 hover:text-white underline-offset-4 hover:underline text-sm text-center"
-          >
+          </FormLink>
+          <FormLink onClick={() => window.location.href = links.register || "/register"}>
             Create an account
-          </a>
-        </div>
-      </form>
+          </FormLink>
+        </FormNavigation>
+      </FormContainer>
     </AuthLayout>
   );
 }

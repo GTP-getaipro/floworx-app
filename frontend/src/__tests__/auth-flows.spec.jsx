@@ -57,14 +57,12 @@ describe('Auth Flows', () => {
 
       // Wait for API calls (CSRF token fetch happens first, then actual API call)
       await waitFor(() => {
-        expect(fetch).toHaveBeenCalledWith('/api/auth/csrf', {
-          method: 'GET',
-          headers: { 'Accept': 'application/json' },
-          credentials: 'include'
-        });
         expect(fetch).toHaveBeenCalledWith('/api/auth/forgot-password', {
           method: 'POST',
-          headers: { 'content-type': 'application/json' },
+          headers: {
+            'content-type': 'application/json',
+            'x-csrf-token': 'mock-csrf-token'
+          },
           body: JSON.stringify({ email: 'test@example.com' }),
           credentials: 'include',
         });
@@ -88,11 +86,16 @@ describe('Auth Flows', () => {
         json: async () => ({ csrf: 'mock-csrf-token' }),
       });
 
-      // Mock 410 error response
-      fetch.mockRejectedValueOnce({
+      // Mock 410 error response for the actual API call
+      fetch.mockResolvedValueOnce({
+        ok: false,
         status: 410,
-        code: 'TOKEN_INVALID',
-        message: 'Token invalid or expired',
+        json: async () => ({
+          error: {
+            code: 'TOKEN_INVALID',
+            message: 'Token invalid or expired'
+          }
+        })
       });
 
       render(

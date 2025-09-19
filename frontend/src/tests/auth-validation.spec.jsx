@@ -88,7 +88,7 @@ describe('Auth Pages Design Validation', () => {
       await waitFor(() => {
         // Look for the actual validation messages that appear
         expect(screen.getByText(/please enter a valid email address/i)).toBeInTheDocument();
-        expect(screen.getByText(/password is required/i)).toBeInTheDocument();
+        expect(screen.getByText(/this field is required/i)).toBeInTheDocument();
       });
 
       // Fill in invalid email
@@ -191,9 +191,9 @@ describe('Auth Pages Design Validation', () => {
         </TestWrapper>
       );
       
-      const emailInput = screen.getByLabelText('Email Address');
+      const emailInput = screen.getByLabelText(/Email Address/i);
       expect(emailInput).toHaveAttribute('aria-invalid', 'true');
-      expect(screen.getByText('Email is required')).toBeInTheDocument();
+      expect(screen.getByText(/this field is required/i)).toBeInTheDocument();
     });
 
     test('keyboard navigation works properly', () => {

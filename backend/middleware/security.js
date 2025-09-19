@@ -316,7 +316,7 @@ const sanitizeInput = (req, res, next) => {
 /**
  * Security headers middleware
  */
-const _securityHeaders = (req, res, next) => {
+const securityHeaders = (req, res, next) => {
   // Additional custom security headers
   res.setHeader('X-Content-Type-Options', 'nosniff');
   res.setHeader('X-Frame-Options', 'DENY');
@@ -374,12 +374,12 @@ const additionalSecurityHeaders = (req, res, next) => {
 module.exports = {
   helmet: helmet(helmetConfig),
   additionalSecurityHeaders,
+  securityHeaders,
   rateLimits: rateLimitConfigs,
   slowDown: slowDownConfigs,
   sanitizeInput,
   sanitizeRequest,
   sanitizeResponse,
-  // securityHeaders: helmet(helmetConfig), // Duplicate - using helmet export instead
   handleValidationErrors,
 
   // Convenience exports

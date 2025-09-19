@@ -27,6 +27,7 @@ const { performanceMiddlewareStack, smartCompression, cacheHeaders } = require('
 const {
   helmet,
   additionalSecurityHeaders,
+  securityHeaders,
   apiRateLimit,
   // authRateLimit, // Not used in this file - handled in middleware/index.js
   // registrationRateLimit, // Not used in this file
@@ -36,7 +37,6 @@ const {
   sanitizeInput,
   sanitizeRequest,
   sanitizeResponse,
-  // securityHeaders, // Not used in this file
   handleValidationErrors
 } = require('./middleware/security');
 // const accountRecoveryRoutes = require('./routes/accountRecovery'); // Removed during cleanup
@@ -126,7 +126,8 @@ app.use(
 );
 
 // Security middleware stack (after CORS)
-// app.use(helmet()); // Temporarily disabled due to initialization issues
+app.use(helmet);
+app.use(securityHeaders);
 app.use(additionalSecurityHeaders);
 app.use(sanitizeRequest);
 

@@ -9,15 +9,15 @@ export default function AuthLayout({ title, subtitle, children }) {
       <div className="absolute bottom-20 right-20 w-96 h-96 bg-indigo-500 rounded-full blur-3xl opacity-40 mix-blend-screen"></div>
 
       {/* Brand header */}
-      <div className="relative z-10 pt-8 pb-4">
+      <div className="relative z-10 pt-8 pb-6">
         <div className="text-center">
-          <Logo variant="whiteOnBlue" size="md" showText={true} className="mx-auto mb-2" />
-          <p className="text-slate-200 text-sm opacity-90">Email AI Built by Hot Tub Pros—For Hot Tub Pros</p>
+          <Logo variant="whiteOnBlue" size="sm" showText={true} className="mx-auto mb-3" />
+          <p className="text-slate-200 text-sm opacity-90 mt-4 px-4">Email AI Built by Hot Tub Pros—For Hot Tub Pros</p>
         </div>
       </div>
       
       {/* Main content */}
-      <div className="relative z-10 flex items-center justify-center px-4 pb-8">
+      <div className="relative z-10 flex items-center justify-center px-4 pb-8 mt-4">
         <div className="bg-white/10 backdrop-blur-xl border border-white/20 shadow-2xl rounded-3xl p-6 sm:p-8 w-full max-w-md sm:max-w-lg lg:max-w-xl">
           {/* Card header */}
           <div className="text-center mb-6">

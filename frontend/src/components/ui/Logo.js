@@ -18,10 +18,10 @@ const Logo = ({
 }) => {
   const sizeClasses = {
     xs: 'h-6 w-6',
-    sm: 'h-8 w-8',
+    sm: 'h-8 w-8',   // Perfect for auth headers - not oversized
     md: 'h-10 w-10', // Reduced from h-12 w-12 for better scaling
-    lg: 'h-14 w-14', // Reduced from h-16 w-16 for better scaling
-    xl: 'h-18 w-18'  // Reduced from h-20 w-20 for better scaling
+    lg: 'h-12 w-12', // Further reduced from h-14 w-14 for UAT compliance
+    xl: 'h-16 w-16'  // Reduced from h-18 w-18 for better scaling
   };
 
   const textSizeClasses = {

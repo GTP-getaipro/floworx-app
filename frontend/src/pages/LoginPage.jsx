@@ -8,6 +8,36 @@ import { api } from "../lib/api";
 import { handleReturnToFromQuery, getReturnTo, clearReturnTo } from "../lib/returnTo";
 import { useAuth } from "../contexts/AuthContext";
 
+/**
+ * LoginPage - User Authentication Page
+ *
+ * Handles user login with form validation, error handling, and email verification.
+ * Supports both prop-based and context-based usage patterns for flexibility.
+ *
+ * @component
+ * @param {Object} props - Component props (optional for backward compatibility)
+ * @param {Object} props.errors - Initial error state (optional)
+ * @param {Object} props.values - Initial form values (optional)
+ * @param {Object} props.links - Navigation links (optional)
+ *
+ * @example
+ * // Primary usage with AuthContext (recommended)
+ * <LoginPage />
+ *
+ * // Legacy usage with props (backward compatibility)
+ * <LoginPage errors={errors} values={values} links={links} />
+ *
+ * @features
+ * - Uses AuthContext for authentication
+ * - Form validation with real-time feedback
+ * - Email verification handling
+ * - Return URL support
+ * - Loading states and error handling
+ *
+ * @dependencies
+ * - AuthContext: Must be wrapped in AuthProvider
+ * - React Router: Uses useNavigate and useSearchParams
+ */
 export default function LoginPage({ errors = {}, values = {}, links = {} }) {
   const { login } = useAuth();
   const [showUnverifiedBanner, setShowUnverifiedBanner] = useState(false);

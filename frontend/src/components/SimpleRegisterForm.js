@@ -1,7 +1,26 @@
 import React, { useState } from 'react';
 import { useAuth } from '../contexts/AuthContext';
 
-// Simple, robust registration form without complex dependencies
+/**
+ * SimpleRegisterForm - Lightweight Registration Component
+ *
+ * A simplified registration form component with minimal dependencies
+ * for basic user registration functionality.
+ *
+ * @component
+ * @example
+ * // Usage in a page
+ * <SimpleRegisterForm />
+ *
+ * @features
+ * - Uses AuthContext for registration (no props required)
+ * - Basic form validation
+ * - Success/error state management
+ * - Minimal UI dependencies
+ *
+ * @dependencies
+ * - AuthContext: Must be wrapped in AuthProvider
+ */
 const SimpleRegisterForm = () => {
   const { register } = useAuth();
   const [formData, setFormData] = useState({

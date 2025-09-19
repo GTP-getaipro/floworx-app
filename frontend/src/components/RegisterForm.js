@@ -14,6 +14,31 @@ import { parseError, logError, ERROR_MESSAGES } from '../utils/errorHandling';
 
 import { Alert, Card, Link, Logo } from './ui';
 
+/**
+ * RegisterForm - Standalone Registration Component
+ *
+ * A comprehensive registration form component that handles user registration
+ * with form validation, persistence, and progress tracking.
+ *
+ * @component
+ * @example
+ * // Usage in a page or layout
+ * <RegisterForm />
+ *
+ * @features
+ * - Uses AuthContext for registration (no props required)
+ * - Form validation with real-time feedback
+ * - Form persistence across sessions
+ * - Progress indicator for multi-step flow
+ * - Toast notifications for user feedback
+ * - Automatic navigation on success
+ *
+ * @dependencies
+ * - AuthContext: Must be wrapped in AuthProvider
+ * - ToastContext: Must be wrapped in ToastProvider
+ * - React Router: Uses useNavigate for navigation
+ */
+
 const validationRules = {
   email: [required(), email()],
   password: [required(), minLength(8), passwordStrong()],

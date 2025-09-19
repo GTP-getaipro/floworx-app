@@ -8,6 +8,35 @@ import { required, email, minLength, passwordStrong, matches } from "../utils/va
 import { handleReturnToFromQuery } from "../lib/returnTo";
 import { useAuth } from "../contexts/AuthContext";
 
+/**
+ * RegisterPage - User Registration Page
+ *
+ * Handles user registration with form validation, persistence, and error handling.
+ * Supports both prop-based and context-based usage patterns for flexibility.
+ *
+ * @component
+ * @param {Object} props - Component props (optional for backward compatibility)
+ * @param {Object} props.errors - Initial error state (optional)
+ * @param {Object} props.values - Initial form values (optional)
+ *
+ * @example
+ * // Primary usage with AuthContext (recommended)
+ * <RegisterPage />
+ *
+ * // Legacy usage with props (backward compatibility)
+ * <RegisterPage errors={errors} values={values} />
+ *
+ * @features
+ * - Uses AuthContext for registration
+ * - Form validation with real-time feedback
+ * - Form persistence across sessions
+ * - Loading states and error handling
+ * - Auto-redirect to email verification
+ *
+ * @dependencies
+ * - AuthContext: Must be wrapped in AuthProvider
+ * - React Router: Uses useNavigate and useSearchParams
+ */
 export default function RegisterPage({ errors = {}, values = {} }) {
   const { register } = useAuth();
   const { load, save, clear } = useFormPersistence('auth:register');

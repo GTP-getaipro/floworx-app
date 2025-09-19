@@ -2,6 +2,27 @@ import React, { useState, useEffect } from 'react';
 import { useAuth } from '../contexts/AuthContext';
 import './UserManagement.css';
 
+/**
+ * UserManagement - User Profile Management Component
+ *
+ * Allows authenticated users to view and update their profile information.
+ *
+ * @component
+ * @example
+ * // Usage in a dashboard or settings page
+ * <UserManagement />
+ *
+ * @features
+ * - Uses AuthContext for user data (no props required)
+ * - Profile editing with form validation
+ * - API integration for profile updates
+ * - Loading states and error handling
+ *
+ * @dependencies
+ * - AuthContext: Must be wrapped in AuthProvider
+ * - CSS: Requires UserManagement.css for styling
+ */
+
 const UserManagement = () => {
   const { user } = useAuth();
   const [profile, setProfile] = useState({

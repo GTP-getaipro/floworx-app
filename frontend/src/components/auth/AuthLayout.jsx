@@ -14,8 +14,8 @@ export default function AuthLayout({ title, subtitle, children }) {
           {/* Compact header with logo + tagline in single section */}
           <div className="text-center mb-6">
             <div className="flex flex-col items-center gap-2">
-              <div className="max-h-12 max-w-12 flex items-center justify-center">
-                <Logo variant="whiteOnBlue" size="sm" showText={true} className="h-12 w-12 object-contain" />
+              <div className="h-12 w-12 flex items-center justify-center overflow-hidden">
+                <Logo variant="whiteOnBlue" size="sm" showText={true} className="max-h-12 max-w-12 object-contain" />
               </div>
               <p className="text-sm text-gray-200">Email AI Built by Hot Tub Pros—For Hot Tub Pros</p>
             </div>

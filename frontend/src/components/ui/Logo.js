@@ -43,7 +43,10 @@ const Logo = ({
           <img
             src={logoAssets.whiteOnBlue}
             alt={alt}
+            width="48"
+            height="48"
             className="w-full h-full object-contain max-w-full max-h-full"
+            style={{ maxWidth: '48px', maxHeight: '48px' }}
           />
         );
 
@@ -54,7 +57,10 @@ const Logo = ({
           <img
             src={logoAssets.transparent}
             alt={alt}
-            className="w-full h-full object-contain"
+            width="48"
+            height="48"
+            className="w-full h-full object-contain max-w-full max-h-full"
+            style={{ maxWidth: '48px', maxHeight: '48px' }}
           />
         );
 

@@ -6,8 +6,10 @@ import useFormValidation from "../hooks/useFormValidation";
 import useFormPersistence from "../hooks/useFormPersistence";
 import { required, email, minLength, passwordStrong, matches } from "../utils/validationRules";
 import { handleReturnToFromQuery } from "../lib/returnTo";
+import { useAuth } from "../contexts/AuthContext";
 
-export default function RegisterPage({ onSubmit, errors = {}, values = {} }) {
+export default function RegisterPage({ errors = {}, values = {} }) {
+  const { register } = useAuth();
   const { load, save, clear } = useFormPersistence('auth:register');
   const [showRestoreNotice, setShowRestoreNotice] = useState(false);
   const [searchParams] = useSearchParams();
@@ -75,14 +77,27 @@ export default function RegisterPage({ onSubmit, errors = {}, values = {} }) {
     setSubmitError(null);
 
     try {
-      await onSubmit(formValues);
-      clear(); // Clear saved data on successful submission
-      setSubmitSuccess(true);
+      const result = await register({
+        email: formValues.email,
+        password: formValues.password,
+        firstName: formValues.firstName,
+        lastName: formValues.lastName,
+        businessName: formValues.company || '',
+        agreeToTerms: true,
+        marketingConsent: false
+      });
 
-      // Auto-redirect to email verification after 2 seconds
-      setTimeout(() => {
-        navigate('/verify-email');
-      }, 2000);
+      if (result.success) {
+        clear(); // Clear saved data on successful submission
+        setSubmitSuccess(true);
+
+        // Auto-redirect to email verification after 2 seconds
+        setTimeout(() => {
+          navigate('/verify-email');
+        }, 2000);
+      } else {
+        setSubmitError(result.error || 'Registration failed. Please try again.');
+      }
     } catch (error) {
       console.error('Registration failed:', error);
       setSubmitError(error.message || 'Registration failed. Please try again.');
@@ -123,6 +138,21 @@ export default function RegisterPage({ onSubmit, errors = {}, values = {} }) {
         </FormAlert>
       )}
 
+      {/* Error message */}
+      {submitError && (
+        <FormAlert type="error" className="mb-4">
+          {submitError}
+        </FormAlert>
+      )}
+
+      {/* Success message */}
+      {submitSuccess && (
+        <FormAlert type="success" className="mb-4">
+          Account created successfully! Please check your email to verify your account.
+          Redirecting to verification page...
+        </FormAlert>
+      )}
+
       <form onSubmit={handleSubmit} className="space-y-4">
         {/* Single column layout for compact spacing */}
         <FormInput
@@ -136,6 +166,7 @@ export default function RegisterPage({ onSubmit, errors = {}, values = {} }) {
           autoFocus={true}
           required={true}
           placeholder="Enter your first name"
+          disabled={loading}
         />
 
         <FormInput
@@ -148,6 +179,7 @@ export default function RegisterPage({ onSubmit, errors = {}, values = {} }) {
           touched={touched.lastName}
           required={true}
           placeholder="Enter your last name"
+          disabled={loading}
         />
 
         <FormInput
@@ -159,6 +191,7 @@ export default function RegisterPage({ onSubmit, errors = {}, values = {} }) {
           error={formErrors.company || errors.company}
           touched={touched.company}
           placeholder="Your company name (optional)"
+          disabled={loading}
         />
 
         <FormInput
@@ -172,6 +205,7 @@ export default function RegisterPage({ onSubmit, errors = {}, values = {} }) {
           touched={touched.email}
           required={true}
           placeholder="Enter your business email"
+          disabled={loading}
         />
 
         <FormInput
@@ -185,6 +219,7 @@ export default function RegisterPage({ onSubmit, errors = {}, values = {} }) {
           touched={touched.password}
           required={true}
           placeholder="Create a strong password (min. 8 characters)"
+          disabled={loading}
         />
 
         <FormInput
@@ -198,14 +233,15 @@ export default function RegisterPage({ onSubmit, errors = {}, values = {} }) {
           touched={touched.confirm}
           required={true}
           placeholder="Confirm your password"
+          disabled={loading}
         />
 
         <FormButton
           type="submit"
           loading={loading}
-          disabled={!isValid && Object.keys(touched).length > 0}
+          disabled={loading || (!isValid && Object.keys(touched).length > 0)}
         >
-          Create Account
+          {loading ? 'Creating Account...' : 'Create Account'}
         </FormButton>
 
         <div className="flex flex-col sm:flex-row items-center justify-center gap-2 pt-4 text-sm text-gray-600">

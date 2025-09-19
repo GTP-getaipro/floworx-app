@@ -1,0 +1,122 @@
+<testsuites id="" name="" tests="16" failures="2" skipped="14" errors="0" time="19.078075000000002">
+<testsuite name="auth.spec.js" timestamp="2025-09-19T20:37:59.556Z" hostname="chromium" tests="16" failures="2" skipped="14" time="34.088" errors="0">
+<testcase name="Authentication &amp; Security (Hybrid Local-Cloud) › User Registration › should register new user successfully" classname="auth.spec.js" time="17.048">
+<failure message="auth.spec.js:19:5 should register new user successfully" type="FAILURE">
+<![CDATA[  [chromium] › auth.spec.js:19:5 › Authentication & Security (Hybrid Local-Cloud) › User Registration › should register new user successfully 
+
+    Error: page.waitForURL: Target page, context or browser has been closed
+    =========================== logs ===========================
+    waiting for navigation to "/login" until "load"
+    ============================================================
+
+      50 |         } catch {
+      51 |           // Alternative: Check for redirect to login
+    > 52 |           await page.waitForURL('/login', { timeout: 15000 });
+         |                      ^
+      53 |         }
+      54 |       }
+      55 |       
+        at C:\FloworxInvite\tests\auth.spec.js:52:22
+]]>
+</failure>
+<system-out>
+<![CDATA[🏠 Running tests against LOCAL environment
+🔒 Validating Production Security Settings:
+   - Account Recovery Token Expiry: 86400000ms (24 hours)
+   - Max Failed Login Attempts: 5
+   - Account Lockout Duration: 900000ms (15 minutes)
+   - Progressive Lockout Multiplier: 2x
+   ✅ All security settings match production configuration
+]]>
+</system-out>
+</testcase>
+<testcase name="Authentication &amp; Security (Hybrid Local-Cloud) › User Registration › should reject registration with invalid email" classname="auth.spec.js" time="17.04">
+<failure message="auth.spec.js:66:5 should reject registration with invalid email" type="FAILURE">
+<![CDATA[  [chromium] › auth.spec.js:66:5 › Authentication & Security (Hybrid Local-Cloud) › User Registration › should reject registration with invalid email 
+
+    TimeoutError: page.fill: Timeout 15000ms exceeded.
+    Call log:
+      - waiting for locator('input[name="confirmPassword"]')
+
+
+      71 |       await page.fill('input[name="email"]', 'invalid-email');
+      72 |       await page.fill('input[name="password"]', 'SecurePassword123!');
+    > 73 |       await page.fill('input[name="confirmPassword"]', 'SecurePassword123!');
+         |                  ^
+      74 |       
+      75 |       await page.click('button[type="submit"], button:has-text("Sign Up"), button:has-text("Register"), button:has-text("Create Account")');
+      76 |       
+        at C:\FloworxInvite\tests\auth.spec.js:73:18
+
+    Error: browserContext.close: Target page, context or browser has been closed
+]]>
+</failure>
+<system-out>
+<![CDATA[🏠 Running tests against LOCAL environment
+🔒 Validating Production Security Settings:
+   - Account Recovery Token Expiry: 86400000ms (24 hours)
+   - Max Failed Login Attempts: 5
+   - Account Lockout Duration: 900000ms (15 minutes)
+   - Progressive Lockout Multiplier: 2x
+   ✅ All security settings match production configuration
+]]>
+</system-out>
+</testcase>
+<testcase name="Authentication &amp; Security (Hybrid Local-Cloud) › User Registration › should reject registration with weak password" classname="auth.spec.js" time="0">
+<skipped>
+</skipped>
+</testcase>
+<testcase name="Authentication &amp; Security (Hybrid Local-Cloud) › User Registration › should reject registration with mismatched passwords" classname="auth.spec.js" time="0">
+<skipped>
+</skipped>
+</testcase>
+<testcase name="Authentication &amp; Security (Hybrid Local-Cloud) › User Registration › should reject duplicate email registration" classname="auth.spec.js" time="0">
+<skipped>
+</skipped>
+</testcase>
+<testcase name="Authentication &amp; Security (Hybrid Local-Cloud) › User Login › should login with valid credentials" classname="auth.spec.js" time="0">
+<skipped>
+</skipped>
+</testcase>
+<testcase name="Authentication &amp; Security (Hybrid Local-Cloud) › User Login › should reject login with invalid email" classname="auth.spec.js" time="0">
+<skipped>
+</skipped>
+</testcase>
+<testcase name="Authentication &amp; Security (Hybrid Local-Cloud) › User Login › should reject login with invalid password" classname="auth.spec.js" time="0">
+<skipped>
+</skipped>
+</testcase>
+<testcase name="Authentication &amp; Security (Hybrid Local-Cloud) › User Login › should implement progressive account lockout with production settings" classname="auth.spec.js" time="0">
+<skipped>
+</skipped>
+</testcase>
+<testcase name="Authentication &amp; Security (Hybrid Local-Cloud) › Password Reset › should initiate password reset for valid email" classname="auth.spec.js" time="0">
+<skipped>
+</skipped>
+</testcase>
+<testcase name="Authentication &amp; Security (Hybrid Local-Cloud) › Password Reset › should handle password reset for non-existent email gracefully" classname="auth.spec.js" time="0">
+<skipped>
+</skipped>
+</testcase>
+<testcase name="Authentication &amp; Security (Hybrid Local-Cloud) › Password Reset › should validate password reset token expiry with production settings" classname="auth.spec.js" time="0">
+<skipped>
+</skipped>
+</testcase>
+<testcase name="Authentication &amp; Security (Hybrid Local-Cloud) › Session Management › should maintain session across page refreshes" classname="auth.spec.js" time="0">
+<skipped>
+</skipped>
+</testcase>
+<testcase name="Authentication &amp; Security (Hybrid Local-Cloud) › Session Management › should logout successfully" classname="auth.spec.js" time="0">
+<skipped>
+</skipped>
+</testcase>
+<testcase name="Authentication &amp; Security (Hybrid Local-Cloud) › Session Management › should redirect to login when accessing protected routes without authentication" classname="auth.spec.js" time="0">
+<skipped>
+</skipped>
+</testcase>
+<testcase name="Authentication &amp; Security (Hybrid Local-Cloud) › Session Management › should handle expired JWT tokens" classname="auth.spec.js" time="0">
+<skipped>
+</skipped>
+</testcase>
+</testsuite>
+</testsuites>

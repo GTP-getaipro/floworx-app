@@ -1,0 +1,114 @@
+{
+  "metadata": {
+    "environment": "production",
+    "baseUrl": "https://app.floworx-iq.com",
+    "startTime": "2025-09-19T19:24:43.376Z",
+    "duration": null,
+    "reportPath": "uat-reports/1758309883376"
+  },
+  "summary": {
+    "overallStatus": "PENDING",
+    "totalTests": 8,
+    "passedTests": 0,
+    "failedTests": 8,
+    "skippedTests": 0,
+    "successRate": 0
+  },
+  "testResults": {
+    "framework": {
+      "status": "FAILED",
+      "error": "this.validatePerformanceAcceptance is not a function"
+    },
+    "playwright": {
+      "status": "FAILED",
+      "error": "spawn npx ENOENT"
+    },
+    "performance": {
+      "status": "FAILED",
+      "metrics": {
+        "totalRequests": 85,
+        "successfulRequests": 35,
+        "failedRequests": 50,
+        "averageResponseTime": 1291.7058823529405,
+        "maxResponseTime": 3338,
+        "minResponseTime": 82
+      },
+      "acceptanceCriteria": {
+        "responseTimeUnder2s": true,
+        "successRateOver90": false
+      }
+    },
+    "security": {
+      "status": "FAILED",
+      "tests": {
+        "Authentication Required": {
+          "status": "FAILED",
+          "error": "Endpoint /api/onboarding/email-provider should require authentication"
+        },
+        "Input Validation": {
+          "status": "FAILED",
+          "error": "Input validation should reject invalid data"
+        },
+        "Rate Limiting": {
+          "status": "FAILED",
+          "error": "this.testRateLimiting is not a function"
+        },
+        "HTTPS Enforcement": {
+          "status": "FAILED",
+          "error": "this.testHTTPSEnforcement is not a function"
+        }
+      },
+      "passedTests": 0,
+      "totalTests": 4
+    },
+    "crossBrowser": {
+      "status": "FAILED",
+      "browsers": {
+        "Browser_1": {
+          "status": "FAILED",
+          "userAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.124 Safari/537.36",
+          "error": "HTTP 429"
+        },
+        "Browser_2": {
+          "status": "FAILED",
+          "userAgent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.124 Safari/537.36",
+          "error": "HTTP 429"
+        },
+        "Browser_3": {
+          "status": "FAILED",
+          "userAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:89.0) Gecko/20100101 Firefox/89.0",
+          "error": "HTTP 429"
+        }
+      },
+      "passedBrowsers": 0,
+      "totalBrowsers": 3
+    }
+  },
+  "recommendations": [
+    {
+      "priority": "HIGH",
+      "category": "Test Failures",
+      "action": "Review and fix all failed tests before production release"
+    },
+    {
+      "priority": "HIGH",
+      "category": "Performance",
+      "action": "Address performance issues - response times or success rates below acceptance criteria"
+    },
+    {
+      "priority": "CRITICAL",
+      "category": "Security",
+      "action": "Fix security vulnerabilities before any production deployment"
+    },
+    {
+      "priority": "MEDIUM",
+      "category": "Monitoring",
+      "action": "Set up continuous UAT monitoring in production"
+    }
+  ],
+  "signOff": {
+    "status": "REJECTED",
+    "reason": "8 tests failed",
+    "timestamp": "2025-09-19T19:25:02.653Z"
+  }
+}

@@ -1,0 +1,639 @@
+{
+  "config": {
+    "configFile": "C:\\FloworxInvite\\playwright.config.production.js",
+    "rootDir": "C:/FloworxInvite/tests",
+    "forbidOnly": false,
+    "fullyParallel": true,
+    "globalSetup": null,
+    "globalTeardown": null,
+    "globalTimeout": 0,
+    "grep": {},
+    "grepInvert": null,
+    "maxFailures": 0,
+    "metadata": {
+      "actualWorkers": 2
+    },
+    "preserveOutput": "always",
+    "reporter": [
+      [
+        "html",
+        {
+          "outputFolder": "test-results/playwright-report"
+        }
+      ],
+      [
+        "json",
+        {
+          "outputFile": "test-results/playwright-results.json"
+        }
+      ],
+      [
+        "junit",
+        {
+          "outputFile": "test-results/playwright-results.xml"
+        }
+      ],
+      [
+        "list",
+        null
+      ]
+    ],
+    "reportSlowTests": {
+      "max": 5,
+      "threshold": 300000
+    },
+    "quiet": false,
+    "projects": [
+      {
+        "outputDir": "C:/FloworxInvite/test-results",
+        "repeatEach": 1,
+        "retries": 1,
+        "metadata": {
+          "actualWorkers": 2
+        },
+        "id": "chromium",
+        "name": "chromium",
+        "testDir": "C:/FloworxInvite/tests",
+        "testIgnore": [],
+        "testMatch": [
+          "**/*.@(spec|test).?(c|m)[jt]s?(x)"
+        ],
+        "timeout": 60000
+      },
+      {
+        "outputDir": "C:/FloworxInvite/test-results",
+        "repeatEach": 1,
+        "retries": 1,
+        "metadata": {
+          "actualWorkers": 2
+        },
+        "id": "firefox",
+        "name": "firefox",
+        "testDir": "C:/FloworxInvite/tests",
+        "testIgnore": [],
+        "testMatch": [
+          "**/*.@(spec|test).?(c|m)[jt]s?(x)"
+        ],
+        "timeout": 60000
+      },
+      {
+        "outputDir": "C:/FloworxInvite/test-results",
+        "repeatEach": 1,
+        "retries": 1,
+        "metadata": {
+          "actualWorkers": 2
+        },
+        "id": "webkit",
+        "name": "webkit",
+        "testDir": "C:/FloworxInvite/tests",
+        "testIgnore": [],
+        "testMatch": [
+          "**/*.@(spec|test).?(c|m)[jt]s?(x)"
+        ],
+        "timeout": 60000
+      },
+      {
+        "outputDir": "C:/FloworxInvite/test-results",
+        "repeatEach": 1,
+        "retries": 1,
+        "metadata": {
+          "actualWorkers": 2
+        },
+        "id": "mobile-chrome",
+        "name": "mobile-chrome",
+        "testDir": "C:/FloworxInvite/tests",
+        "testIgnore": [],
+        "testMatch": [
+          "**/*.@(spec|test).?(c|m)[jt]s?(x)"
+        ],
+        "timeout": 60000
+      },
+      {
+        "outputDir": "C:/FloworxInvite/test-results",
+        "repeatEach": 1,
+        "retries": 1,
+        "metadata": {
+          "actualWorkers": 2
+        },
+        "id": "mobile-safari",
+        "name": "mobile-safari",
+        "testDir": "C:/FloworxInvite/tests",
+        "testIgnore": [],
+        "testMatch": [
+          "**/*.@(spec|test).?(c|m)[jt]s?(x)"
+        ],
+        "timeout": 60000
+      }
+    ],
+    "shard": null,
+    "updateSnapshots": "missing",
+    "updateSourceMethod": "patch",
+    "version": "1.55.0",
+    "workers": 2,
+    "webServer": null
+  },
+  "suites": [
+    {
+      "title": "auth.spec.js",
+      "file": "auth.spec.js",
+      "column": 0,
+      "line": 0,
+      "specs": [],
+      "suites": [
+        {
+          "title": "Authentication & Security (Hybrid Local-Cloud)",
+          "file": "auth.spec.js",
+          "line": 4,
+          "column": 6,
+          "specs": [],
+          "suites": [
+            {
+              "title": "User Registration",
+              "file": "auth.spec.js",
+              "line": 18,
+              "column": 8,
+              "specs": [
+                {
+                  "title": "should register new user successfully",
+                  "ok": false,
+                  "tags": [],
+                  "tests": [
+                    {
+                      "timeout": 60000,
+                      "annotations": [],
+                      "expectedStatus": "passed",
+                      "projectId": "chromium",
+                      "projectName": "chromium",
+                      "results": [
+                        {
+                          "workerIndex": 0,
+                          "parallelIndex": 0,
+                          "status": "failed",
+                          "duration": 17048,
+                          "error": {
+                            "message": "Error: page.waitForURL: Target page, context or browser has been closed\n=========================== logs ===========================\nwaiting for navigation to \"/login\" until \"load\"\n============================================================",
+                            "stack": "Error: page.waitForURL: Target page, context or browser has been closed\n=========================== logs ===========================\nwaiting for navigation to \"/login\" until \"load\"\n============================================================\n    at C:\\FloworxInvite\\tests\\auth.spec.js:52:22",
+                            "location": {
+                              "file": "C:\\FloworxInvite\\tests\\auth.spec.js",
+                              "column": 22,
+                              "line": 52
+                            },
+                            "snippet": "\u001b[0m \u001b[90m 50 |\u001b[39m         } \u001b[36mcatch\u001b[39m {\n \u001b[90m 51 |\u001b[39m           \u001b[90m// Alternative: Check for redirect to login\u001b[39m\n\u001b[31m\u001b[1m>\u001b[22m\u001b[39m\u001b[90m 52 |\u001b[39m           \u001b[36mawait\u001b[39m page\u001b[33m.\u001b[39mwaitForURL(\u001b[32m'/login'\u001b[39m\u001b[33m,\u001b[39m { timeout\u001b[33m:\u001b[39m \u001b[35m15000\u001b[39m })\u001b[33m;\u001b[39m\n \u001b[90m    |\u001b[39m                      \u001b[31m\u001b[1m^\u001b[22m\u001b[39m\n \u001b[90m 53 |\u001b[39m         }\n \u001b[90m 54 |\u001b[39m       }\n \u001b[90m 55 |\u001b[39m       \u001b[0m"
+                          },
+                          "errors": [
+                            {
+                              "location": {
+                                "file": "C:\\FloworxInvite\\tests\\auth.spec.js",
+                                "column": 22,
+                                "line": 52
+                              },
+                              "message": "Error: page.waitForURL: Target page, context or browser has been closed\n=========================== logs ===========================\nwaiting for navigation to \"/login\" until \"load\"\n============================================================\n\n\u001b[0m \u001b[90m 50 |\u001b[39m         } \u001b[36mcatch\u001b[39m {\n \u001b[90m 51 |\u001b[39m           \u001b[90m// Alternative: Check for redirect to login\u001b[39m\n\u001b[31m\u001b[1m>\u001b[22m\u001b[39m\u001b[90m 52 |\u001b[39m           \u001b[36mawait\u001b[39m page\u001b[33m.\u001b[39mwaitForURL(\u001b[32m'/login'\u001b[39m\u001b[33m,\u001b[39m { timeout\u001b[33m:\u001b[39m \u001b[35m15000\u001b[39m })\u001b[33m;\u001b[39m\n \u001b[90m    |\u001b[39m                      \u001b[31m\u001b[1m^\u001b[22m\u001b[39m\n \u001b[90m 53 |\u001b[39m         }\n \u001b[90m 54 |\u001b[39m       }\n \u001b[90m 55 |\u001b[39m       \u001b[0m\n\u001b[2m    at C:\\FloworxInvite\\tests\\auth.spec.js:52:22\u001b[22m"
+                            }
+                          ],
+                          "stdout": [
+                            {
+                              "text": "🏠 Running tests against LOCAL environment\n"
+                            },
+                            {
+                              "text": "🔒 Validating Production Security Settings:\n"
+                            },
+                            {
+                              "text": "   - Account Recovery Token Expiry: 86400000ms (24 hours)\n"
+                            },
+                            {
+                              "text": "   - Max Failed Login Attempts: 5\n"
+                            },
+                            {
+                              "text": "   - Account Lockout Duration: 900000ms (15 minutes)\n"
+                            },
+                            {
+                              "text": "   - Progressive Lockout Multiplier: 2x\n"
+                            },
+                            {
+                              "text": "   ✅ All security settings match production configuration\n"
+                            }
+                          ],
+                          "stderr": [],
+                          "retry": 0,
+                          "startTime": "2025-09-19T20:38:00.542Z",
+                          "annotations": [],
+                          "attachments": [],
+                          "errorLocation": {
+                            "file": "C:\\FloworxInvite\\tests\\auth.spec.js",
+                            "column": 22,
+                            "line": 52
+                          }
+                        }
+                      ],
+                      "status": "unexpected"
+                    }
+                  ],
+                  "id": "d5ed79a6b333c2ba7209-f692dbf6264b902d5b08",
+                  "file": "auth.spec.js",
+                  "line": 19,
+                  "column": 5
+                },
+                {
+                  "title": "should reject registration with invalid email",
+                  "ok": false,
+                  "tags": [],
+                  "tests": [
+                    {
+                      "timeout": 60000,
+                      "annotations": [],
+                      "expectedStatus": "passed",
+                      "projectId": "chromium",
+                      "projectName": "chromium",
+                      "results": [
+                        {
+                          "workerIndex": 1,
+                          "parallelIndex": 1,
+                          "status": "failed",
+                          "duration": 17040,
+                          "error": {
+                            "message": "TimeoutError: page.fill: Timeout 15000ms exceeded.\nCall log:\n\u001b[2m  - waiting for locator('input[name=\"confirmPassword\"]')\u001b[22m\n",
+                            "stack": "TimeoutError: page.fill: Timeout 15000ms exceeded.\nCall log:\n\u001b[2m  - waiting for locator('input[name=\"confirmPassword\"]')\u001b[22m\n\n    at C:\\FloworxInvite\\tests\\auth.spec.js:73:18",
+                            "location": {
+                              "file": "C:\\FloworxInvite\\tests\\auth.spec.js",
+                              "column": 18,
+                              "line": 73
+                            },
+                            "snippet": "\u001b[0m \u001b[90m 71 |\u001b[39m       \u001b[36mawait\u001b[39m page\u001b[33m.\u001b[39mfill(\u001b[32m'input[name=\"email\"]'\u001b[39m\u001b[33m,\u001b[39m \u001b[32m'invalid-email'\u001b[39m)\u001b[33m;\u001b[39m\n \u001b[90m 72 |\u001b[39m       \u001b[36mawait\u001b[39m page\u001b[33m.\u001b[39mfill(\u001b[32m'input[name=\"password\"]'\u001b[39m\u001b[33m,\u001b[39m \u001b[32m'SecurePassword123!'\u001b[39m)\u001b[33m;\u001b[39m\n\u001b[31m\u001b[1m>\u001b[22m\u001b[39m\u001b[90m 73 |\u001b[39m       \u001b[36mawait\u001b[39m page\u001b[33m.\u001b[39mfill(\u001b[32m'input[name=\"confirmPassword\"]'\u001b[39m\u001b[33m,\u001b[39m \u001b[32m'SecurePassword123!'\u001b[39m)\u001b[33m;\u001b[39m\n \u001b[90m    |\u001b[39m                  \u001b[31m\u001b[1m^\u001b[22m\u001b[39m\n \u001b[90m 74 |\u001b[39m       \n \u001b[90m 75 |\u001b[39m       \u001b[36mawait\u001b[39m page\u001b[33m.\u001b[39mclick(\u001b[32m'button[type=\"submit\"], button:has-text(\"Sign Up\"), button:has-text(\"Register\"), button:has-text(\"Create Account\")'\u001b[39m)\u001b[33m;\u001b[39m\n \u001b[90m 76 |\u001b[39m       \u001b[0m"
+                          },
+                          "errors": [
+                            {
+                              "location": {
+                                "file": "C:\\FloworxInvite\\tests\\auth.spec.js",
+                                "column": 18,
+                                "line": 73
+                              },
+                              "message": "TimeoutError: page.fill: Timeout 15000ms exceeded.\nCall log:\n\u001b[2m  - waiting for locator('input[name=\"confirmPassword\"]')\u001b[22m\n\n\n\u001b[0m \u001b[90m 71 |\u001b[39m       \u001b[36mawait\u001b[39m page\u001b[33m.\u001b[39mfill(\u001b[32m'input[name=\"email\"]'\u001b[39m\u001b[33m,\u001b[39m \u001b[32m'invalid-email'\u001b[39m)\u001b[33m;\u001b[39m\n \u001b[90m 72 |\u001b[39m       \u001b[36mawait\u001b[39m page\u001b[33m.\u001b[39mfill(\u001b[32m'input[name=\"password\"]'\u001b[39m\u001b[33m,\u001b[39m \u001b[32m'SecurePassword123!'\u001b[39m)\u001b[33m;\u001b[39m\n\u001b[31m\u001b[1m>\u001b[22m\u001b[39m\u001b[90m 73 |\u001b[39m       \u001b[36mawait\u001b[39m page\u001b[33m.\u001b[39mfill(\u001b[32m'input[name=\"confirmPassword\"]'\u001b[39m\u001b[33m,\u001b[39m \u001b[32m'SecurePassword123!'\u001b[39m)\u001b[33m;\u001b[39m\n \u001b[90m    |\u001b[39m                  \u001b[31m\u001b[1m^\u001b[22m\u001b[39m\n \u001b[90m 74 |\u001b[39m       \n \u001b[90m 75 |\u001b[39m       \u001b[36mawait\u001b[39m page\u001b[33m.\u001b[39mclick(\u001b[32m'button[type=\"submit\"], button:has-text(\"Sign Up\"), button:has-text(\"Register\"), button:has-text(\"Create Account\")'\u001b[39m)\u001b[33m;\u001b[39m\n \u001b[90m 76 |\u001b[39m       \u001b[0m\n\u001b[2m    at C:\\FloworxInvite\\tests\\auth.spec.js:73:18\u001b[22m"
+                            },
+                            {
+                              "message": "Error: browserContext.close: Target page, context or browser has been closed"
+                            }
+                          ],
+                          "stdout": [
+                            {
+                              "text": "🏠 Running tests against LOCAL environment\n"
+                            },
+                            {
+                              "text": "🔒 Validating Production Security Settings:\n"
+                            },
+                            {
+                              "text": "   - Account Recovery Token Expiry: 86400000ms (24 hours)\n"
+                            },
+                            {
+                              "text": "   - Max Failed Login Attempts: 5\n"
+                            },
+                            {
+                              "text": "   - Account Lockout Duration: 900000ms (15 minutes)\n"
+                            },
+                            {
+                              "text": "   - Progressive Lockout Multiplier: 2x\n"
+                            },
+                            {
+                              "text": "   ✅ All security settings match production configuration\n"
+                            }
+                          ],
+                          "stderr": [],
+                          "retry": 0,
+                          "startTime": "2025-09-19T20:38:00.545Z",
+                          "annotations": [],
+                          "attachments": [],
+                          "errorLocation": {
+                            "file": "C:\\FloworxInvite\\tests\\auth.spec.js",
+                            "column": 18,
+                            "line": 73
+                          }
+                        }
+                      ],
+                      "status": "unexpected"
+                    }
+                  ],
+                  "id": "d5ed79a6b333c2ba7209-a3966100773e6fca2756",
+                  "file": "auth.spec.js",
+                  "line": 66,
+                  "column": 5
+                },
+                {
+                  "title": "should reject registration with weak password",
+                  "ok": true,
+                  "tags": [],
+                  "tests": [
+                    {
+                      "timeout": 60000,
+                      "annotations": [],
+                      "expectedStatus": "passed",
+                      "projectId": "chromium",
+                      "projectName": "chromium",
+                      "results": [],
+                      "status": "skipped"
+                    }
+                  ],
+                  "id": "d5ed79a6b333c2ba7209-3e48770dd285bdfbf2b5",
+                  "file": "auth.spec.js",
+                  "line": 108,
+                  "column": 5
+                },
+                {
+                  "title": "should reject registration with mismatched passwords",
+                  "ok": true,
+                  "tags": [],
+                  "tests": [
+                    {
+                      "timeout": 60000,
+                      "annotations": [],
+                      "expectedStatus": "passed",
+                      "projectId": "chromium",
+                      "projectName": "chromium",
+                      "results": [],
+                      "status": "skipped"
+                    }
+                  ],
+                  "id": "d5ed79a6b333c2ba7209-8c41c31553318595ceea",
+                  "file": "auth.spec.js",
+                  "line": 151,
+                  "column": 5
+                },
+                {
+                  "title": "should reject duplicate email registration",
+                  "ok": true,
+                  "tags": [],
+                  "tests": [
+                    {
+                      "timeout": 60000,
+                      "annotations": [],
+                      "expectedStatus": "passed",
+                      "projectId": "chromium",
+                      "projectName": "chromium",
+                      "results": [],
+                      "status": "skipped"
+                    }
+                  ],
+                  "id": "d5ed79a6b333c2ba7209-f71bcd1068911dffabab",
+                  "file": "auth.spec.js",
+                  "line": 194,
+                  "column": 5
+                }
+              ]
+            },
+            {
+              "title": "User Login",
+              "file": "auth.spec.js",
+              "line": 218,
+              "column": 8,
+              "specs": [
+                {
+                  "title": "should login with valid credentials",
+                  "ok": true,
+                  "tags": [],
+                  "tests": [
+                    {
+                      "timeout": 60000,
+                      "annotations": [],
+                      "expectedStatus": "passed",
+                      "projectId": "chromium",
+                      "projectName": "chromium",
+                      "results": [],
+                      "status": "skipped"
+                    }
+                  ],
+                  "id": "d5ed79a6b333c2ba7209-808c735325ccd5cd3ae0",
+                  "file": "auth.spec.js",
+                  "line": 219,
+                  "column": 5
+                },
+                {
+                  "title": "should reject login with invalid email",
+                  "ok": true,
+                  "tags": [],
+                  "tests": [
+                    {
+                      "timeout": 60000,
+                      "annotations": [],
+                      "expectedStatus": "passed",
+                      "projectId": "chromium",
+                      "projectName": "chromium",
+                      "results": [],
+                      "status": "skipped"
+                    }
+                  ],
+                  "id": "d5ed79a6b333c2ba7209-5973aeefab9f313b4ae2",
+                  "file": "auth.spec.js",
+                  "line": 254,
+                  "column": 5
+                },
+                {
+                  "title": "should reject login with invalid password",
+                  "ok": true,
+                  "tags": [],
+                  "tests": [
+                    {
+                      "timeout": 60000,
+                      "annotations": [],
+                      "expectedStatus": "passed",
+                      "projectId": "chromium",
+                      "projectName": "chromium",
+                      "results": [],
+                      "status": "skipped"
+                    }
+                  ],
+                  "id": "d5ed79a6b333c2ba7209-7b4f4a37be1e0515efa8",
+                  "file": "auth.spec.js",
+                  "line": 276,
+                  "column": 5
+                },
+                {
+                  "title": "should implement progressive account lockout with production settings",
+                  "ok": true,
+                  "tags": [],
+                  "tests": [
+                    {
+                      "timeout": 60000,
+                      "annotations": [],
+                      "expectedStatus": "passed",
+                      "projectId": "chromium",
+                      "projectName": "chromium",
+                      "results": [],
+                      "status": "skipped"
+                    }
+                  ],
+                  "id": "d5ed79a6b333c2ba7209-4355baf77dd970c41233",
+                  "file": "auth.spec.js",
+                  "line": 298,
+                  "column": 5
+                }
+              ]
+            },
+            {
+              "title": "Password Reset",
+              "file": "auth.spec.js",
+              "line": 360,
+              "column": 8,
+              "specs": [
+                {
+                  "title": "should initiate password reset for valid email",
+                  "ok": true,
+                  "tags": [],
+                  "tests": [
+                    {
+                      "timeout": 60000,
+                      "annotations": [],
+                      "expectedStatus": "passed",
+                      "projectId": "chromium",
+                      "projectName": "chromium",
+                      "results": [],
+                      "status": "skipped"
+                    }
+                  ],
+                  "id": "d5ed79a6b333c2ba7209-2a773ef6570b61401a9a",
+                  "file": "auth.spec.js",
+                  "line": 361,
+                  "column": 5
+                },
+                {
+                  "title": "should handle password reset for non-existent email gracefully",
+                  "ok": true,
+                  "tags": [],
+                  "tests": [
+                    {
+                      "timeout": 60000,
+                      "annotations": [],
+                      "expectedStatus": "passed",
+                      "projectId": "chromium",
+                      "projectName": "chromium",
+                      "results": [],
+                      "status": "skipped"
+                    }
+                  ],
+                  "id": "d5ed79a6b333c2ba7209-7288803affd58f67bea9",
+                  "file": "auth.spec.js",
+                  "line": 381,
+                  "column": 5
+                },
+                {
+                  "title": "should validate password reset token expiry with production settings",
+                  "ok": true,
+                  "tags": [],
+                  "tests": [
+                    {
+                      "timeout": 60000,
+                      "annotations": [],
+                      "expectedStatus": "passed",
+                      "projectId": "chromium",
+                      "projectName": "chromium",
+                      "results": [],
+                      "status": "skipped"
+                    }
+                  ],
+                  "id": "d5ed79a6b333c2ba7209-85b0fec07d48524870c5",
+                  "file": "auth.spec.js",
+                  "line": 405,
+                  "column": 5
+                }
+              ]
+            },
+            {
+              "title": "Session Management",
+              "file": "auth.spec.js",
+              "line": 440,
+              "column": 8,
+              "specs": [
+                {
+                  "title": "should maintain session across page refreshes",
+                  "ok": true,
+                  "tags": [],
+                  "tests": [
+                    {
+                      "timeout": 60000,
+                      "annotations": [],
+                      "expectedStatus": "passed",
+                      "projectId": "chromium",
+                      "projectName": "chromium",
+                      "results": [],
+                      "status": "skipped"
+                    }
+                  ],
+                  "id": "d5ed79a6b333c2ba7209-d5ec2b338af5795be8e9",
+                  "file": "auth.spec.js",
+                  "line": 441,
+                  "column": 5
+                },
+                {
+                  "title": "should logout successfully",
+                  "ok": true,
+                  "tags": [],
+                  "tests": [
+                    {
+                      "timeout": 60000,
+                      "annotations": [],
+                      "expectedStatus": "passed",
+                      "projectId": "chromium",
+                      "projectName": "chromium",
+                      "results": [],
+                      "status": "skipped"
+                    }
+                  ],
+                  "id": "d5ed79a6b333c2ba7209-df359a7cbe0e0abd4439",
+                  "file": "auth.spec.js",
+                  "line": 452,
+                  "column": 5
+                },
+                {
+                  "title": "should redirect to login when accessing protected routes without authentication",
+                  "ok": true,
+                  "tags": [],
+                  "tests": [
+                    {
+                      "timeout": 60000,
+                      "annotations": [],
+                      "expectedStatus": "passed",
+                      "projectId": "chromium",
+                      "projectName": "chromium",
+                      "results": [],
+                      "status": "skipped"
+                    }
+                  ],
+                  "id": "d5ed79a6b333c2ba7209-8d1039af5d69563cf35a",
+                  "file": "auth.spec.js",
+                  "line": 461,
+                  "column": 5
+                },
+                {
+                  "title": "should handle expired JWT tokens",
+                  "ok": true,
+                  "tags": [],
+                  "tests": [
+                    {
+                      "timeout": 60000,
+                      "annotations": [],
+                      "expectedStatus": "passed",
+                      "projectId": "chromium",
+                      "projectName": "chromium",
+                      "results": [],
+                      "status": "skipped"
+                    }
+                  ],
+                  "id": "d5ed79a6b333c2ba7209-297d120e5f9fae03f14a",
+                  "file": "auth.spec.js",
+                  "line": 472,
+                  "column": 5
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    }
+  ],
+  "errors": [],
+  "stats": {
+    "startTime": "2025-09-19T20:37:59.471Z",
+    "duration": 19078.075,
+    "expected": 0,
+    "skipped": 14,
+    "unexpected": 2,
+    "flaky": 0
+  }
+}

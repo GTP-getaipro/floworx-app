@@ -1,0 +1,55 @@
+
+<!DOCTYPE html>
+<html>
+<head>
+    <title>FloWorx UAT Report</title>
+    <style>
+        body { font-family: Arial, sans-serif; margin: 20px; }
+        .header { background: #f0f0f0; padding: 20px; border-radius: 5px; }
+        .summary { background: #e8f5e8; padding: 15px; margin: 20px 0; border-radius: 5px; }
+        .failed { background: #ffe8e8; }
+        .test-section { margin: 20px 0; padding: 15px; border: 1px solid #ddd; border-radius: 5px; }
+        .pass { color: green; font-weight: bold; }
+        .fail { color: red; font-weight: bold; }
+        .skip { color: orange; font-weight: bold; }
+        table { width: 100%; border-collapse: collapse; margin: 10px 0; }
+        th, td { border: 1px solid #ddd; padding: 8px; text-align: left; }
+        th { background-color: #f2f2f2; }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <h1>FloWorx User Acceptance Testing Report</h1>
+        <p><strong>Environment:</strong> production</p>
+        <p><strong>Base URL:</strong> https://app.floworx-iq.com</p>
+        <p><strong>Test Duration:</strong> 0s</p>
+        <p><strong>Generated:</strong> 2025-09-19T19:25:02.656Z</p>
+    </div>
+    
+    <div class="summary failed">
+        <h2>Test Summary</h2>
+        <p><strong>Overall Status:</strong> <span class="fail">REJECTED</span></p>
+        <p><strong>Total Tests:</strong> 8</p>
+        <p><strong>Passed:</strong> <span class="pass">0</span></p>
+        <p><strong>Failed:</strong> <span class="fail">8</span></p>
+        <p><strong>Skipped:</strong> <span class="skip">0</span></p>
+        <p><strong>Success Rate:</strong> 0%</p>
+    </div>
+    
+    <div class="test-section">
+        <h3>Sign-off Status</h3>
+        <p><strong>Status:</strong> <span class="fail">REJECTED</span></p>
+        <p><strong>Reason:</strong> 8 tests failed</p>
+    </div>
+    
+    
+    <div class="test-section">
+        <h3>Recommendations</h3>
+        <ul>
+            <li><strong>HIGH:</strong> Review and fix all failed tests before production release</li><li><strong>HIGH:</strong> Address performance issues - response times or success rates below acceptance criteria</li><li><strong>CRITICAL:</strong> Fix security vulnerabilities before any production deployment</li><li><strong>MEDIUM:</strong> Set up continuous UAT monitoring in production</li>
+        </ul>
+    </div>
+    
+    
+</body>
+</html>

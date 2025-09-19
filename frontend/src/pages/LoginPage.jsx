@@ -6,11 +6,15 @@ import useFormValidation from "../hooks/useFormValidation";
 import { required, email, minLength } from "../utils/validationRules";
 import { api } from "../lib/api";
 import { handleReturnToFromQuery, getReturnTo, clearReturnTo } from "../lib/returnTo";
+import { useAuth } from "../contexts/AuthContext";
 
-export default function LoginPage({ onSubmit, errors = {}, values = {}, links = {} }) {
+export default function LoginPage({ errors = {}, values = {}, links = {} }) {
+  const { login } = useAuth();
   const [showUnverifiedBanner, setShowUnverifiedBanner] = useState(false);
   const [isResending, setIsResending] = useState(false);
   const [resendSuccess, setResendSuccess] = useState(false);
+  const [loading, setLoading] = useState(false);
+  const [submitError, setSubmitError] = useState(null);
   const [searchParams] = useSearchParams();
   const navigate = useNavigate();
   const {
@@ -42,22 +46,30 @@ export default function LoginPage({ onSubmit, errors = {}, values = {}, links = 
     // Reset states
     setShowUnverifiedBanner(false);
     setResendSuccess(false);
+    setLoading(true);
+    setSubmitError(null);
 
-    // Call original onSubmit if provided (for compatibility)
-    if (onSubmit) {
-      try {
-        await onSubmit(formValues);
+    try {
+      const result = await login(formValues.email, formValues.password);
 
+      if (result.success) {
         // On successful login, redirect to returnTo or default
         const returnTo = getReturnTo();
         clearReturnTo();
-        navigate(returnTo || '/');
-      } catch (error) {
-        // Check if it's a 409 UNVERIFIED error
-        if (error?.status === 409 && error?.code === 'UNVERIFIED') {
+        navigate(returnTo || '/dashboard');
+      } else {
+        // Check if it's an email verification error
+        if (result.code === 'EMAIL_NOT_VERIFIED') {
           setShowUnverifiedBanner(true);
+        } else {
+          setSubmitError(result.error || 'Login failed. Please try again.');
         }
       }
+    } catch (error) {
+      console.error('Login failed:', error);
+      setSubmitError(error.message || 'Login failed. Please try again.');
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -101,6 +113,12 @@ export default function LoginPage({ onSubmit, errors = {}, values = {}, links = 
         </FormAlert>
       )}
 
+      {submitError && (
+        <FormAlert type="error">
+          {submitError}
+        </FormAlert>
+      )}
+
       <form onSubmit={handleSubmit} className="space-y-4">
         <FormInput
           name="email"
@@ -114,6 +132,7 @@ export default function LoginPage({ onSubmit, errors = {}, values = {}, links = 
           autoFocus={true}
           required={true}
           placeholder="you@company.com"
+          disabled={loading}
         />
 
         <FormInput
@@ -127,13 +146,15 @@ export default function LoginPage({ onSubmit, errors = {}, values = {}, links = 
           touched={touched.password}
           required={true}
           placeholder="••••••••"
+          disabled={loading}
         />
 
         <FormButton
           type="submit"
-          disabled={!isValid && Object.keys(touched).length > 0}
+          disabled={loading || (!isValid && Object.keys(touched).length > 0)}
+          loading={loading}
         >
-          Sign In
+          {loading ? 'Signing In...' : 'Sign In'}
         </FormButton>
 
         <div className="flex flex-col sm:flex-row items-center justify-between gap-3 pt-4 text-sm">

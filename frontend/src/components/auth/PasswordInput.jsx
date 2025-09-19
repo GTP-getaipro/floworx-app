@@ -58,13 +58,17 @@ export default function PasswordInput({
   value,
   onChange,
   config = {},
+  // Backward compatibility - support old prop structure
+  onBlur: legacyOnBlur,
+  error: legacyError,
+  placeholder: legacyPlaceholder,
   ...props
 }) {
-  // Extract config with defaults
+  // Extract config with defaults, supporting backward compatibility
   const {
-    onBlur,
-    error,
-    placeholder
+    onBlur = legacyOnBlur,
+    error = legacyError,
+    placeholder = legacyPlaceholder
   } = config;
   const [showPassword, setShowPassword] = useState(false);
 

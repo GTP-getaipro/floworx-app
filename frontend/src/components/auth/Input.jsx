@@ -58,14 +58,19 @@ export default function Input({
   value,
   onChange,
   config = {},
+  // Backward compatibility - support old prop structure
+  type: legacyType,
+  placeholder: legacyPlaceholder,
+  onBlur: legacyOnBlur,
+  error: legacyError,
   ...props
 }) {
-  // Extract config with defaults
+  // Extract config with defaults, supporting backward compatibility
   const {
-    type = "text",
-    placeholder,
-    onBlur,
-    error
+    type = legacyType || "text",
+    placeholder = legacyPlaceholder,
+    onBlur = legacyOnBlur,
+    error = legacyError
   } = config;
   return (
     <div className="space-y-2">

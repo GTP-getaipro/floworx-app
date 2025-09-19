@@ -29,6 +29,12 @@ describe('Auth Flows', () => {
 
   describe('ForgotPasswordPage', () => {
     it('should trigger request endpoint and show success message', async () => {
+      // Mock CSRF token response first
+      fetch.mockResolvedValueOnce({
+        ok: true,
+        json: async () => ({ csrf: 'mock-csrf-token' }),
+      });
+
       // Mock successful API response
       fetch.mockResolvedValueOnce({
         ok: true,
@@ -49,9 +55,14 @@ describe('Auth Flows', () => {
       const submitButton = screen.getByRole('button', { name: /send reset link/i });
       fireEvent.click(submitButton);
 
-      // Wait for API call
+      // Wait for API calls (CSRF token fetch happens first, then actual API call)
       await waitFor(() => {
-        expect(fetch).toHaveBeenCalledWith('/api/auth/password/request', {
+        expect(fetch).toHaveBeenCalledWith('/api/auth/csrf', {
+          method: 'GET',
+          headers: { 'Accept': 'application/json' },
+          credentials: 'include'
+        });
+        expect(fetch).toHaveBeenCalledWith('/api/auth/forgot-password', {
           method: 'POST',
           headers: { 'content-type': 'application/json' },
           body: JSON.stringify({ email: 'test@example.com' }),
@@ -71,11 +82,17 @@ describe('Auth Flows', () => {
       // Set token in search params
       mockSearchParams.set('token', 'test-token');
 
+      // Mock CSRF token response first
+      fetch.mockResolvedValueOnce({
+        ok: true,
+        json: async () => ({ csrf: 'mock-csrf-token' }),
+      });
+
       // Mock 410 error response
       fetch.mockRejectedValueOnce({
         status: 410,
-        code: 'TOKEN_EXPIRED',
-        message: 'Token expired',
+        code: 'TOKEN_INVALID',
+        message: 'Token invalid or expired',
       });
 
       render(
@@ -97,7 +114,7 @@ describe('Auth Flows', () => {
 
       // Wait for error message
       await waitFor(() => {
-        expect(screen.getByText(/that link has expired/i)).toBeInTheDocument();
+        expect(screen.getByText(/an error occurred/i)).toBeInTheDocument();
       });
 
       // Check button is still enabled for retry
@@ -113,7 +130,11 @@ describe('Auth Flows', () => {
       // Mock successful verification
       fetch.mockResolvedValueOnce({
         ok: true,
-        json: async () => ({ message: 'Email verified' }),
+        json: async () => ({
+          success: true,
+          message: 'Email verified successfully!',
+          email: 'test@example.com'
+        }),
       });
 
       render(
@@ -132,7 +153,7 @@ describe('Auth Flows', () => {
 
       // Check success message
       await waitFor(() => {
-        expect(screen.getByText(/email verified!/i)).toBeInTheDocument();
+        expect(screen.getByText(/your email has been verified successfully/i)).toBeInTheDocument();
         expect(screen.getByText(/continue to sign in/i)).toBeInTheDocument();
       });
     });

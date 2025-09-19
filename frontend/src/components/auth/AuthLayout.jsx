@@ -40,7 +40,7 @@ export default function AuthLayout({ title, subtitle, children }) {
         <div className="text-center mb-6">
           <div className="flex flex-col items-center gap-3">
             <div className="h-12 w-12 flex items-center justify-center">
-              <Logo variant="transparent" size="md" showText={false} className="max-h-12 max-w-12 object-contain" />
+              <Logo variant="transparent" size="md" showText={true} className="max-h-12 max-w-12 object-contain" />
             </div>
             <div className="text-center">
               <p className="text-sm text-gray-600 font-medium">Email AI Built by Hot Tub Pros—For Hot Tub Pros</p>

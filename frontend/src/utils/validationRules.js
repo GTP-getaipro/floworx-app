@@ -4,7 +4,7 @@ export function required(msg = "This field is required") {
   };
 }
 
-export function email(msg = "Enter a valid email") {
+export function email(msg = "Please enter a valid email address") {
   return function validateEmail(v) {
     return /.+@.+\..+/.test(String(v || "").trim()) ? null : msg;
   };

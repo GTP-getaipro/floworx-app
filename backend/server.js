@@ -68,7 +68,8 @@ const app = express();
 let realTimeMonitoringService = null;
 
 // Trust proxy for proper IP detection behind load balancers (Coolify/Docker)
-app.set('trust proxy', true);
+// Use specific proxy configuration to match rate limiter settings
+app.set('trust proxy', 1); // Trust first proxy (Traefik/Coolify)
 
 // Load configuration and get PORT
 const PORT = config.get('port');

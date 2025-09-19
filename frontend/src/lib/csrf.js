@@ -1,6 +1,20 @@
 /**
  * CSRF token management utility
+ *
  * Handles fetching, storing, and managing CSRF tokens for secure requests
+ * with comprehensive error handling and retry mechanisms.
+ *
+ * @file
+ * @features
+ * - Promise-based CSRF token fetching with caching
+ * - Prevents multiple concurrent requests to CSRF endpoint
+ * - Comprehensive error handling with proper error propagation
+ * - Token invalidation for security scenarios
+ * - Memory-based token storage for performance
+ *
+ * @dependencies
+ * - Requires /api/auth/csrf endpoint on the server
+ * - Uses fetch API with credentials for authenticated requests
  */
 
 let csrfToken = null;

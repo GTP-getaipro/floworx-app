@@ -1,5 +1,27 @@
 import React, { useState, useEffect } from 'react';
 
+/**
+ * Settings - User Settings Management Component
+ *
+ * Allows users to configure automation settings, notifications,
+ * and business preferences with proper error handling.
+ *
+ * @component
+ * @example
+ * // Usage in settings page
+ * <Settings />
+ *
+ * @features
+ * - Fetches and updates user settings
+ * - Toggle switches for boolean settings
+ * - Form inputs for numeric/text settings
+ * - Error handling for API failures
+ * - Loading states during operations
+ * - Auto-save functionality
+ *
+ * @dependencies
+ * - API: Requires /api/user/settings endpoints
+ */
 const Settings = () => {
   const [settings, setSettings] = useState({
     emailNotifications: true,
@@ -14,22 +36,33 @@ const Settings = () => {
   });
   const [loading, setLoading] = useState(false);
   const [message, setMessage] = useState('');
+  const [error, setError] = useState(null);
+  const [fetchLoading, setFetchLoading] = useState(true);
 
   useEffect(() => {
     fetchSettings();
   }, []);
 
   const fetchSettings = async () => {
+    setFetchLoading(true);
+    setError(null);
+
     try {
       const response = await fetch('/api/user/settings', {
         credentials: 'include'
       });
+
       if (response.ok) {
         const data = await response.json();
         setSettings(data);
+      } else {
+        throw new Error(`HTTP ${response.status}: Failed to fetch settings`);
       }
     } catch (error) {
       console.error('Failed to fetch settings:', error);
+      setError(error.message || 'Failed to load settings');
+    } finally {
+      setFetchLoading(false);
     }
   };
 

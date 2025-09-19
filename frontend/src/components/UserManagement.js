@@ -34,6 +34,8 @@ const UserManagement = () => {
   });
   const [loading, setLoading] = useState(false);
   const [message, setMessage] = useState('');
+  const [error, setError] = useState(null);
+  const [success, setSuccess] = useState(false);
 
   useEffect(() => {
     if (user) {
@@ -59,6 +61,8 @@ const UserManagement = () => {
     e.preventDefault();
     setLoading(true);
     setMessage('');
+    setError(null);
+    setSuccess(false);
 
     try {
       const response = await fetch('/api/user/profile', {
@@ -73,11 +77,21 @@ const UserManagement = () => {
       const data = await response.json();
 
       if (response.ok) {
+        setSuccess(true);
         setMessage('Profile updated successfully!');
+
+        // Auto-clear success message after 3 seconds
+        setTimeout(() => {
+          setSuccess(false);
+          setMessage('');
+        }, 3000);
       } else {
+        setError(data.message || `HTTP ${response.status}: Failed to update profile`);
         setMessage(data.message || 'Failed to update profile');
       }
     } catch (error) {
+      console.error('Profile update error:', error);
+      setError(error.message || 'Network error occurred');
       setMessage('Network error. Please try again.');
     } finally {
       setLoading(false);

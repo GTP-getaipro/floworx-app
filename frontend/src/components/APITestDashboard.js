@@ -1,9 +1,33 @@
 import React, { useState, useEffect } from 'react';
 import './APITestDashboard.css';
 
+/**
+ * APITestDashboard - API Endpoint Testing Component
+ *
+ * Provides a dashboard for testing various API endpoints with real-time results,
+ * error handling, and status monitoring.
+ *
+ * @component
+ * @example
+ * // Usage in admin or development pages
+ * <APITestDashboard />
+ *
+ * @features
+ * - Tests multiple API endpoints simultaneously
+ * - Real-time status monitoring with timestamps
+ * - Comprehensive error handling and display
+ * - Loading states for individual tests
+ * - Retry functionality for failed tests
+ *
+ * @dependencies
+ * - Requires APITestDashboard.css for styling
+ * - Makes authenticated API calls (requires valid session)
+ */
 const APITestDashboard = () => {
   const [testResults, setTestResults] = useState({});
   const [loading, setLoading] = useState(false);
+  const [globalError, setGlobalError] = useState(null);
+  const [testingEndpoint, setTestingEndpoint] = useState(null);
 
   const apiEndpoints = [
     { name: 'Health Check', url: '/api/health', method: 'GET' },
@@ -14,7 +38,9 @@ const APITestDashboard = () => {
   ];
 
   const testEndpoint = async (endpoint) => {
-    setLoading(true);
+    setTestingEndpoint(endpoint.name);
+    setGlobalError(null);
+
     try {
       const response = await fetch(endpoint.url, {
         method: endpoint.method,
@@ -25,28 +51,38 @@ const APITestDashboard = () => {
       });
 
       const data = await response.json();
-      
+
       setTestResults(prev => ({
         ...prev,
         [endpoint.name]: {
           status: response.status,
           success: response.ok,
           data: data,
-          timestamp: new Date().toISOString()
+          timestamp: new Date().toISOString(),
+          error: null
         }
       }));
     } catch (error) {
+      console.error(`API Test failed for ${endpoint.name}:`, error);
+
       setTestResults(prev => ({
         ...prev,
         [endpoint.name]: {
           status: 'ERROR',
           success: false,
           error: error.message,
-          timestamp: new Date().toISOString()
+          timestamp: new Date().toISOString(),
+          data: null
         }
       }));
+
+      // Set global error for critical failures
+      if (error.name === 'TypeError' && error.message.includes('fetch')) {
+        setGlobalError('Network error: Unable to connect to API server');
+      }
+    } finally {
+      setTestingEndpoint(null);
     }
-    setLoading(false);
   };
 
   const testAllEndpoints = async () => {

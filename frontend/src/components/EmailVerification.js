@@ -2,11 +2,35 @@ import React, { useState, useEffect } from 'react';
 import { useSearchParams, useNavigate } from 'react-router-dom';
 import './EmailVerification.css';
 
+/**
+ * EmailVerification - Email Verification Handler Component
+ *
+ * Handles email verification process by processing verification tokens
+ * from email links and providing user feedback.
+ *
+ * @component
+ * @example
+ * // Usage in verification route
+ * <EmailVerification />
+ *
+ * @features
+ * - Processes email verification tokens from URL parameters
+ * - Comprehensive error handling for various failure scenarios
+ * - Success/error state management with user feedback
+ * - Automatic redirect to login after successful verification
+ * - Loading states during verification process
+ *
+ * @dependencies
+ * - React Router: Uses useSearchParams and useNavigate
+ * - API: Requires /api/auth/verify-email endpoint
+ * - CSS: Requires EmailVerification.css for styling
+ */
 const EmailVerification = () => {
   const [searchParams] = useSearchParams();
   const navigate = useNavigate();
   const [status, setStatus] = useState('verifying'); // verifying, success, error
   const [message, setMessage] = useState('');
+  const [error, setError] = useState(null);
 
   useEffect(() => {
     const verifyEmail = async () => {
@@ -14,6 +38,7 @@ const EmailVerification = () => {
       
       if (!token) {
         setStatus('error');
+        setError('Missing verification token');
         setMessage('Invalid verification link. Please check your email and try again.');
         return;
       }
@@ -39,10 +64,13 @@ const EmailVerification = () => {
           }, 3000);
         } else {
           setStatus('error');
+          setError(data.error || `HTTP ${response.status}`);
           setMessage(data.message || 'Email verification failed. Please try again.');
         }
       } catch (error) {
+        console.error('Email verification error:', error);
         setStatus('error');
+        setError(error.message || 'Network error');
         setMessage('Network error. Please check your connection and try again.');
       }
     };

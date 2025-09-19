@@ -5,6 +5,31 @@ import BusinessTypeStep from './onboarding/BusinessTypeStep';
 import GmailOAuthStep from './onboarding/GmailOAuthStep';
 import './OnboardingWizard.css';
 
+/**
+ * OnboardingWizard - Multi-Step User Onboarding Component
+ *
+ * Guides new users through the initial setup process including
+ * business type selection and Gmail integration.
+ *
+ * @component
+ * @example
+ * // Usage in onboarding flow
+ * <OnboardingWizard />
+ *
+ * @features
+ * - Multi-step wizard interface with progress tracking
+ * - Business type selection and Gmail OAuth integration
+ * - Persistent onboarding state across sessions
+ * - Error handling for API failures and network issues
+ * - Loading states during async operations
+ * - Navigation controls with validation
+ *
+ * @dependencies
+ * - React Router: Uses useNavigate for routing
+ * - Lucide React: Icons for UI elements
+ * - API: Requires /api/onboarding/* endpoints
+ * - CSS: Requires OnboardingWizard.css for styling
+ */
 const OnboardingWizard = () => {
   const navigate = useNavigate();
   const [currentStep, setCurrentStep] = useState(0);
@@ -13,6 +38,9 @@ const OnboardingWizard = () => {
     gmailConnected: false,
     completedSteps: []
   });
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
+  const [saving, setSaving] = useState(false);
 
   const steps = [
     {
@@ -35,6 +63,9 @@ const OnboardingWizard = () => {
   }, []);
 
   const loadOnboardingStatus = async () => {
+    setLoading(true);
+    setError(null);
+
     try {
       const token = localStorage.getItem('token');
       if (!token) {
@@ -51,7 +82,7 @@ const OnboardingWizard = () => {
 
       if (response.ok) {
         const data = await response.json();
-        
+
         // Update onboarding data based on backend status
         setOnboardingData(prev => ({
           ...prev,

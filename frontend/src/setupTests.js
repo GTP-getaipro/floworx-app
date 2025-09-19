@@ -1,3 +1,25 @@
+/**
+ * setupTests.js - Jest Test Configuration
+ *
+ * Configures Jest testing environment with necessary mocks, providers,
+ * and utilities for testing React components in the FloWorx application.
+ *
+ * @file
+ * @features
+ * - DOM testing utilities from @testing-library/jest-dom
+ * - Global mocks for browser APIs (matchMedia, IntersectionObserver, etc.)
+ * - Custom render function with all context providers
+ * - Mock implementations for localStorage, sessionStorage, fetch
+ * - Console error filtering for cleaner test output
+ * - Extended timeout for async operations
+ *
+ * @dependencies
+ * - @testing-library/jest-dom: DOM matchers
+ * - @testing-library/react: React testing utilities
+ * - React Router: Navigation context
+ * - Context providers: Auth, Toast, Error contexts
+ */
+
 // jest-dom adds custom jest matchers for asserting on DOM nodes.
 // allows you to do things like:
 // expect(element).toHaveTextContent(/react/i)
@@ -88,22 +110,31 @@ global.sessionStorage = sessionStorageMock;
 // Increase timeout for async tests
 jest.setTimeout(10000);
 
-// Mock console.error to reduce noise in tests
+// Mock console.error to reduce noise in tests with proper error handling
 const originalError = console.error;
 beforeAll(() => {
-  console.error = (...args) => {
-    if (
-      typeof args[0] === 'string' &&
-      (args[0].includes('Warning: ReactDOM.render is no longer supported') ||
-       args[0].includes('Warning: An update to') ||
-       args[0].includes('act(...)'))
-    ) {
-      return;
-    }
-    originalError.call(console, ...args);
-  };
+  try {
+    console.error = (...args) => {
+      if (
+        typeof args[0] === 'string' &&
+        (args[0].includes('Warning: ReactDOM.render is no longer supported') ||
+         args[0].includes('Warning: An update to') ||
+         args[0].includes('act(...)'))
+      ) {
+        return;
+      }
+      originalError.call(console, ...args);
+    };
+  } catch (error) {
+    // Fallback if console mocking fails
+    console.warn('Failed to mock console.error:', error);
+  }
 });
 
 afterAll(() => {
-  console.error = originalError;
+  try {
+    console.error = originalError;
+  } catch (error) {
+    console.warn('Failed to restore console.error:', error);
+  }
 });

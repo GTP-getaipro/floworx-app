@@ -62,7 +62,7 @@
   box-shadow: var(--shadow-card-blue);
   padding: 32px;
   width: 100%;
-  max-width: 480px;
+  max-width: 600px; /* Increased from 480px for better desktop experience */
   transition: box-shadow 0.3s ease;
 }
 
@@ -135,7 +135,7 @@
   box-shadow: var(--shadow-card-blue);
   padding: 32px;
   width: 100%;
-  max-width: 480px;
+  max-width: 600px; /* Increased from 480px for better desktop experience */
   transition: box-shadow 0.3s ease;
 }
 
@@ -368,43 +368,65 @@
   justify-content: center;
 }
 
-/* Mobile Responsive */
+/* Responsive Design */
+
+/* Large Desktop (1200px+) */
+@media (min-width: 1200px) {
+  .card, .auth-card {
+    max-width: 650px;
+    padding: 40px;
+  }
+
+  .h1, .auth-title {
+    font-size: 32px;
+  }
+}
+
+/* Desktop (768px - 1199px) */
+@media (min-width: 768px) and (max-width: 1199px) {
+  .card, .auth-card {
+    max-width: 600px;
+    padding: 36px;
+  }
+}
+
+/* Tablet (641px - 767px) */
+@media (min-width: 641px) and (max-width: 767px) {
+  .card, .auth-card {
+    max-width: 500px;
+    padding: 28px;
+  }
+
+  .auth-wrap, .auth-content {
+    padding: 20px;
+  }
+}
+
+/* Mobile (640px and below) */
 @media (max-width: 640px) {
-  .card {
+  .card, .auth-card {
     padding: 22px;
     margin: 16px;
+    max-width: 100%;
   }
-  
-  .h1 {
+
+  .h1, .auth-title {
     font-size: 24px;
   }
-  
-  .auth-wrap {
+
+  .auth-wrap, .auth-content {
     padding: 16px;
   }
-  
+
   .row {
     grid-template-columns: 1fr;
     gap: 0;
   }
-  
+
   .links {
     flex-direction: column;
     gap: 8px;
     text-align: center;
-  }
-
-  /* AuthLayout responsive adjustments */
-  .auth-content {
-    padding: 16px;
-  }
-
-  .auth-card {
-    padding: 24px;
-  }
-
-  .auth-title {
-    font-size: 24px;
   }
 
   .brand-content {

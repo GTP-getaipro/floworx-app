@@ -71,7 +71,7 @@ export default function ForgotPasswordPage() {
     setNetworkError('');
 
     try {
-      await api('/api/auth/password/request', {
+      await api('/api/password-reset/request', {
         method: 'POST',
         body: { email: formValues.email }
       });

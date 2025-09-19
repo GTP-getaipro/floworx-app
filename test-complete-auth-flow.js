@@ -206,15 +206,25 @@ class CompleteAuthFlowTester {
       const response = await axios.post(`${API_URL}/password-reset/request`, {
         email: this.testUser.email
       });
-      
+
+      const data = response.data;
+      const hasCorrectSchema = (
+        data.success === true &&
+        data.message &&
+        data.meta &&
+        typeof data.meta.remoteAddr !== 'undefined'
+      );
+
       this.log(
         'Password Reset Request',
-        response.status === 200,
-        'Password reset request processed',
+        hasCorrectSchema && response.status === 200,
+        hasCorrectSchema ? 'Password reset request successful with correct schema' : 'Schema validation failed',
         {
           status: response.status,
-          success: response.data.success,
-          message: response.data.message
+          success: data.success,
+          hasMessage: !!data.message,
+          hasRemoteAddr: typeof data.meta?.remoteAddr,
+          requestTime: data.meta?.requestTime
         }
       );
 
@@ -222,9 +232,10 @@ class CompleteAuthFlowTester {
       this.log(
         'Password Reset Request',
         false,
-        `Password reset failed: ${error.response?.data?.error || error.message}`,
+        `Password reset failed: ${error.response?.data?.error?.message || error.message}`,
         {
-          status: error.response?.status
+          status: error.response?.status,
+          errorCode: error.response?.data?.error?.code
         }
       );
     }

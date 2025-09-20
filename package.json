@@ -123,6 +123,11 @@
     "audit:imports": "npx eslint . --ext .js,.jsx --max-warnings=0",
     "audit:code-full": "npm run audit:unused && npm run audit:deps && npm run audit:cycles",
     "verify:audit": "npm run audit:deps && npm run audit:imports",
+    "verify": "node verify-floworx.js",
+    "verify:quick": "node verify-floworx.js --mode=quick",
+    "verify:fix": "node verify-floworx.js --fix",
+    "verify:monitor": "node verify-floworx.js --mode=monitor",
+    "verify:report": "node verify-floworx.js --report=html",
     "guardrails:validate": "node scripts/validate-guardrails.js",
     "guardrails:check": "npm run guardrails:validate"
   },

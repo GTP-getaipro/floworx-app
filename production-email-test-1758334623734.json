@@ -1,0 +1,56 @@
+{
+  "timestamp": "2025-09-20T02:17:03.732Z",
+  "environment": "production",
+  "baseUrl": "https://app.floworx-iq.com",
+  "testEmail": "test.email.verification@gmail.com",
+  "summary": {
+    "total": 3,
+    "passed": 2,
+    "failed": 1
+  },
+  "tests": [
+    {
+      "name": "Email Service Configuration Check",
+      "success": true,
+      "details": [
+        "✅ Backend health check passed",
+        "✅ Email service appears to be configured"
+      ],
+      "error": null,
+      "timestamp": "2025-09-20T02:17:02.483Z"
+    },
+    {
+      "name": "User Registration with Email Verification",
+      "success": false,
+      "details": [
+        "✅ CSRF token obtained",
+        "❌ Registration failed: 409 - {\"success\":false,\"error\":{\"code\":\"EMAIL_EXISTS\",\"message\":\"Email already registered\"},\"meta\":{\"remoteAddr\":\"70.65.45.30\"}}"
+      ],
+      "error": null,
+      "timestamp": "2025-09-20T02:17:02.796Z"
+    },
+    {
+      "name": "Password Reset Email",
+      "success": true,
+      "details": [
+        "✅ CSRF token obtained",
+        "✅ Password reset request successful",
+        "Response: {\n  \"success\": true,\n  \"message\": \"Password reset link has been sent to your email address.\",\n  \"emailSent\": true,\n  \"expiresIn\": 15\n}"
+      ],
+      "error": null,
+      "timestamp": "2025-09-20T02:17:03.082Z"
+    }
+  ],
+  "recommendations": [
+    {
+      "priority": "high",
+      "issue": "Email functionality not working properly",
+      "solutions": [
+        "Check SendGrid API key is valid and has send permissions",
+        "Verify domain authentication in SendGrid dashboard",
+        "Check SMTP configuration in production environment",
+        "Ensure FROM_EMAIL domain is verified with SendGrid"
+      ]
+    }
+  ]
+}

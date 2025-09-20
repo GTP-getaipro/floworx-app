@@ -1,0 +1,42 @@
+{
+  "name": "floworx-verification-system",
+  "version": "1.0.0",
+  "description": "Comprehensive verification system for FloWorx application - catches and resolves issues automatically",
+  "main": "index.js",
+  "bin": {
+    "floworx-verify": "./index.js"
+  },
+  "scripts": {
+    "verify": "node index.js",
+    "verify:quick": "node index.js --mode=quick",
+    "verify:fix": "node index.js --fix",
+    "verify:monitor": "node index.js --mode=monitor",
+    "verify:report": "node index.js --report=html",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [
+    "verification",
+    "testing",
+    "monitoring",
+    "floworx",
+    "automation",
+    "quality-assurance"
+  ],
+  "author": "FloWorx Team",
+  "license": "MIT",
+  "dependencies": {
+    "axios": "^1.6.0"
+  },
+  "devDependencies": {},
+  "engines": {
+    "node": ">=14.0.0"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/GTP-getaipro/floworx-app.git"
+  },
+  "bugs": {
+    "url": "https://github.com/GTP-getaipro/floworx-app/issues"
+  },
+  "homepage": "https://github.com/GTP-getaipro/floworx-app#readme"
+}

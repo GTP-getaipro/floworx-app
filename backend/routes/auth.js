@@ -2160,10 +2160,11 @@ router.get('/profile', authenticateToken, async (req, res) => {
 });
 
 // GET /api/auth/verify-email/:token
-// Email verification endpoint (basic implementation)
+// Email verification endpoint - FULLY FUNCTIONAL
 router.get('/verify-email/:token', async (req, res) => {
   try {
     const { token } = req.params;
+    const { returnTo } = req.query;
 
     if (!token) {
       return res.status(400).json({
@@ -2172,12 +2173,69 @@ router.get('/verify-email/:token', async (req, res) => {
       });
     }
 
-    // For now, return a basic response indicating the endpoint exists
-    // In a full implementation, this would verify the token and update user status
+    // Validate the verification token
+    const { validateVerificationToken } = require('../utils/emailVerification');
+    const tokenValidation = validateVerificationToken(token);
+
+    if (!tokenValidation.success) {
+      return res.status(400).json({
+        success: false,
+        error: {
+          code: tokenValidation.code || "INVALID_TOKEN",
+          message: tokenValidation.error
+        }
+      });
+    }
+
+    const { email, userId } = tokenValidation.data;
+
+    // Get user from database
+    const userResult = await databaseOperations.getUserByEmail(email);
+    if (!userResult || !userResult.data) {
+      return res.status(404).json({
+        success: false,
+        error: { code: "USER_NOT_FOUND", message: "User not found" }
+      });
+    }
+
+    const user = userResult.data;
+
+    // Check if email is already verified
+    if (user.email_verified) {
+      return res.status(200).json({
+        success: true,
+        message: "Email already verified",
+        alreadyVerified: true
+      });
+    }
+
+    // Update user's email verification status
+    const updateResult = await databaseOperations.markEmailAsVerified(userId);
+
+    if (updateResult.error) {
+      console.error('Failed to mark email as verified:', updateResult.error);
+      return res.status(500).json({
+        success: false,
+        error: { code: "VERIFICATION_FAILED", message: "Unable to verify email address" }
+      });
+    }
+
+    // Sanitize returnTo if provided
+    const { sanitizeReturnTo } = require('../utils/urls');
+    const safeReturnTo = sanitizeReturnTo(returnTo);
+
+    console.log(`✅ Email verified successfully for user: ${email}`);
+
     res.status(200).json({
       success: true,
-      message: 'Email verification endpoint is available',
-      note: 'Full email verification implementation pending'
+      message: "Email verified successfully! You can now log in.",
+      user: {
+        id: user.id,
+        email: user.email,
+        firstName: user.first_name,
+        emailVerified: true
+      },
+      ...(safeReturnTo && { returnTo: safeReturnTo })
     });
 
   } catch (error) {

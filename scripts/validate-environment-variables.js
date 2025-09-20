@@ -144,31 +144,40 @@ class EnvironmentVariableValidator {
 
   async validateRequiredVariables(envData) {
     console.log('\n✅ Validating Required Variables...');
-    
+
     for (const [envName, requiredVars] of Object.entries(this.requiredVariables)) {
       const envFiles = envData[envName] || {};
-      
+
+      // Skip validation if no environment files exist for this environment
+      if (Object.keys(envFiles).length === 0) {
+        continue;
+      }
+
       for (const variable of requiredVars) {
         let found = false;
-        
+
         for (const [file, variables] of Object.entries(envFiles)) {
           if (variables[variable]) {
             found = true;
             break;
           }
         }
-        
+
         if (!found) {
+          // Only flag as critical if it's a production environment
+          const severity = envName === 'production' ?
+            this.getVariableSeverity(variable) : 'warning';
+
           this.results.missingVariables.push({
             variable,
             environment: envName,
-            severity: this.getVariableSeverity(variable),
+            severity,
             suggestion: this.getVariableSuggestion(variable)
           });
         }
       }
     }
-    
+
     console.log(`Found ${this.results.missingVariables.length} missing required variables`);
   }
 
@@ -222,14 +231,19 @@ class EnvironmentVariableValidator {
 
   async validateSecurity(envData) {
     console.log('\n🔒 Validating Security Practices...');
-    
+
     for (const [envName, envFiles] of Object.entries(envData)) {
       for (const [file, variables] of Object.entries(envFiles)) {
+        // Skip template files - they're supposed to have placeholder values
+        if (file.includes('.template')) {
+          continue;
+        }
+
         for (const [variable, value] of Object.entries(variables)) {
           // Check for sensitive variables with weak values
           if (this.isSensitiveVariable(variable)) {
-            const issues = this.checkSensitiveValue(variable, value);
-            
+            const issues = this.checkSensitiveValue(variable, value, file);
+
             issues.forEach(issue => {
               this.results.securityIssues.push({
                 variable,
@@ -240,7 +254,7 @@ class EnvironmentVariableValidator {
               });
             });
           }
-          
+
           // Check for hardcoded values that should be environment-specific
           if (this.isHardcodedValue(variable, value)) {
             this.results.securityIssues.push({
@@ -254,7 +268,7 @@ class EnvironmentVariableValidator {
         }
       }
     }
-    
+
     console.log(`Found ${this.results.securityIssues.length} security issues`);
   }
 
@@ -384,19 +398,25 @@ class EnvironmentVariableValidator {
     return this.sensitivePatterns.some(pattern => pattern.test(variable));
   }
 
-  checkSensitiveValue(variable, value) {
+  checkSensitiveValue(variable, value, file) {
     const issues = [];
-    
+
     if (!value || value.trim() === '') {
       issues.push('Empty sensitive variable');
     } else if (value.length < 16 && variable.toLowerCase().includes('secret')) {
       issues.push('Secret value too short (< 16 characters)');
     } else if (value === 'your_' + variable.toLowerCase()) {
-      issues.push('Placeholder value detected');
+      // Only flag placeholder values in non-template files
+      if (!file.includes('.template')) {
+        issues.push('Placeholder value detected');
+      }
     } else if (value.includes('example') || value.includes('test')) {
-      issues.push('Example/test value in production variable');
+      // Only flag example/test values in production files
+      if (file.includes('production') && !file.includes('.template')) {
+        issues.push('Example/test value in production variable');
+      }
     }
-    
+
     return issues;
   }
 

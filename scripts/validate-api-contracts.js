@@ -90,11 +90,11 @@ class APIContractValidator {
         
         apiCalls.forEach(apiCall => {
           const key = `${apiCall.method}:${apiCall.path}`;
-          
+
           if (!this.frontendApiCalls.has(key)) {
             this.frontendApiCalls.set(key, []);
           }
-          
+
           this.frontendApiCalls.get(key).push(apiCall);
         });
       } catch (error) {
@@ -242,27 +242,33 @@ class APIContractValidator {
   extractBackendEndpoints(content, file) {
     const endpoints = [];
     const lines = content.split('\n');
-    
+
+    // Get base path for this route file
+    const basePath = this.getBasePathFromFile(file);
+
     lines.forEach((line, index) => {
       // Express route definitions
       const routeMatch = line.match(/router\.(get|post|put|delete|patch)\s*\(\s*['"`]([^'"`]+)['"`]/);
       if (routeMatch) {
         const method = routeMatch[1].toUpperCase();
-        const path = this.normalizePath(routeMatch[2]);
-        
+        const routePath = this.normalizePath(routeMatch[2]);
+
+        // Combine base path with route path
+        const fullPath = basePath + routePath;
+
         endpoints.push({
           method,
-          path,
+          path: fullPath,
           file,
           line: index + 1,
           handler: this.extractHandler(line),
           middleware: this.extractMiddleware(line),
-          parameters: this.extractRouteParameters(path, content, index),
+          parameters: this.extractRouteParameters(routePath, content, index),
           responses: this.extractResponseFormats(content, index)
         });
       }
     });
-    
+
     return endpoints;
   }
 
@@ -272,22 +278,22 @@ class APIContractValidator {
     
     lines.forEach((line, index) => {
       // Fetch calls
-      const fetchMatch = line.match(/fetch\s*\(\s*['"`]([^'"`]+)['"`]\s*,?\s*({[^}]*})?/);
+      const fetchMatch = line.match(/fetch\s*\(\s*['"`]([^'"`]+)['"`]/);
       if (fetchMatch) {
         const url = fetchMatch[1];
-        const options = fetchMatch[2];
-        const method = this.extractMethodFromOptions(options) || 'GET';
         const path = this.extractPathFromUrl(url);
-        
+
         if (path) {
+          // Look for method in the next few lines for multi-line fetch calls
+          const method = this.extractMethodFromContext(content, index) || 'GET';
+
           apiCalls.push({
             method,
             path: this.normalizePath(path),
             file,
             line: index + 1,
             url,
-            options,
-            parameters: this.extractCallParameters(options),
+            parameters: this.extractCallParameters(content, index),
             expectedResponse: this.extractExpectedResponse(content, index)
           });
         }
@@ -315,6 +321,34 @@ class APIContractValidator {
   }
 
   // Helper methods
+  getBasePathFromFile(file) {
+    // Map route files to their base paths based on how they're mounted in server.js
+    const pathMappings = {
+      'auth.js': '/api/auth',
+      'user.js': '/api/user',
+      'oauth.js': '/api/oauth',
+      'google.js': '/api/integrations/google',
+      'microsoft.js': '/api/integrations/microsoft',
+      'dashboard.js': '/api/dashboard',
+      'onboarding.js': '/api/onboarding',
+      'businessTypes.js': '/api/business-types',
+      'clients.js': '/api/clients',
+      'workflows.js': '/api/workflows',
+      'analytics.js': '/api/analytics',
+      'monitoring.js': '/api/monitoring',
+      'passwordReset.js': '/api/password-reset',
+      'recovery.js': '/api/recovery',
+      'errors.js': '/api/errors',
+      'mailbox.js': '/api/mailbox'
+    };
+
+    // Handle both forward and backward slashes
+    const fileName = file.split(/[/\\]/).pop();
+    const basePath = pathMappings[fileName] || '/api';
+
+    return basePath;
+  }
+
   normalizePath(path) {
     // Remove query parameters and normalize path
     return path.split('?')[0].replace(/\/+/g, '/').replace(/\/$/, '') || '/';
@@ -322,9 +356,24 @@ class APIContractValidator {
 
   extractMethodFromOptions(options) {
     if (!options) return null;
-    
+
     const methodMatch = options.match(/method\s*:\s*['"`](\w+)['"`]/i);
     return methodMatch ? methodMatch[1].toUpperCase() : null;
+  }
+
+  extractMethodFromContext(content, startIndex) {
+    const lines = content.split('\n');
+
+    // Look in the next 10 lines for method specification
+    for (let i = startIndex; i < Math.min(startIndex + 10, lines.length); i++) {
+      const line = lines[i];
+      const methodMatch = line.match(/method\s*:\s*['"`](\w+)['"`]/i);
+      if (methodMatch) {
+        return methodMatch[1].toUpperCase();
+      }
+    }
+
+    return null;
   }
 
   extractPathFromUrl(url) {

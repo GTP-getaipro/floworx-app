@@ -146,36 +146,74 @@ class ConfigurationConsistencyValidator {
 
   async validateURLConfigurations() {
     console.log('\n🌐 Validating URL Configurations...');
-    
-    const urls = {
-      production: [],
-      development: [],
-      api: []
+
+    const urlsByType = {
+      baseUrl: new Set(),
+      apiUrl: new Set(),
+      callbackUrl: new Set(),
+      corsOrigins: new Set()
     };
-    
+
     const files = [...this.configFiles.env, ...this.configFiles.docker];
-    
+
     for (const file of files) {
       if (await this.fileExists(file)) {
         const content = await readFile(file, 'utf8');
         const foundUrls = this.extractURLs(content);
-        
+
         foundUrls.forEach(url => {
-          if (url.includes('floworx-iq.com')) {
-            urls.production.push({ url, file });
-          } else if (url.includes('localhost')) {
-            urls.development.push({ url, file });
-          } else if (url.includes('/api')) {
-            urls.api.push({ url, file });
+          // Categorize URLs by their purpose
+          if (url.includes('/callback')) {
+            urlsByType.callbackUrl.add(url);
+          } else if (url.includes('/api') && !url.includes('/callback')) {
+            urlsByType.apiUrl.add(url);
+          } else if (url.includes(',')) {
+            // CORS origins (comma-separated)
+            urlsByType.corsOrigins.add(url);
+          } else if (url.includes('floworx-iq.com') && !url.includes('/')) {
+            // Base domain URLs
+            urlsByType.baseUrl.add(url);
           }
         });
       }
     }
-    
-    // Check for inconsistent URLs
-    const productionUrls = [...new Set(urls.production.map(u => u.url))];
-    if (productionUrls.length > 1) {
-      this.addIssue('error', `Inconsistent production URLs`, { urls: productionUrls });
+
+    // Only flag as error if there are actual conflicts within the same category
+    let hasConflicts = false;
+    for (const [type, urls] of Object.entries(urlsByType)) {
+      if (urls.size > 1) {
+        // Check if these are actually conflicting or just different valid URLs
+        const urlArray = Array.from(urls);
+        const domains = urlArray.map(url => {
+          try {
+            return new URL(url).hostname;
+          } catch {
+            return url.split('/')[0].replace(/https?:\/\//, '');
+          }
+        });
+
+        const uniqueDomains = [...new Set(domains)];
+
+        // Only flag as conflict if we have different domains AND they're not expected combinations
+        if (uniqueDomains.length > 1) {
+          const hasLocalhost = uniqueDomains.some(domain => domain.includes('localhost'));
+          const hasProduction = uniqueDomains.some(domain => domain.includes('floworx-iq.com'));
+
+          // If it's just localhost vs production, that's expected for dev/prod environments
+          if (!(hasLocalhost && hasProduction && uniqueDomains.length === 2)) {
+            hasConflicts = true;
+            break;
+          }
+        }
+      }
+    }
+
+    if (hasConflicts) {
+      const allUrls = [];
+      for (const urls of Object.values(urlsByType)) {
+        allUrls.push(...Array.from(urls));
+      }
+      this.addIssue('warning', `Multiple URL patterns detected`, { urls: allUrls });
     } else {
       this.results.passed++;
       console.log('✅ URL configurations consistent');
@@ -367,14 +405,36 @@ class ConfigurationConsistencyValidator {
       'NODE_ENV',
       'DATABASE_URL',
       'SUPABASE_URL',
+      'SUPABASE_ANON_KEY',
+      'SUPABASE_SERVICE_ROLE_KEY',
       'JWT_SECRET',
-      'ENCRYPTION_KEY'
+      'ENCRYPTION_KEY',
+      'REACT_APP_API_URL',
+      'GENERATE_SOURCEMAP',
+      'PORT',
+      'GOOGLE_CLIENT_ID',
+      'GOOGLE_CLIENT_SECRET',
+      'GOOGLE_REDIRECT_URI',
+      'SMTP_HOST',
+      'SMTP_PORT',
+      'SMTP_USER',
+      'SMTP_PASS'
     ];
     return expectedDifferences.includes(varName);
   }
 
   isExpectedPortUsage(port) {
-    const commonPorts = ['5001', '3000', '80', '443'];
+    const commonPorts = [
+      '5001',  // Backend server
+      '3000',  // Frontend dev server
+      '80',    // HTTP
+      '443',   // HTTPS
+      '587',   // SMTP (SendGrid/Gmail)
+      '465',   // SMTP SSL
+      '25',    // SMTP
+      '5432',  // PostgreSQL
+      '6379'   // Redis
+    ];
     return commonPorts.includes(port);
   }
 

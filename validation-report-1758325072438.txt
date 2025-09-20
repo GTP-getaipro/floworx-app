@@ -1,0 +1,45 @@
+FLOWORX VALIDATION REPORT
+==================================================
+Generated: 2025-09-19T23:37:52.057Z
+Overall Status: CRITICAL_ISSUES
+
+SUMMARY
+--------------------
+Total Validations: 4
+Passed: 0
+Failed: 4
+Critical Issues: 8
+Warning Issues: 4
+Total Issues: 12
+
+VALIDATION DETAILS
+--------------------
+Component Contract Validation: FAILED
+  Issues: 2
+  Warnings: 1
+  Duration: 52ms
+
+Configuration Consistency: FAILED
+  Issues: 2
+  Warnings: 1
+  Duration: 46ms
+
+Environment Variable Validation: FAILED
+  Issues: 2
+  Warnings: 1
+  Duration: 191ms
+
+API Contract Validation: FAILED
+  Issues: 2
+  Warnings: 1
+  Duration: 86ms
+
+RECOMMENDATIONS
+--------------------
+1. [HIGH] Critical Issues
+   8 critical issues found that require immediate attention
+   Action: Review and fix critical issues before deployment
+
+2. [HIGH] Critical Validations
+   4 critical validations failed
+   Action: Fix critical validation failures: Component Contract Validation, Configuration Consistency, Environment Variable Validation, API Contract Validation

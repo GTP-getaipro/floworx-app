@@ -295,49 +295,7 @@
       "suggestion": "Define in appropriate environment files"
     },
     {
-      "variable": "TEST_DATABASE_URL",
-      "environment": "all",
-      "severity": "critical",
-      "suggestion": "Define in appropriate environment files"
-    },
-    {
-      "variable": "DISABLE_RATE_LIMITING",
-      "environment": "all",
-      "severity": "critical",
-      "suggestion": "Define in appropriate environment files"
-    },
-    {
-      "variable": "MS_CLIENT_ID",
-      "environment": "all",
-      "severity": "critical",
-      "suggestion": "Define in appropriate environment files"
-    },
-    {
-      "variable": "MS_CLIENT_SECRET",
-      "environment": "all",
-      "severity": "critical",
-      "suggestion": "Define in appropriate environment files"
-    },
-    {
-      "variable": "MS_REDIRECT_URI",
-      "environment": "all",
-      "severity": "critical",
-      "suggestion": "Define in appropriate environment files"
-    },
-    {
-      "variable": "SESSION_TTL_MIN",
-      "environment": "all",
-      "severity": "critical",
-      "suggestion": "Define in appropriate environment files"
-    },
-    {
-      "variable": "REFRESH_TTL_DAYS",
-      "environment": "all",
-      "severity": "critical",
-      "suggestion": "Define in appropriate environment files"
-    },
-    {
-      "variable": "REVOKE_ALL_ON_REUSE",
+      "variable": "DISABLE_REDIS",
       "environment": "all",
       "severity": "critical",
       "suggestion": "Define in appropriate environment files"
@@ -349,13 +307,61 @@
       "suggestion": "Define in appropriate environment files"
     },
     {
+      "variable": "KEYDB_PORT",
+      "environment": "all",
+      "severity": "critical",
+      "suggestion": "Define in appropriate environment files"
+    },
+    {
       "variable": "KEYDB_PASSWORD",
       "environment": "all",
       "severity": "critical",
       "suggestion": "Define in appropriate environment files"
     },
     {
-      "variable": "DISABLE_REDIS",
+      "variable": "FLOWORX_API_URL",
+      "environment": "all",
+      "severity": "critical",
+      "suggestion": "Define in appropriate environment files"
+    },
+    {
+      "variable": "N8N_API_URL",
+      "environment": "all",
+      "severity": "critical",
+      "suggestion": "Define in appropriate environment files"
+    },
+    {
+      "variable": "REPLY_TO_EMAIL",
+      "environment": "all",
+      "severity": "critical",
+      "suggestion": "Define in appropriate environment files"
+    },
+    {
+      "variable": "CACHE_TTL",
+      "environment": "all",
+      "severity": "critical",
+      "suggestion": "Define in appropriate environment files"
+    },
+    {
+      "variable": "CACHE_MAX_KEYS",
+      "environment": "all",
+      "severity": "critical",
+      "suggestion": "Define in appropriate environment files"
+    },
+    {
+      "variable": "ENABLE_REDIS_IN_TESTS",
+      "environment": "all",
+      "severity": "critical",
+      "suggestion": "Define in appropriate environment files"
+    },
+    {
+      "variable": "TEST_DATABASE_URL",
+      "environment": "all",
+      "severity": "critical",
+      "suggestion": "Define in appropriate environment files"
+    },
+    {
+      "variable": "DISABLE_RATE_LIMITING",
       "environment": "all",
       "severity": "critical",
       "suggestion": "Define in appropriate environment files"
@@ -403,43 +409,37 @@
       "suggestion": "Define in appropriate environment files"
     },
     {
-      "variable": "KEYDB_PORT",
+      "variable": "MS_CLIENT_ID",
       "environment": "all",
       "severity": "critical",
       "suggestion": "Define in appropriate environment files"
     },
     {
-      "variable": "FLOWORX_API_URL",
+      "variable": "MS_CLIENT_SECRET",
       "environment": "all",
       "severity": "critical",
       "suggestion": "Define in appropriate environment files"
     },
     {
-      "variable": "N8N_API_URL",
+      "variable": "MS_REDIRECT_URI",
       "environment": "all",
       "severity": "critical",
       "suggestion": "Define in appropriate environment files"
     },
     {
-      "variable": "REPLY_TO_EMAIL",
+      "variable": "SESSION_TTL_MIN",
       "environment": "all",
       "severity": "critical",
       "suggestion": "Define in appropriate environment files"
     },
     {
-      "variable": "CACHE_TTL",
+      "variable": "REFRESH_TTL_DAYS",
       "environment": "all",
       "severity": "critical",
       "suggestion": "Define in appropriate environment files"
     },
     {
-      "variable": "CACHE_MAX_KEYS",
-      "environment": "all",
-      "severity": "critical",
-      "suggestion": "Define in appropriate environment files"
-    },
-    {
-      "variable": "ENABLE_REDIS_IN_TESTS",
+      "variable": "REVOKE_ALL_ON_REUSE",
       "environment": "all",
       "severity": "critical",
       "suggestion": "Define in appropriate environment files"
@@ -590,83 +590,6 @@
       "environment": "development",
       "issue": "Hardcoded value detected",
       "severity": "warning"
-    },
-    {
-      "variable": "JWT_SECRET",
-      "file": ".env.test",
-      "environment": "test",
-      "issue": "Example/test value in production variable",
-      "severity": "critical"
-    },
-    {
-      "variable": "ENCRYPTION_KEY",
-      "file": ".env.test",
-      "environment": "test",
-      "issue": "Example/test value in production variable",
-      "severity": "critical"
-    },
-    {
-      "variable": "DATADOG_API_KEY",
-      "file": ".env.production.template",
-      "environment": "template",
-      "issue": "Placeholder value detected",
-      "severity": "critical"
-    },
-    {
-      "variable": "DATADOG_APP_KEY",
-      "file": ".env.production.template",
-      "environment": "template",
-      "issue": "Placeholder value detected",
-      "severity": "critical"
-    },
-    {
-      "variable": "NEW_RELIC_LICENSE_KEY",
-      "file": ".env.production.template",
-      "environment": "template",
-      "issue": "Placeholder value detected",
-      "severity": "critical"
-    },
-    {
-      "variable": "PAGERDUTY_INTEGRATION_KEY",
-      "file": ".env.production.template",
-      "environment": "template",
-      "issue": "Placeholder value detected",
-      "severity": "critical"
-    },
-    {
-      "variable": "PAGERDUTY_SERVICE_KEY",
-      "file": ".env.production.template",
-      "environment": "template",
-      "issue": "Placeholder value detected",
-      "severity": "critical"
-    },
-    {
-      "variable": "N8N_API_KEY",
-      "file": ".env.production.template",
-      "environment": "template",
-      "issue": "Placeholder value detected",
-      "severity": "critical"
-    },
-    {
-      "variable": "SUPABASE_ANON_KEY",
-      "file": ".env.production.template",
-      "environment": "template",
-      "issue": "Placeholder value detected",
-      "severity": "critical"
-    },
-    {
-      "variable": "SUPABASE_SERVICE_ROLE_KEY",
-      "file": ".env.production.template",
-      "environment": "template",
-      "issue": "Placeholder value detected",
-      "severity": "critical"
-    },
-    {
-      "variable": "GOOGLE_CLIENT_SECRET",
-      "file": ".env.production.template",
-      "environment": "template",
-      "issue": "Placeholder value detected",
-      "severity": "critical"
     }
   ],
   "unusedVariables": [
@@ -826,32 +749,11 @@
       "suggestion": "Consider removing if not needed"
     }
   ],
-  "typeConflicts": [
-    {
-      "variable": "SMTP_USER",
-      "types": {
-        "string": [
-          {
-            "environment": "production",
-            "file": ".env.production",
-            "value": "apikey"
-          }
-        ],
-        "email": [
-          {
-            "environment": "template",
-            "file": ".env.production.template",
-            "value": "alerts@floworx-iq.com"
-          }
-        ]
-      },
-      "severity": "warning"
-    }
-  ],
+  "typeConflicts": [],
   "summary": {
     "totalVariables": 0,
-    "totalIssues": 140,
-    "criticalIssues": 102,
-    "warningIssues": 38
+    "totalIssues": 128,
+    "criticalIssues": 91,
+    "warningIssues": 37
   }
 }

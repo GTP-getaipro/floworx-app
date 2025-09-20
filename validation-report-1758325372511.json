@@ -1,0 +1,204 @@
+{
+  "timestamp": "2025-09-19T23:42:52.165Z",
+  "validations": {
+    "Component Contract Validation": {
+      "passed": 6,
+      "failed": 0,
+      "warnings": 1,
+      "issues": [
+        {
+          "type": "warning",
+          "message": "Multiple URL patterns detected",
+          "details": {
+            "urls": [
+              "https://app.floworx-iq.com/api",
+              "http://localhost:5001/api",
+              "https://app.floworx-iq.com/api/oauth/google/callback",
+              "https://app.floworx-iq.com,https://www.floworx-iq.com"
+            ]
+          },
+          "timestamp": "2025-09-19T23:40:06.895Z"
+        }
+      ],
+      "details": {
+        "passed": 6,
+        "failed": 0,
+        "warnings": 1,
+        "issues": [
+          {
+            "type": "warning",
+            "message": "Multiple URL patterns detected",
+            "details": {
+              "urls": [
+                "https://app.floworx-iq.com/api",
+                "http://localhost:5001/api",
+                "https://app.floworx-iq.com/api/oauth/google/callback",
+                "https://app.floworx-iq.com,https://www.floworx-iq.com"
+              ]
+            },
+            "timestamp": "2025-09-19T23:40:06.895Z"
+          }
+        ],
+        "summary": {}
+      },
+      "duration": 49,
+      "status": "PASSED",
+      "critical": true
+    },
+    "Configuration Consistency": {
+      "passed": 6,
+      "failed": 0,
+      "warnings": 1,
+      "issues": [
+        {
+          "type": "warning",
+          "message": "Multiple URL patterns detected",
+          "details": {
+            "urls": [
+              "https://app.floworx-iq.com/api",
+              "http://localhost:5001/api",
+              "https://app.floworx-iq.com/api/oauth/google/callback",
+              "https://app.floworx-iq.com,https://www.floworx-iq.com"
+            ]
+          },
+          "timestamp": "2025-09-19T23:42:52.253Z"
+        }
+      ],
+      "details": {
+        "passed": 6,
+        "failed": 0,
+        "warnings": 1,
+        "issues": [
+          {
+            "type": "warning",
+            "message": "Multiple URL patterns detected",
+            "details": {
+              "urls": [
+                "https://app.floworx-iq.com/api",
+                "http://localhost:5001/api",
+                "https://app.floworx-iq.com/api/oauth/google/callback",
+                "https://app.floworx-iq.com,https://www.floworx-iq.com"
+              ]
+            },
+            "timestamp": "2025-09-19T23:42:52.253Z"
+          }
+        ],
+        "summary": {}
+      },
+      "duration": 45,
+      "status": "PASSED",
+      "critical": true
+    },
+    "Environment Variable Validation": {
+      "passed": 6,
+      "failed": 0,
+      "warnings": 1,
+      "issues": [
+        {
+          "type": "warning",
+          "message": "Multiple URL patterns detected",
+          "details": {
+            "urls": [
+              "https://app.floworx-iq.com/api",
+              "http://localhost:5001/api",
+              "https://app.floworx-iq.com/api/oauth/google/callback",
+              "https://app.floworx-iq.com,https://www.floworx-iq.com"
+            ]
+          },
+          "timestamp": "2025-09-19T23:42:52.253Z"
+        }
+      ],
+      "details": {
+        "passed": 6,
+        "failed": 0,
+        "warnings": 1,
+        "issues": [
+          {
+            "type": "warning",
+            "message": "Multiple URL patterns detected",
+            "details": {
+              "urls": [
+                "https://app.floworx-iq.com/api",
+                "http://localhost:5001/api",
+                "https://app.floworx-iq.com/api/oauth/google/callback",
+                "https://app.floworx-iq.com,https://www.floworx-iq.com"
+              ]
+            },
+            "timestamp": "2025-09-19T23:42:52.253Z"
+          }
+        ],
+        "summary": {}
+      },
+      "duration": 164,
+      "status": "PASSED",
+      "critical": true
+    },
+    "API Contract Validation": {
+      "passed": 6,
+      "failed": 0,
+      "warnings": 1,
+      "issues": [
+        {
+          "type": "warning",
+          "message": "Multiple URL patterns detected",
+          "details": {
+            "urls": [
+              "https://app.floworx-iq.com/api",
+              "http://localhost:5001/api",
+              "https://app.floworx-iq.com/api/oauth/google/callback",
+              "https://app.floworx-iq.com,https://www.floworx-iq.com"
+            ]
+          },
+          "timestamp": "2025-09-19T23:42:52.253Z"
+        }
+      ],
+      "details": {
+        "passed": 6,
+        "failed": 0,
+        "warnings": 1,
+        "issues": [
+          {
+            "type": "warning",
+            "message": "Multiple URL patterns detected",
+            "details": {
+              "urls": [
+                "https://app.floworx-iq.com/api",
+                "http://localhost:5001/api",
+                "https://app.floworx-iq.com/api/oauth/google/callback",
+                "https://app.floworx-iq.com,https://www.floworx-iq.com"
+              ]
+            },
+            "timestamp": "2025-09-19T23:42:52.253Z"
+          }
+        ],
+        "summary": {}
+      },
+      "duration": 83,
+      "status": "PASSED",
+      "critical": true
+    }
+  },
+  "summary": {
+    "totalValidations": 4,
+    "passedValidations": 4,
+    "failedValidations": 0,
+    "totalIssues": 4,
+    "criticalIssues": 0,
+    "warningIssues": 4,
+    "overallStatus": "HEALTHY"
+  },
+  "recommendations": [
+    {
+      "priority": "LOW",
+      "category": "Maintenance",
+      "message": "All validations passed successfully",
+      "action": "Continue regular validation runs to maintain code quality"
+    }
+  ],
+  "metadata": {
+    "version": "1.0.0",
+    "generatedBy": "FloWorx Master Validation Orchestrator",
+    "nodeVersion": "v24.7.0",
+    "platform": "win32"
+  }
+}

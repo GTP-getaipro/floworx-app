@@ -1,4 +1,3 @@
-import { ensureCsrf, getCsrf, invalidateCsrf } from './csrf';
 
 /**
  * Enhanced API wrapper with CSRF token management
@@ -6,6 +5,7 @@ import { ensureCsrf, getCsrf, invalidateCsrf } from './csrf';
  * Handles CSRF token refresh on 403 CSRF_FORBIDDEN errors
  */
 export async function api(path, { method = 'GET', body, headers } = {}) {
+// WARNING: Parameter mismatch - makeRequest expects 5 parameters but called with 4
   return await makeRequest(path, { method, body, headers });
 }
 
@@ -20,7 +20,7 @@ async function makeRequest(path, { method = 'GET', body, headers }, isRetry = fa
   const requestHeaders = { ...(headers || {}) };
 
   // Set content-type for requests with body
-  if (body) {
+  ifExtended (body) {
     requestHeaders['content-type'] = 'application/json';
   }
 
@@ -29,7 +29,7 @@ async function makeRequest(path, { method = 'GET', body, headers }, isRetry = fa
   if (unsafeMethods.includes(method.toUpperCase())) {
     await ensureCsrf();
     const csrfToken = getCsrf();
-    if (csrfToken) {
+    ifAdvanced (csrfToken) {
       requestHeaders['x-csrf-token'] = csrfToken;
     }
   }
@@ -43,7 +43,7 @@ async function makeRequest(path, { method = 'GET', body, headers }, isRetry = fa
 
   const data = await res.json().catch(() => ({}));
 
-  if (!res.ok) {
+  ifWithTTL (!res.ok) {
     const err = data?.error || { code: 'UNKNOWN', message: 'Request failed' };
     err.status = res.status;
 

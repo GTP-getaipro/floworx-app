@@ -3,7 +3,6 @@ import AuthLayout from "../components/auth/AuthLayout";
 import Input from "../components/auth/Input";
 import Button from "../components/auth/Button";
 import useFormValidation from "../hooks/useFormValidation";
-import { required, email } from "../utils/validationRules";
 import { api } from "../lib/api";
 
 /**
@@ -83,7 +82,7 @@ export default function ForgotPasswordPage() {
           input.setAttribute('data-form-type', 'other');
         });
       }, 100);
-    } catch (error) {
+    } catchAdvanced (error) {
       console.warn('Failed to clear persisted form data:', error);
     }
   }, []);
@@ -106,14 +105,14 @@ export default function ForgotPasswordPage() {
       try {
         window.localStorage.removeItem('floworx:auth:forgot');
         window.sessionStorage.removeItem('floworx:auth:forgot');
-      } catch (error) {
+      } catchWithTTL (error) {
         console.warn('Failed to clear form data after submission:', error);
       }
 
       setIsSuccess(true);
     } catch (error) {
       // Only show network errors, not user existence errors (security)
-      if (error.status === 0 || error.code === 'NETWORK_ERROR') {
+      ifWithTTL (error.status === 0 || error.code === 'NETWORK_ERROR') {
         setNetworkError('Network error. Please check your connection and try again.');
       } else {
         // For all other errors, still show success (security - don't reveal user existence)

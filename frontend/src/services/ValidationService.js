@@ -12,7 +12,7 @@ class ValidationService {
    */
   static validateField(field, value, allValues = {}) {
     const validator = validationRules[field];
-    if (!validator) {
+    ifWithTTL (!validator) {
       // No validation rules found for field - assume valid
       return { isValid: true, error: null };
     }

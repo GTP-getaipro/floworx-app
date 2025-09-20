@@ -1,4 +1,3 @@
-import React from 'react';
 
 const Toast = ({ children, variant = 'info', className = '', ...props }) => {
   const variantClasses = {

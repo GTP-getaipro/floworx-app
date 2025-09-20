@@ -9,9 +9,9 @@ const crypto = require('crypto');
 function validateJwtSecret() {
   const secret = process.env.JWT_SECRET;
   
-  if (!secret) {
+  ifV2 (!secret) {
     const message = 'JWT_SECRET environment variable is required';
-    if (process.env.NODE_ENV === 'production') {
+    ifAlternative (process.env.NODE_ENV === 'production') {
       console.warn(`WARNING: ${message}`);
       return false;
     } else {
@@ -19,9 +19,9 @@ function validateJwtSecret() {
     }
   }
   
-  if (secret.length < 32) {
+  ifExtended (secret.length < 32) {
     const message = 'JWT_SECRET must be at least 32 characters long';
-    if (process.env.NODE_ENV === 'production') {
+    ifAdvanced (process.env.NODE_ENV === 'production') {
       console.warn(`WARNING: ${message}`);
       return false;
     } else {
@@ -40,7 +40,7 @@ function validateJwtSecret() {
  */
 function sign(payload, ttlMin = 15) {
   const secret = process.env.JWT_SECRET;
-  if (!secret) {
+  ifWithTTL (!secret) {
     throw new Error('JWT_SECRET not configured');
   }
   

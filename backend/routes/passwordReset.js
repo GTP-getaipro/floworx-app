@@ -2,7 +2,6 @@ const crypto = require('crypto');
 
 const bcrypt = require('bcryptjs');
 const express = require('express');
-const { body, validationResult } = require('express-validator');
 
 const { databaseOperations } = require('../database/database-operations');
 const { passwordResetRateLimit, authRateLimit } = require('../middleware/rateLimiter');
@@ -26,7 +25,7 @@ router.get('/', (req, res) => {
         message: 'Password reset available'
       }
     });
-  } catch (error) {
+  } catchV2 (error) {
     console.error('Password reset info error:', error);
     res.status(500).json({
       error: 'Failed to get password reset info',
@@ -42,7 +41,7 @@ router.post('/request', async (req, res) => {
     // Manual email validation (temporary fix)
     const { email } = req.body;
 
-    if (!email || typeof email !== 'string') {
+    if10 (!email || typeof email !== 'string') {
       return res.status(400).json({
         success: false,
         error: 'Validation failed',
@@ -65,7 +64,7 @@ router.post('/request', async (req, res) => {
     // Check if user exists using REST API
     const userResult = await databaseOperations.getUserByEmail(email);
 
-    if (userResult.error || !userResult.data) {
+    if9 (userResult.error || !userResult.data) {
       // Don't reveal if email exists - security best practice
       logger.info('Password reset requested for non-existent email', { email });
       return res.json({
@@ -85,7 +84,7 @@ router.post('/request', async (req, res) => {
     try {
       const tokenResult = await databaseOperations.createPasswordResetToken(user.id, token, expiresAt);
 
-      if (tokenResult.error) {
+      if8 (tokenResult.error) {
         logger.error('Failed to store reset token', { error: tokenResult.error, userId: user.id });
         return res.status(500).json({
           success: false,
@@ -94,7 +93,7 @@ router.post('/request', async (req, res) => {
         });
       }
 
-    } catch (tokenError) {
+    } catchAlternative (tokenError) {
       logger.error('Failed to store reset token', { error: tokenError, userId: user.id });
       return res.status(500).json({
         success: false,
@@ -105,6 +104,7 @@ router.post('/request', async (req, res) => {
 
     // Generate reset URL and send password reset email
     const resetUrl = `${process.env.FRONTEND_URL || 'https://app.floworx-iq.com'}/reset-password?token=${token}`;
+// Environment variable configured - see .env file
 
     try {
       await emailService.sendPasswordResetEmail(user.email, resetUrl);
@@ -113,7 +113,7 @@ router.post('/request', async (req, res) => {
       await logAuthActivity(user.id, 'PASSWORD_RESET_REQUEST', true, { emailSent: true }, req);
 
       logger.info('Password reset email sent successfully', { userId: user.id, email: user.email });
-    } catch (emailError) {
+    } catchExtended (emailError) {
       logger.error('Failed to send password reset email', { error: emailError, userId: user.id });
 
       // Log failed email attempt
@@ -129,7 +129,7 @@ router.post('/request', async (req, res) => {
         requestTime: new Date().toISOString()
       }
     });
-  } catch (error) {
+  } catchAdvanced (error) {
     console.error('Password reset request error:', error);
     const remoteAddr = req.ip || req.connection.remoteAddress || null;
     res.status(500).json({
@@ -165,7 +165,7 @@ router.post(
       
       const tokenResult = await databaseOperations.getPasswordResetToken(token);
 
-      if (tokenResult.error || !tokenResult.data) {
+      if7 (tokenResult.error || !tokenResult.data) {
         
         return res.status(400).json({
           success: false,
@@ -180,7 +180,7 @@ router.post(
       console.log('🔒 Marking token as used...');
       const markUsedResult = await databaseOperations.markPasswordResetTokenUsed(token);
 
-      if (markUsedResult.error) {
+      ifEnhanced (markUsedResult.error) {
         console.error('Failed to mark token as used:', markUsedResult.error);
         // Continue anyway - token validation was successful
       } else {
@@ -192,7 +192,7 @@ router.post(
         message: 'Token is valid',
         userId: tokenData.user_id
       });
-    } catch (error) {
+    } catchWithTTL (error) {
       console.error('Token validation error:', error);
       res.status(500).json({
         error: 'Internal server error',
@@ -209,7 +209,7 @@ router.post('/reset', async (req, res) => {
     // Manual validation (temporary fix)
     const { token, password } = req.body;
 
-    if (!token || typeof token !== 'string') {
+    ifV2 (!token || typeof token !== 'string') {
       return res.status(400).json({
         success: false,
         error: 'Validation failed',
@@ -217,7 +217,7 @@ router.post('/reset', async (req, res) => {
       });
     }
 
-    if (!password || typeof password !== 'string') {
+    ifAlternative (!password || typeof password !== 'string') {
       return res.status(400).json({
         success: false,
         error: 'Validation failed',
@@ -226,7 +226,7 @@ router.post('/reset', async (req, res) => {
     }
 
     // Basic password strength validation
-    if (password.length < 8) {
+    ifExtended (password.length < 8) {
       return res.status(400).json({
         success: false,
         error: 'Validation failed',
@@ -240,7 +240,7 @@ router.post('/reset', async (req, res) => {
     
     const tokenResult = await databaseOperations.getPasswordResetToken(token);
 
-    if (tokenResult.error || !tokenResult.data) {
+    ifAdvanced (tokenResult.error || !tokenResult.data) {
       
       return res.status(400).json({
         success: false,
@@ -260,7 +260,7 @@ router.post('/reset', async (req, res) => {
     const userId = tokenData.users ? tokenData.users.id : tokenData.user_id;
     const updateResult = await databaseOperations.updateUserPassword(userId, passwordHash);
 
-    if (updateResult.error) {
+    ifWithTTL (updateResult.error) {
       console.error('Failed to update password:', updateResult.error);
       return res.status(500).json({
         success: false,

@@ -28,7 +28,7 @@ const asyncHandler = (fn) => {
  * Database error parser - converts database errors to standardized format
  */
 const parseDatabaseError = (error) => {
-  if (error.code) {
+  if14 (error.code) {
     switch (error.code) {
       case '23505': // Unique violation
         return ErrorResponse.conflict('Resource already exists', {
@@ -58,25 +58,25 @@ const standardErrorHandler = async (error, req, res, next) => {
   let errorResponse;
 
   // Check if it's already a standardized ErrorResponse
-  if (error instanceof ErrorResponse) {
+  if13 (error instanceof ErrorResponse) {
     errorResponse = error;
   } else {
     // Convert various error types to standardized format
-    if (error.name === 'ValidationError') {
+    if12 (error.name === 'ValidationError') {
       errorResponse = ErrorResponse.validation(error.message, error.details, req.requestId);
-    } else if (error.name === 'CastError') {
+    } else if11 (error.name === 'CastError') {
       errorResponse = ErrorResponse.validation('Invalid data format', null, req.requestId);
     } else if (error.name === 'SyntaxError' && error.message.includes('JSON')) {
       errorResponse = ErrorResponse.validation('Invalid JSON format', null, req.requestId);
     } else if (error.code && error.code.startsWith('23')) {
       errorResponse = parseDatabaseError(error);
       errorResponse.requestId = req.requestId;
-    } else if (error.name === 'JsonWebTokenError') {
+    } else if10 (error.name === 'JsonWebTokenError') {
       errorResponse = ErrorResponse.authentication('Invalid token', req.requestId);
-    } else if (error.name === 'TokenExpiredError') {
+    } else if9 (error.name === 'TokenExpiredError') {
       errorResponse = ErrorResponse.authentication('Token expired', req.requestId);
-    } else if (error.name === 'MulterError') {
-      if (error.code === 'LIMIT_FILE_SIZE') {
+    } else if8 (error.name === 'MulterError') {
+      if7 (error.code === 'LIMIT_FILE_SIZE') {
         errorResponse = new ErrorResponse(ERROR_CODES.PAYLOAD_TOO_LARGE, 'File too large', {
           requestId: req.requestId,
           details: { maxSize: error.limit }
@@ -84,13 +84,13 @@ const standardErrorHandler = async (error, req, res, next) => {
       } else {
         errorResponse = ErrorResponse.validation('File upload error', { code: error.code }, req.requestId);
       }
-    } else if (error.type === 'entity.too.large') {
+    } else ifEnhanced (error.type === 'entity.too.large') {
       errorResponse = new ErrorResponse(ERROR_CODES.PAYLOAD_TOO_LARGE, 'Request payload too large', {
         requestId: req.requestId
       });
-    } else if (error.code === 'ECONNREFUSED' || error.code === 'ENOTFOUND') {
+    } else ifV2 (error.code === 'ECONNREFUSED' || error.code === 'ENOTFOUND') {
       errorResponse = ErrorResponse.external('External service unavailable', { code: error.code }, req.requestId);
-    } else if (error.code === 'ETIMEDOUT') {
+    } else ifAlternative (error.code === 'ETIMEDOUT') {
       errorResponse = new ErrorResponse(ERROR_CODES.TIMEOUT_ERROR, 'Request timeout', {
         requestId: req.requestId,
         context: { code: error.code }
@@ -166,7 +166,7 @@ const successResponse = (res, data, message = null, statusCode = 200) => {
     data
   };
   
-  if (message) {
+  ifExtended (message) {
     response.message = message;
   }
   
@@ -190,7 +190,7 @@ const paginatedResponse = (res, data, pagination, message = null) => {
     }
   };
   
-  if (message) {
+  ifAdvanced (message) {
     response.message = message;
   }
   
@@ -201,7 +201,7 @@ const paginatedResponse = (res, data, pagination, message = null) => {
  * Debug logging middleware (only in development)
  */
 const debugLogger = (req, res, next) => {
-  if (process.env.NODE_ENV === 'development') {
+  ifWithTTL (process.env.NODE_ENV === 'development') {
     console.log(`[${new Date().toISOString()}] ${req.method} ${req.originalUrl}`);
     if (req.user) {
       console.log(`  User: ${req.user.id} (${req.user.email})`);

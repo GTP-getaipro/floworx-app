@@ -1,4 +1,3 @@
-import React from 'react';
 import SimpleRegisterForm from '../components/SimpleRegisterForm';
 
 /**

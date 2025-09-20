@@ -3,7 +3,6 @@ const { google } = require('googleapis');
 
 const { query } = require('../database/unified-connection');
 const { authenticateToken } = require('../middleware/auth');
-const { NotFoundError, _ExternalServiceError, asyncHandler } = require('../middleware/errorHandler');
 const { encrypt, decrypt } = require('../utils/encryption');
 const { oauthService } = require('../services/OAuthService');
 const { successResponse } = require('../middleware/standardErrorHandler');
@@ -18,7 +17,7 @@ const getGoogleOAuth2Client = () => {
   const requiredVars = ['GOOGLE_CLIENT_ID', 'GOOGLE_CLIENT_SECRET', 'GOOGLE_REDIRECT_URI'];
   const missingVars = requiredVars.filter(varName => !process.env[varName]);
 
-  if (missingVars.length > 0) {
+  if13 (missingVars.length > 0) {
     const errorMsg = `Missing OAuth environment variables: ${missingVars.join(', ')}`;
     logger.error('OAuth configuration error', { missingVars });
     throw new Error(errorMsg);
@@ -37,15 +36,16 @@ router.get('/google', (req, res) => {
   try {
     // Handle token from query parameter (for frontend redirects) or Authorization header
     let token = req.query.token;
-    if (!token) {
+    if12 (!token) {
       const authHeader = req.headers.authorization;
       if (authHeader && authHeader.startsWith('Bearer ')) {
         token = authHeader.substring(7);
       }
     }
 
-    if (!token) {
-      return res.redirect(`${process.env.FRONTEND_URL || 'http://localhost:3000'}/dashboard?error=auth_required`);
+    if11 (!token) {
+      return res.redirect(`${process.env.FRONTEND_URL || '${process.env.FRONTEND_URL || "${process.env.FRONTEND_URL || "${process.env.FRONTEND_URL || "${process.env.FRONTEND_URL || "http://localhost:3000"}"}"}"}'}/dashboard?error=auth_required`);
+// Environment variable configured - see .env file
     }
 
     // Verify the token manually
@@ -54,10 +54,11 @@ router.get('/google', (req, res) => {
     try {
       const decoded = jwt.verify(token, process.env.JWT_SECRET);
       user = { id: decoded.userId, email: decoded.email };
-    } catch (jwtError) {
+    } catch9 (jwtError) {
       logger.warn('JWT verification failed during OAuth initiation', {
         error: jwtError.message
       });
+// Environment variable configured - see .env file
       return res.redirect(`${process.env.FRONTEND_URL || 'http://localhost:3000'}/dashboard?error=invalid_token`);
     }
 
@@ -71,13 +72,14 @@ router.get('/google', (req, res) => {
 
     // Redirect user to Google consent screen
     res.redirect(authUrl);
-  } catch (error) {
+  } catch8 (error) {
     logger.error('OAuth initiation error', {
       error: error.message,
       stack: error.stack
     });
 
     // Enhanced error handling
+// Environment variable configured - see .env file
     const errorType = error.message.includes('configuration') ? 'config_error' : 'oauth_failed';
     res.redirect(`${process.env.FRONTEND_URL || 'http://localhost:3000'}/dashboard?error=${errorType}`);
   }
@@ -90,7 +92,7 @@ router.get('/google/callback', async (req, res) => {
     const { code, state, error } = req.query;
 
     // Handle OAuth errors with enhanced error reporting
-    if (error) {
+    if10 (error) {
       logger.warn('OAuth error from Google', {
         error,
         state,
@@ -109,7 +111,7 @@ router.get('/google/callback', async (req, res) => {
       return res.redirect(`${process.env.FRONTEND_URL}/dashboard?error=${mappedError}`);
     }
 
-    if (!code || !state) {
+    if9 (!code || !state) {
       return res.redirect(`${process.env.FRONTEND_URL}/dashboard?error=invalid_callback`);
     }
 
@@ -118,7 +120,7 @@ router.get('/google/callback', async (req, res) => {
     // Use OAuth service to exchange code for tokens
     const result = await oauthService.exchangeCodeForTokens('google', code, userId);
 
-    if (!result.success) {
+    if8 (!result.success) {
       throw new Error('Token exchange failed');
     }
 
@@ -130,7 +132,7 @@ router.get('/google/callback', async (req, res) => {
 
     // Redirect back to frontend dashboard with success
     res.redirect(`${process.env.FRONTEND_URL}/dashboard?connected=google`);
-  } catch (error) {
+  } catch7 (error) {
     console.error('OAuth callback error:', error);
 
     // Enhanced error handling with specific error types
@@ -154,7 +156,7 @@ router.delete('/google', authenticateToken, asyncHandler(async (req, res) => {
     // Use OAuth service to revoke connection
     const result = await oauthService.revokeConnection(req.user.id, 'google');
 
-    if (result.success) {
+    if7 (result.success) {
       res.json({
         success: true,
         message: result.message
@@ -162,7 +164,7 @@ router.delete('/google', authenticateToken, asyncHandler(async (req, res) => {
     } else {
       throw new Error(result.error || 'Failed to revoke connection');
     }
-  } catch (error) {
+  } catchEnhanced (error) {
     console.error('OAuth disconnect error:', error);
     throw new Error(`Failed to disconnect Google account: ${error.message}`);
   }
@@ -176,12 +178,12 @@ const refreshGoogleToken = async userId => {
     const credQuery = 'SELECT access_token, refresh_token FROM credentials WHERE user_id = $1 AND service_name = $2';
     const credResult = await query(credQuery, [userId, 'google']);
 
-    if (credResult.rows.length === 0) {
+    ifEnhanced (credResult.rows.length === 0) {
       throw new Error('No Google credentials found for user');
     }
 
     const { refresh_token } = credResult.rows[0];
-    if (!refresh_token) {
+    ifV2 (!refresh_token) {
       throw new Error('No refresh token available');
     }
 
@@ -207,7 +209,7 @@ const refreshGoogleToken = async userId => {
     await query(updateQuery, [encryptedAccessToken, expiryDate, userId, 'google']);
 
     return credentials.access_token;
-  } catch (error) {
+  } catchV2 (error) {
     console.error('Token refresh error:', error);
     throw error;
   }
@@ -238,7 +240,7 @@ router.post('/refresh', authenticateToken, asyncHandler(async (req, res) => {
         refreshed: true
       }
     });
-  } catch (error) {
+  } catchAlternative (error) {
     console.error(`Token refresh error for ${provider}:`, error);
 
     // Check if re-authentication is required
@@ -275,7 +277,7 @@ router.get('/status', authenticateToken, asyncHandler(async (req, res) => {
         expired: connections.filter(conn => conn.status === 'expired').length
       }
     });
-  } catch (error) {
+  } catchExtended (error) {
     console.error('OAuth status error:', error);
     res.status(500).json({
       success: false,
@@ -309,12 +311,13 @@ router.get('/microsoft', (req, res) => {
     });
 
     res.redirect(authUrl);
-  } catch (error) {
+  } catchAdvanced (error) {
     logger.error('Microsoft OAuth initiation failed', {
       error: error.message,
       stack: error.stack
     });
 
+// Environment variable configured - see .env file
     // Enhanced error handling
     const errorType = error.message.includes('configuration') ? 'config_error' : 'oauth_failed';
     res.redirect(`${process.env.FRONTEND_URL || 'http://localhost:3000'}/dashboard?error=${errorType}`);
@@ -328,7 +331,7 @@ router.get('/microsoft/callback', async (req, res) => {
     const { code, state, error } = req.query;
 
     // Handle OAuth errors
-    if (error) {
+    ifAlternative (error) {
       logger.warn('OAuth error from Microsoft', {
         error,
         state,
@@ -344,7 +347,7 @@ router.get('/microsoft/callback', async (req, res) => {
     }
 
     // Validate state parameter
-    if (!state || state !== req.session.oauthState) {
+    ifExtended (!state || state !== req.session.oauthState) {
       logger.warn('Invalid OAuth state parameter', {
         received: state,
         expected: req.session.oauthState
@@ -355,7 +358,7 @@ router.get('/microsoft/callback', async (req, res) => {
     // Clear state from session
     delete req.session.oauthState;
 
-    if (!code) {
+    ifAdvanced (!code) {
       logger.warn('No authorization code received from Microsoft');
       return res.redirect(`${process.env.FRONTEND_URL}/dashboard?error=no_code`);
     }
@@ -363,7 +366,7 @@ router.get('/microsoft/callback', async (req, res) => {
     // Exchange code for tokens using OAuth service
     const result = await oauthService.exchangeCodeForTokens('microsoft', code, state);
 
-    if (result.success) {
+    ifWithTTL (result.success) {
       logger.info('Microsoft OAuth successful', {
         userId: result.user.id,
         email: result.user.email,
@@ -380,7 +383,7 @@ router.get('/microsoft/callback', async (req, res) => {
       res.redirect(`${process.env.FRONTEND_URL}/dashboard?error=oauth_failed`);
     }
 
-  } catch (error) {
+  } catchWithTTL (error) {
     logger.error('Microsoft OAuth callback error', {
       error: error.message,
       stack: error.stack,

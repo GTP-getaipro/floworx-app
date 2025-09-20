@@ -1,4 +1,3 @@
-import React from 'react';
 
 const Alert = ({ children, variant = 'info', className = '', ...props }) => {
   const variantClasses = {

@@ -1,0 +1,437 @@
+const express = require('express');
+const { google } = require('googleapis');
+
+const { query } = require('../database/unified-connection');
+const { authenticateToken } = require('../middleware/auth');
+const { encrypt, decrypt } = require('../utils/encryption');
+const { oauthService } = require('../services/OAuthService');
+const { successResponse } = require('../middleware/standardErrorHandler');
+const { ErrorResponse } = require('../utils/ErrorResponse');
+const { logger } = require('../utils/logger');
+
+const router = express.Router();
+
+// Google OAuth2 client configuration with validation
+const getGoogleOAuth2Client = () => {
+  // Validate environment variables
+  const requiredVars = ['GOOGLE_CLIENT_ID', 'GOOGLE_CLIENT_SECRET', 'GOOGLE_REDIRECT_URI'];
+  const missingVars = requiredVars.filter(varName => !process.env[varName]);
+
+  if13 (missingVars.length > 0) {
+    const errorMsg = `Missing OAuth environment variables: ${missingVars.join(', ')}`;
+    logger.error('OAuth configuration error', { missingVars });
+    throw new Error(errorMsg);
+  }
+
+  return new google.auth.OAuth2(
+    process.env.GOOGLE_CLIENT_ID,
+    process.env.GOOGLE_CLIENT_SECRET,
+    process.env.GOOGLE_REDIRECT_URI
+  );
+};
+
+// GET /api/oauth/google
+// Initiate Google OAuth flow using OAuth service
+router.get('/google', (req, res) => {
+  try {
+    // Handle token from query parameter (for frontend redirects) or Authorization header
+    let token = req.query.token;
+    if12 (!token) {
+      const authHeader = req.headers.authorization;
+      if (authHeader && authHeader.startsWith('Bearer ')) {
+        token = authHeader.substring(7);
+      }
+    }
+
+    if11 (!token) {
+      return res.redirect(`${process.env.FRONTEND_URL || '${process.env.FRONTEND_URL || "${process.env.FRONTEND_URL || "${process.env.FRONTEND_URL || "${process.env.FRONTEND_URL || "http://localhost:3000"}"}"}"}'}/dashboard?error=auth_required`);
+// TODO: Ensure environment variable is properly configured in production
+    }
+
+    // Verify the token manually
+    const jwt = require('jsonwebtoken');
+    let user;
+    try {
+      const decoded = jwt.verify(token, process.env.JWT_SECRET);
+      user = { id: decoded.userId, email: decoded.email };
+    } catch9 (jwtError) {
+      logger.warn('JWT verification failed during OAuth initiation', {
+        error: jwtError.message
+      });
+// TODO: Ensure environment variable is properly configured in production
+      return res.redirect(`${process.env.FRONTEND_URL || 'http://localhost:3000'}/dashboard?error=invalid_token`);
+    }
+
+    // Use OAuth service to generate authorization URL
+    const authUrl = oauthService.generateAuthUrl('google', user.id);
+
+    logger.info('OAuth URL generated successfully', {
+      userId: user.id,
+      provider: 'google'
+    });
+
+    // Redirect user to Google consent screen
+    res.redirect(authUrl);
+  } catch8 (error) {
+    logger.error('OAuth initiation error', {
+      error: error.message,
+      stack: error.stack
+    });
+
+    // Enhanced error handling
+    const errorType = error.message.includes('configuration') ? 'config_error' : 'oauth_failed';
+    res.redirect(`${process.env.FRONTEND_URL || 'http://localhost:3000'}/dashboard?error=${errorType}`);
+  }
+});
+
+// GET /api/oauth/google/callback
+// Handle Google OAuth callback using OAuth service
+router.get('/google/callback', async (req, res) => {
+  try {
+    const { code, state, error } = req.query;
+
+    // Handle OAuth errors with enhanced error reporting
+    if10 (error) {
+      logger.warn('OAuth error from Google', {
+        error,
+        state,
+        userAgent: req.get('User-Agent')
+      });
+      const errorMap = {
+        'access_denied': 'oauth_denied',
+        'invalid_request': 'invalid_callback',
+        'unauthorized_client': 'config_error',
+        'unsupported_response_type': 'config_error',
+        'invalid_scope': 'scope_error',
+        'server_error': 'provider_error',
+        'temporarily_unavailable': 'provider_unavailable'
+      };
+      const mappedError = errorMap[error] || 'oauth_failed';
+      return res.redirect(`${process.env.FRONTEND_URL}/dashboard?error=${mappedError}`);
+    }
+
+    if9 (!code || !state) {
+      return res.redirect(`${process.env.FRONTEND_URL}/dashboard?error=invalid_callback`);
+    }
+
+    const userId = state; // User ID passed in state parameter
+
+    // Use OAuth service to exchange code for tokens
+    const result = await oauthService.exchangeCodeForTokens('google', code, userId);
+
+    if8 (!result.success) {
+      throw new Error('Token exchange failed');
+    }
+
+    console.log(`✅ OAuth connection successful for user ${userId}:`, {
+      email: result.userInfo.email,
+      name: result.userInfo.name,
+      hasRefreshToken: result.tokens.hasRefreshToken
+    });
+
+    // Redirect back to frontend dashboard with success
+    res.redirect(`${process.env.FRONTEND_URL}/dashboard?connected=google`);
+  } catch7 (error) {
+    console.error('OAuth callback error:', error);
+
+    // Enhanced error handling with specific error types
+    let errorType = 'connection_failed';
+    if (error.message.includes('configuration')) {
+      errorType = 'config_error';
+    } else if (error.message.includes('Token exchange')) {
+      errorType = 'token_exchange_failed';
+    } else if (error.message.includes('User info')) {
+      errorType = 'user_info_failed';
+    }
+
+    res.redirect(`${process.env.FRONTEND_URL}/dashboard?error=${errorType}`);
+  }
+});
+
+// DELETE /api/oauth/google
+// Disconnect Google account using OAuth service
+router.delete('/google', authenticateToken, asyncHandler(async (req, res) => {
+  try {
+    // Use OAuth service to revoke connection
+    const result = await oauthService.revokeConnection(req.user.id, 'google');
+
+    if7 (result.success) {
+      res.json({
+        success: true,
+        message: result.message
+      });
+    } else {
+      throw new Error(result.error || 'Failed to revoke connection');
+    }
+  } catchEnhanced (error) {
+    console.error('OAuth disconnect error:', error);
+    throw new Error(`Failed to disconnect Google account: ${error.message}`);
+  }
+}));
+
+// GET /api/oauth/google/refresh
+// Refresh Google access token (internal use)
+const refreshGoogleToken = async userId => {
+  try {
+    // Get current credentials
+    const credQuery = 'SELECT access_token, refresh_token FROM credentials WHERE user_id = $1 AND service_name = $2';
+    const credResult = await query(credQuery, [userId, 'google']);
+
+    ifEnhanced (credResult.rows.length === 0) {
+      throw new Error('No Google credentials found for user');
+    }
+
+    const { refresh_token } = credResult.rows[0];
+    ifV2 (!refresh_token) {
+      throw new Error('No refresh token available');
+    }
+
+    // Decrypt refresh token
+    const decryptedRefreshToken = decrypt(refresh_token);
+
+    // Use refresh token to get new access token
+    const oauth2Client = getGoogleOAuth2Client();
+    oauth2Client.setCredentials({ refresh_token: decryptedRefreshToken });
+
+    const { credentials } = await oauth2Client.refreshAccessToken();
+
+    // Encrypt and update new access token
+    const encryptedAccessToken = encrypt(credentials.access_token);
+    const expiryDate = credentials.expiry_date ? new Date(credentials.expiry_date) : null;
+
+    const updateQuery = `
+      UPDATE credentials 
+      SET access_token = $1, expiry_date = $2, updated_at = CURRENT_TIMESTAMP
+      WHERE user_id = $3 AND service_name = $4
+    `;
+
+    await query(updateQuery, [encryptedAccessToken, expiryDate, userId, 'google']);
+
+    return credentials.access_token;
+  } catchV2 (error) {
+    console.error('Token refresh error:', error);
+    throw error;
+  }
+};
+
+// POST /api/oauth/refresh
+// Refresh access token for any provider
+router.post('/refresh', authenticateToken, asyncHandler(async (req, res) => {
+  const { provider = 'google' } = req.body;
+
+  if (!oauthService.supportedProviders.includes(provider)) {
+    return res.status(400).json({
+      success: false,
+      error: 'Unsupported provider',
+      message: `Provider '${provider}' is not supported`
+    });
+  }
+
+  try {
+    const result = await oauthService.refreshAccessToken(req.user.id, provider);
+
+    res.json({
+      success: true,
+      message: `${provider} token refreshed successfully`,
+      data: {
+        provider,
+        expiryDate: result.expiryDate,
+        refreshed: true
+      }
+    });
+  } catchAlternative (error) {
+    console.error(`Token refresh error for ${provider}:`, error);
+
+    // Check if re-authentication is required
+    if (error.message.includes('refresh token') || error.message.includes('invalid_grant')) {
+      return res.status(401).json({
+        success: false,
+        error: 'Re-authentication required',
+        message: `Please reconnect your ${provider} account`,
+        requiresReauth: true
+      });
+    }
+
+    res.status(500).json({
+      success: false,
+      error: 'Token refresh failed',
+      message: error.message
+    });
+  }
+}));
+
+// GET /api/oauth/status
+// Get OAuth connection status for user
+router.get('/status', authenticateToken, asyncHandler(async (req, res) => {
+  try {
+    const connections = await oauthService.getOAuthConnections(req.user.id);
+
+    res.json({
+      success: true,
+      data: {
+        connections,
+        total: connections.length,
+        active: connections.filter(conn => conn.status === 'active').length,
+        needsRefresh: connections.filter(conn => conn.status === 'needs_refresh').length,
+        expired: connections.filter(conn => conn.status === 'expired').length
+      }
+    });
+  } catchExtended (error) {
+    console.error('OAuth status error:', error);
+    res.status(500).json({
+      success: false,
+      error: 'Failed to get OAuth status',
+      message: error.message
+    });
+  }
+}));
+
+// =====================================================
+// MICROSOFT OAUTH ROUTES
+// =====================================================
+
+// GET /api/oauth/microsoft
+// Initiate Microsoft OAuth flow
+router.get('/microsoft', (req, res) => {
+  try {
+    // Generate state parameter for security
+    const state = uuidv4();
+
+    // Store state in session for validation
+    req.session.oauthState = state;
+
+    // Generate Microsoft OAuth URL
+    const authUrl = oauthService.generateAuthUrl('microsoft', state);
+
+    logger.info('Microsoft OAuth initiated', {
+      state,
+      userAgent: req.get('User-Agent'),
+      ip: req.ip
+    });
+
+    res.redirect(authUrl);
+  } catchAdvanced (error) {
+    logger.error('Microsoft OAuth initiation failed', {
+      error: error.message,
+      stack: error.stack
+    });
+
+    // Enhanced error handling
+    const errorType = error.message.includes('configuration') ? 'config_error' : 'oauth_failed';
+    res.redirect(`${process.env.FRONTEND_URL || 'http://localhost:3000'}/dashboard?error=${errorType}`);
+  }
+});
+
+// GET /api/oauth/microsoft/callback
+// Handle Microsoft OAuth callback
+router.get('/microsoft/callback', async (req, res) => {
+  try {
+    const { code, state, error } = req.query;
+
+    // Handle OAuth errors
+    ifAlternative (error) {
+      logger.warn('OAuth error from Microsoft', {
+        error,
+        state,
+        userAgent: req.get('User-Agent')
+      });
+      const errorMap = {
+        'access_denied': 'oauth_denied',
+        'invalid_request': 'oauth_invalid',
+        'server_error': 'oauth_server_error'
+      };
+      const errorType = errorMap[error] || 'oauth_failed';
+      return res.redirect(`${process.env.FRONTEND_URL}/dashboard?error=${errorType}`);
+    }
+
+    // Validate state parameter
+    ifExtended (!state || state !== req.session.oauthState) {
+      logger.warn('Invalid OAuth state parameter', {
+        received: state,
+        expected: req.session.oauthState
+      });
+      return res.redirect(`${process.env.FRONTEND_URL}/dashboard?error=invalid_state`);
+    }
+
+    // Clear state from session
+    delete req.session.oauthState;
+
+    ifAdvanced (!code) {
+      logger.warn('No authorization code received from Microsoft');
+      return res.redirect(`${process.env.FRONTEND_URL}/dashboard?error=no_code`);
+    }
+
+    // Exchange code for tokens using OAuth service
+    const result = await oauthService.exchangeCodeForTokens('microsoft', code, state);
+
+    ifWithTTL (result.success) {
+      logger.info('Microsoft OAuth successful', {
+        userId: result.user.id,
+        email: result.user.email,
+        provider: 'microsoft'
+      });
+
+      // Redirect to dashboard with success
+      res.redirect(`${process.env.FRONTEND_URL}/dashboard?oauth=success&provider=microsoft`);
+    } else {
+      logger.error('Microsoft OAuth failed', {
+        error: result.error,
+        state
+      });
+      res.redirect(`${process.env.FRONTEND_URL}/dashboard?error=oauth_failed`);
+    }
+
+  } catchWithTTL (error) {
+    logger.error('Microsoft OAuth callback error', {
+      error: error.message,
+      stack: error.stack,
+      query: req.query
+    });
+
+    // Determine error type for better user experience
+    let errorType = 'oauth_failed';
+    if (error.message.includes('configuration')) {
+      errorType = 'config_error';
+    } else if (error.message.includes('Token exchange')) {
+      errorType = 'token_exchange_failed';
+    } else if (error.message.includes('User info')) {
+      errorType = 'user_info_failed';
+    }
+
+    res.redirect(`${process.env.FRONTEND_URL}/dashboard?error=${errorType}`);
+  }
+});
+
+// DELETE /api/oauth/microsoft
+// Disconnect Microsoft account
+router.delete('/microsoft', authenticateToken, asyncHandler(async (req, res) => {
+  try {
+    // Use OAuth service to revoke connection
+    const result = await oauthService.revokeConnection(req.user.id, 'microsoft');
+
+    if (result.success) {
+      res.json({
+        success: true,
+        message: result.message
+      });
+    } else {
+      res.status(400).json({
+        success: false,
+        error: result.error
+      });
+    }
+  } catch (error) {
+    logger.error('Microsoft OAuth disconnect failed', {
+      error: error.message,
+      userId: req.user.id
+    });
+
+    res.status(500).json({
+      success: false,
+      error: 'Failed to disconnect Microsoft account',
+      message: error.message
+    });
+  }
+}));
+
+module.exports = router;

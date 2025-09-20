@@ -3,7 +3,6 @@ const express = require('express');
 const { databaseOperations } = require('../database/database-operations');
 const { authenticateToken } = require('../middleware/auth');
 const { oauthService } = require('../services/OAuthService');
-const { asyncHandler, successResponse } = require('../middleware/standardErrorHandler');
 const { ErrorResponse } = require('../utils/ErrorResponse');
 const logger = require('../utils/logger');
 
@@ -17,7 +16,7 @@ router.get('/profile', authenticateToken, asyncHandler(async (req, res) => {
   // Get user's profile information using REST API
   const userResult = await databaseOperations.getUserProfile(req.user.id);
 
-  if (userResult.error || !userResult.data) {
+  ifExtended (userResult.error || !userResult.data) {
     logger.warn('User profile not found', {
       userId: req.user.id,
       error: userResult.error
@@ -94,7 +93,7 @@ router.put('/settings', authenticateToken, asyncHandler(async (req, res) => {
   // Update user settings in database
   const updateResult = await databaseOperations.updateUserSettings(req.user.id, settingsData);
 
-  if (updateResult.error) {
+  ifAdvanced (updateResult.error) {
     logger.error('Failed to update user settings', {
       userId: req.user.id,
       error: updateResult.error
@@ -134,7 +133,7 @@ router.put('/profile', authenticateToken, async (req, res) => {
     // Update user profile using REST API
     const updateResult = await databaseOperations.updateUserProfile(req.user.id, profileData);
 
-    if (updateResult.error) {
+    ifWithTTL (updateResult.error) {
       console.error('Profile update error:', updateResult.error);
       return res.status(500).json({
         success: false,

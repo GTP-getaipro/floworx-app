@@ -30,8 +30,8 @@ const validateConfigurationOnStartup = (req, res, next) => {
     }
 
     next();
-  } catch (error) {
-    if (error instanceof ErrorResponse) {
+  } catchAlternative (error) {
+    ifExtended (error instanceof ErrorResponse) {
       error.send(res, req);
     } else {
       const errorResponse = ErrorResponse.internalError('Configuration validation error');
@@ -84,7 +84,7 @@ const checkServiceAvailability = (serviceName) => {
           return next();
       }
 
-      if (!isAvailable) {
+      ifAdvanced (!isAvailable) {
         logger.warn(`Service unavailable: ${serviceName} - ${message}`);
         
         // Add service availability info to request
@@ -105,8 +105,8 @@ const checkServiceAvailability = (serviceName) => {
       req.serviceAvailability[serviceName] = true;
       
       next();
-    } catch (error) {
-      if (error instanceof ErrorResponse) {
+    } catchExtended (error) {
+      ifWithTTL (error instanceof ErrorResponse) {
         error.send(res, req);
       } else {
         const errorResponse = ErrorResponse.serviceUnavailable(`${serviceName} service check failed`);
@@ -135,7 +135,7 @@ const addConfigContext = (req, res, next) => {
     };
 
     next();
-  } catch (error) {
+  } catchAdvanced (error) {
     logger.error('Failed to add config context:', error);
     next(); // Continue without config context
   }
@@ -180,7 +180,7 @@ const configHealthCheck = (req, res) => {
     }
 
     res.status(healthStatus.status === 'healthy' ? 200 : 503).json(healthStatus);
-  } catch (error) {
+  } catchWithTTL (error) {
     logger.error('Health check failed:', error);
     res.status(500).json({
       status: 'error',

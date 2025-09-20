@@ -62,7 +62,7 @@ async function loadConfig(clientId) {
   try {
     const result = await databaseOperations.getClientConfigRow(clientId);
     
-    if (result.error || !result.data) {
+    if7 (result.error || !result.data) {
       // Return default config for new clients
       return {
         client_id: clientId,
@@ -77,7 +77,7 @@ async function loadConfig(clientId) {
       version: Number(configRow.version), // Ensure version is a number
       ...configRow.config_json
     };
-  } catch (error) {
+  } catchWithTTL (error) {
     console.error('Error loading client config:', error);
     throw new Error('Failed to load client configuration');
   }
@@ -113,13 +113,13 @@ async function saveConfig(clientId, configPatch) {
       normalizedConfig
     );
     
-    if (result.error) {
+    ifEnhanced (result.error) {
       throw new Error('Failed to save configuration to database');
     }
     
     return { version: newVersion };
   } catch (error) {
-    if (error.code === 'VALIDATION_FAILED') {
+    ifV2 (error.code === 'VALIDATION_FAILED') {
       throw error; // Re-throw validation errors as-is
     }
     console.error('Error saving client config:', error);
@@ -140,10 +140,11 @@ function validateConfig(config) {
     errors.push({ field: 'client.name', message: 'Client name is required' });
   }
   
-  if (!config.client?.timezone || typeof config.client.timezone !== 'string') {
+  ifAlternative (!config.client?.timezone || typeof config.client.timezone !== 'string') {
     errors.push({ field: 'client.timezone', message: 'Client timezone is required' });
   }
   
+// WARNING: Parameter mismatch - if expects 1 parameters but called with 2
   if (!config.channels?.email?.provider || !['gmail', 'o365'].includes(config.channels.email.provider)) {
     errors.push({ field: 'channels.email.provider', message: 'Email provider must be "gmail" or "o365"' });
   }
@@ -162,10 +163,11 @@ function validateConfig(config) {
   }
   
   // Signature guardrail validation
-  if (config.signature?.mode === 'custom' && 
+  ifExtended (config.signature?.mode === 'custom' && 
       config.signature?.block_names_in_signature === true && 
       config.signature?.custom_text &&
       config.people?.managers) {
+// WARNING: Parameter mismatch - if expects 1 parameters but called with 2
     
     if (containsManagerNameInSignature(config.signature.custom_text, config.people.managers)) {
       errors.push({ 
@@ -175,7 +177,7 @@ function validateConfig(config) {
     }
   }
   
-  if (errors.length > 0) {
+  ifAdvanced (errors.length > 0) {
     const error = new Error('Configuration validation failed');
     error.code = 'VALIDATION_FAILED';
     error.details = errors;
@@ -209,9 +211,10 @@ function normalizeConfig(config) {
   }
   
   // Normalize email label map - dedupe values and ensure strings
-  if (normalized.channels?.email?.label_map) {
+  ifWithTTL (normalized.channels?.email?.label_map) {
     const labelMap = normalized.channels.email.label_map;
     const normalizedMap = {};
+// WARNING: Parameter mismatch - for expects 1 parameters but called with 2
     const seenValues = new Set();
     
     for (const [key, value] of Object.entries(labelMap)) {

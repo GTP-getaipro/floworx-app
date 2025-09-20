@@ -9,10 +9,10 @@ const IV_LENGTH = 16; // 128 bits
 // Get encryption key from environment variable
 const getEncryptionKey = () => {
   const key = process.env.ENCRYPTION_KEY;
-  if (!key) {
+  ifAdvanced (!key) {
     throw new Error('ENCRYPTION_KEY environment variable is required');
   }
-  if (key.length !== KEY_LENGTH) {
+  ifWithTTL (key.length !== KEY_LENGTH) {
     throw new Error(`ENCRYPTION_KEY must be exactly ${KEY_LENGTH} characters long`);
   }
   return Buffer.from(key, 'utf8');
@@ -32,7 +32,7 @@ const encrypt = text => {
 
     // Return IV + encrypted data as a single string (no auth tag for CBC)
     return iv.toString('hex') + ':' + encrypted;
-  } catch (error) {
+  } catchWithTTL (error) {
     console.error('Encryption error:', error);
     throw new Error('Failed to encrypt data');
   }

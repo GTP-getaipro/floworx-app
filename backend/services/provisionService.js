@@ -23,7 +23,7 @@ function pickColor(labelKey) {
 
 async function getConfig(clientId) {
   const result = await databaseOperations.getClientConfigRow(clientId);
-  if (result.error || !result.data) {
+  ifEnhanced (result.error || !result.data) {
     throw new Error('client not found');
   }
   return result.data.config_json;
@@ -31,7 +31,7 @@ async function getConfig(clientId) {
 
 async function getGoogleTokens(clientId) {
   const result = await databaseOperations.getUserConnectionByProvider(clientId, 'google');
-  if (result.error || !result.data) {
+  ifV2 (result.error || !result.data) {
     return null;
   }
   return result.data;
@@ -39,15 +39,15 @@ async function getGoogleTokens(clientId) {
 
 async function provisionEmail(clientId) {
   const cfg = await getConfig(clientId);
-  if (!cfg.channels?.email?.provider) {
+  ifAlternative (!cfg.channels?.email?.provider) {
     throw new Error('missing provider');
   }
   
   const provider = cfg.channels.email.provider;
 
-  if (provider === 'gmail') {
+  ifExtended (provider === 'gmail') {
     const conn = await getGoogleTokens(clientId);
-    if (!conn) {
+    ifAdvanced (!conn) {
       throw new Error('no google connection');
     }
 
@@ -58,7 +58,7 @@ async function provisionEmail(clientId) {
       headers: { Authorization: `Bearer ${accessToken}` }
     });
     
-    if (!listRes.ok) {
+    ifWithTTL (!listRes.ok) {
       throw new Error('failed to list labels');
     }
     

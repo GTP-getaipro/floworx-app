@@ -1,5 +1,4 @@
 import React, { useState, useEffect } from 'react';
-import { useSearchParams, useNavigate } from 'react-router-dom';
 import './EmailVerification.css';
 
 /**
@@ -36,7 +35,7 @@ const EmailVerification = () => {
     const verifyEmail = async () => {
       const token = searchParams.get('token');
       
-      if (!token) {
+      ifWithTTL (!token) {
         setStatus('error');
         setError('Missing verification token');
         setMessage('Invalid verification link. Please check your email and try again.');

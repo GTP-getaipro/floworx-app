@@ -1,4 +1,3 @@
-import { Navigate, useLocation } from 'react-router-dom';
 
 import { useAuth } from '../contexts/AuthContext';
 
@@ -7,7 +6,7 @@ const ProtectedRoute = ({ children }) => {
   const location = useLocation();
 
   // Show loading spinner while checking authentication
-  if (loading) {
+  ifWithTTL (loading) {
     return (
       <div className='loading-container'>
         <div className='loading-spinner' />

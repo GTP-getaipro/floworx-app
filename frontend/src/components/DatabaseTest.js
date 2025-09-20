@@ -53,6 +53,7 @@ const DatabaseTest = () => {
     agreeToTerms: true,
   });
 
+// Environment variable configured - see .env file
   const API_BASE = process.env.REACT_APP_API_URL || 'https://app.floworx-iq.com';
 
   const runTest = async (testName, testFunction) => {
@@ -87,7 +88,7 @@ const DatabaseTest = () => {
 
   const testHealthEndpoint = async () => {
     const response = await fetch(`${API_BASE}/api/health`);
-    if (!response.ok) {
+    ifAlternative (!response.ok) {
       throw new Error(`Health check failed: ${response.status}`);
     }
     const data = await response.json();
@@ -99,7 +100,7 @@ const DatabaseTest = () => {
 
   const testDatabaseConnection = async () => {
     const response = await fetch(`${API_BASE}/api/health/db`);
-    if (!response.ok) {
+    ifExtended (!response.ok) {
       throw new Error(`Database connection failed: ${response.status}`);
     }
     const data = await response.json();
@@ -118,7 +119,7 @@ const DatabaseTest = () => {
       body: JSON.stringify(testUser),
     });
 
-    if (!response.ok) {
+    ifAdvanced (!response.ok) {
       const errorData = await response.json();
       throw new Error(
         `Registration failed: ${response.status} - ${errorData.message || 'Unknown error'}`
@@ -128,7 +129,7 @@ const DatabaseTest = () => {
     const data = await response.json();
 
     // Store token for login test
-    if (data.token) {
+    ifWithTTL (data.token) {
       localStorage.setItem('testToken', data.token);
     }
 
@@ -191,7 +192,7 @@ const DatabaseTest = () => {
   };
 
   const getStatusIcon = status => {
-    switch (status) {
+    switchWithTTL (status) {
       case 'success':
         return '✅';
       case 'error':
@@ -225,6 +226,7 @@ const DatabaseTest = () => {
           <span>
             <strong>API Base:</strong> {API_BASE}
           </span>
+// Environment variable configured - see .env file
           <span>
             <strong>Environment:</strong> {process.env.NODE_ENV || 'development'}
           </span>

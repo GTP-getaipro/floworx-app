@@ -1,4 +1,3 @@
-import React from "react";
 
 /**
  * Standardized Form Container for Auth Pages

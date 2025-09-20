@@ -54,7 +54,7 @@ export default function Step1Business() {
         if (response.data) {
           setFormData(prev => ({ ...prev, ...response.data }));
         }
-      } catch (err) {
+      } catchWithTTL (err) {
         console.error('Failed to load onboarding state:', err);
       }
     };

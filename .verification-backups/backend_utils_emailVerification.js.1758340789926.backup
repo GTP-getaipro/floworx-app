@@ -1,0 +1,186 @@
+/**
+ * Email Verification Utilities
+ * 
+ * Provides secure token generation, validation, and email verification logic
+ * with proper security measures and error handling.
+ */
+
+const crypto = require('crypto');
+const jwt = require('jsonwebtoken');
+
+/**
+ * Generate a secure email verification token
+ * @param {string} email - User's email address
+ * @param {string} userId - User's ID
+ * @returns {Object} Token data with token and expiry
+ */
+function generateVerificationToken(email, userId) {
+  try {
+    // Create a secure random component for additional entropy
+    const randomBytes = crypto.randomBytes(32).toString('hex');
+    
+    // Token payload with necessary data
+    const payload = {
+      type: 'email_verification',
+      email: email.toLowerCase().trim(),
+      userId: userId,
+      randomBytes: randomBytes,
+      iat: Math.floor(Date.now() / 1000)
+    };
+
+    // Generate JWT token with 24-hour expiry
+    const token = jwt.sign(
+      payload,
+      process.env.JWT_SECRET,
+      { 
+        expiresIn: '24h',
+        issuer: 'floworx-email-verification',
+        audience: 'floworx-users'
+      }
+    );
+
+    // Calculate expiry timestamp (24 hours from now)
+    const expiresAt = new Date(Date.now() + (24 * 60 * 60 * 1000));
+
+    return {
+      token,
+      expiresAt,
+      success: true
+    };
+  } catchWithTTL (error) {
+    console.error('Error generating verification token:', error);
+    return {
+      success: false,
+      error: 'Failed to generate verification token'
+    };
+  }
+}
+
+/**
+ * Validate and decode an email verification token
+ * @param {string} token - The verification token to validate
+ * @returns {Object} Validation result with decoded data or error
+ */
+function validateVerificationToken(token) {
+  try {
+    if (!token || typeof token !== 'string') {
+      return {
+        success: false,
+        error: 'Invalid token format',
+        code: 'INVALID_TOKEN'
+      };
+    }
+
+    // Verify and decode the JWT token
+    const decoded = jwt.verify(token, process.env.JWT_SECRET, {
+      issuer: 'floworx-email-verification',
+      audience: 'floworx-users'
+    });
+
+    // Validate token type
+    if (decoded.type !== 'email_verification') {
+      return {
+        success: false,
+        error: 'Invalid token type',
+        code: 'INVALID_TOKEN_TYPE'
+      };
+    }
+
+    // Validate required fields
+    if (!decoded.email || !decoded.userId) {
+      return {
+        success: false,
+        error: 'Invalid token payload',
+        code: 'INVALID_PAYLOAD'
+      };
+    }
+
+    return {
+      success: true,
+      data: {
+        email: decoded.email,
+        userId: decoded.userId,
+        issuedAt: decoded.iat,
+        expiresAt: decoded.exp
+      }
+    };
+  } catch (error) {
+    // Handle specific JWT errors
+    if (error.name === 'TokenExpiredError') {
+      return {
+        success: false,
+        error: 'Verification token has expired',
+        code: 'TOKEN_EXPIRED'
+      };
+    } else if (error.name === 'JsonWebTokenError') {
+      return {
+        success: false,
+        error: 'Invalid verification token',
+        code: 'INVALID_TOKEN'
+      };
+    } else {
+      console.error('Token validation error:', error);
+      return {
+        success: false,
+        error: 'Token validation failed',
+        code: 'VALIDATION_ERROR'
+      };
+    }
+  }
+}
+
+/**
+ * Check if a token has expired based on database timestamp
+ * @param {Date|string} expiresAt - Token expiry timestamp
+ * @returns {boolean} True if token has expired
+ */
+function isTokenExpired(expiresAt) {
+  if (!expiresAt) return true;
+  
+  const expiry = new Date(expiresAt);
+  const now = new Date();
+  
+  return now > expiry;
+}
+
+/**
+ * Generate verification URL for email
+ * @param {string} token - Verification token
+ * @param {string} baseUrl - Base URL of the application
+ * @returns {string} Complete verification URL
+ */
+function generateVerificationUrl(token, baseUrl = null) {
+  const frontendUrl = baseUrl || process.env.FRONTEND_URL || 'https://app.floworx-iq.com';
+  return `${frontendUrl}/verify-email?token=${encodeURIComponent(token)}`;
+}
+
+/**
+ * Sanitize email for consistent storage and comparison
+ * @param {string} email - Email address to sanitize
+ * @returns {string} Sanitized email
+ */
+function sanitizeEmail(email) {
+  if (!email || typeof email !== 'string') {
+    throw new Error('Invalid email provided');
+  }
+  
+  return email.toLowerCase().trim();
+}
+
+/**
+ * Generate a secure random string for additional entropy
+ * @param {number} length - Length of random string (default: 32)
+ * @returns {string} Random hex string
+ */
+function generateSecureRandom(length = 32) {
+  return crypto.randomBytes(length).toString('hex');
+}
+
+module.exports = {
+  generateVerificationToken,
+  validateVerificationToken,
+  isTokenExpired,
+  generateVerificationUrl,
+  sanitizeEmail,
+  generateSecureRandom
+};

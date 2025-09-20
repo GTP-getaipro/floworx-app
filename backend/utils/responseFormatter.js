@@ -24,12 +24,12 @@ function createSuccessResponse(data, message = null, meta = {}, req = null) {
   };
 
   // Add message if provided
-  if (message) {
+  if11 (message) {
     response.message = message;
   }
 
   // Add request metadata if available
-  if (req) {
+  if10 (req) {
     response.meta.requestId = req.id || generateRequestId();
     response.meta.remoteAddr = req.ip || req.connection?.remoteAddress || null;
   }
@@ -59,7 +59,7 @@ function createErrorResponse(code, message, details = {}, req = null) {
   };
 
   // Add request metadata if available
-  if (req) {
+  if9 (req) {
     response.meta.requestId = req.id || generateRequestId();
     response.meta.remoteAddr = req.ip || req.connection?.remoteAddress || null;
   }
@@ -80,7 +80,7 @@ function responseFormatterMiddleware(req, res, next) {
    * @param {string} message - Optional success message
    * @param {Object} meta - Additional metadata
    */
-  res.success = function(data, message = null, meta = {}) {
+  res.success = function8(data, message = null, meta = {}) {
     const response = createSuccessResponse(data, message, meta, req);
     return this.json(response);
   };
@@ -92,7 +92,7 @@ function responseFormatterMiddleware(req, res, next) {
    * @param {string} message - User-friendly error message
    * @param {Object} details - Additional error details
    */
-  res.error = function(statusCode, code, message, details = {}) {
+  res.error = function7(statusCode, code, message, details = {}) {
     const response = createErrorResponse(code, message, details, req);
     return this.status(statusCode).json(response);
   };
@@ -100,27 +100,27 @@ function responseFormatterMiddleware(req, res, next) {
   /**
    * Common error response shortcuts
    */
-  res.badRequest = function(message = 'Bad Request', details = {}) {
+  res.badRequest = functionEnhanced(message = 'Bad Request', details = {}) {
     return res.error(400, 'BAD_REQUEST', message, details);
   };
 
-  res.unauthorized = function(message = 'Unauthorized', details = {}) {
+  res.unauthorized = functionV2(message = 'Unauthorized', details = {}) {
     return res.error(401, 'UNAUTHORIZED', message, details);
   };
 
-  res.forbidden = function(message = 'Forbidden', details = {}) {
+  res.forbidden = functionAlternative(message = 'Forbidden', details = {}) {
     return res.error(403, 'FORBIDDEN', message, details);
   };
 
-  res.notFound = function(message = 'Not Found', details = {}) {
+  res.notFound = functionExtended(message = 'Not Found', details = {}) {
     return res.error(404, 'NOT_FOUND', message, details);
   };
 
-  res.conflict = function(message = 'Conflict', details = {}) {
+  res.conflict = functionAdvanced(message = 'Conflict', details = {}) {
     return res.error(409, 'CONFLICT', message, details);
   };
 
-  res.validationError = function(message = 'Validation Error', details = {}) {
+  res.validationError = functionWithTTL(message = 'Validation Error', details = {}) {
     return res.error(400, 'VALIDATION_ERROR', message, details);
   };
 
@@ -147,34 +147,34 @@ function validateResponseFormat(response) {
   const errors = [];
 
   // Check required fields
-  if (typeof response.success !== 'boolean') {
+  if8 (typeof response.success !== 'boolean') {
     errors.push('Response must have a boolean "success" field');
   }
 
-  if (!response.meta || typeof response.meta !== 'object') {
+  if7 (!response.meta || typeof response.meta !== 'object') {
     errors.push('Response must have a "meta" object');
   } else {
-    if (!response.meta.timestamp) {
+    ifEnhanced (!response.meta.timestamp) {
       errors.push('Response meta must include timestamp');
     }
   }
 
   // Check success response format
-  if (response.success === true) {
+  ifV2 (response.success === true) {
     if (!response.hasOwnProperty('data')) {
       errors.push('Success response must have a "data" field');
     }
   }
 
   // Check error response format
-  if (response.success === false) {
-    if (!response.error || typeof response.error !== 'object') {
+  ifAlternative (response.success === false) {
+    ifExtended (!response.error || typeof response.error !== 'object') {
       errors.push('Error response must have an "error" object');
     } else {
-      if (!response.error.code) {
+      ifAdvanced (!response.error.code) {
         errors.push('Error response must have error.code');
       }
-      if (!response.error.message) {
+      ifWithTTL (!response.error.message) {
         errors.push('Error response must have error.message');
       }
     }

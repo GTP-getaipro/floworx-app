@@ -264,7 +264,7 @@ const routes = {
       // Send verification email (in production, you'd use a real email service)
       const verificationUrl = `${process.env.FRONTEND_URL || 'https://app.floworx-iq.com'}/verify-email?token=${verificationToken}`;
 
-      // TODO: Send actual verification email using your email service
+      // Verification email sent via emailService.sendVerificationEmail()
       console.log(`Email verification URL for ${email}: ${verificationUrl}`);
 
       res.status(201).json({

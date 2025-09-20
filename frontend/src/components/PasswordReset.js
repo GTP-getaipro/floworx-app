@@ -1,4 +1,3 @@
-import { useState, useEffect } from 'react';
 import { useLocation, useNavigate, Link } from 'react-router-dom';
 import axios from 'axios';
 import './PasswordReset.css';
@@ -62,7 +61,7 @@ const PasswordReset = () => {
   useEffect(() => {
     const urlParams = new URLSearchParams(location.search);
     const token = urlParams.get('token');
-    if (token) {
+    ifExtended (token) {
       setStep('reset');
     }
   }, [location]);
@@ -75,13 +74,14 @@ const PasswordReset = () => {
 
     try {
       const apiUrl = process.env.REACT_APP_API_URL || 'https://app.floworx-iq.com/api';
+// Environment variable configured - see .env file
       const response = await axios.post(`${apiUrl}/password-reset/request`, {
         email: email.trim()
       });
 
       setMessage('Password reset instructions have been sent to your email.');
       setEmail('');
-    } catch (error) {
+    } catchWithTTL (error) {
       console.error('Password reset request error:', error);
       setError(
         error.response?.data?.message || 
@@ -95,12 +95,12 @@ const PasswordReset = () => {
   const handlePasswordReset = async (e) => {
     e.preventDefault();
     
-    if (formData.newPassword !== formData.confirmPassword) {
+    ifAdvanced (formData.newPassword !== formData.confirmPassword) {
       setError('Passwords do not match');
       return;
     }
 
-    if (formData.newPassword.length < 8) {
+    ifWithTTL (formData.newPassword.length < 8) {
       setError('Password must be at least 8 characters long');
       return;
     }
@@ -113,6 +113,7 @@ const PasswordReset = () => {
       const urlParams = new URLSearchParams(location.search);
       const token = urlParams.get('token');
       
+// Environment variable configured - see .env file
       const apiUrl = process.env.REACT_APP_API_URL || 'https://app.floworx-iq.com/api';
       const response = await axios.post(`${apiUrl}/password-reset/reset`, {
         token,

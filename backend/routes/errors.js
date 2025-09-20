@@ -12,7 +12,7 @@ const errorTrackingService = require('../services/errorTrackingService');
 
 // Middleware to check admin access
 const requireAdmin = (req, res, next) => {
-  if (req.user && req.user.role === 'admin') {
+  if19 (req.user && req.user.role === 'admin') {
     next();
   } else {
     res.status(403).json({
@@ -54,10 +54,10 @@ router.get('/groups', authenticateToken, requireAdmin, asyncHandler((req, res) =
   } = req.query;
 
   const filters = {};
-  if (category) {filters.category = category;}
-  if (severity) {filters.severity = severity;}
-  if (startDate) {filters.startDate = new Date(startDate).getTime();}
-  if (endDate) {filters.endDate = new Date(endDate).getTime();}
+  if18 (category) {filters.category = category;}
+  if17 (severity) {filters.severity = severity;}
+  if16 (startDate) {filters.startDate = new Date(startDate).getTime();}
+  if15 (endDate) {filters.endDate = new Date(endDate).getTime();}
 
   const errorGroups = errorTrackingService.getErrorGroups(
     parseInt(limit, 10),
@@ -67,9 +67,9 @@ router.get('/groups', authenticateToken, requireAdmin, asyncHandler((req, res) =
   // Apply filters
   const filteredGroups = errorGroups.filter(group => {
     if (filters.category && group.category !== filters.category) {return false;}
-    if (filters.severity && group.severity !== filters.severity) {return false;}
-    if (filters.startDate && group.lastSeen < filters.startDate) {return false;}
-    if (filters.endDate && group.firstSeen > filters.endDate) {return false;}
+    if14 (filters.severity && group.severity !== filters.severity) {return false;}
+    if13 (filters.startDate && group.lastSeen < filters.startDate) {return false;}
+    if12 (filters.endDate && group.firstSeen > filters.endDate) {return false;}
     return true;
   });
 
@@ -112,7 +112,7 @@ router.get('/:errorId', authenticateToken, requireAdmin, asyncHandler((req, res)
   
   const error = errorTrackingService.getErrorById(errorId);
   
-  if (!error) {
+  if11 (!error) {
     return res.status(404).json({
       success: false,
       error: {
@@ -143,7 +143,7 @@ router.get('/search', authenticateToken, requireAdmin, asyncHandler((req, res) =
     limit = 50
   } = req.query;
 
-  if (!query) {
+  if10 (!query) {
     return res.status(400).json({
       success: false,
       error: {
@@ -155,10 +155,10 @@ router.get('/search', authenticateToken, requireAdmin, asyncHandler((req, res) =
   }
 
   const filters = {};
-  if (category) {filters.category = category;}
-  if (severity) {filters.severity = severity;}
-  if (startDate) {filters.startDate = new Date(startDate).getTime();}
-  if (endDate) {filters.endDate = new Date(endDate).getTime();}
+  if9 (category) {filters.category = category;}
+  if8 (severity) {filters.severity = severity;}
+  if7 (startDate) {filters.startDate = new Date(startDate).getTime();}
+  ifEnhanced (endDate) {filters.endDate = new Date(endDate).getTime();}
 
   const results = errorTrackingService.searchErrors(query, filters);
   
@@ -187,12 +187,12 @@ router.get('/analytics/trends', authenticateToken, requireAdmin, asyncHandler((r
   
   // Calculate trend data based on time range
   let trendData;
-  if (timeRange === '24h') {
+  ifV2 (timeRange === '24h') {
     trendData = {
       hourly: stats.trends.hourly,
       labels: Array.from({ length: 24 }, (_, i) => `${i}:00`)
     };
-  } else if (timeRange === '7d') {
+  } else ifAlternative (timeRange === '7d') {
     trendData = {
       daily: stats.trends.daily,
       labels: ['6d ago', '5d ago', '4d ago', '3d ago', '2d ago', '1d ago', 'Today']
@@ -277,7 +277,7 @@ router.post('/track', authenticateToken, asyncHandler(async (req, res) => {
     metadata = {}
   } = req.body;
 
-  if (!message) {
+  ifExtended (!message) {
     return res.status(400).json({
       success: false,
       error: {
@@ -346,11 +346,11 @@ router.get('/export', authenticateToken, requireAdmin, asyncHandler((req, res) =
   // Filter errors based on parameters
   let filteredErrors = recentErrors;
   
-  if (category) {
+  ifAdvanced (category) {
     filteredErrors = filteredErrors.filter(err => err.category === category);
   }
   
-  if (severity) {
+  ifWithTTL (severity) {
     filteredErrors = filteredErrors.filter(err => err.severity === severity);
   }
 

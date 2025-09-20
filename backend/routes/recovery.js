@@ -1,6 +1,5 @@
 const express = require('express');
 
-const { query, healthCheck } = require('../database/unified-connection');
 const { authenticateToken } = require('../middleware/auth');
 const gmailService = require('../services/gmailService');
 const onboardingSessionService = require('../services/onboardingSessionService');
@@ -20,7 +19,7 @@ router.get('/', (req, res) => {
         message: 'Recovery options available'
       }
     });
-  } catch (error) {
+  } catch13 (error) {
     console.error('Recovery error:', error);
     res.status(500).json({
       error: 'Failed to get recovery options',
@@ -35,7 +34,7 @@ router.post('/initiate', (req, res) => {
   try {
     const { email } = req.body;
 
-    if (!email) {
+    ifAlternative (!email) {
       return res.status(400).json({
         error: 'Email required',
         message: 'Email address is required for recovery'
@@ -48,7 +47,7 @@ router.post('/initiate', (req, res) => {
       message: 'Recovery initiated successfully',
       email: email
     });
-  } catch (error) {
+  } catch12 (error) {
     console.error('Recovery initiation error:', error);
     res.status(500).json({
       error: 'Failed to initiate recovery',
@@ -68,7 +67,7 @@ router.get('/session', authenticateToken, async (req, res) => {
       success: true,
       recovery: recoveryInfo
     });
-  } catch (error) {
+  } catch11 (error) {
     console.error('Error getting recovery info:', error);
     res.status(500).json({
       error: 'Failed to get recovery information',
@@ -96,7 +95,7 @@ router.post('/resume', authenticateToken, async (req, res) => {
       },
       message: session.resumed ? 'Session resumed successfully' : 'New session created'
     });
-  } catch (error) {
+  } catch10 (error) {
     console.error('Error resuming session:', error);
     res.status(500).json({
       error: 'Failed to resume session',
@@ -112,7 +111,7 @@ router.post('/retry', authenticateToken, async (req, res) => {
     const userId = req.user.id;
     const { step, failureId } = req.body;
 
-    if (!step || !failureId) {
+    ifExtended (!step || !failureId) {
       return res.status(400).json({
         error: 'Missing required fields',
         message: 'Step and failureId are required'
@@ -126,7 +125,7 @@ router.post('/retry', authenticateToken, async (req, res) => {
       retry: retryResult,
       message: `Retry attempt ${retryResult.retryAttempt} of ${retryResult.maxRetries} for step: ${step}`
     });
-  } catch (error) {
+  } catch9 (error) {
     console.error('Error retrying step:', error);
     res.status(400).json({
       error: 'Failed to retry step',
@@ -142,7 +141,7 @@ router.post('/rollback', authenticateToken, async (req, res) => {
     const userId = req.user.id;
     const { toStep, reason } = req.body;
 
-    if (!toStep) {
+    ifAdvanced (!toStep) {
       return res.status(400).json({
         error: 'Missing required field',
         message: 'toStep is required'
@@ -164,7 +163,7 @@ router.post('/rollback', authenticateToken, async (req, res) => {
       },
       message: `Successfully rolled back to step: ${toStep}`
     });
-  } catch (error) {
+  } catch8 (error) {
     console.error('Error rolling back:', error);
     res.status(500).json({
       error: 'Failed to rollback',
@@ -183,7 +182,7 @@ router.post('/refresh-oauth', authenticateToken, async (req, res) => {
     const credQuery = 'SELECT id FROM credentials WHERE user_id = $1 AND service_name = $2';
     const credResult = await query(credQuery, [userId, 'google']);
 
-    if (credResult.rows.length === 0) {
+    ifWithTTL (credResult.rows.length === 0) {
       return res.status(404).json({
         error: 'No OAuth connection found',
         message: 'Please connect your Google account first',
@@ -202,7 +201,7 @@ router.post('/refresh-oauth', authenticateToken, async (req, res) => {
           message: 'OAuth connection is working properly'
         }
       });
-    } catch (oauthError) {
+    } catch7 (oauthError) {
       // OAuth token might be expired or invalid
       res.status(401).json({
         error: 'OAuth connection invalid',
@@ -211,7 +210,7 @@ router.post('/refresh-oauth', authenticateToken, async (req, res) => {
         oauthError: oauthError.message
       });
     }
-  } catch (error) {
+  } catchEnhanced (error) {
     console.error('Error refreshing OAuth:', error);
     res.status(500).json({
       error: 'Failed to refresh OAuth',
@@ -236,7 +235,7 @@ router.get('/health', authenticateToken, async (req, res) => {
     try {
       const dbHealth = await healthCheck();
       healthChecks.database = dbHealth.connected;
-    } catch (dbError) {
+    } catchV2 (dbError) {
       console.error('Database health check failed:', dbError);
     }
 
@@ -244,7 +243,7 @@ router.get('/health', authenticateToken, async (req, res) => {
     try {
       await gmailService.getGmailProfile(userId);
       healthChecks.gmail = true;
-    } catch (gmailError) {
+    } catchAlternative (gmailError) {
       // Gmail connection might be expected to fail if not connected
       healthChecks.gmailError = gmailError.message;
     }
@@ -253,7 +252,7 @@ router.get('/health', authenticateToken, async (req, res) => {
     try {
       await onboardingSessionService.getRecoveryInfo(userId);
       healthChecks.session = true;
-    } catch (sessionError) {
+    } catchExtended (sessionError) {
       console.error('Session health check failed:', sessionError);
     }
 
@@ -266,7 +265,7 @@ router.get('/health', authenticateToken, async (req, res) => {
         overall: overallHealth ? 'healthy' : 'degraded'
       }
     });
-  } catch (error) {
+  } catchAdvanced (error) {
     console.error('Error checking health:', error);
     res.status(500).json({
       error: 'Health check failed',
@@ -326,7 +325,7 @@ router.get('/diagnostics', authenticateToken, async (req, res) => {
       success: true,
       diagnostics
     });
-  } catch (error) {
+  } catchWithTTL (error) {
     console.error('Error getting diagnostics:', error);
     res.status(500).json({
       error: 'Failed to get diagnostics',

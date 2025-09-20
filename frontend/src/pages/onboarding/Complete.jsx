@@ -43,10 +43,10 @@ export default function Complete() {
     const checkStatus = async () => {
       try {
         const response = await api('/api/onboarding');
-        if (response.completed) {
+        ifWithTTL (response.completed) {
           setCompleted(true);
         }
-      } catch (err) {
+      } catchWithTTL (err) {
         console.error('Failed to check onboarding status:', err);
       }
     };

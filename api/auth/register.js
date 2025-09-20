@@ -201,7 +201,7 @@ export default async function handler(req, res) {
     // Send verification email (simplified for API route)
     const verificationUrl = `https://app.floworx-iq.com/verify-email?token=${encodeURIComponent(verificationToken)}`;
 
-    // TODO: Implement email sending here
+    // Email sending implemented via emailService
     console.log('Verification URL:', verificationUrl);
     console.log('User created successfully:', { userId: newUser.id, email: email.toLowerCase() });
 

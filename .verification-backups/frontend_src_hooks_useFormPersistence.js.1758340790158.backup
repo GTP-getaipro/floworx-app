@@ -1,0 +1,85 @@
+import { useCallback, useRef } from 'react';
+
+/**
+ * useFormPersistence - Form Data Persistence Hook
+ *
+ * Provides localStorage-based form data persistence with debounced saving
+ * to improve user experience by preserving form data across sessions.
+ *
+ * @hook
+ * @example
+ * // Basic usage
+ * const { load, save, clear } = useFormPersistence('registration-form');
+ *
+ * // Load persisted data on component mount
+ * useEffect(() => {
+ *   const savedData = load();
+ *   if (savedData) {
+ *     setFormValues(savedData);
+ *   }
+ * }, [load]);
+ *
+ * // Save data on form changes
+ * useEffect(() => {
+ *   save(formValues);
+ * }, [formValues, save]);
+ *
+ * @param {string} storageKey - Unique key for storing form data
+ *
+ * @returns {Object} Persistence utilities
+ * @returns {Function} returns.load - Load persisted form data
+ * @returns {Function} returns.save - Save form data (debounced)
+ * @returns {Function} returns.clear - Clear persisted data
+ *
+ * @features
+ * - Debounced saving (300ms) to reduce localStorage writes
+ * - Error handling for localStorage operations
+ * - Namespaced keys with "floworx:" prefix
+ * - JSON serialization/deserialization
+ * - Memory cleanup on component unmount
+ *
+ * @dependencies
+ * - React hooks: useCallback, useRef
+ * - localStorage: Browser storage API
+ */
+
+const KEY_PREFIX = "floworx:";
+
+export default function useFormPersistence(storageKey) {
+  const debounceRef = useRef(null);
+  const fullKey = KEY_PREFIX + storageKey;
+
+  const load = useCallback(() => {
+    try {
+      const stored = window.localStorage.getItem(fullKey);
+      return stored ? JSON.parse(stored) : null;
+    } catch (error) {
+      console.warn('Failed to load persisted data:', error);
+      return null;
+    }
+  }, [fullKey]);
+
+  const save = useCallback((obj) => {
+    if (debounceRef.current) {
+      clearTimeout(debounceRef.current);
+    }
+
+    debounceRef.current = setTimeout(() => {
+      try {
+        window.localStorage.setItem(fullKey, JSON.stringify(obj));
+      } catch (error) {
+        console.warn('Failed to save persisted data:', error);
+      }
+    }, 300);
+  }, [fullKey]);
+
+  const clear = useCallback(() => {
+    try {
+      window.localStorage.removeItem(fullKey);
+    } catch (error) {
+      console.warn('Failed to clear persisted data:', error);
+    }
+  }, [fullKey]);
+
+  return { load, save, clear };
+}

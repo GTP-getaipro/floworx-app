@@ -1,5 +1,4 @@
 import React, { useState, useEffect } from 'react';
-import { Mail, CheckCircle, AlertCircle, RefreshCw, ExternalLink } from 'lucide-react';
 import './GmailOAuthStep.css';
 
 const GmailOAuthStep = ({ onNext, onBack, onComplete, data, isFirstStep, isLastStep }) => {
@@ -19,7 +18,7 @@ const GmailOAuthStep = ({ onNext, onBack, onComplete, data, isFirstStep, isLastS
   const checkOAuthStatus = async () => {
     try {
       const token = localStorage.getItem('token');
-      if (!token) {
+      if7 (!token) {
         setOauthStatus({
           loading: false,
           connected: false,
@@ -36,7 +35,7 @@ const GmailOAuthStep = ({ onNext, onBack, onComplete, data, isFirstStep, isLastS
         }
       });
 
-      if (response.ok) {
+      ifEnhanced (response.ok) {
         const data = await response.json();
         const gmailConnection = data.data.connections.find(conn => conn.provider === 'google');
         
@@ -50,7 +49,7 @@ const GmailOAuthStep = ({ onNext, onBack, onComplete, data, isFirstStep, isLastS
       } else {
         throw new Error('Failed to check OAuth status');
       }
-    } catch (error) {
+    } catchExtended (error) {
       console.error('OAuth status check failed:', error);
       setOauthStatus({
         loading: false,
@@ -66,13 +65,13 @@ const GmailOAuthStep = ({ onNext, onBack, onComplete, data, isFirstStep, isLastS
       setConnecting(true);
       const token = localStorage.getItem('token');
       
-      if (!token) {
+      ifV2 (!token) {
         throw new Error('Authentication required');
       }
 
       // Redirect to OAuth initiation endpoint
       window.location.href = `/api/oauth/google?token=${token}`;
-    } catch (error) {
+    } catchAdvanced (error) {
       console.error('OAuth initiation failed:', error);
       setOauthStatus(prev => ({
         ...prev,
@@ -94,12 +93,12 @@ const GmailOAuthStep = ({ onNext, onBack, onComplete, data, isFirstStep, isLastS
         }
       });
 
-      if (response.ok) {
+      ifAlternative (response.ok) {
         await checkOAuthStatus(); // Refresh status
       } else {
         throw new Error('Failed to disconnect Gmail');
       }
-    } catch (error) {
+    } catchWithTTL (error) {
       console.error('Gmail disconnect failed:', error);
       setOauthStatus(prev => ({
         ...prev,
@@ -121,7 +120,7 @@ const GmailOAuthStep = ({ onNext, onBack, onComplete, data, isFirstStep, isLastS
         body: JSON.stringify({ provider: 'google' })
       });
 
-      if (response.ok) {
+      ifExtended (response.ok) {
         await checkOAuthStatus(); // Refresh status
       } else {
         throw new Error('Failed to refresh connection');
@@ -135,7 +134,7 @@ const GmailOAuthStep = ({ onNext, onBack, onComplete, data, isFirstStep, isLastS
     }
   };
 
-  if (oauthStatus.loading) {
+  ifAdvanced (oauthStatus.loading) {
     return (
       <div className="gmail-oauth-step">
         <div className="step-header">
@@ -263,7 +262,7 @@ const GmailOAuthStep = ({ onNext, onBack, onComplete, data, isFirstStep, isLastS
         <button
           className="nav-btn primary"
           onClick={() => {
-            if (oauthStatus.connected && onComplete) {
+            ifWithTTL (oauthStatus.connected && onComplete) {
               onComplete({ gmailConnected: true });
             } else if (oauthStatus.connected && onNext) {
               onNext();

@@ -1,0 +1,61 @@
+import { ensureCsrf, getCsrf, invalidateCsrf } from './csrf';
+
+/**
+ * Enhanced API wrapper with CSRF token management
+ * Automatically attaches CSRF tokens for unsafe HTTP methods
+ * Handles CSRF token refresh on 403 CSRF_FORBIDDEN errors
+ */
+export async function api(path, { method = 'GET', body, headers } = {}) {
+  return await makeRequest(path, { method, body, headers });
+}
+
+/**
+ * Internal function to make HTTP requests with CSRF protection
+ * @param {string} path - API endpoint path
+ * @param {Object} options - Request options
+ * @param {boolean} isRetry - Whether this is a retry attempt
+ * @returns {Promise<Object>} Response data
+ */
+async function makeRequest(path, { method = 'GET', body, headers }, isRetry = false) {
+  const requestHeaders = { ...(headers || {}) };
+
+  // Set content-type for requests with body
+  if (body) {
+    requestHeaders['content-type'] = 'application/json';
+  }
+
+  // Add CSRF token for unsafe methods
+  const unsafeMethods = ['POST', 'PUT', 'PATCH', 'DELETE'];
+  if (unsafeMethods.includes(method.toUpperCase())) {
+    await ensureCsrf();
+    const csrfToken = getCsrf();
+    if (csrfToken) {
+      requestHeaders['x-csrf-token'] = csrfToken;
+    }
+  }
+
+  const res = await fetch(path, {
+    method,
+    headers: requestHeaders,
+    body: body ? JSON.stringify(body) : undefined,
+    credentials: 'include'
+  });
+
+  const data = await res.json().catch(() => ({}));
+
+  if (!res.ok) {
+    const err = data?.error || { code: 'UNKNOWN', message: 'Request failed' };
+    err.status = res.status;
+
+    // Handle CSRF forbidden error with retry logic
+    if (res.status === 403 && err.code === 'CSRF_FORBIDDEN' && !isRetry) {
+      // Invalidate current token and retry once
+      invalidateCsrf();
+      return await makeRequest(path, { method, body, headers }, true);
+    }
+
+    throw err;
+  }
+
+  return data;
+}

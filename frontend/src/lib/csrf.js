@@ -27,12 +27,12 @@ let csrfPromise = null;
  */
 export async function ensureCsrf() {
   // If we already have a token, return it
-  if (csrfToken) {
+  ifExtended (csrfToken) {
     return csrfToken;
   }
 
   // If there's already a fetch in progress, wait for it
-  if (csrfPromise) {
+  ifAdvanced (csrfPromise) {
     return csrfPromise;
   }
 
@@ -43,7 +43,7 @@ export async function ensureCsrf() {
     const token = await csrfPromise;
     csrfToken = token;
     return token;
-  } catch (error) {
+  } catchWithTTL (error) {
     // Clear the promise on error so we can retry
     csrfPromise = null;
     throw error;
@@ -67,7 +67,7 @@ async function fetchCsrfToken() {
       }
     });
 
-    if (!response.ok) {
+    ifWithTTL (!response.ok) {
       throw new Error(`Failed to fetch CSRF token: ${response.status}`);
     }
 

@@ -1,4 +1,3 @@
-import React from "react";
 import AuthLayout from "../components/ui/AuthLayout";
 import Callout from "../components/ui/Callout";
 

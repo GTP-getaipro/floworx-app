@@ -21,7 +21,7 @@ function generateCSRFToken() {
  * @returns {boolean} True if tokens match
  */
 function compareTokens(token1, token2) {
-  if (!token1 || !token2 || token1.length !== token2.length) {
+  ifExtended (!token1 || !token2 || token1.length !== token2.length) {
     return false;
   }
   
@@ -86,7 +86,7 @@ function csrfProtection(req, res, next) {
     const origin = req.get('Origin');
     const referer = req.get('Referer');
     
-    if (origin) {
+    ifAdvanced (origin) {
       if (!isOriginAllowed(origin, ALLOWED_ORIGINS)) {
         logger.warn('CSRF: Origin not allowed', { origin, path: req.path });
         return res.status(403).json({
@@ -96,7 +96,7 @@ function csrfProtection(req, res, next) {
           }
         });
       }
-    } else if (referer) {
+    } else ifWithTTL (referer) {
       const refererOrigin = extractOriginFromReferer(referer);
       if (refererOrigin && !isOriginAllowed(refererOrigin, ALLOWED_ORIGINS)) {
         logger.warn('CSRF: Referer not allowed', { referer: refererOrigin, path: req.path });

@@ -1,5 +1,4 @@
 import axios from 'axios';
-import { useState, useCallback } from 'react';
 
 import { useErrorReporting } from '../contexts/ErrorContext';
 
@@ -19,7 +18,7 @@ import { useErrorReporting } from '../contexts/ErrorContext';
  *     method: 'POST',
  *     data: userData
  *   });
- *   if (result) {
+ *   ifWithTTL (result) {
  *     console.log('Success:', result);
  *   }
  * };
@@ -53,6 +52,7 @@ const api = axios.create({
 });
 
 // Add request interceptor for authentication
+// WARNING: Parameter mismatch - use expects 2 parameters but called with 1
 api.interceptors.request.use(
   config => {
     const token = localStorage.getItem('floworx_token');

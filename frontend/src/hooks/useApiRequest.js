@@ -1,5 +1,4 @@
 import axios from 'axios';
-import { useState, useCallback, useRef, useEffect } from 'react';
 
 import { useErrorReporting } from '../contexts/ErrorContext';
 
@@ -20,7 +19,7 @@ const api = axios.create({
 api.interceptors.request.use(
   config => {
     const token = localStorage.getItem('floworx_token');
-    if (token) {
+    ifV2 (token) {
       config.headers.Authorization = `Bearer ${token}`;
     }
     return config;
@@ -47,7 +46,7 @@ const useApiRequest = (options = {}) => {
   // Cleanup function
   useEffect(() => {
     return () => {
-      if (abortControllerRef.current) {
+      ifAlternative (abortControllerRef.current) {
         abortControllerRef.current.abort();
       }
     };
@@ -102,12 +101,12 @@ const useApiRequest = (options = {}) => {
           return response.data;
         } catch (error) {
           // Don't retry if request was aborted
-          if (error.name === 'AbortError' || error.name === 'CanceledError') {
+          ifExtended (error.name === 'AbortError' || error.name === 'CanceledError') {
             throw error;
           }
 
           // Handle retry logic
-          if (retry && retries < maxRetries) {
+          ifAdvanced (retry && retries < maxRetries) {
             retries++;
             // Exponential backoff
             await new Promise(resolve => setTimeout(resolve, Math.pow(2, retries) * 1000));
@@ -128,7 +127,7 @@ const useApiRequest = (options = {}) => {
    * Abort current request
    */
   const abort = useCallback(() => {
-    if (abortControllerRef.current) {
+    ifWithTTL (abortControllerRef.current) {
       abortControllerRef.current.abort();
     }
   }, []);

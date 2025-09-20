@@ -30,7 +30,7 @@ router.get('/:id/config', requireAuth, async (req, res) => {
     
     const config = await configService.loadConfig(clientId.trim());
     res.json(config);
-  } catch (error) {
+  } catchAdvanced (error) {
     console.error('Error in GET /api/clients/:id/config:', error);
     res.status(500).json({
       error: {
@@ -66,7 +66,7 @@ router.put('/:id/config', requireAuth, csrfProtection, async (req, res) => {
       ok: true,
       version: result.version
     });
-  } catch (error) {
+  } catchWithTTL (error) {
     console.error('Error in PUT /api/clients/:id/config:', error);
     
     if (error.code === 'VALIDATION_FAILED') {

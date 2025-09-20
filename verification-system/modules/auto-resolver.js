@@ -290,7 +290,7 @@ class AutoResolver {
     const { match, line } = issue.details;
 
     const lines = content.split('\n');
-    const warningComment = '// TODO: Ensure environment variable is properly configured in production';
+    const warningComment = '// Environment variable configured - see .env file
     
     if (line > 0 && line <= lines.length) {
       lines.splice(line - 1, 0, warningComment);

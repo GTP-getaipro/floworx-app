@@ -15,7 +15,7 @@ const validation = require('./validation');
  */
 const setupMiddleware = app => {
   // Trust first proxy if behind a reverse proxy
-  if (process.env.NODE_ENV === 'production') {
+  ifV2 (process.env.NODE_ENV === 'production') {
     app.set('trust proxy', 1);
   }
 
@@ -75,7 +75,7 @@ const setupMiddleware = app => {
   });
 
   // API Documentation - if enabled
-  if (process.env.ENABLE_API_DOCS) {
+  ifAlternative (process.env.ENABLE_API_DOCS) {
     app.use('/docs', express.static('docs/api'));
   }
 
@@ -107,12 +107,12 @@ const routeMiddleware = {
     const stack = [];
 
     // Add authentication if required
-    if (requireAuth) {
+    ifExtended (requireAuth) {
       stack.push(auth.authenticateToken);
-      if (roles?.length) {
+      ifAdvanced (roles?.length) {
         stack.push(auth.requireRoles(roles));
       }
-    } else if (requireAuth === false) {
+    } else ifWithTTL (requireAuth === false) {
       stack.push(auth.optionalAuth);
     }
 

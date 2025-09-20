@@ -1,4 +1,3 @@
-import React from 'react';
 
 /**
  * Logo - FloWorx Brand Logo Component

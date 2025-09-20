@@ -1,0 +1,265 @@
+/**
+ * Standardized API Response Formatter
+ * 
+ * Ensures all API responses follow the same format to prevent
+ * frontend-backend contract mismatches.
+ */
+
+/**
+ * Create a standardized success response
+ * @param {*} data - The response data
+ * @param {string} message - Optional success message
+ * @param {Object} meta - Additional metadata
+ * @param {Object} req - Express request object for metadata
+ * @returns {Object} Standardized success response
+ */
+function createSuccessResponse(data, message = null, meta = {}, req = null) {
+  const response = {
+    success: true,
+    data: data,
+    meta: {
+      timestamp: new Date().toISOString(),
+      ...meta
+    }
+  };
+
+  // Add message if provided
+  if (message) {
+    response.message = message;
+  }
+
+  // Add request metadata if available
+  if (req) {
+    response.meta.requestId = req.id || generateRequestId();
+    response.meta.remoteAddr = req.ip || req.connection?.remoteAddress || null;
+  }
+
+  return response;
+}
+
+/**
+ * Create a standardized error response
+ * @param {string} code - Error code (e.g., 'VALIDATION_ERROR', 'NOT_FOUND')
+ * @param {string} message - User-friendly error message
+ * @param {Object} details - Additional error details
+ * @param {Object} req - Express request object for metadata
+ * @returns {Object} Standardized error response
+ */
+function createErrorResponse(code, message, details = {}, req = null) {
+  const response = {
+    success: false,
+    error: {
+      code: code,
+      message: message,
+      ...details
+    },
+    meta: {
+      timestamp: new Date().toISOString()
+    }
+  };
+
+  // Add request metadata if available
+  if (req) {
+    response.meta.requestId = req.id || generateRequestId();
+    response.meta.remoteAddr = req.ip || req.connection?.remoteAddress || null;
+  }
+
+  return response;
+}
+
+/**
+ * Express middleware to add response formatter methods to res object
+ */
+function responseFormatterMiddleware(req, res, next) {
+  // Add request ID for tracking
+  req.id = req.headers['x-request-id'] || generateRequestId();
+
+  /**
+   * Send standardized success response
+   * @param {*} data - Response data
+   * @param {string} message - Optional success message
+   * @param {Object} meta - Additional metadata
+   */
+  res.success = function(data, message = null, meta = {}) {
+    const response = createSuccessResponse(data, message, meta, req);
+    return this.json(response);
+  };
+
+  /**
+   * Send standardized error response
+   * @param {number} statusCode - HTTP status code
+   * @param {string} code - Error code
+   * @param {string} message - User-friendly error message
+   * @param {Object} details - Additional error details
+   */
+  res.error = function(statusCode, code, message, details = {}) {
+    const response = createErrorResponse(code, message, details, req);
+    return this.status(statusCode).json(response);
+  };
+
+  /**
+   * Common error response shortcuts
+   */
+  res.badRequest = function(message = 'Bad Request', details = {}) {
+    return res.error(400, 'BAD_REQUEST', message, details);
+  };
+
+  res.unauthorized = function(message = 'Unauthorized', details = {}) {
+    return res.error(401, 'UNAUTHORIZED', message, details);
+  };
+
+  res.forbidden = function(message = 'Forbidden', details = {}) {
+    return res.error(403, 'FORBIDDEN', message, details);
+  };
+
+  res.notFound = function(message = 'Not Found', details = {}) {
+    return res.error(404, 'NOT_FOUND', message, details);
+  };
+
+  res.conflict = function(message = 'Conflict', details = {}) {
+    return res.error(409, 'CONFLICT', message, details);
+  };
+
+  res.validationError = function(message = 'Validation Error', details = {}) {
+    return res.error(400, 'VALIDATION_ERROR', message, details);
+  };
+
+  res.internalError = function(message = 'Internal Server Error', details = {}) {
+    return res.error(500, 'INTERNAL_ERROR', message, details);
+  };
+
+  next();
+}
+
+/**
+ * Generate a unique request ID
+ * @returns {string} Unique request ID
+ */
+function generateRequestId() {
+  return `req_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`;
+}
+
+/**
+ * Validation helper for API responses
+ * Ensures responses follow the standard format
+ */
+function validateResponseFormat(response) {
+  const errors = [];
+
+  // Check required fields
+  if (typeof response.success !== 'boolean') {
+    errors.push('Response must have a boolean "success" field');
+  }
+
+  if (!response.meta || typeof response.meta !== 'object') {
+    errors.push('Response must have a "meta" object');
+  } else {
+    if (!response.meta.timestamp) {
+      errors.push('Response meta must include timestamp');
+    }
+  }
+
+  // Check success response format
+  if (response.success === true) {
+    if (!response.hasOwnProperty('data')) {
+      errors.push('Success response must have a "data" field');
+    }
+  }
+
+  // Check error response format
+  if (response.success === false) {
+    if (!response.error || typeof response.error !== 'object') {
+      errors.push('Error response must have an "error" object');
+    } else {
+      if (!response.error.code) {
+        errors.push('Error response must have error.code');
+      }
+      if (!response.error.message) {
+        errors.push('Error response must have error.message');
+      }
+    }
+  }
+
+  return {
+    valid: errors.length === 0,
+    errors: errors
+  };
+}
+
+/**
+ * Common error codes and messages
+ */
+const ERROR_CODES = {
+  // Authentication & Authorization
+  UNAUTHORIZED: 'Authentication required',
+  FORBIDDEN: 'Access denied',
+  TOKEN_EXPIRED: 'Authentication token has expired',
+  INVALID_TOKEN: 'Invalid authentication token',
+  EMAIL_NOT_VERIFIED: 'Email address not verified',
+
+  // Validation
+  VALIDATION_ERROR: 'Invalid input data',
+  MISSING_REQUIRED_FIELD: 'Required field is missing',
+  INVALID_EMAIL: 'Invalid email address format',
+  WEAK_PASSWORD: 'Password does not meet security requirements',
+
+  // Resources
+  NOT_FOUND: 'Requested resource not found',
+  ALREADY_EXISTS: 'Resource already exists',
+  EMAIL_EXISTS: 'Email address already registered',
+
+  // Server
+  INTERNAL_ERROR: 'Internal server error',
+  SERVICE_UNAVAILABLE: 'Service temporarily unavailable',
+  RATE_LIMITED: 'Too many requests',
+
+  // Business Logic
+  INSUFFICIENT_PERMISSIONS: 'Insufficient permissions for this action',
+  OPERATION_NOT_ALLOWED: 'Operation not allowed in current state',
+  QUOTA_EXCEEDED: 'Usage quota exceeded'
+};
+
+/**
+ * Get user-friendly message for error code
+ * @param {string} code - Error code
+ * @returns {string} User-friendly message
+ */
+function getErrorMessage(code) {
+  return ERROR_CODES[code] || 'An error occurred';
+}
+
+module.exports = {
+  createSuccessResponse,
+  createErrorResponse,
+  responseFormatterMiddleware,
+  validateResponseFormat,
+  ERROR_CODES,
+  getErrorMessage,
+  generateRequestId
+};
+
+/**
+ * USAGE EXAMPLES:
+ * 
+ * // In Express routes with middleware:
+ * app.use(responseFormatterMiddleware);
+ * 
+ * router.post('/register', async (req, res) => {
+ *   try {
+ *     const user = await createUser(req.body);
+ *     return res.success(user, 'User created successfully', { requiresVerification: true });
+ *   } catch (error) {
+ *     if (error.code === 'EMAIL_EXISTS') {
+ *       return res.conflict('Email address already registered');
+ *     }
+ *     return res.internalError('Failed to create user');
+ *   }
+ * });
+ * 
+ * // Manual usage without middleware:
+ * const response = createSuccessResponse(userData, 'Login successful');
+ * res.json(response);
+ * 
+ * const errorResponse = createErrorResponse('VALIDATION_ERROR', 'Invalid email format');
+ * res.status(400).json(errorResponse);
+ */

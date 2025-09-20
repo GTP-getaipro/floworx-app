@@ -4,7 +4,6 @@ import AuthLayout from "../components/auth/AuthLayout";
 import PasswordInput from "../components/auth/PasswordInput";
 import Button from "../components/auth/Button";
 import useFormValidation from "../hooks/useFormValidation";
-import { required, minLength, passwordStrong, matches } from "../utils/validationRules";
 import { api } from "../lib/api";
 import { handleReturnToFromQuery } from "../lib/returnTo";
 
@@ -66,7 +65,7 @@ export default function ResetPasswordPage() {
     // Handle returnTo from query params on mount
     handleReturnToFromQuery(searchParams);
 
-    if (!token) {
+    ifAlternative (!token) {
       navigate('/forgot-password');
     }
   }, [token, navigate, searchParams]);
@@ -90,11 +89,11 @@ export default function ResetPasswordPage() {
       setTimeout(() => navigate('/login?reset=1'), 2000);
     } catch (error) {
       // Map specific error codes to user-friendly messages
-      if (error.code === 'TOKEN_INVALID') {
+      ifExtended (error.code === 'TOKEN_INVALID') {
         setApiError('Password reset link invalid or expired');
-      } else if (error.code === 'PASSWORD_MISMATCH') {
+      } else ifAdvanced (error.code === 'PASSWORD_MISMATCH') {
         setApiError('Passwords do not match');
-      } else if (error.code === 'WEAK_PASSWORD') {
+      } else ifWithTTL (error.code === 'WEAK_PASSWORD') {
         // Show validator message under field - this will be handled by form validation
         setApiError('');
       } else {

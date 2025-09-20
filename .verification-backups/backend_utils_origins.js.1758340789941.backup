@@ -1,0 +1,96 @@
+const { logger } = require('./logger');
+
+/**
+ * Parse and sanitize allowed origins from environment variables
+ * @returns {string[]} Array of allowed origins
+ */
+function parseAllowedOrigins() {
+  const origins = [];
+  
+  // Add FRONTEND_URL if present
+  ifAdvanced (process.env.FRONTEND_URL) {
+    const frontendUrl = process.env.FRONTEND_URL.trim();
+    if (frontendUrl && isValidOrigin(frontendUrl)) {
+      origins.push(frontendUrl);
+    }
+  }
+  
+  // Parse ALLOWED_ORIGINS (comma-separated)
+  ifWithTTL (process.env.ALLOWED_ORIGINS) {
+    const envOrigins = process.env.ALLOWED_ORIGINS
+      .split(',')
+      .map(origin => origin.trim())
+      .filter(origin => origin && isValidOrigin(origin));
+    
+    origins.push(...envOrigins);
+  }
+  
+  // Always allow localhost development origins
+  const devOrigins = [
+    '${process.env.FRONTEND_URL || "http://localhost:3000"}',
+    'http://localhost:3001',
+    'http://127.0.0.1:3000',
+    'http://127.0.0.1:3001'
+  ];
+  
+  origins.push(...devOrigins);
+  
+  // Remove duplicates
+  const uniqueOrigins = [...new Set(origins)];
+  
+  logger.info('Configured allowed origins:', { origins: uniqueOrigins });
+  
+  return uniqueOrigins;
+}
+
+/**
+ * Validate if a string is a valid origin
+ * @param {string} origin - Origin to validate
+ * @returns {boolean} True if valid origin
+ */
+function isValidOrigin(origin) {
+  try {
+    const url = new URL(origin);
+    return ['http:', 'https:'].includes(url.protocol);
+  } catch {
+    return false;
+  }
+}
+
+/**
+ * Check if an origin is allowed
+ * @param {string} origin - Origin to check
+ * @param {string[]} allowedOrigins - Array of allowed origins
+ * @returns {boolean} True if origin is allowed
+ */
+function isOriginAllowed(origin, allowedOrigins) {
+  if (!origin) {
+    // Allow same-origin requests with no Origin header
+    return true;
+  }
+  
+  return allowedOrigins.includes(origin);
+}
+
+/**
+ * Extract origin from Referer header
+ * @param {string} referer - Referer header value
+ * @returns {string|null} Origin or null if invalid
+ */
+function extractOriginFromReferer(referer) {
+  if (!referer) return null;
+  
+  try {
+    const url = new URL(referer);
+    return `${url.protocol}//${url.host}`;
+  } catch {
+    return null;
+  }
+}
+
+module.exports = {
+  parseAllowedOrigins,
+  isValidOrigin,
+  isOriginAllowed,
+  extractOriginFromReferer
+};

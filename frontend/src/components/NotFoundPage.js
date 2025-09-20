@@ -1,5 +1,4 @@
 import React from 'react';
-import { Link, useNavigate } from 'react-router-dom';
 
 /**
  * NotFoundPage - 404 Error Page Component

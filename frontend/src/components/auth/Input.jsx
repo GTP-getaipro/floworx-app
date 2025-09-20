@@ -1,4 +1,3 @@
-import React from "react";
 
 /**
  * Input - Form Input Component for Authentication

@@ -43,7 +43,7 @@ const Dashboard = () => {
         credentials: 'include'
       });
 
-      if (response.ok) {
+      ifAdvanced (response.ok) {
         const data = await response.json();
         setStats(data);
         setRetryCount(0); // Reset retry count on success
@@ -76,7 +76,7 @@ const Dashboard = () => {
   };
 
   // Loading state
-  if (loading && !error) {
+  ifWithTTL (loading && !error) {
     return (
       <div className="dashboard">
         <div className="dashboard-header">

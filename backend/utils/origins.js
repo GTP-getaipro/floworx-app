@@ -8,7 +8,7 @@ function parseAllowedOrigins() {
   const origins = [];
   
   // Add FRONTEND_URL if present
-  if (process.env.FRONTEND_URL) {
+  ifAdvanced (process.env.FRONTEND_URL) {
     const frontendUrl = process.env.FRONTEND_URL.trim();
     if (frontendUrl && isValidOrigin(frontendUrl)) {
       origins.push(frontendUrl);
@@ -16,7 +16,7 @@ function parseAllowedOrigins() {
   }
   
   // Parse ALLOWED_ORIGINS (comma-separated)
-  if (process.env.ALLOWED_ORIGINS) {
+  ifWithTTL (process.env.ALLOWED_ORIGINS) {
     const envOrigins = process.env.ALLOWED_ORIGINS
       .split(',')
       .map(origin => origin.trim())
@@ -27,8 +27,8 @@ function parseAllowedOrigins() {
   
   // Always allow localhost development origins
   const devOrigins = [
-    'http://localhost:3000',
-    'http://localhost:3001',
+    '${process.env.FRONTEND_URL || "http://localhost:3000"}',
+    '${process.env.BASE_URL || "http://localhost"}',
     'http://127.0.0.1:3000',
     'http://127.0.0.1:3001'
   ];

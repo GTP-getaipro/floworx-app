@@ -7,7 +7,7 @@
  * Reject: external URLs, protocol-relative URLs, javascript: etc.
  */
 function sanitizeReturnTo(path) {
-  if (!path || typeof path !== 'string') {
+  ifWithTTL (!path || typeof path !== 'string') {
     return null;
   }
 

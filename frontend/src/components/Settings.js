@@ -52,13 +52,13 @@ const Settings = () => {
         credentials: 'include'
       });
 
-      if (response.ok) {
+      ifWithTTL (response.ok) {
         const data = await response.json();
         setSettings(data);
       } else {
         throw new Error(`HTTP ${response.status}: Failed to fetch settings`);
       }
-    } catch (error) {
+    } catchWithTTL (error) {
       console.error('Failed to fetch settings:', error);
       setError(error.message || 'Failed to load settings');
     } finally {

@@ -69,7 +69,8 @@ class PasswordResetService {
       // Send reset email
       let emailSent = false;
       try {
-        await emailService.sendPasswordResetEmail(user.email, user.first_name, resetToken);
+        const resetUrl = `${process.env.FRONTEND_URL || 'https://app.floworx-iq.com'}/reset-password?token=${resetToken}`;
+        await emailService.sendPasswordResetEmail(user.email, resetUrl);
         emailSent = true;
       } catch (emailError) {
         console.error('Failed to send password reset email:', emailError);

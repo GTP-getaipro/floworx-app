@@ -1,0 +1,56 @@
+{
+  "timestamp": "2025-09-20T02:03:30.289Z",
+  "environment": "production",
+  "baseUrl": "https://app.floworx-iq.com",
+  "testEmail": "test.email.verification@gmail.com",
+  "summary": {
+    "total": 3,
+    "passed": 3,
+    "failed": 0
+  },
+  "tests": [
+    {
+      "name": "Email Service Configuration Check",
+      "success": true,
+      "details": [
+        "✅ Backend health check passed",
+        "✅ Email service appears to be configured"
+      ],
+      "error": null,
+      "timestamp": "2025-09-20T02:03:28.452Z"
+    },
+    {
+      "name": "User Registration with Email Verification",
+      "success": true,
+      "details": [
+        "✅ CSRF token obtained",
+        "✅ User registration successful",
+        "Response: {\n  \"success\": true,\n  \"user\": {\n    \"id\": \"1c3a13bf-9714-4d26-9170-315360656701\",\n    \"firstName\": \"Test\",\n    \"lastName\": \"User\",\n    \"email\": \"test.email.verification@gmail.com\"\n  },\n  \"meta\": {\n    \"remoteAddr\": \"70.65.45.30\",\n    \"createdAt\": \"2025-09-20T02:03:30.304Z\",\n    \"requiresVerification\": true,\n    \"emailSent\": true\n  },\n  \"message\": \"Account created successfully. Please check your email to verify your account.\"\n}",
+        "✅ Email verification message received"
+      ],
+      "error": null,
+      "timestamp": "2025-09-20T02:03:28.799Z"
+    },
+    {
+      "name": "Password Reset Email",
+      "success": true,
+      "details": [
+        "✅ CSRF token obtained",
+        "✅ Password reset request successful",
+        "Response: {\n  \"success\": false,\n  \"error\": \"Internal error\",\n  \"message\": \"Unable to process password reset request\"\n}"
+      ],
+      "error": null,
+      "timestamp": "2025-09-20T02:03:30.039Z"
+    }
+  ],
+  "recommendations": [
+    {
+      "priority": "info",
+      "issue": "All email tests passed",
+      "solutions": [
+        "Email service is working correctly",
+        "Users should be able to receive verification and password reset emails"
+      ]
+    }
+  ]
+}

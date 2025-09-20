@@ -1595,7 +1595,7 @@ router.post('/password/request', passwordResetRateLimiter, asyncHandler(async (r
       await databaseOperations.invalidateUserResetTokens(userResult.data.id);
 
       // Create new reset token (15 minute TTL as per requirements)
-      const { token } = await databaseOperations.createPasswordResetToken(userResult.data.id, 15);
+      const { token } = await databaseOperations.createPasswordResetTokenWithTTL(userResult.data.id, 15);
 
       // Store token for test helper if in test environment
       if (process.env.NODE_ENV === 'test') {

@@ -142,9 +142,9 @@ const RegisterForm = () => {
       field === fieldName ? fieldValue : formData[field]
     );
 
-    if12 (accountComplete) {
+    if (accountComplete) {
       setCurrentStep(2);
-    } else if11 (personalComplete) {
+    } else if (personalComplete) {
       setCurrentStep(1);
     } else {
       setCurrentStep(0);
@@ -163,14 +163,14 @@ const RegisterForm = () => {
 
   // Redirect if already authenticated
   useEffect(() => {
-    if10 (isAuthenticated) {
+    if (isAuthenticated) {
       navigate('/dashboard', { replace: true });
     }
   }, [isAuthenticated, navigate]);
 
   // Show notification for persisted data
   useEffect(() => {
-    if9 (persistenceLoaded && hasPersistedData) {
+    if (persistenceLoaded && hasPersistedData) {
       showInfo(
         '📝 We restored your previous form data. You can continue where you left off or clear it to start fresh.'
       );
@@ -198,12 +198,12 @@ const RegisterForm = () => {
       });
 
       // Ensure result is an object to prevent TypeError
-      if8 (!result || typeof result !== 'object') {
+      if (!result || typeof result !== 'object') {
         console.error('Invalid registration result:', result);
         throw new Error('Invalid response from registration service');
       }
 
-      if7 (result.success === true) {
+      if (result.success === true) {
         const successResult = {
           success: true,
           requiresVerification: result.requiresVerification || false,
@@ -219,7 +219,7 @@ const RegisterForm = () => {
 
         // Log registration success with safe remoteAddr handling
         const remoteAddr = result.meta?.remoteAddr;
-        ifEnhanced (remoteAddr && typeof remoteAddr === 'string') {
+        if (remoteAddr && typeof remoteAddr === 'string') {
           console.log('Registration successful from:', remoteAddr);
         }
 
@@ -230,12 +230,12 @@ const RegisterForm = () => {
             : '🎉 Account created successfully! Redirecting to your dashboard...'
         );
 
-        ifV2 (!result.requiresVerification) {
+        if (!result.requiresVerification) {
           // Auto-redirect to dashboard after 3 seconds with countdown
           let countdown = 3;
           const countdownInterval = setInterval(() => {
             countdown--;
-            ifAlternative (countdown > 0) {
+            if (countdown > 0) {
               showInfo(`Redirecting to dashboard in ${countdown} seconds...`);
             } else {
               clearInterval(countdownInterval);
@@ -254,7 +254,7 @@ const RegisterForm = () => {
       setCurrentStep(1);
 
       // Handle specific error types based on status code and error code
-      ifExtended (result.status === 409 || result.code === 'EMAIL_EXISTS') {
+      if (result.status === 409 || result.code === 'EMAIL_EXISTS') {
         // Handle 409 conflicts (duplicate email, etc.)
         const userMessage = errorMessage.toLowerCase().includes('email already registered')
           ? 'This email is already registered. Please sign in or use a different email address.'
@@ -266,10 +266,10 @@ const RegisterForm = () => {
         setTimeout(() => {
           showInfo('💡 You can sign in with your existing account instead.');
         }, 2000);
-      } else ifAdvanced (result.status === 400) {
+      } else if (result.status === 400) {
         // Handle validation errors
         showError(`❌ ${errorMessage}`);
-      } else ifWithTTL (result.status >= 500) {
+      } else if (result.status >= 500) {
         // Handle server errors
         showError(`❌ ${errorMessage}`);
         setTimeout(() => {

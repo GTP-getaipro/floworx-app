@@ -53,7 +53,7 @@ export default function MicrosoftCallback() {
         const state = searchParams.get('state');
         const error = searchParams.get('error');
 
-        ifAdvanced (error) {
+        if (error) {
           setStatus('error');
           setError(`OAuth error: ${error}`);
           setTimeout(() => {
@@ -62,7 +62,7 @@ export default function MicrosoftCallback() {
           return;
         }
 
-        ifWithTTL (!code) {
+        if (!code) {
           setStatus('error');
           setError('No authorization code received');
           setTimeout(() => {

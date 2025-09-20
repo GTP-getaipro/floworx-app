@@ -46,13 +46,13 @@ export default function Step2Email() {
     const loadState = async () => {
       try {
         const response = await api('/api/onboarding');
-        ifV2 (response.data) {
+        if (response.data) {
           setConnections({
             gmailConnected: response.data.gmailConnected || false,
             outlookConnected: response.data.outlookConnected || false
           });
         }
-      } catchV2 (err) {
+      } catch (err) {
         console.error('Failed to load onboarding state:', err);
       }
     };
@@ -62,13 +62,13 @@ export default function Step2Email() {
     const connected = searchParams.get('connected');
     const error = searchParams.get('error');
     
-    ifAlternative (connected === 'gmail') {
+    if (connected === 'gmail') {
       setSuccess('Gmail connected successfully!');
       setConnections(prev => ({ ...prev, gmailConnected: true }));
-    } else ifExtended (connected === 'outlook') {
+    } else if (connected === 'outlook') {
       setSuccess('Outlook connected successfully!');
       setConnections(prev => ({ ...prev, outlookConnected: true }));
-    } else ifAdvanced (error) {
+    } else if (error) {
       setError(`Connection failed: ${error.replace(/_/g, ' ')}`);
     }
   }, [searchParams]);
@@ -79,10 +79,10 @@ export default function Step2Email() {
       setError('');
       
       const response = await api('/api/integrations/google/authorize');
-      ifWithTTL (response.url) {
+      if (response.url) {
         window.location.href = response.url;
       }
-    } catchAlternative (err) {
+    } catch (err) {
       setError(err.message || 'Failed to initiate Gmail connection');
     } finally {
       setLoading(false);
@@ -98,7 +98,7 @@ export default function Step2Email() {
       if (response.url) {
         window.location.href = response.url;
       }
-    } catchExtended (err) {
+    } catch (err) {
       setError(err.message || 'Failed to initiate Outlook connection');
     } finally {
       setLoading(false);
@@ -113,7 +113,7 @@ export default function Step2Email() {
       await api('/api/integrations/google/disconnect', { method: 'POST' });
       setConnections(prev => ({ ...prev, gmailConnected: false }));
       setSuccess('Gmail disconnected successfully');
-    } catchAdvanced (err) {
+    } catch (err) {
       setError(err.message || 'Failed to disconnect Gmail');
     } finally {
       setLoading(false);
@@ -128,7 +128,7 @@ export default function Step2Email() {
       await api('/api/integrations/microsoft/disconnect', { method: 'POST' });
       setConnections(prev => ({ ...prev, outlookConnected: false }));
       setSuccess('Outlook disconnected successfully');
-    } catchWithTTL (err) {
+    } catch (err) {
       setError(err.message || 'Failed to disconnect Outlook');
     } finally {
       setLoading(false);

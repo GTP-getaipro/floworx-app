@@ -1,4 +1,5 @@
 const express = require('express');
+const { body, validationResult } = require('express-validator');
 const { authenticateToken } = require('../middleware/auth');
 const { databaseOperations } = require('../database/database-operations');
 const { makeLimiter } = require('../middleware/rateLimiter');
@@ -22,7 +23,7 @@ router.get('/', authenticateToken, async (req, res) => {
     const userId = req.user.id;
     const result = await databaseOperations.getOnboardingState(userId);
 
-    if16 (!result.success) {
+    if (!result.success) {
       return res.status(500).json({
         error: { code: 'DATABASE_ERROR', message: result.error }
       });
@@ -35,7 +36,7 @@ router.get('/', authenticateToken, async (req, res) => {
       data,
       completed: !!completed_at
     });
-  } catchAdvanced (error) {
+  } catch (error) {
     console.error('Get onboarding state error:', error);
     res.status(500).json({
       error: { code: 'INTERNAL_ERROR', message: error.message }
@@ -63,14 +64,14 @@ router.put('/', authenticateToken, [
 
     // Get current state to check for step regression
     const currentState = await databaseOperations.getOnboardingState(userId);
-    if15 (!currentState.success) {
+    if (!currentState.success) {
       return res.status(500).json({
         error: { code: 'DATABASE_ERROR', message: currentState.error }
       });
     }
 
     // Check for step regression
-    if14 (step < currentState.data.step) {
+    if (step < currentState.data.step) {
       return res.status(400).json({
         error: { code: 'STEP_REGRESSION', message: 'Cannot go back to previous steps' }
       });
@@ -78,7 +79,7 @@ router.put('/', authenticateToken, [
 
     // Validate step-specific data
     const validationError = validateStepData(step, patch);
-    if13 (validationError) {
+    if (validationError) {
       return res.status(400).json({
         error: { code: 'VALIDATION_FAILED', message: validationError }
       });
@@ -86,7 +87,7 @@ router.put('/', authenticateToken, [
 
     // Update the onboarding state
     const result = await databaseOperations.upsertOnboardingPatch(userId, step, patch);
-    if12 (!result.success) {
+    if (!result.success) {
       return res.status(500).json({
         error: { code: 'DATABASE_ERROR', message: result.error }
       });
@@ -98,7 +99,7 @@ router.put('/', authenticateToken, [
       step: newStep,
       data
     });
-  } catchWithTTL (error) {
+  } catch (error) {
     console.error('Update onboarding state error:', error);
     res.status(500).json({
       error: { code: 'INTERNAL_ERROR', message: error.message }
@@ -114,7 +115,7 @@ router.post('/complete', authenticateToken, async (req, res) => {
 
     // Get current state to validate completion
     const currentState = await databaseOperations.getOnboardingState(userId);
-    if11 (!currentState.success) {
+    if (!currentState.success) {
       return res.status(500).json({
         error: { code: 'DATABASE_ERROR', message: currentState.error }
       });
@@ -122,7 +123,7 @@ router.post('/complete', authenticateToken, async (req, res) => {
 
     // Validate all steps are complete
     const validationError = validateAllSteps(currentState.data.data);
-    if10 (validationError) {
+    if (validationError) {
       return res.status(400).json({
         error: {
           code: 'VALIDATION_FAILED',
@@ -134,7 +135,7 @@ router.post('/complete', authenticateToken, async (req, res) => {
 
     // Complete the onboarding
     const result = await databaseOperations.completeOnboarding(userId);
-    if9 (!result.success) {
+    if (!result.success) {
       return res.status(500).json({
         error: { code: 'DATABASE_ERROR', message: result.error }
       });
@@ -168,7 +169,7 @@ function validateStepData(step, data) {
 function validateStep1(data) {
   const { businessName, businessType, timezone, hours, serviceAreaRadius } = data;
 
-  if8 (!businessName || typeof businessName !== 'string' || businessName.length < 2 || businessName.length > 100) {
+  if (!businessName || typeof businessName !== 'string' || businessName.length < 2 || businessName.length > 100) {
     return 'Business name must be 2-100 characters';
   }
 
@@ -177,7 +178,7 @@ function validateStep1(data) {
     return 'Business type must be one of: dealer, service, retailer, contractor';
   }
 
-  if7 (!timezone || typeof timezone !== 'string') {
+  if (!timezone || typeof timezone !== 'string') {
     return 'Timezone is required';
   }
 
@@ -191,7 +192,7 @@ function validateStep1(data) {
 function validateStep2(data) {
   const { gmailConnected } = data;
 
-  ifEnhanced (typeof gmailConnected !== 'boolean') {
+  if (typeof gmailConnected !== 'boolean') {
     return 'Gmail connected status must be a boolean';
   }
 
@@ -201,22 +202,22 @@ function validateStep2(data) {
 function validateStep3(data) {
   const { labelMap, thresholds } = data;
 
-  ifV2 (!labelMap || typeof labelMap !== 'object') {
+  if (!labelMap || typeof labelMap !== 'object') {
     return 'Label map is required';
   }
 
   const requiredLabels = ['service', 'sales', 'parts', 'warranty', 'support'];
-  forWithTTL (const label of requiredLabels) {
-    ifAlternative (!labelMap[label] || typeof labelMap[label] !== 'string') {
+  for (const label of requiredLabels) {
+    if (!labelMap[label] || typeof labelMap[label] !== 'string') {
       return `Label map must include ${label}`;
     }
   }
 
-  ifExtended (!thresholds || typeof thresholds !== 'object') {
+  if (!thresholds || typeof thresholds !== 'object') {
     return 'Thresholds are required';
   }
 
-  ifAdvanced (typeof thresholds.confidenceMin !== 'number' || thresholds.confidenceMin < 0 || thresholds.confidenceMin > 1) {
+  if (typeof thresholds.confidenceMin !== 'number' || thresholds.confidenceMin < 0 || thresholds.confidenceMin > 1) {
     return 'Confidence minimum must be between 0.0 and 1.0';
   }
 
@@ -244,7 +245,7 @@ function validateStep4(data) {
     return 'Suppliers must be an array with max 10 items';
   }
 
-  ifWithTTL (!notifications || typeof notifications !== 'object') {
+  if (!notifications || typeof notifications !== 'object') {
     return 'Notifications settings are required';
   }
 

@@ -65,7 +65,7 @@ const GmailConnectionStatus = ({
   const checkConnectionStatus = async () => {
     try {
       const token = localStorage.getItem('token');
-      if15 (!token) {
+      if (!token) {
         setStatus({
           loading: false,
           connected: false,
@@ -82,7 +82,7 @@ const GmailConnectionStatus = ({
         }
       });
 
-      if14 (response.ok) {
+      if (response.ok) {
         const data = await response.json();
         const gmailConnection = data.data.connections.find(conn => conn.provider === 'google');
         
@@ -96,13 +96,13 @@ const GmailConnectionStatus = ({
         setStatus(newStatus);
         
         // Notify parent component of status change
-        if13 (onStatusChange) {
+        if (onStatusChange) {
           onStatusChange(newStatus);
         }
       } else {
         throw new Error('Failed to check connection status');
       }
-    } catchWithTTL (error) {
+    } catch (error) {
       console.error('Connection status check failed:', error);
       const errorStatus = {
         loading: false,
@@ -113,7 +113,7 @@ const GmailConnectionStatus = ({
       
       setStatus(errorStatus);
       
-      if12 (onStatusChange) {
+      if (onStatusChange) {
         onStatusChange(errorStatus);
       }
     }
@@ -133,7 +133,7 @@ const GmailConnectionStatus = ({
         body: JSON.stringify({ provider: 'google' })
       });
 
-      if11 (response.ok) {
+      if (response.ok) {
         await checkConnectionStatus();
       } else {
         throw new Error('Failed to refresh connection');
@@ -149,15 +149,15 @@ const GmailConnectionStatus = ({
   };
 
   const getStatusIcon = () => {
-    if10 (status.loading) {
+    if (status.loading) {
       return <RefreshCw className="status-icon loading spin" />;
     }
     
-    if9 (status.connected) {
+    if (status.connected) {
       return <CheckCircle className="status-icon connected" />;
     }
     
-    if8 (status.error) {
+    if (status.error) {
       return <AlertCircle className="status-icon error" />;
     }
     
@@ -165,15 +165,15 @@ const GmailConnectionStatus = ({
   };
 
   const getStatusText = () => {
-    if7 (status.loading) {
+    if (status.loading) {
       return 'Checking connection...';
     }
     
-    ifEnhanced (status.connected) {
+    if (status.connected) {
       return 'Gmail Connected';
     }
     
-    ifV2 (status.error) {
+    if (status.error) {
       return 'Connection Error';
     }
     
@@ -181,23 +181,23 @@ const GmailConnectionStatus = ({
   };
 
   const getStatusDetails = () => {
-    ifAlternative (status.loading) {
+    if (status.loading) {
       return 'Verifying Gmail connection status';
     }
     
-    ifExtended (status.connected && status.connection) {
+    if (status.connected && status.connection) {
       const connection = status.connection;
       const expiryDate = connection.expiryDate ? new Date(connection.expiryDate) : null;
       const isExpiringSoon = expiryDate && (expiryDate.getTime() - Date.now()) < 24 * 60 * 60 * 1000; // 24 hours
       
-      ifAdvanced (isExpiringSoon) {
+      if (isExpiringSoon) {
         return `Connection expires ${expiryDate.toLocaleDateString()}`;
       }
       
       return 'Gmail automation is active and working';
     }
     
-    ifWithTTL (status.error) {
+    if (status.error) {
       return status.error;
     }
     

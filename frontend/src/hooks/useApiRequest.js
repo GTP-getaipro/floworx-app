@@ -19,7 +19,7 @@ const api = axios.create({
 api.interceptors.request.use(
   config => {
     const token = localStorage.getItem('floworx_token');
-    ifV2 (token) {
+    if (token) {
       config.headers.Authorization = `Bearer ${token}`;
     }
     return config;
@@ -46,7 +46,7 @@ const useApiRequest = (options = {}) => {
   // Cleanup function
   useEffect(() => {
     return () => {
-      ifAlternative (abortControllerRef.current) {
+      if (abortControllerRef.current) {
         abortControllerRef.current.abort();
       }
     };
@@ -101,12 +101,12 @@ const useApiRequest = (options = {}) => {
           return response.data;
         } catch (error) {
           // Don't retry if request was aborted
-          ifExtended (error.name === 'AbortError' || error.name === 'CanceledError') {
+          if (error.name === 'AbortError' || error.name === 'CanceledError') {
             throw error;
           }
 
           // Handle retry logic
-          ifAdvanced (retry && retries < maxRetries) {
+          if (retry && retries < maxRetries) {
             retries++;
             // Exponential backoff
             await new Promise(resolve => setTimeout(resolve, Math.pow(2, retries) * 1000));
@@ -127,7 +127,7 @@ const useApiRequest = (options = {}) => {
    * Abort current request
    */
   const abort = useCallback(() => {
-    ifWithTTL (abortControllerRef.current) {
+    if (abortControllerRef.current) {
       abortControllerRef.current.abort();
     }
   }, []);

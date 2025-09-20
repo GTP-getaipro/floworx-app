@@ -40,13 +40,13 @@ const createRoute = options => {
   const middlewares = [];
 
   // Add validation middleware if provided
-  ifAlternative (validation) {
+  if (validation) {
     const validateRequest = require('./validateRequest');
     middlewares.push(validateRequest(validation));
   }
 
   // Add custom middleware
-  ifExtended (middleware.length > 0) {
+  if (middleware.length > 0) {
     middlewares.push(...middleware);
   }
 
@@ -79,7 +79,7 @@ const wrapController = ControllerClass => {
           const result = originalMethod.apply(this, args);
 
           // If this looks like an Express middleware (3 args with next)
-          ifAdvanced (args.length === 3 && typeof args[2] === 'function') {
+          if (args.length === 3 && typeof args[2] === 'function') {
             const [_req, _res, next] = args;
             return Promise.resolve(result).catch(next);
           }
@@ -107,9 +107,9 @@ const safeAsync = (handler, options = {}) => {
   return async (req, res, next) => {
     try {
       await handler(req, res, next);
-    } catchAdvanced (error) {
+    } catch (error) {
       // Log error if enabled
-      ifWithTTL (logErrors) {
+      if (logErrors) {
         console.error(`Error in ${handler.name || 'anonymous handler'}:`, {
           error: error.message,
           stack: error.stack,
@@ -125,7 +125,7 @@ const safeAsync = (handler, options = {}) => {
         try {
           await onError(error, req, res, next);
           return;
-        } catchWithTTL (onErrorError) {
+        } catch (onErrorError) {
           console.error('Error in custom error handler:', onErrorError);
         }
       }

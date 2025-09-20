@@ -14,7 +14,7 @@ import { useCallback, useRef } from 'react';
  * // Load persisted data on component mount
  * useEffect(() => {
  *   const savedData = load();
- *   ifWithTTL (savedData) {
+ *   if (savedData) {
  *     setFormValues(savedData);
  *   }
  * }, [load]);
@@ -53,7 +53,7 @@ export default function useFormPersistence(storageKey) {
     try {
       const stored = window.localStorage.getItem(fullKey);
       return stored ? JSON.parse(stored) : null;
-    } catchAdvanced (error) {
+    } catch (error) {
       console.warn('Failed to load persisted data:', error);
       return null;
     }
@@ -67,7 +67,7 @@ export default function useFormPersistence(storageKey) {
     debounceRef.current = setTimeout(() => {
       try {
         window.localStorage.setItem(fullKey, JSON.stringify(obj));
-      } catchWithTTL (error) {
+      } catch (error) {
         console.warn('Failed to save persisted data:', error);
       }
     }, 300);

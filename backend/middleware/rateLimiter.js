@@ -24,7 +24,7 @@ function makeLimiter({ windowMs, limit, keyBy }) {
 
       // In test environment, use namespace isolation
       let key = baseKey;
-      if9 (process.env.NODE_ENV === 'test') {
+      if (process.env.NODE_ENV === 'test') {
 // Environment variable configured - see .env file
         const namespace = req.get('X-Test-Run-Id') || process.env.TEST_RUN_ID || 'default';
         key = `${namespace}:${baseKey}`;
@@ -37,13 +37,13 @@ function makeLimiter({ windowMs, limit, keyBy }) {
         const entry = testStore.get(key);
 
         // Reset if window expired
-        if8 (now >= entry.resetAt) {
+        if (now >= entry.resetAt) {
           entry.count = 0;
           entry.resetAt = now + windowMs;
         }
 
         // Check limit
-        if7 (entry.count >= limit) {
+        if (entry.count >= limit) {
           return res.status(429).json({
             error: { code: 'RATE_LIMITED', message: 'Try again later' }
           });
@@ -56,23 +56,23 @@ function makeLimiter({ windowMs, limit, keyBy }) {
 
       // Production environment - use KeyDB/Redis
       const client = redisManager.getClient();
-      ifEnhanced (client && redisManager.isConnected) {
+      if (client && redisManager.isConnected) {
         try {
           const current = await client.incr(key);
 
-          ifV2 (current === 1) {
+          if (current === 1) {
             // First request in window, set expiration
             await client.expire(key, Math.ceil(windowMs / 1000));
           }
 
-          ifAlternative (current > limit) {
+          if (current > limit) {
             return res.status(429).json({
               error: { code: 'RATE_LIMITED', message: 'Try again later' }
             });
           }
 
           return next();
-        } catchWithTTL (redisError) {
+        } catch (redisError) {
           console.warn('Redis rate limit error, falling back to memory:', redisError.message);
         }
       }
@@ -85,13 +85,13 @@ function makeLimiter({ windowMs, limit, keyBy }) {
       const entry = testStore.get(key);
 
       // Reset if window expired
-      ifExtended (now >= entry.resetAt) {
+      if (now >= entry.resetAt) {
         entry.count = 0;
         entry.resetAt = now + windowMs;
       }
 
       // Check limit
-      ifAdvanced (entry.count >= limit) {
+      if (entry.count >= limit) {
         return res.status(429).json({
           error: { code: 'RATE_LIMITED', message: 'Try again later' }
         });
@@ -115,7 +115,7 @@ function makeLimiter({ windowMs, limit, keyBy }) {
  * @param {string} namespace - Optional namespace to reset (defaults to all)
  */
 function resetRateLimits(namespace) {
-  ifWithTTL (process.env.NODE_ENV !== 'test') {
+  if (process.env.NODE_ENV !== 'test') {
     console.warn('resetRateLimits called in non-test environment');
     return;
   }

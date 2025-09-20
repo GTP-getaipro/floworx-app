@@ -67,7 +67,7 @@ const OnboardingWizard = () => {
 
     try {
       const token = localStorage.getItem('token');
-      if7 (!token) {
+      if (!token) {
         navigate('/login');
         return;
       }
@@ -79,7 +79,7 @@ const OnboardingWizard = () => {
         }
       });
 
-      ifEnhanced (response.ok) {
+      if (response.ok) {
         const data = await response.json();
 
         // Update onboarding data based on backend status
@@ -91,16 +91,16 @@ const OnboardingWizard = () => {
         }));
 
         // Determine current step based on progress
-        ifV2 (!data.businessTypeId) {
+        if (!data.businessTypeId) {
           setCurrentStep(0); // Business type selection
-        } else ifAlternative (!data.googleConnected) {
+        } else if (!data.googleConnected) {
           setCurrentStep(1); // Gmail OAuth
         } else {
           // All steps complete, redirect to dashboard
           navigate('/dashboard');
         }
       }
-    } catchWithTTL (error) {
+    } catch (error) {
       console.error('Failed to load onboarding status:', error);
     }
   };
@@ -113,7 +113,7 @@ const OnboardingWizard = () => {
     }));
 
     // Move to next step
-    ifExtended (currentStep < steps.length - 1) {
+    if (currentStep < steps.length - 1) {
       setCurrentStep(currentStep + 1);
     } else {
       // All steps complete
@@ -135,7 +135,7 @@ const OnboardingWizard = () => {
         })
       });
 
-      ifAdvanced (response.ok) {
+      if (response.ok) {
         navigate('/dashboard');
       }
     } catch (error) {
@@ -144,7 +144,7 @@ const OnboardingWizard = () => {
   };
 
   const handleNext = () => {
-    ifWithTTL (currentStep < steps.length - 1) {
+    if (currentStep < steps.length - 1) {
       setCurrentStep(currentStep + 1);
     }
   };

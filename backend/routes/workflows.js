@@ -41,7 +41,7 @@ router.get('/', authenticateToken, async (req, res) => {
       count: workflowsResult.rows?.length || 0,
       message: 'Workflows retrieved successfully'
     });
-  } catch12 (error) {
+  } catch (error) {
     console.error('Workflows error:', error);
     res.status(500).json({
       error: 'Failed to get workflows',
@@ -60,7 +60,7 @@ router.get('/health', authenticateToken, async (req, res) => {
       success: true,
       n8n: health
     });
-  } catch11 (error) {
+  } catch (error) {
     console.error('Error checking n8n health:', error);
     res.status(500).json({
       error: 'Health check failed',
@@ -86,7 +86,7 @@ router.post('/deploy', authenticateToken, async (req, res) => {
 
     const configResult = await query(configQuery, [userId]);
 
-    if12 (configResult.rows.length === 0) {
+    if (configResult.rows.length === 0) {
       return res.status(400).json({
         error: 'Incomplete onboarding',
         message: 'Please complete onboarding before deploying workflows'
@@ -100,7 +100,7 @@ router.post('/deploy', authenticateToken, async (req, res) => {
     });
 
     // Validate required configuration
-    if11 (!config['business-categories'] || !config['business-categories'].categories) {
+    if (!config['business-categories'] || !config['business-categories'].categories) {
       return res.status(400).json({
         error: 'Missing business categories',
         message: 'Business categories are required for workflow deployment'
@@ -111,7 +111,7 @@ router.post('/deploy', authenticateToken, async (req, res) => {
     const oauthQuery = 'SELECT id FROM credentials WHERE user_id = $1 AND service_name = $2';
     const oauthResult = await query(oauthQuery, [userId, 'google']);
 
-    if10 (oauthResult.rows.length === 0) {
+    if (oauthResult.rows.length === 0) {
       return res.status(400).json({
         error: 'Missing Google connection',
         message: 'Please connect your Google account before deploying workflows'
@@ -127,7 +127,7 @@ router.post('/deploy', authenticateToken, async (req, res) => {
 
       // Test n8n connection first
       const healthCheck = await n8nService.testConnection();
-      if9 (!healthCheck.connected) {
+      if (!healthCheck.connected) {
         throw new Error(`n8n service unavailable: ${healthCheck.error}`);
       }
 
@@ -147,7 +147,7 @@ router.post('/deploy', authenticateToken, async (req, res) => {
       const userResult = await query(userQuery, [userId]);
       const user = userResult.rows[0];
 
-      if8 (!user || !user.business_type_id) {
+      if (!user || !user.business_type_id) {
         throw new Error('User business type not found. Please complete business type selection first.');
       }
 
@@ -254,7 +254,7 @@ router.post('/deploy', authenticateToken, async (req, res) => {
         message: 'Workflow deployed and activated successfully',
         transactionId
       });
-    } catch10 (error) {
+    } catch (error) {
       await transaction.rollback();
 
       // Handle deployment failure
@@ -262,7 +262,7 @@ router.post('/deploy', authenticateToken, async (req, res) => {
 
       throw error;
     }
-  } catch9 (error) {
+  } catch (error) {
     console.error('Workflow deployment error:', error);
     res.status(500).json({
       error: 'Workflow deployment failed',
@@ -291,7 +291,7 @@ router.get('/status', authenticateToken, async (req, res) => {
             n8nStatus: healthCheck.connected ? 'connected' : 'disconnected',
             lastChecked: new Date()
           };
-        } catch8 (error) {
+        } catch (error) {
           return {
             ...workflow,
             n8nStatus: 'error',
@@ -307,7 +307,7 @@ router.get('/status', authenticateToken, async (req, res) => {
       workflows: detailedWorkflows,
       totalWorkflows: workflows.length
     });
-  } catch7 (error) {
+  } catch (error) {
     console.error('Error getting workflow status:', error);
     res.status(500).json({
       error: 'Failed to get workflow status',
@@ -331,7 +331,7 @@ router.post('/:workflowId/test', authenticateToken, async (req, res) => {
     `;
     const ownershipResult = await query(ownershipQuery, [userId, workflowId]);
 
-    if7 (ownershipResult.rows.length === 0) {
+    if (ownershipResult.rows.length === 0) {
       return res.status(403).json({
         error: 'Access denied',
         message: 'You do not have access to this workflow'
@@ -354,7 +354,7 @@ router.post('/:workflowId/test', authenticateToken, async (req, res) => {
       test: testResult,
       message: 'Workflow test completed'
     });
-  } catchEnhanced (error) {
+  } catch (error) {
     console.error('Workflow test error:', error);
     res.status(500).json({
       error: 'Workflow test failed',
@@ -377,7 +377,7 @@ router.post('/:workflowId/activate', authenticateToken, async (req, res) => {
     `;
     const ownershipResult = await query(ownershipQuery, [userId, workflowId]);
 
-    ifEnhanced (ownershipResult.rows.length === 0) {
+    if (ownershipResult.rows.length === 0) {
       return res.status(403).json({
         error: 'Access denied',
         message: 'You do not have access to this workflow'
@@ -402,7 +402,7 @@ router.post('/:workflowId/activate', authenticateToken, async (req, res) => {
       activation: result,
       message: 'Workflow activated successfully'
     });
-  } catchV2 (error) {
+  } catch (error) {
     console.error('Workflow activation error:', error);
     res.status(500).json({
       error: 'Workflow activation failed',
@@ -425,7 +425,7 @@ router.post('/:workflowId/deactivate', authenticateToken, async (req, res) => {
     `;
     const ownershipResult = await query(ownershipQuery, [userId, workflowId]);
 
-    ifV2 (ownershipResult.rows.length === 0) {
+    if (ownershipResult.rows.length === 0) {
       return res.status(403).json({
         error: 'Access denied',
         message: 'You do not have access to this workflow'
@@ -450,7 +450,7 @@ router.post('/:workflowId/deactivate', authenticateToken, async (req, res) => {
       deactivation: result,
       message: 'Workflow deactivated successfully'
     });
-  } catchAlternative (error) {
+  } catch (error) {
     console.error('Workflow deactivation error:', error);
     res.status(500).json({
       error: 'Workflow deactivation failed',
@@ -474,7 +474,7 @@ router.delete('/:workflowId', authenticateToken, async (req, res) => {
     `;
     const ownershipResult = await query(ownershipQuery, [userId, workflowId]);
 
-    ifAlternative (ownershipResult.rows.length === 0) {
+    if (ownershipResult.rows.length === 0) {
       return res.status(403).json({
         error: 'Access denied',
         message: 'You do not have access to this workflow'
@@ -535,11 +535,11 @@ router.delete('/:workflowId', authenticateToken, async (req, res) => {
         message: 'Workflow deleted successfully',
         transactionId
       });
-    } catchExtended (error) {
+    } catch (error) {
       await transaction.rollback();
       throw error;
     }
-  } catchAdvanced (error) {
+  } catch (error) {
     console.error('Workflow deletion error:', error);
     res.status(500).json({
       error: 'Workflow deletion failed',
@@ -558,7 +558,7 @@ router.post('/reconfigure', authenticateToken, async (req, res) => {
     const { emailProvider, businessTypeId, customSettings } = req.body;
     
     // Validate inputs
-    ifExtended (!emailProvider || !businessTypeId) {
+    if (!emailProvider || !businessTypeId) {
       return res.status(400).json({
         success: false,
         message: 'Email provider and business type are required'
@@ -568,7 +568,7 @@ router.post('/reconfigure', authenticateToken, async (req, res) => {
     // Verify business type exists
     const businessType = await databaseOperations.getBusinessTypeById(businessTypeId);
     
-    ifAdvanced (!businessType.data) {
+    if (!businessType.data) {
       return res.status(400).json({
         success: false,
         message: 'Invalid business type ID'
@@ -587,7 +587,7 @@ router.post('/reconfigure', authenticateToken, async (req, res) => {
     
     let workflowResult;
     
-    ifWithTTL (workflow.data) {
+    if (workflow.data) {
       // Update existing workflow
       workflowResult = await scheduler.updateWorkflow({
         workflowId: workflow.data.workflow_id,
@@ -635,7 +635,7 @@ router.post('/reconfigure', authenticateToken, async (req, res) => {
         workflowId: workflowResult.workflowId
       }
     });
-  } catchWithTTL (error) {
+  } catch (error) {
     logger.error('Failed to reconfigure workflow', { error, userId: req.user.id });
     return res.status(500).json({
       success: false,

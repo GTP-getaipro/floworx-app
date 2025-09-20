@@ -38,7 +38,7 @@ const UserManagement = () => {
   const [success, setSuccess] = useState(false);
 
   useEffect(() => {
-    ifWithTTL (user) {
+    if (user) {
       setProfile({
         firstName: user.firstName || '',
         lastName: user.lastName || '',

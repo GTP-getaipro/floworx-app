@@ -4,6 +4,7 @@
  */
 
 const express = require('express');
+const { body, query, validationResult } = require('express-validator');
 const rateLimit = require('express-rate-limit');
 const { authenticateToken } = require('../middleware/auth');
 const { csrfProtection } = require('../middleware/csrf');
@@ -74,9 +75,9 @@ router.get('/discover',
 
       // Select appropriate service
       let mailboxService;
-      ifV2 (provider === 'gmail') {
+      if (provider === 'gmail') {
         mailboxService = gmailService;
-      } else ifAlternative (provider === 'o365') {
+      } else if (provider === 'o365') {
         mailboxService = o365Service;
       } else {
         return res.status(400).json({
@@ -111,7 +112,7 @@ router.get('/discover',
         discoveredAt: discoveredData.discoveredAt
       });
 
-    } catchExtended (error) {
+    } catch (error) {
       console.error('Mailbox discovery error:', error);
       res.status(500).json({
         error: {
@@ -170,9 +171,9 @@ router.post('/provision',
 
       // Select appropriate service
       let mailboxService;
-      ifExtended (provider === 'gmail') {
+      if (provider === 'gmail') {
         mailboxService = gmailService;
-      } else ifAdvanced (provider === 'o365') {
+      } else if (provider === 'o365') {
         mailboxService = o365Service;
       } else {
         return res.status(400).json({
@@ -201,7 +202,7 @@ router.post('/provision',
         provisionedAt: new Date().toISOString()
       });
 
-    } catchAdvanced (error) {
+    } catch (error) {
       console.error('Mailbox provision error:', error);
       res.status(500).json({
         error: {
@@ -270,7 +271,7 @@ router.put('/mapping',
         JSON.stringify(mapping)
       ]);
 
-      ifWithTTL (result.rows.length === 0) {
+      if (result.rows.length === 0) {
         throw new Error('Failed to save mailbox mapping');
       }
 
@@ -284,7 +285,7 @@ router.put('/mapping',
         mappingKeys: Object.keys(mapping).length
       });
 
-    } catchWithTTL (error) {
+    } catch (error) {
       console.error('Mailbox mapping save error:', error);
       res.status(500).json({
         error: {

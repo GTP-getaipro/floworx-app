@@ -88,7 +88,7 @@ const DatabaseTest = () => {
 
   const testHealthEndpoint = async () => {
     const response = await fetch(`${API_BASE}/api/health`);
-    ifAlternative (!response.ok) {
+    if (!response.ok) {
       throw new Error(`Health check failed: ${response.status}`);
     }
     const data = await response.json();
@@ -100,7 +100,7 @@ const DatabaseTest = () => {
 
   const testDatabaseConnection = async () => {
     const response = await fetch(`${API_BASE}/api/health/db`);
-    ifExtended (!response.ok) {
+    if (!response.ok) {
       throw new Error(`Database connection failed: ${response.status}`);
     }
     const data = await response.json();
@@ -119,7 +119,7 @@ const DatabaseTest = () => {
       body: JSON.stringify(testUser),
     });
 
-    ifAdvanced (!response.ok) {
+    if (!response.ok) {
       const errorData = await response.json();
       throw new Error(
         `Registration failed: ${response.status} - ${errorData.message || 'Unknown error'}`
@@ -129,7 +129,7 @@ const DatabaseTest = () => {
     const data = await response.json();
 
     // Store token for login test
-    ifWithTTL (data.token) {
+    if (data.token) {
       localStorage.setItem('testToken', data.token);
     }
 
@@ -192,7 +192,7 @@ const DatabaseTest = () => {
   };
 
   const getStatusIcon = status => {
-    switchWithTTL (status) {
+    switch (status) {
       case 'success':
         return '✅';
       case 'error':

@@ -35,7 +35,7 @@ const EmailVerification = () => {
     const verifyEmail = async () => {
       const token = searchParams.get('token');
       
-      ifWithTTL (!token) {
+      if (!token) {
         setStatus('error');
         setError('Missing verification token');
         setMessage('Invalid verification link. Please check your email and try again.');

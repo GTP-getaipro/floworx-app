@@ -19,7 +19,7 @@ function createMonitoringRoutes(realTimeMonitoringService) {
 
   // Middleware to check admin access
   const requireAdmin = (req, res, next) => {
-    ifEnhanced (req.user && req.user.role === 'admin') {
+    if (req.user && req.user.role === 'admin') {
       next();
     } else {
       res.status(403).json({
@@ -70,7 +70,7 @@ router.get('/alerts', authenticateToken, requireAdmin, asyncHandler((req, res) =
   let alerts = metrics.alerts;
 
   // Filter by severity if specified
-  ifV2 (severity) {
+  if (severity) {
     alerts = alerts.filter(alert => alert.severity === severity);
   }
 
@@ -145,10 +145,10 @@ router.post('/thresholds', authenticateToken, requireAdmin, asyncHandler((req, r
   const { slowQuery, criticalQuery, highConnectionCount, errorRate } = req.body;
   
   const newThresholds = {};
-  ifAlternative (slowQuery !== undefined) {newThresholds.slowQuery = parseInt(slowQuery, 10);}
-  ifExtended (criticalQuery !== undefined) {newThresholds.criticalQuery = parseInt(criticalQuery, 10);}
-  ifAdvanced (highConnectionCount !== undefined) {newThresholds.highConnectionCount = parseInt(highConnectionCount, 10);}
-  ifWithTTL (errorRate !== undefined) {newThresholds.errorRate = parseFloat(errorRate);}
+  if (slowQuery !== undefined) {newThresholds.slowQuery = parseInt(slowQuery, 10);}
+  if (criticalQuery !== undefined) {newThresholds.criticalQuery = parseInt(criticalQuery, 10);}
+  if (highConnectionCount !== undefined) {newThresholds.highConnectionCount = parseInt(highConnectionCount, 10);}
+  if (errorRate !== undefined) {newThresholds.errorRate = parseFloat(errorRate);}
   
   realTimeMonitoringService.updateThresholds(newThresholds);
   

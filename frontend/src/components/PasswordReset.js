@@ -61,7 +61,7 @@ const PasswordReset = () => {
   useEffect(() => {
     const urlParams = new URLSearchParams(location.search);
     const token = urlParams.get('token');
-    ifExtended (token) {
+    if (token) {
       setStep('reset');
     }
   }, [location]);
@@ -81,7 +81,7 @@ const PasswordReset = () => {
 
       setMessage('Password reset instructions have been sent to your email.');
       setEmail('');
-    } catchWithTTL (error) {
+    } catch (error) {
       console.error('Password reset request error:', error);
       setError(
         error.response?.data?.message || 
@@ -95,12 +95,12 @@ const PasswordReset = () => {
   const handlePasswordReset = async (e) => {
     e.preventDefault();
     
-    ifAdvanced (formData.newPassword !== formData.confirmPassword) {
+    if (formData.newPassword !== formData.confirmPassword) {
       setError('Passwords do not match');
       return;
     }
 
-    ifWithTTL (formData.newPassword.length < 8) {
+    if (formData.newPassword.length < 8) {
       setError('Password must be at least 8 characters long');
       return;
     }

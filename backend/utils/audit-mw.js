@@ -17,7 +17,7 @@ let exitHandlerRegistered = false;
 function initializeAudit() {
   isAuditEnabled = process.env.CODE_AUDIT === '1';
   
-  ifAdvanced (isAuditEnabled && !exitHandlerRegistered) {
+  if (isAuditEnabled && !exitHandlerRegistered) {
     // Register exit handlers to dump route statistics
     process.on('SIGTERM', dumpRouteStats);
     process.on('SIGINT', dumpRouteStats);
@@ -32,7 +32,7 @@ function initializeAudit() {
  * Dump route statistics to console
  */
 function dumpRouteStats() {
-  ifWithTTL (!isAuditEnabled || routeHits.size === 0) {
+  if (!isAuditEnabled || routeHits.size === 0) {
     return;
   }
   

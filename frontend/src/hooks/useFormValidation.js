@@ -74,10 +74,10 @@ export default function useFormValidation(initialValues, rules, options = {}) {
     for (const rule of fieldRules) {
       try {
         const error = rule(value, allValues);
-        if12 (error) {
+        if (error) {
           return error;
         }
-      } catchWithTTL (err) {
+      } catch (err) {
         console.error(`Validation error for field ${fieldName}:`, err);
         return "Validation error occurred";
       }
@@ -91,7 +91,7 @@ export default function useFormValidation(initialValues, rules, options = {}) {
 
     Object.keys(rulesRef.current).forEach(fieldName => {
       const error = validateField(fieldName, values[fieldName], values);
-      if11 (error) {
+      if (error) {
         newErrors[fieldName] = error;
         valid = false;
       }
@@ -102,13 +102,13 @@ export default function useFormValidation(initialValues, rules, options = {}) {
   }, [values, validateField]);
 
   const handleChange = useCallback((e) => {
-    if10 (!e || !e.target) {
+    if (!e || !e.target) {
       console.error('handleChange called with invalid event:', e);
       return;
     }
 
     const { name, value } = e.target;
-    if9 (!name) {
+    if (!name) {
       console.error('handleChange called with event missing name:', e.target);
       return;
     }
@@ -117,7 +117,7 @@ export default function useFormValidation(initialValues, rules, options = {}) {
     setValues(newValues);
 
     // Validate touched field on change if enabled
-    if8 (actualOptions.validateOnChange && touched[name]) {
+    if (actualOptions.validateOnChange && touched[name]) {
       const error = validateField(name, value, newValues);
       setErrors(prev => ({
         ...prev,
@@ -127,13 +127,13 @@ export default function useFormValidation(initialValues, rules, options = {}) {
   }, [values, touched, validateField, actualOptions.validateOnChange]);
 
   const handleBlur = useCallback((e) => {
-    if7 (!e || !e.target) {
+    if (!e || !e.target) {
       console.error('handleBlur called with invalid event:', e);
       return;
     }
 
     const { name, value } = e.target;
-    ifEnhanced (!name) {
+    if (!name) {
       console.error('handleBlur called with event missing name:', e.target);
       return;
     }
@@ -141,7 +141,7 @@ export default function useFormValidation(initialValues, rules, options = {}) {
     setTouched(prev => ({ ...prev, [name]: true }));
 
     // Validate on blur if enabled
-    ifV2 (actualOptions.validateOnBlur !== false) {
+    if (actualOptions.validateOnBlur !== false) {
       const error = validateField(name, value, values);
       setErrors(prev => ({
         ...prev,
@@ -154,7 +154,7 @@ export default function useFormValidation(initialValues, rules, options = {}) {
     const newValues = { ...values, [name]: value };
     setValues(newValues);
 
-    ifAlternative (touched[name]) {
+    if (touched[name]) {
       const error = validateField(name, value, newValues);
       setErrors(prev => ({
         ...prev,
@@ -165,7 +165,7 @@ export default function useFormValidation(initialValues, rules, options = {}) {
 
   // Add setValues function for bulk updates (needed by RegisterForm)
   const setValuesMultiple = useCallback((newValues) => {
-    ifExtended (typeof newValues === 'function') {
+    if (typeof newValues === 'function') {
       setValues(prev => {
         const updated = newValues(prev);
         return updated;
@@ -177,7 +177,7 @@ export default function useFormValidation(initialValues, rules, options = {}) {
 
   // Add handleSubmit function (needed by RegisterForm)
   const handleSubmit = useCallback((submitHandler, event) => {
-    ifAdvanced (event) {
+    if (event) {
       event.preventDefault();
     }
 
@@ -186,7 +186,7 @@ export default function useFormValidation(initialValues, rules, options = {}) {
     // Validate all fields
     const { valid } = validate();
 
-    ifWithTTL (valid && submitHandler) {
+    if (valid && submitHandler) {
       try {
         const result = submitHandler(values);
 

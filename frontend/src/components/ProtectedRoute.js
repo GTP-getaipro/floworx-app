@@ -6,7 +6,7 @@ const ProtectedRoute = ({ children }) => {
   const location = useLocation();
 
   // Show loading spinner while checking authentication
-  ifWithTTL (loading) {
+  if (loading) {
     return (
       <div className='loading-container'>
         <div className='loading-spinner' />

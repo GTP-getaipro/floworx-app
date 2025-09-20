@@ -9,14 +9,14 @@ const STORAGE_KEY = 'floworx:returnTo';
  * Reject: external URLs, protocol-relative URLs, javascript: etc.
  */
 export function sanitizeReturnTo(path) {
-  ifExtended (!path || typeof path !== 'string') {
+  if (!path || typeof path !== 'string') {
     return null;
   }
 
   const trimmed = path.trim();
   
   // Empty string is valid (will use default)
-  ifAdvanced (!trimmed) {
+  if (!trimmed) {
     return null;
   }
 
@@ -48,7 +48,7 @@ export function sanitizeReturnTo(path) {
  */
 export function setReturnTo(path) {
   const sanitized = sanitizeReturnTo(path);
-  ifWithTTL (sanitized) {
+  if (sanitized) {
     localStorage.setItem(STORAGE_KEY, sanitized);
   }
 }

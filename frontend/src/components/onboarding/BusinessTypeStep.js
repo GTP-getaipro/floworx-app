@@ -11,7 +11,7 @@ const BusinessTypeStep = ({ onNext, onBack, onComplete, data, isFirstStep, isLas
 
   // Load existing selection from data
   useEffect(() => {
-    if7 (data?.businessType) {
+    if (data?.businessType) {
       setSelectedBusinessType(data.businessType);
     }
   }, [data]);
@@ -25,12 +25,12 @@ const BusinessTypeStep = ({ onNext, onBack, onComplete, data, isFirstStep, isLas
 
         const response = await axios.get('/api/business-types');
 
-        ifEnhanced (response.data.success) {
+        if (response.data.success) {
           setBusinessTypes(response.data.data);
         } else {
           throw new Error('Failed to load business types');
         }
-      } catchWithTTL (err) {
+      } catch (err) {
         console.error('Error fetching business types:', err);
         setError(
           err.response?.data?.message ||
@@ -58,7 +58,7 @@ const BusinessTypeStep = ({ onNext, onBack, onComplete, data, isFirstStep, isLas
   };
 
   const handleContinue = async () => {
-    ifV2 (!selectedBusinessType) {
+    if (!selectedBusinessType) {
       setError('Please select your business type to continue');
       return;
     }
@@ -80,7 +80,7 @@ const BusinessTypeStep = ({ onNext, onBack, onComplete, data, isFirstStep, isLas
         }
       );
 
-      ifAlternative (response.data.success) {
+      if (response.data.success) {
         // Prepare step completion data
         const completionData = {
           businessType: selectedBusinessType,
@@ -91,9 +91,9 @@ const BusinessTypeStep = ({ onNext, onBack, onComplete, data, isFirstStep, isLas
         };
 
         // Complete this step
-        ifExtended (onComplete) {
+        if (onComplete) {
           onComplete(completionData);
-        } else ifAdvanced (onNext) {
+        } else if (onNext) {
           onNext();
         }
       } else {
@@ -110,7 +110,7 @@ const BusinessTypeStep = ({ onNext, onBack, onComplete, data, isFirstStep, isLas
     }
   };
 
-  ifWithTTL (isLoading) {
+  if (isLoading) {
     return (
       <div className='max-w-4xl mx-auto p-6'>
         <div className='text-center mb-8'>

@@ -49,7 +49,7 @@ export default function VerifyEmailPage() {
     // Handle returnTo from query params on mount
     handleReturnToFromQuery(searchParams);
 
-    if7 (!token) {
+    if (!token) {
       setIsLoading(false);
       setError('No verification token provided.');
       return;
@@ -66,7 +66,7 @@ export default function VerifyEmailPage() {
 
         const data = await response.json();
 
-        ifEnhanced (response.ok && data.success) {
+        if (response.ok && data.success) {
           setIsSuccess(true);
           setEmail(data.email || '');
 
@@ -78,11 +78,11 @@ export default function VerifyEmailPage() {
         } else {
           const errorCode = data.error?.code;
 
-          ifV2 (errorCode === 'INVALID_TOKEN') {
+          if (errorCode === 'INVALID_TOKEN') {
             setError('Verification link invalid');
-          } else ifAlternative (errorCode === 'TOKEN_EXPIRED') {
+          } else if (errorCode === 'TOKEN_EXPIRED') {
             setError('Link expired. Resend verification.');
-          } else ifExtended (response.status === 200 && data.alreadyVerified) {
+          } else if (response.status === 200 && data.alreadyVerified) {
             setIsSuccess(true);
             setError('');
             setTimeout(() => navigate('/login?verified=1'), 1000);
@@ -92,7 +92,7 @@ export default function VerifyEmailPage() {
 
           setEmail(data.email || '');
         }
-      } catchWithTTL (error) {
+      } catch (error) {
         console.error('Verification error:', error);
         setError('Network error. Please check your connection and try again.');
       } finally {
@@ -121,7 +121,7 @@ export default function VerifyEmailPage() {
 
       const data = await response.json();
 
-      ifAdvanced (response.ok && data.success) {
+      if (response.ok && data.success) {
         setResendSuccess(true);
       } else {
         // Don't show errors for resend to avoid revealing user existence
@@ -135,7 +135,7 @@ export default function VerifyEmailPage() {
     }
   };
 
-  ifWithTTL (isLoading) {
+  if (isLoading) {
     return (
       <AuthLayout title="Verifying email..." subtitle="Please wait while we verify your email">
         <div className="text-center py-8">

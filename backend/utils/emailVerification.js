@@ -47,7 +47,7 @@ function generateVerificationToken(email, userId) {
       expiresAt,
       success: true
     };
-  } catchWithTTL (error) {
+  } catch (error) {
     console.error('Error generating verification token:', error);
     return {
       success: false,
@@ -63,7 +63,7 @@ function generateVerificationToken(email, userId) {
  */
 function validateVerificationToken(token) {
   try {
-    ifV2 (!token || typeof token !== 'string') {
+    if (!token || typeof token !== 'string') {
       return {
         success: false,
         error: 'Invalid token format',
@@ -78,7 +78,7 @@ function validateVerificationToken(token) {
     });
 
     // Validate token type
-    ifAlternative (decoded.type !== 'email_verification') {
+    if (decoded.type !== 'email_verification') {
       return {
         success: false,
         error: 'Invalid token type',
@@ -87,7 +87,7 @@ function validateVerificationToken(token) {
     }
 
     // Validate required fields
-    ifExtended (!decoded.email || !decoded.userId) {
+    if (!decoded.email || !decoded.userId) {
       return {
         success: false,
         error: 'Invalid token payload',
@@ -106,13 +106,13 @@ function validateVerificationToken(token) {
     };
   } catch (error) {
     // Handle specific JWT errors
-    ifAdvanced (error.name === 'TokenExpiredError') {
+    if (error.name === 'TokenExpiredError') {
       return {
         success: false,
         error: 'Verification token has expired',
         code: 'TOKEN_EXPIRED'
       };
-    } else ifWithTTL (error.name === 'JsonWebTokenError') {
+    } else if (error.name === 'JsonWebTokenError') {
       return {
         success: false,
         error: 'Invalid verification token',

@@ -81,7 +81,7 @@ export default function LoginPage({ errors = {}, values = {}, links = {} }) {
     try {
       const result = await login(formValues.email, formValues.password);
 
-      ifWithTTL (result.success) {
+      if (result.success) {
         // On successful login, redirect to returnTo or default
         const returnTo = getReturnTo();
         clearReturnTo();
@@ -94,7 +94,7 @@ export default function LoginPage({ errors = {}, values = {}, links = {} }) {
           setSubmitError(result.error || 'Login failed. Please try again.');
         }
       }
-    } catchWithTTL (error) {
+    } catch (error) {
       console.error('Login failed:', error);
       setSubmitError(error.message || 'Login failed. Please try again.');
     } finally {

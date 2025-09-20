@@ -51,7 +51,7 @@ const EmailAutomationSettings = ({ clientId }) => {
   const [success, setSuccess] = useState('');
 
   useEffect(() => {
-    ifEnhanced (clientId) {
+    if (clientId) {
       loadConfig();
     }
   }, [clientId]);
@@ -62,12 +62,12 @@ const EmailAutomationSettings = ({ clientId }) => {
     
     try {
       const result = await apiService.getClientConfig(clientId);
-      ifV2 (result.success) {
+      if (result.success) {
         setConfig(result.data);
       } else {
         setError(result.error);
       }
-    } catchExtended (err) {
+    } catch (err) {
       setError('Failed to load configuration');
     } finally {
       setLoading(false);
@@ -81,14 +81,14 @@ const EmailAutomationSettings = ({ clientId }) => {
 
     try {
       const result = await apiService.updateClientConfig(clientId, config);
-      ifAlternative (result.success) {
+      if (result.success) {
         setSuccess('Configuration saved successfully!');
         // Reload to get updated version
         await loadConfig();
       } else {
         setError(result.error);
       }
-    } catchAdvanced (err) {
+    } catch (err) {
       setError('Failed to save configuration');
     } finally {
       setSaving(false);
@@ -102,12 +102,12 @@ const EmailAutomationSettings = ({ clientId }) => {
 
     try {
       const result = await apiService.provisionClient(clientId);
-      ifExtended (result.success) {
+      if (result.success) {
         setSuccess('Email provisioning completed successfully!');
       } else {
         setError(result.error);
       }
-    } catchWithTTL (err) {
+    } catch (err) {
       setError('Failed to provision email infrastructure');
     } finally {
       setProvisioning(false);
@@ -121,7 +121,7 @@ const EmailAutomationSettings = ({ clientId }) => {
 
     try {
       const result = await apiService.redeployClient(clientId);
-      ifAdvanced (result.success) {
+      if (result.success) {
         setSuccess('Workflow redeployed successfully!');
       } else {
         setError(result.error);
@@ -220,7 +220,7 @@ const EmailAutomationSettings = ({ clientId }) => {
     updateConfig('channels.email.label_map', newLabelMap);
   };
 
-  ifWithTTL (loading) {
+  if (loading) {
     return (
       <div className="email-automation-settings">
         <div className="loading">⏳ Loading configuration...</div>

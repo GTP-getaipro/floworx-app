@@ -71,7 +71,7 @@ async function exchangeCodeForTokens(code) {
     }),
   });
 
-  if9 (!response.ok) {
+  if (!response.ok) {
     const error = await response.text();
     throw new Error(`Token exchange failed: ${error}`);
   }
@@ -89,7 +89,7 @@ async function getUserInfo(accessToken) {
     },
   });
 
-  if8 (!response.ok) {
+  if (!response.ok) {
     throw new Error('Failed to get user info');
   }
 
@@ -104,7 +104,7 @@ async function revokeTokens(token) {
     // Microsoft doesn't have a standard revoke endpoint for v2.0
     // We'll just return true and rely on token deletion
     return true;
-  } catchAlternative (error) {
+  } catch (error) {
     console.error('Error revoking Microsoft tokens:', error);
     return false;
   }
@@ -114,7 +114,7 @@ async function revokeTokens(token) {
 router.get('/authorize', authorizeLimiter, authenticateToken, (req, res) => {
   try {
     // Check environment variables dynamically for testing
-    if7 (!process.env.MS_CLIENT_ID || !process.env.MS_CLIENT_SECRET || !process.env.MS_REDIRECT_URI) {
+    if (!process.env.MS_CLIENT_ID || !process.env.MS_CLIENT_SECRET || !process.env.MS_REDIRECT_URI) {
       return res.status(500).json({
         error: { code: 'OAUTH_CONFIG_MISSING', message: 'Microsoft OAuth configuration missing' }
       });
@@ -130,7 +130,7 @@ router.get('/authorize', authorizeLimiter, authenticateToken, (req, res) => {
     const authUrl = buildMicrosoftAuthorizeUrl(state);
 
     res.json({ url: authUrl });
-  } catchExtended (error) {
+  } catch (error) {
     console.error('Microsoft authorize error:', error);
     res.status(500).json({
       error: { code: 'INTERNAL', message: 'Failed to generate authorization URL' }
@@ -143,19 +143,19 @@ router.get('/callback', callbackLimiter, async (req, res) => {
   try {
     const { code, state, error } = req.query;
 
-    ifEnhanced (error) {
+    if (error) {
       console.error('OAuth error:', error);
       return res.redirect(`${FRONTEND_URL}/onboarding/step2?error=oauth_denied`);
     }
 
-    ifV2 (!code) {
+    if (!code) {
       return res.status(400).json({
         error: { code: 'MISSING_CODE', message: 'Authorization code required' }
       });
     }
 
     // Verify and decode state parameter
-    ifAlternative (!state) {
+    if (!state) {
       return res.status(400).json({
         error: { code: 'MISSING_STATE', message: 'State parameter required' }
       });
@@ -164,14 +164,14 @@ router.get('/callback', callbackLimiter, async (req, res) => {
     let stateData;
     try {
       stateData = JSON.parse(Buffer.from(state, 'base64').toString('utf8'));
-    } catchAdvanced (error) {
+    } catch (error) {
       return res.status(400).json({
         error: { code: 'INVALID_STATE', message: 'Invalid state parameter' }
       });
     }
 
     const userId = stateData.userId;
-    ifExtended (!userId) {
+    if (!userId) {
       return res.redirect(`${FRONTEND_URL}/onboarding/step2?error=session_expired`);
     }
 
@@ -193,7 +193,7 @@ router.get('/callback', callbackLimiter, async (req, res) => {
     };
 
     const storeResult = await databaseOperations.upsertProviderTokens(userId, 'microsoft', connectionData);
-    ifAdvanced (!storeResult.success) {
+    if (!storeResult.success) {
       console.error('Failed to store Microsoft tokens:', storeResult.error);
       return res.redirect(`${FRONTEND_URL}/onboarding/step2?error=storage_failed`);
     }
@@ -203,7 +203,7 @@ router.get('/callback', callbackLimiter, async (req, res) => {
 
     // Redirect to frontend with success
     res.redirect(`${FRONTEND_URL}/onboarding/step2?connected=outlook`);
-  } catchWithTTL (error) {
+  } catch (error) {
     console.error('Microsoft callback error:', error);
     res.redirect(`${FRONTEND_URL}/onboarding/step2?error=callback_failed`);
   }
@@ -217,7 +217,7 @@ router.post('/disconnect', authenticateToken, csrfProtection, async (req, res) =
     // Get current connection to revoke tokens
     const connection = await databaseOperations.getConnection(userId, 'microsoft');
     
-    ifWithTTL (connection.success && connection.data) {
+    if (connection.success && connection.data) {
       // Attempt to revoke tokens (best effort for Microsoft)
       await revokeTokens(connection.data.access_token);
     }

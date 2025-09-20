@@ -54,17 +54,17 @@ const SimpleRegisterForm = () => {
       newErrors.email = 'Please enter a valid email address';
     }
 
-    if7 (!formData.password) {
+    if (!formData.password) {
       newErrors.password = 'Password is required';
-    } else ifEnhanced (formData.password.length < 8) {
+    } else if (formData.password.length < 8) {
       newErrors.password = 'Password must be at least 8 characters';
     } else if (!/^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[^\w\s]).{8,}$/.test(formData.password)) {
       newErrors.password = 'Password must include uppercase, lowercase, number, and special character';
     }
 
-    ifV2 (!formData.confirmPassword) {
+    if (!formData.confirmPassword) {
       newErrors.confirmPassword = 'Please confirm your password';
-    } else ifAlternative (formData.password !== formData.confirmPassword) {
+    } else if (formData.password !== formData.confirmPassword) {
       newErrors.confirmPassword = 'Passwords do not match';
     }
 
@@ -77,7 +77,7 @@ const SimpleRegisterForm = () => {
     setFormData(prev => ({ ...prev, [name]: value }));
     
     // Clear error when user starts typing
-    ifExtended (errors[name]) {
+    if (errors[name]) {
       setErrors(prev => ({ ...prev, [name]: '' }));
     }
   }
@@ -109,12 +109,12 @@ const SimpleRegisterForm = () => {
         marketingConsent: false,
       });
 
-      ifAdvanced (result && result.success) {
+      if (result && result.success) {
         console.log('Registration successful');
 
         // Log registration success with safe remoteAddr handling
         const remoteAddr = result.meta?.remoteAddr;
-        ifWithTTL (remoteAddr && typeof remoteAddr === 'string') {
+        if (remoteAddr && typeof remoteAddr === 'string') {
           console.log('Registration successful from:', remoteAddr);
         }
 

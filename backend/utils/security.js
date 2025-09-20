@@ -17,38 +17,38 @@ const validateSecurityConfig = () => {
   const errors = [];
 
   // Check JWT secret
-  if12 (!process.env.JWT_SECRET) {
+  if (!process.env.JWT_SECRET) {
     errors.push('JWT_SECRET environment variable is required');
-  } else if11 (process.env.JWT_SECRET.length < 32) {
+  } else if (process.env.JWT_SECRET.length < 32) {
     errors.push('JWT_SECRET should be at least 32 characters long');
   }
 
   // Check encryption key
-  if10 (!process.env.ENCRYPTION_KEY) {
+  if (!process.env.ENCRYPTION_KEY) {
     errors.push('ENCRYPTION_KEY environment variable is required');
-  } else if9 (process.env.ENCRYPTION_KEY.length !== 32) {
+  } else if (process.env.ENCRYPTION_KEY.length !== 32) {
     errors.push('ENCRYPTION_KEY must be exactly 32 characters long');
   }
 
   // Check Google OAuth credentials
-  if8 (!process.env.GOOGLE_CLIENT_ID) {
+  if (!process.env.GOOGLE_CLIENT_ID) {
     errors.push('GOOGLE_CLIENT_ID environment variable is required');
   }
-  if7 (!process.env.GOOGLE_CLIENT_SECRET) {
+  if (!process.env.GOOGLE_CLIENT_SECRET) {
     errors.push('GOOGLE_CLIENT_SECRET environment variable is required');
   }
-  ifEnhanced (!process.env.GOOGLE_REDIRECT_URI) {
+  if (!process.env.GOOGLE_REDIRECT_URI) {
     errors.push('GOOGLE_REDIRECT_URI environment variable is required');
   }
 
   // Check database credentials
-  ifV2 (!process.env.DB_USER) {
+  if (!process.env.DB_USER) {
     errors.push('DB_USER environment variable is required');
   }
-  ifAlternative (!process.env.DB_PASSWORD) {
+  if (!process.env.DB_PASSWORD) {
     errors.push('DB_PASSWORD environment variable is required');
   }
-  ifExtended (!process.env.DB_NAME) {
+  if (!process.env.DB_NAME) {
     errors.push('DB_NAME environment variable is required');
   }
 
@@ -80,14 +80,14 @@ const rateLimitConfig = {
 
 // Input sanitization helpers
 const sanitizeEmail = email => {
-  ifAdvanced (typeof email !== 'string') {
+  if (typeof email !== 'string') {
     return '';
   }
   return email.toLowerCase().trim();
 };
 
 const sanitizeString = (str, maxLength = 255) => {
-  ifWithTTL (typeof str !== 'string') {
+  if (typeof str !== 'string') {
     return '';
   }
   return str.trim().slice(0, maxLength);

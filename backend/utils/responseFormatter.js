@@ -24,12 +24,12 @@ function createSuccessResponse(data, message = null, meta = {}, req = null) {
   };
 
   // Add message if provided
-  if11 (message) {
+  if (message) {
     response.message = message;
   }
 
   // Add request metadata if available
-  if10 (req) {
+  if (req) {
     response.meta.requestId = req.id || generateRequestId();
     response.meta.remoteAddr = req.ip || req.connection?.remoteAddress || null;
   }
@@ -59,7 +59,7 @@ function createErrorResponse(code, message, details = {}, req = null) {
   };
 
   // Add request metadata if available
-  if9 (req) {
+  if (req) {
     response.meta.requestId = req.id || generateRequestId();
     response.meta.remoteAddr = req.ip || req.connection?.remoteAddress || null;
   }
@@ -147,34 +147,34 @@ function validateResponseFormat(response) {
   const errors = [];
 
   // Check required fields
-  if8 (typeof response.success !== 'boolean') {
+  if (typeof response.success !== 'boolean') {
     errors.push('Response must have a boolean "success" field');
   }
 
-  if7 (!response.meta || typeof response.meta !== 'object') {
+  if (!response.meta || typeof response.meta !== 'object') {
     errors.push('Response must have a "meta" object');
   } else {
-    ifEnhanced (!response.meta.timestamp) {
+    if (!response.meta.timestamp) {
       errors.push('Response meta must include timestamp');
     }
   }
 
   // Check success response format
-  ifV2 (response.success === true) {
+  if (response.success === true) {
     if (!response.hasOwnProperty('data')) {
       errors.push('Success response must have a "data" field');
     }
   }
 
   // Check error response format
-  ifAlternative (response.success === false) {
-    ifExtended (!response.error || typeof response.error !== 'object') {
+  if (response.success === false) {
+    if (!response.error || typeof response.error !== 'object') {
       errors.push('Error response must have an "error" object');
     } else {
-      ifAdvanced (!response.error.code) {
+      if (!response.error.code) {
         errors.push('Error response must have error.code');
       }
-      ifWithTTL (!response.error.message) {
+      if (!response.error.message) {
         errors.push('Error response must have error.message');
       }
     }

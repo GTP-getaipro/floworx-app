@@ -43,7 +43,7 @@ const EmailVerificationPage = () => {
   const token = searchParams.get('token');
 
   useEffect(() => {
-    ifEnhanced (token) {
+    if (token) {
       verifyEmail(token);
     } else {
       setVerificationState('error');
@@ -62,7 +62,7 @@ const EmailVerificationPage = () => {
 
       const data = await response.json();
 
-      ifV2 (response.ok && data.success) {
+      if (response.ok && data.success) {
         setVerificationState('success');
         setMessage(data.message || 'Email verified successfully!');
         setEmail(data.email || '');
@@ -80,10 +80,10 @@ const EmailVerificationPage = () => {
       } else {
         const errorCode = data.error?.code;
         
-        ifAlternative (errorCode === 'TOKEN_EXPIRED') {
+        if (errorCode === 'TOKEN_EXPIRED') {
           setVerificationState('expired');
           setMessage('Your verification link has expired. Please request a new one.');
-        } else ifExtended (response.status === 200 && data.alreadyVerified) {
+        } else if (response.status === 200 && data.alreadyVerified) {
           setVerificationState('success');
           setMessage('Your email is already verified! You can log in to your account.');
           setTimeout(() => navigate('/login'), 2000);
@@ -92,11 +92,11 @@ const EmailVerificationPage = () => {
           setMessage(data.error?.message || 'Verification failed. Please try again.');
         }
         
-        ifAdvanced (errorCode !== 'TOKEN_EXPIRED' && !data.alreadyVerified) {
+        if (errorCode !== 'TOKEN_EXPIRED' && !data.alreadyVerified) {
           showError(`❌ ${data.error?.message || 'Verification failed'}`);
         }
       }
-    } catchWithTTL (error) {
+    } catch (error) {
       console.error('Verification error:', error);
       setVerificationState('error');
       setMessage('Network error. Please check your connection and try again.');
@@ -105,7 +105,7 @@ const EmailVerificationPage = () => {
   };
 
   const handleResendVerification = async () => {
-    ifWithTTL (!email) {
+    if (!email) {
       showError('❌ Email address not available for resend');
       return;
     }

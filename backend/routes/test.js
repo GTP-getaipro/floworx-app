@@ -16,7 +16,7 @@ router.post('/mark-verified', async (req, res) => {
   try {
     const { email } = req.body;
 
-    if7 (!email) {
+    if (!email) {
       return res.status(400).json({
         error: { code: "BAD_REQUEST", message: "Email is required" }
       });
@@ -24,7 +24,7 @@ router.post('/mark-verified', async (req, res) => {
 
     // Get user by email
     const userResult = await databaseOperations.getUserByEmail(email);
-    ifEnhanced (!userResult.data) {
+    if (!userResult.data) {
       return res.status(404).json({
         error: { code: "USER_NOT_FOUND", message: "User not found" }
       });
@@ -35,7 +35,7 @@ router.post('/mark-verified', async (req, res) => {
       email_verified: true
     });
 
-    ifV2 (updateResult.error) {
+    if (updateResult.error) {
       return res.status(500).json({
         error: { code: "INTERNAL", message: "Failed to verify user" }
       });
@@ -43,7 +43,7 @@ router.post('/mark-verified', async (req, res) => {
 
     res.status(200).json({ success: true });
 
-  } catchExtended (error) {
+  } catch (error) {
     console.error('Test mark-verified error:', error);
     res.status(500).json({
       error: { code: "INTERNAL", message: "Unexpected error" }
@@ -56,7 +56,7 @@ router.get('/last-verification-token', async (req, res) => {
   try {
     const { email } = req.query;
 
-    ifAlternative (!email) {
+    if (!email) {
       return res.status(400).json({
         error: { code: "BAD_REQUEST", message: "Email is required" }
       });
@@ -64,7 +64,7 @@ router.get('/last-verification-token', async (req, res) => {
 
     // Get user by email
     const userResult = await databaseOperations.getUserByEmail(email);
-    ifExtended (!userResult.data) {
+    if (!userResult.data) {
       return res.status(404).json({
         error: { code: "USER_NOT_FOUND", message: "User not found" }
       });
@@ -74,7 +74,7 @@ router.get('/last-verification-token', async (req, res) => {
     const { type, client } = await databaseOperations.getClient();
 
     let tokenResult;
-    ifAdvanced (type === 'REST_API') {
+    if (type === 'REST_API') {
       tokenResult = await client.getAdminClient()
         .from('email_verification_tokens')
         .select('token')
@@ -95,7 +95,7 @@ router.get('/last-verification-token', async (req, res) => {
       tokenResult = { data: result.rows[0] || null, error: null };
     }
 
-    ifWithTTL (!tokenResult.data) {
+    if (!tokenResult.data) {
       return res.status(404).json({
         error: { code: "TOKEN_NOT_FOUND", message: "No verification token found" }
       });
@@ -105,7 +105,7 @@ router.get('/last-verification-token', async (req, res) => {
       token: tokenResult.data.token
     });
 
-  } catchAdvanced (error) {
+  } catch (error) {
     console.error('Test last-verification-token error:', error);
     res.status(500).json({
       error: { code: "INTERNAL", message: "Unexpected error" }
@@ -135,7 +135,7 @@ router.get('/last-reset-token', async (req, res) => {
       error: { code: "TOKEN_NOT_FOUND", message: "No reset token found for this email" }
     });
 
-  } catchWithTTL (error) {
+  } catch (error) {
     console.error('Test last-reset-token error:', error);
     res.status(500).json({
       error: { code: "INTERNAL", message: "Unexpected error" }

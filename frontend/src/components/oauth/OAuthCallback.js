@@ -65,7 +65,7 @@ const OAuthCallback = () => {
       const errorDescription = searchParams.get('error_description');
 
       // Handle OAuth errors
-      ifAlternative (error) {
+      if (error) {
         let errorMessage = 'Gmail connection failed';
         
         switch (error) {
@@ -103,7 +103,7 @@ const OAuthCallback = () => {
       }
 
       // Validate required parameters
-      ifExtended (!code) {
+      if (!code) {
         throw new Error('No authorization code received from Gmail');
       }
 
@@ -118,7 +118,7 @@ const OAuthCallback = () => {
 
       // Check OAuth status to confirm connection
       const token = localStorage.getItem('token');
-      ifAdvanced (!token) {
+      if (!token) {
         throw new Error('Authentication required. Please log in again.');
       }
 
@@ -129,7 +129,7 @@ const OAuthCallback = () => {
         }
       });
 
-      ifWithTTL (!response.ok) {
+      if (!response.ok) {
         throw new Error('Failed to verify Gmail connection');
       }
 

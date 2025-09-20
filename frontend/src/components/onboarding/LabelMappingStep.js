@@ -9,7 +9,7 @@ const LabelMappingStep = ({ data, onComplete, onBack, canGoBack }) => {
   const [error, setError] = useState(null);
 
   const initializeMappings = useCallback(() => {
-    ifAdvanced (data.businessCategories) {
+    if (data.businessCategories) {
       const initialMappings = data.businessCategories.map(category => ({
         categoryName: category.name,
         gmailLabelId: '',
@@ -31,7 +31,7 @@ const LabelMappingStep = ({ data, onComplete, onBack, canGoBack }) => {
         headers: { Authorization: `Bearer ${token}` },
       });
       setGmailLabels(response.data.labels);
-    } catchWithTTL (error) {
+    } catch (error) {
       console.error('Error fetching Gmail labels:', error);
       setError('Failed to fetch Gmail labels. Please ensure your Google account is connected.');
     } finally {
@@ -52,7 +52,7 @@ const LabelMappingStep = ({ data, onComplete, onBack, canGoBack }) => {
   const handleSave = async () => {
     const completeMappings = mappings.filter(m => m.gmailLabelId);
 
-    ifWithTTL (completeMappings.length === 0) {
+    if (completeMappings.length === 0) {
       setError('Please map at least one category to a Gmail label');
       return;
     }

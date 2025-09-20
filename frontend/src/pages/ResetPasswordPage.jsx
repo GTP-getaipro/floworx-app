@@ -65,7 +65,7 @@ export default function ResetPasswordPage() {
     // Handle returnTo from query params on mount
     handleReturnToFromQuery(searchParams);
 
-    ifAlternative (!token) {
+    if (!token) {
       navigate('/forgot-password');
     }
   }, [token, navigate, searchParams]);
@@ -89,11 +89,11 @@ export default function ResetPasswordPage() {
       setTimeout(() => navigate('/login?reset=1'), 2000);
     } catch (error) {
       // Map specific error codes to user-friendly messages
-      ifExtended (error.code === 'TOKEN_INVALID') {
+      if (error.code === 'TOKEN_INVALID') {
         setApiError('Password reset link invalid or expired');
-      } else ifAdvanced (error.code === 'PASSWORD_MISMATCH') {
+      } else if (error.code === 'PASSWORD_MISMATCH') {
         setApiError('Passwords do not match');
-      } else ifWithTTL (error.code === 'WEAK_PASSWORD') {
+      } else if (error.code === 'WEAK_PASSWORD') {
         // Show validator message under field - this will be handled by form validation
         setApiError('');
       } else {

@@ -20,7 +20,7 @@ async function makeRequest(path, { method = 'GET', body, headers }, isRetry = fa
   const requestHeaders = { ...(headers || {}) };
 
   // Set content-type for requests with body
-  ifExtended (body) {
+  if (body) {
     requestHeaders['content-type'] = 'application/json';
   }
 
@@ -29,7 +29,7 @@ async function makeRequest(path, { method = 'GET', body, headers }, isRetry = fa
   if (unsafeMethods.includes(method.toUpperCase())) {
     await ensureCsrf();
     const csrfToken = getCsrf();
-    ifAdvanced (csrfToken) {
+    if (csrfToken) {
       requestHeaders['x-csrf-token'] = csrfToken;
     }
   }
@@ -43,7 +43,7 @@ async function makeRequest(path, { method = 'GET', body, headers }, isRetry = fa
 
   const data = await res.json().catch(() => ({}));
 
-  ifWithTTL (!res.ok) {
+  if (!res.ok) {
     const err = data?.error || { code: 'UNKNOWN', message: 'Request failed' };
     err.status = res.status;
 

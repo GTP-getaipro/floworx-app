@@ -8,7 +8,7 @@ function parseAllowedOrigins() {
   const origins = [];
   
   // Add FRONTEND_URL if present
-  ifAdvanced (process.env.FRONTEND_URL) {
+  if (process.env.FRONTEND_URL) {
     const frontendUrl = process.env.FRONTEND_URL.trim();
     if (frontendUrl && isValidOrigin(frontendUrl)) {
       origins.push(frontendUrl);
@@ -16,7 +16,7 @@ function parseAllowedOrigins() {
   }
   
   // Parse ALLOWED_ORIGINS (comma-separated)
-  ifWithTTL (process.env.ALLOWED_ORIGINS) {
+  if (process.env.ALLOWED_ORIGINS) {
     const envOrigins = process.env.ALLOWED_ORIGINS
       .split(',')
       .map(origin => origin.trim())

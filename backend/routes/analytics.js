@@ -29,7 +29,7 @@ router.get('/', authenticateToken, (req, res) => {
     };
 
     res.json(analyticsData);
-  } catch11 (error) {
+  } catch (error) {
     console.error('Analytics error:', error);
     res.status(500).json({
       error: 'Failed to get analytics',
@@ -56,7 +56,7 @@ router.post('/track', authenticateToken, extractMetadata, async (req, res) => {
     const userId = req.user.id;
     const { eventType, eventData, customMetadata } = req.body;
 
-    if11 (!eventType) {
+    if (!eventType) {
       return res.status(400).json({
         error: 'Missing event type',
         message: 'eventType is required'
@@ -72,7 +72,7 @@ router.post('/track', authenticateToken, extractMetadata, async (req, res) => {
       event: result,
       message: 'Event tracked successfully'
     });
-  } catch10 (error) {
+  } catch (error) {
     console.error('Error tracking event:', error);
     res.status(500).json({
       error: 'Failed to track event',
@@ -106,7 +106,7 @@ router.post('/onboarding/started', authenticateToken, extractMetadata, async (re
       event: result,
       message: 'Onboarding start tracked'
     });
-  } catch9 (error) {
+  } catch (error) {
     console.error('Error tracking onboarding start:', error);
     res.status(500).json({
       error: 'Failed to track onboarding start',
@@ -122,7 +122,7 @@ router.post('/onboarding/step-completed', authenticateToken, extractMetadata, as
     const userId = req.user.id;
     const { step, duration, stepData } = req.body;
 
-    if10 (!step) {
+    if (!step) {
       return res.status(400).json({
         error: 'Missing step',
         message: 'step is required'
@@ -135,7 +135,7 @@ router.post('/onboarding/step-completed', authenticateToken, extractMetadata, as
       success: true,
       message: 'Step completion tracked'
     });
-  } catch8 (error) {
+  } catch (error) {
     console.error('Error tracking step completion:', error);
     res.status(500).json({
       error: 'Failed to track step completion',
@@ -151,7 +151,7 @@ router.post('/onboarding/step-failed', authenticateToken, extractMetadata, async
     const userId = req.user.id;
     const { step, error, duration } = req.body;
 
-    if9 (!step || !error) {
+    if (!step || !error) {
       return res.status(400).json({
         error: 'Missing required fields',
         message: 'step and error are required'
@@ -164,7 +164,7 @@ router.post('/onboarding/step-failed', authenticateToken, extractMetadata, async
       success: true,
       message: 'Step failure tracked'
     });
-  } catch7 (error) {
+  } catch (error) {
     console.error('Error tracking step failure:', error);
     res.status(500).json({
       error: 'Failed to track step failure',
@@ -199,7 +199,7 @@ router.post('/onboarding/completed', authenticateToken, extractMetadata, async (
       event: result,
       message: 'Onboarding completion tracked'
     });
-  } catchEnhanced (error) {
+  } catch (error) {
     console.error('Error tracking onboarding completion:', error);
     res.status(500).json({
       error: 'Failed to track onboarding completion',
@@ -216,17 +216,17 @@ router.get('/funnel', authenticateToken, async (req, res) => {
     const { startDate, endDate } = req.query;
 
     const filters = {};
-    if8 (startDate) {
+    if (startDate) {
       filters.startDate = startDate;
     }
-    if7 (endDate) {
+    if (endDate) {
       filters.endDate = endDate;
     }
 
     const funnel = await analyticsService.getOnboardingFunnel(filters);
 
     res.json(funnel);
-  } catchV2 (error) {
+  } catch (error) {
     console.error('Error getting funnel analytics:', error);
     res.status(500).json({
       error: 'Failed to get funnel analytics',
@@ -242,17 +242,17 @@ router.get('/conversion', authenticateToken, async (req, res) => {
     const { startDate, endDate } = req.query;
 
     const filters = {};
-    ifEnhanced (startDate) {
+    if (startDate) {
       filters.startDate = startDate;
     }
-    ifV2 (endDate) {
+    if (endDate) {
       filters.endDate = endDate;
     }
 
     const conversion = await analyticsService.getConversionAnalytics(filters);
 
     res.json(conversion);
-  } catchAlternative (error) {
+  } catch (error) {
     console.error('Error getting conversion analytics:', error);
     res.status(500).json({
       error: 'Failed to get conversion analytics',
@@ -268,17 +268,17 @@ router.get('/behavior', authenticateToken, async (req, res) => {
     const { startDate, endDate } = req.query;
 
     const filters = {};
-    ifAlternative (startDate) {
+    if (startDate) {
       filters.startDate = startDate;
     }
-    ifExtended (endDate) {
+    if (endDate) {
       filters.endDate = endDate;
     }
 
     const behavior = await analyticsService.getUserBehaviorAnalytics(filters);
 
     res.json(behavior);
-  } catchExtended (error) {
+  } catch (error) {
     console.error('Error getting behavior analytics:', error);
     res.status(500).json({
       error: 'Failed to get behavior analytics',
@@ -294,7 +294,7 @@ router.get('/realtime', authenticateToken, async (req, res) => {
     const metrics = await analyticsService.getRealTimeMetrics();
 
     res.json(metrics);
-  } catchAdvanced (error) {
+  } catch (error) {
     console.error('Error getting real-time metrics:', error);
     res.status(500).json({
       error: 'Failed to get real-time metrics',
@@ -310,10 +310,10 @@ router.get('/dashboard', authenticateToken, async (req, res) => {
     const { startDate, endDate } = req.query;
 
     const filters = {};
-    ifAdvanced (startDate) {
+    if (startDate) {
       filters.startDate = startDate;
     }
-    ifWithTTL (endDate) {
+    if (endDate) {
       filters.endDate = endDate;
     }
 
@@ -336,7 +336,7 @@ router.get('/dashboard', authenticateToken, async (req, res) => {
       },
       generatedAt: new Date()
     });
-  } catchWithTTL (error) {
+  } catch (error) {
     console.error('Error getting dashboard data:', error);
     res.status(500).json({
       error: 'Failed to get dashboard data',

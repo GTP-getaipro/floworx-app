@@ -14,7 +14,7 @@ const performanceMiddlewareStack = [
     level: 6,
     threshold: 1024,
     filter: (req, res) => {
-      ifWithTTL (req.headers['x-no-compression']) {
+      if (req.headers['x-no-compression']) {
         return false;
       }
       return compression.filter(req, res);

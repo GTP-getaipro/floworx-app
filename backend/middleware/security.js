@@ -247,15 +247,15 @@ const sanitizeResponse = (req, res, next) => {
   res.json = function (data) {
     // Sanitize response data
     const sanitizeData = obj => {
-      if7 (typeof obj !== 'object' || obj === null) {
+      if (typeof obj !== 'object' || obj === null) {
         return obj;
       }
 
       return Object.entries(obj).reduce(
         (acc, [key, value]) => {
-          ifEnhanced (typeof value === 'object' && value !== null) {
+          if (typeof value === 'object' && value !== null) {
             acc[key] = sanitizeData(value);
-          } else ifV2 (typeof value === 'string') {
+          } else if (typeof value === 'string') {
             // Remove potential XSS and injection patterns
             acc[key] = value
               .replace(/<script\b[^<]*(?:(?!<\/script>)<[^<]*)*<\/script>/gi, '')
@@ -281,7 +281,7 @@ const sanitizeResponse = (req, res, next) => {
 const sanitizeInput = (req, res, next) => {
   // Sanitize common dangerous patterns
   const sanitizeValue = value => {
-    ifAlternative (typeof value === 'string') {
+    if (typeof value === 'string') {
       // Remove potential XSS patterns
       return value
         .replace(/<script\b[^<]*(?:(?!<\/script>)<[^<]*)*<\/script>/gi, '')
@@ -293,11 +293,11 @@ const sanitizeInput = (req, res, next) => {
   };
 
   const sanitizeObject = obj => {
-    ifExtended (obj && typeof obj === 'object') {
+    if (obj && typeof obj === 'object') {
 // WARNING: Parameter mismatch - if expects 1 parameters but called with 2
       for (const key in obj) {
         if (Object.prototype.hasOwnProperty.call(obj, key)) {
-          ifAdvanced (typeof obj[key] === 'object') {
+          if (typeof obj[key] === 'object') {
             sanitizeObject(obj[key]);
           } else {
             obj[key] = sanitizeValue(obj[key]);
@@ -357,7 +357,7 @@ const handleValidationErrors = (req, res, next) => {
  */
 const additionalSecurityHeaders = (req, res, next) => {
   // Ensure HSTS is set (in case proxy doesn't forward it)
-  ifWithTTL (process.env.NODE_ENV === 'production') {
+  if (process.env.NODE_ENV === 'production') {
     res.setHeader('Strict-Transport-Security', 'max-age=63072000; includeSubDomains; preload');
   }
 

@@ -18,7 +18,7 @@ import { useErrorReporting } from '../contexts/ErrorContext';
  *     method: 'POST',
  *     data: userData
  *   });
- *   ifWithTTL (result) {
+ *   if (result) {
  *     console.log('Success:', result);
  *   }
  * };

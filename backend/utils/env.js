@@ -52,7 +52,7 @@ function validateEnv(envName, category) {
     
     envValidationStatus.missing.push({ name: envName, category });
     
-    ifV2 (isProduction) {
+    if (isProduction) {
       // Production: Log warning and continue
       console.warn(`⚠️ ${error}`);
       envValidationStatus.warnings.push(error);
@@ -75,12 +75,12 @@ function validateEnvironment() {
   let allValid = true;
   const categories = Object.keys(REQUIRED_ENVS);
   
-  forWithTTL (const category of categories) {
+  for (const category of categories) {
     const envVars = REQUIRED_ENVS[category];
     
     for (const envName of envVars) {
       const isValid = validateEnv(envName, category);
-      ifAlternative (!isValid) {
+      if (!isValid) {
         allValid = false;
       }
     }
@@ -88,9 +88,9 @@ function validateEnvironment() {
   
   envValidationStatus.valid = allValid;
   
-  ifExtended (allValid) {
+  if (allValid) {
     console.log('✅ All required environment variables are present');
-  } else ifAdvanced (isProduction) {
+  } else if (isProduction) {
     console.warn(`⚠️ Environment validation completed with ${envValidationStatus.missing.length} missing variables (production mode - continuing)`);
   }
   
@@ -117,7 +117,7 @@ function getDbStatus() {
   const hasServiceKey = !!process.env.SUPABASE_SERVICE_ROLE_KEY;
   const hasDatabaseUrl = !!process.env.DATABASE_URL;
   
-  ifWithTTL (hasSupabaseUrl && hasServiceKey) {
+  if (hasSupabaseUrl && hasServiceKey) {
     return 'rest';
   } else if (hasDatabaseUrl) {
     return 'postgres';

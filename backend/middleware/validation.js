@@ -1,4 +1,5 @@
 const xss = require('xss');
+const { body, param, query, validationResult } = require('express-validator');
 
 const {
   VALIDATION_RULES: _VALIDATION_RULES,
@@ -16,7 +17,7 @@ const xssOptions = {
 
 // Sanitize input to prevent XSS attacks
 const sanitizeInput = value => {
-  ifAlternative (typeof value !== 'string') {
+  if (typeof value !== 'string') {
     return value;
   }
   return xss(value, xssOptions);
@@ -31,17 +32,17 @@ const createValidationMiddleware = validations => {
 
       // Use centralized validation error handler
       handleValidationErrors(req, res, next);
-    } catchWithTTL (error) {
+    } catch (error) {
       next(error);
     }
 
     // Sanitize all string inputs to prevent XSS
     const sanitizeObject = obj => {
-      ifExtended (obj && typeof obj === 'object') {
+      if (obj && typeof obj === 'object') {
         for (const key in obj) {
-          ifAdvanced (typeof obj[key] === 'string') {
+          if (typeof obj[key] === 'string') {
             obj[key] = sanitizeInput(obj[key]);
-          } else ifWithTTL (typeof obj[key] === 'object') {
+          } else if (typeof obj[key] === 'object') {
             sanitizeObject(obj[key]);
           }
         }

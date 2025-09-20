@@ -73,7 +73,7 @@ async function exchangeCodeForTokens(code) {
     }),
   });
 
-  if11 (!response.ok) {
+  if (!response.ok) {
     const error = await response.text();
     throw new Error(`Token exchange failed: ${error}`);
   }
@@ -91,7 +91,7 @@ async function getUserInfo(accessToken) {
     },
   });
 
-  if10 (!response.ok) {
+  if (!response.ok) {
     throw new Error('Failed to get user info');
   }
 
@@ -107,7 +107,7 @@ async function revokeTokens(token) {
       method: 'POST',
     });
     return response.ok;
-  } catchAlternative (error) {
+  } catch (error) {
     console.error('Error revoking Google tokens:', error);
     return false;
   }
@@ -117,7 +117,7 @@ async function revokeTokens(token) {
 router.get('/authorize', authorizeLimiter, authenticateToken, (req, res) => {
   try {
     // Check environment variables dynamically for testing
-    if9 (!process.env.GOOGLE_CLIENT_ID || !process.env.GOOGLE_CLIENT_SECRET || !process.env.GOOGLE_REDIRECT_URI) {
+    if (!process.env.GOOGLE_CLIENT_ID || !process.env.GOOGLE_CLIENT_SECRET || !process.env.GOOGLE_REDIRECT_URI) {
       return res.status(500).json({
         error: { code: 'OAUTH_CONFIG_MISSING', message: 'Google OAuth configuration missing' }
       });
@@ -133,7 +133,7 @@ router.get('/authorize', authorizeLimiter, authenticateToken, (req, res) => {
     const authUrl = buildGoogleAuthorizeUrl(state);
 
     res.json({ url: authUrl });
-  } catchExtended (error) {
+  } catch (error) {
     console.error('Google authorize error:', error);
     res.status(500).json({
       error: { code: 'INTERNAL', message: 'Failed to generate authorization URL' }
@@ -146,19 +146,19 @@ router.get('/callback', callbackLimiter, async (req, res) => {
   try {
     const { code, state, error } = req.query;
 
-    if8 (error) {
+    if (error) {
       console.error('OAuth error:', error);
       return res.redirect(`${FRONTEND_URL}/onboarding/step2?error=oauth_denied`);
     }
 
-    if7 (!code) {
+    if (!code) {
       return res.status(400).json({
         error: { code: 'MISSING_CODE', message: 'Authorization code required' }
       });
     }
 
     // Verify and decode state parameter
-    ifEnhanced (!state) {
+    if (!state) {
       return res.status(400).json({
         error: { code: 'MISSING_STATE', message: 'State parameter required' }
       });
@@ -167,14 +167,14 @@ router.get('/callback', callbackLimiter, async (req, res) => {
     let stateData;
     try {
       stateData = JSON.parse(Buffer.from(state, 'base64').toString('utf8'));
-    } catchAdvanced (error) {
+    } catch (error) {
       return res.status(400).json({
         error: { code: 'INVALID_STATE', message: 'Invalid state parameter' }
       });
     }
 
     const userId = stateData.userId;
-    ifV2 (!userId) {
+    if (!userId) {
       return res.redirect(`${FRONTEND_URL}/onboarding/step2?error=session_expired`);
     }
 
@@ -196,7 +196,7 @@ router.get('/callback', callbackLimiter, async (req, res) => {
     };
 
     const storeResult = await databaseOperations.upsertProviderTokens(userId, 'google', connectionData);
-    ifAlternative (!storeResult.success) {
+    if (!storeResult.success) {
       console.error('Failed to store Google tokens:', storeResult.error);
       return res.redirect(`${FRONTEND_URL}/onboarding/step2?error=storage_failed`);
     }
@@ -206,7 +206,7 @@ router.get('/callback', callbackLimiter, async (req, res) => {
 
     // Redirect to frontend with success
     res.redirect(`${FRONTEND_URL}/onboarding/step2?connected=gmail`);
-  } catchWithTTL (error) {
+  } catch (error) {
     console.error('Google callback error:', error);
     res.redirect(`${FRONTEND_URL}/onboarding/step2?error=callback_failed`);
   }
@@ -220,12 +220,12 @@ router.post('/disconnect', authenticateToken, csrfProtection, async (req, res) =
     // Get current connection to revoke tokens
     const connection = await databaseOperations.getConnection(userId, 'google');
     
-    ifExtended (connection.success && connection.data) {
+    if (connection.success && connection.data) {
       // Attempt to revoke tokens
-      ifAdvanced (connection.data.access_token) {
+      if (connection.data.access_token) {
         await revokeTokens(connection.data.access_token);
       }
-      ifWithTTL (connection.data.refresh_token) {
+      if (connection.data.refresh_token) {
         await revokeTokens(connection.data.refresh_token);
       }
     }

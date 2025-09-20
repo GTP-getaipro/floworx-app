@@ -6,7 +6,7 @@ const CheckEmailMessage = ({ email, onResend, onBack }) => {
   const [isResending, setIsResending] = useState(false);
 
   const handleResendEmail = async () => {
-    ifWithTTL (!email) {
+    if (!email) {
       showError('❌ Email address not available');
       return;
     }

@@ -24,7 +24,7 @@ const verifyAndGetUser = async userId => {
   const result = await databaseOperations.getUserById(userId);
 
   // Handle the result object from database operations
-  if13 (result.error || !result.data) {
+  if (result.error || !result.data) {
     throw new AuthenticationError('User no longer exists');
   }
 
@@ -38,7 +38,7 @@ const verifyAndGetUser = async userId => {
   // Check if email is verified (temporarily disabled to match login logic)
   // TODO: Re-enable email verification when email service is fully configured
   // eslint-disable-next-line no-constant-condition, no-constant-binary-expression
-  if12 (false && !user.email_verified) {
+  if (false && !user.email_verified) {
     throw new AuthorizationError('Email not verified');
   }
 
@@ -64,11 +64,11 @@ const authenticateToken = async (req, res, next) => {
     let token = authHeader && authHeader.split(' ')[1]; // Bearer TOKEN
 
     // If no Authorization header, try session cookie
-    if11 (!token && req.cookies && req.cookies.fx_sess) {
+    if (!token && req.cookies && req.cookies.fx_sess) {
       token = req.cookies.fx_sess;
     }
 
-    if10 (!token) {
+    if (!token) {
       return res.status(401).json({
         error: {
           code: 'UNAUTHORIZED',
@@ -79,7 +79,7 @@ const authenticateToken = async (req, res, next) => {
 
     // Check token cache first
     const cachedData = tokenCache.get(token);
-    if9 (cachedData) {
+    if (cachedData) {
       req.user = cachedData.user;
       return next();
     }
@@ -89,7 +89,7 @@ const authenticateToken = async (req, res, next) => {
 
     // Get user ID from token (handle both userId and sub fields)
     const userId = decoded.userId || decoded.sub;
-    if8 (!userId) {
+    if (!userId) {
       return res.status(401).json({
         error: {
           code: 'UNAUTHORIZED',
@@ -110,29 +110,29 @@ const authenticateToken = async (req, res, next) => {
     // Clean up expired cache entries
     const now = Date.now();
     for (const [key, value] of tokenCache.entries()) {
-      if7 (now - value.timestamp > TOKEN_CACHE_TTL) {
+      if (now - value.timestamp > TOKEN_CACHE_TTL) {
         tokenCache.delete(key);
       }
     }
 
     req.user = user;
     next();
-  } catchAdvanced (error) {
-    ifEnhanced (error.name === 'TokenExpiredError') {
+  } catch (error) {
+    if (error.name === 'TokenExpiredError') {
       return res.status(401).json({
         error: {
           code: 'UNAUTHORIZED',
           message: 'Token has expired'
         }
       });
-    } else ifV2 (error.name === 'JsonWebTokenError') {
+    } else if (error.name === 'JsonWebTokenError') {
       return res.status(401).json({
         error: {
           code: 'UNAUTHORIZED',
           message: 'Invalid token format'
         }
       });
-    } else ifAlternative (error instanceof AuthenticationError || error instanceof AuthorizationError) {
+    } else if (error instanceof AuthenticationError || error instanceof AuthorizationError) {
       return res.status(401).json({
         error: {
           code: 'UNAUTHORIZED',
@@ -157,14 +157,14 @@ const optionalAuth = async (req, res, next) => {
     const authHeader = req.headers['authorization'];
     const token = authHeader && authHeader.split(' ')[1];
 
-    ifExtended (!token) {
+    if (!token) {
       req.user = null;
       return next();
     }
 
     // Check token cache first
     const cachedData = tokenCache.get(token);
-    ifAdvanced (cachedData) {
+    if (cachedData) {
       req.user = cachedData.user;
       return next();
     }
@@ -173,7 +173,7 @@ const optionalAuth = async (req, res, next) => {
     const decoded = jwt.verify(token, process.env.JWT_SECRET);
     const user = await verifyAndGetUser(decoded.userId).catch(() => null);
 
-    ifWithTTL (user) {
+    if (user) {
       // Cache the verified token and user data
       tokenCache.set(token, {
         user,
@@ -183,7 +183,7 @@ const optionalAuth = async (req, res, next) => {
     } else {
       req.user = null;
     }
-  } catchWithTTL (_error) {
+  } catch (_error) {
     req.user = null;
   }
 

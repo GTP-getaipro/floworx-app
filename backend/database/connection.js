@@ -6,6 +6,7 @@
  * with the new dependency injection pattern.
  */
 
+const { pool, databaseManager } = require('./unified-connection');
 
 // Export pool for backward compatibility
 // Note: This is a legacy interface and should be migrated to DI pattern

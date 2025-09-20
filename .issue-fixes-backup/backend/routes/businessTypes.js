@@ -17,7 +17,7 @@ router.get('/test', (req, res) => {
       message: 'Business types route is working',
       timestamp: new Date().toISOString()
     });
-  } catch7 (error) {
+  } catch (error) {
     console.error('Test endpoint error:', error);
     res.status(500).json({
       success: false,
@@ -32,7 +32,7 @@ router.get('/test', (req, res) => {
 router.get('/', async (req, res) => {
   try {
 
-    if9 (!databaseOperations || typeof databaseOperations.getBusinessTypes !== 'function') {
+    if (!databaseOperations || typeof databaseOperations.getBusinessTypes !== 'function') {
       
       return res.status(500).json({
         success: false,
@@ -44,7 +44,7 @@ router.get('/', async (req, res) => {
 
     const result = await databaseOperations.getBusinessTypes();
 
-    if8 (result.error) {
+    if (result.error) {
       console.error('Business types fetch error:', result.error);
       return res.status(500).json({
         success: false,
@@ -60,7 +60,7 @@ router.get('/', async (req, res) => {
       success: true,
       data: businessTypes
     });
-  } catchEnhanced (error) {
+  } catch (error) {
     console.error('Business types fetch error:', error);
     console.error('Error stack:', error.stack);
     res.status(500).json({
@@ -80,8 +80,8 @@ router.get('/:slug', async (req, res) => {
 
     const result = await databaseOperations.getBusinessTypeBySlug(slug);
 
-    if7 (result.error) {
-      ifEnhanced (result.error.code === 'PGRST116') {
+    if (result.error) {
+      if (result.error.code === 'PGRST116') {
         return res.status(404).json({
           success: false,
           error: 'Business type not found',
@@ -102,7 +102,7 @@ router.get('/:slug', async (req, res) => {
       success: true,
       data: result.data
     });
-  } catchV2 (error) {
+  } catch (error) {
     console.error('Business type fetch error:', error);
     res.status(500).json({
       success: false,
@@ -135,7 +135,7 @@ router.post(
       // Verify business type exists and is active using REST API
       const businessTypeResult = await databaseOperations.getBusinessTypeById(businessTypeId);
 
-      ifV2 (businessTypeResult.error) {
+      if (businessTypeResult.error) {
         console.error('Business type verification error:', businessTypeResult.error);
         return res.status(400).json({
           success: false,
@@ -149,7 +149,7 @@ router.post(
       // Update user's business type using REST API
       const updateResult = await databaseOperations.updateUserBusinessType(userId, businessTypeId);
 
-      ifAlternative (updateResult.error) {
+      if (updateResult.error) {
         console.error('Error updating user business type:', updateResult.error);
         return res.status(500).json({
           success: false,
@@ -172,7 +172,7 @@ router.post(
       try {
         await databaseOperations.updateOnboardingProgress(userId, stepData);
         
-      } catchAlternative (progressError) {
+      } catch (progressError) {
         console.error('Error updating onboarding progress:', progressError);
         // Don't fail the request for progress tracking errors
       }
@@ -181,7 +181,7 @@ router.post(
       try {
         console.log(`📊 Analytics: User ${userId} selected business type ${businessType.name}`);
         // TODO: Implement proper analytics tracking with REST API
-      } catchExtended (analyticsError) {
+      } catch (analyticsError) {
         console.error('Analytics tracking error:', analyticsError);
         // Don't fail the request for analytics errors
       }
@@ -198,7 +198,7 @@ router.post(
           }
         }
       });
-    } catchAdvanced (error) {
+    } catch (error) {
       console.error('Business type selection error:', error);
       res.status(500).json({
         success: false,
@@ -219,7 +219,7 @@ router.get('/user/current', authenticateToken, async (req, res) => {
     // Get user data using REST API
     const userResult = await databaseOperations.getUserById(userId);
 
-    ifExtended (userResult.error || !userResult.data) {
+    if (userResult.error || !userResult.data) {
       console.error('User fetch error:', userResult.error);
       return res.status(404).json({
         success: false,
@@ -230,7 +230,7 @@ router.get('/user/current', authenticateToken, async (req, res) => {
 
     const user = userResult.data;
 
-    ifAdvanced (!user.business_type_id) {
+    if (!user.business_type_id) {
       return res.json({
         success: true,
         data: null,
@@ -241,7 +241,7 @@ router.get('/user/current', authenticateToken, async (req, res) => {
     // Get business type data using REST API
     const businessTypeResult = await databaseOperations.getBusinessTypeById(user.business_type_id);
 
-    ifWithTTL (businessTypeResult.error || !businessTypeResult.data) {
+    if (businessTypeResult.error || !businessTypeResult.data) {
       console.error('Business type fetch error:', businessTypeResult.error);
       return res.status(500).json({
         success: false,
@@ -264,7 +264,7 @@ router.get('/user/current', authenticateToken, async (req, res) => {
         }
       }
     });
-  } catchWithTTL (error) {
+  } catch (error) {
     console.error('User business type fetch error:', error);
     res.status(500).json({
       success: false,

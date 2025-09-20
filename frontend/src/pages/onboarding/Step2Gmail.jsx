@@ -51,7 +51,7 @@ export default function Step2Gmail() {
         if (response.data) {
           setFormData(prev => ({ ...prev, ...response.data }));
         }
-      } catchWithTTL (err) {
+      } catch (err) {
         console.error('Failed to load onboarding state:', err);
       }
     };

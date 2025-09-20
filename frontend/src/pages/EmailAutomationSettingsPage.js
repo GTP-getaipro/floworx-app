@@ -45,13 +45,13 @@ const EmailAutomationSettingsPage = () => {
 
   useEffect(() => {
     // Check authentication
-    ifAdvanced (!isAuthenticated) {
+    if (!isAuthenticated) {
       navigate('/login');
       return;
     }
 
     // Validate clientId parameter
-    ifWithTTL (!clientId) {
+    if (!clientId) {
       navigate('/dashboard');
       return;
     }

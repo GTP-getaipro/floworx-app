@@ -17,7 +17,7 @@ router.get('/', authenticateToken, async (req, res) => {
     // Get user profile
     const userProfile = await databaseOperations.getUserProfile(userId);
     
-    ifExtended (!userProfile.data) {
+    if (!userProfile.data) {
       return res.status(404).json({
         success: false,
         message: 'User not found'
@@ -77,7 +77,7 @@ router.get('/', authenticateToken, async (req, res) => {
         }
       }
     });
-  } catchExtended (error) {
+  } catch (error) {
     console.error('💥 Dashboard error:', error.message);
     console.error('Stack:', error.stack);
     return res.status(500).json({
@@ -124,7 +124,7 @@ router.get('/statistics', authenticateToken, async (req, res) => {
         }
       }
     });
-  } catchAdvanced (error) {
+  } catch (error) {
     console.error('💥 Workflow statistics error:', error.message);
     return res.status(500).json({
       success: false,
@@ -149,7 +149,7 @@ router.get('/activity', authenticateToken, async (req, res) => {
     const activityData = [];
 
     // Add onboarding activities
-    ifAdvanced (onboardingProgress.data) {
+    if (onboardingProgress.data) {
       const progress = onboardingProgress.data;
       if (progress.completed_steps && Array.isArray(progress.completed_steps)) {
         progress.completed_steps.forEach((step, index) => {
@@ -163,7 +163,7 @@ router.get('/activity', authenticateToken, async (req, res) => {
         });
       }
 
-      ifWithTTL (progress.google_connected) {
+      if (progress.google_connected) {
         activityData.push({
           id: 'google-connection',
           type: 'oauth_connection',
@@ -196,7 +196,7 @@ router.get('/activity', authenticateToken, async (req, res) => {
       success: true,
       data: sortedActivity
     });
-  } catchWithTTL (error) {
+  } catch (error) {
     console.error('💥 User activity error:', error.message);
     return res.status(500).json({
       success: false,

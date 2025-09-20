@@ -89,7 +89,7 @@ const GmailConnectionStatus = ({
         
         const newStatus = {
           loading: false,
-          connected: !!gmailConnection && gmailConnection.status === 'active',
+          connected: Boolean(gmailConnection) && gmailConnection.status === 'active',
           connection: gmailConnection,
           error: null
         };

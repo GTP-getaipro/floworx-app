@@ -89,7 +89,7 @@ export default function Input({
         onChange={onChange}
         onBlur={onBlur}
         placeholder={placeholder}
-        aria-invalid={!!error}
+        aria-invalid={Boolean(error)}
         className={`
           h-11 w-full rounded-xl bg-white/90 text-slate-900 placeholder-slate-400
           ring-1 ring-slate-300 focus:ring-2 focus:ring-brand-500 focus:outline-none px-3

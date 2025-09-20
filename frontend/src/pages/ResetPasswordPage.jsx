@@ -163,7 +163,7 @@ export default function ResetPasswordPage() {
           onBlur={handleBlur}
           error={formErrors.password}
           placeholder="Create a new password"
-          aria-invalid={!!formErrors.password}
+          aria-invalid={Boolean(formErrors.password)}
         />
         <PasswordInput
           id="confirm"
@@ -174,7 +174,7 @@ export default function ResetPasswordPage() {
           onBlur={handleBlur}
           error={formErrors.confirm}
           placeholder="Confirm your new password"
-          aria-invalid={!!formErrors.confirm}
+          aria-invalid={Boolean(formErrors.confirm)}
         />
         <Button
           type="submit"

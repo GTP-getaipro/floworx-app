@@ -140,7 +140,7 @@ export default function VerifyEmailPage() {
     return (
       <AuthLayout title="Verifying email..." subtitle="Please wait while we verify your email">
         <div className="text-center py-8">
-          <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-brand-300 mx-auto"></div>
+          <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-brand-300 mx-auto" />
         </div>
       </AuthLayout>
     );

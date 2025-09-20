@@ -178,7 +178,7 @@ const OAuthCallback = () => {
               <h2>Connecting Gmail Account</h2>
               <p>{status.message}</p>
               <div className="progress-bar">
-                <div className="progress-fill"></div>
+                <div className="progress-fill" />
               </div>
             </>
           )}

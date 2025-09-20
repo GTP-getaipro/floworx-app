@@ -183,7 +183,7 @@ export default function ForgotPasswordPage() {
           onBlur={handleBlur}
           error={formErrors.email}
           placeholder="Enter your account email"
-          aria-invalid={!!formErrors.email}
+          aria-invalid={Boolean(formErrors.email)}
           autoComplete="off"
           autoCorrect="off"
           autoCapitalize="off"

@@ -61,7 +61,7 @@ const NotFoundPage = () => {
         </div>
       </div>
 
-      <style jsx>{`
+      <style>{`
         .not-found-page {
           min-height: 100vh;
           display: flex;
@@ -176,15 +176,15 @@ const NotFoundPage = () => {
           .not-found-page {
             padding: 1rem;
           }
-          
+
           .not-found-container {
             padding: 2rem;
           }
-          
+
           .error-code {
             font-size: 4rem;
           }
-          
+
           .not-found-actions {
             flex-direction: column;
           }

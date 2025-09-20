@@ -54,7 +54,7 @@ export default function Input({ label, id, error, ...props }) {
       <input 
         id={id} 
         className="input" 
-        aria-invalid={!!error} 
+        aria-invalid={Boolean(error)}
         {...props} 
       />
       {error && <div className="error">{error}</div>}

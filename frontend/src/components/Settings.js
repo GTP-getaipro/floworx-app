@@ -135,7 +135,7 @@ const Settings = () => {
                   checked={settings.emailNotifications}
                   onChange={() => handleToggle('emailNotifications')}
                 />
-                <span className="toggle-slider"></span>
+                <span className="toggle-slider" />
                 Email Notifications
               </label>
               <p className="setting-description">
@@ -153,7 +153,7 @@ const Settings = () => {
                   checked={settings.automationEnabled}
                   onChange={() => handleToggle('automationEnabled')}
                 />
-                <span className="toggle-slider"></span>
+                <span className="toggle-slider" />
                 Enable Automation
               </label>
               <p className="setting-description">
@@ -254,7 +254,7 @@ const Settings = () => {
         </div>
       </div>
 
-      <style jsx>{`
+      <style>{`
         .settings {
           max-width: 800px;
           margin: 0 auto;

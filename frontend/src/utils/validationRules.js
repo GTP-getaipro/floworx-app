@@ -1,6 +1,6 @@
 export function required(msg = "This field is required") {
   return function validateRequired(v) {
-    return (v == null || String(v).trim() === "" ? msg : null);
+    return (v === null || v === undefined || String(v).trim() === "" ? msg : null);
   };
 }
 

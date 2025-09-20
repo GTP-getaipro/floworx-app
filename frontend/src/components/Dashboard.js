@@ -84,7 +84,7 @@ const Dashboard = () => {
           <p>Loading your FloWorx automation overview...</p>
         </div>
         <div className="loading-spinner">
-          <div className="spinner"></div>
+          <div className="spinner" />
           <p>Loading dashboard data...</p>
         </div>
       </div>
